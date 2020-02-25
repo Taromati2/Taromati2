@@ -438,59 +438,51 @@ OnURLDropping
 }
 OnURLQuery
 {
-if shortcut==1
-{
-temp=reference0
-"\![excute,http-get,%(reference0),--param-charset=UTF-8,--file=url.html,--timeout=50,--async=OnLoadUrlTitle]"
-
-}
-
-//OnFileDrop2(reference0,"url")
+	if shortcut==1
+	{
+		temp=reference0
+		"\![excute,http-get,%(reference0),--param-charset=UTF-8,--file=url.html,--timeout=50,--async=OnLoadUrlTitle]"
+	}
 }
 
 OnLoadUrlTitle
 {
-_file="var\\url.html";
-_title="";
-_charset=""
-_url=temp
-temp=null
-if FOPEN(_file,'r')
-{
-
-               	_buff="";
+	_file="var\\url.html";
+	_title="";
+	_charset=""
+	_url=temp
+	temp=null
+	if FOPEN(_file,'r')
+	{
+		_buff="";
 		for _tmp = FREAD(_file);  _tmp != -1; _tmp = FREAD(_file) 
-			{
-				_buff += _tmp;	
-			}  
-       _charset=TextBetween(_buff,'charset=','>');
-       _charset=REPLACE(_charset,'"','')
-       _charset=TOLOWER(_charset)
-}
+		{
+			_buff += _tmp;	
+		}  
+		_charset=TextBetween(_buff,'charset=','>');
+		_charset=REPLACE(_charset,'"','')
+		_charset=TOLOWER(_charset)
+	}
 	FCLOSE(_file);
-		if  'utf-8' _in_ _charset|| 'utf8' _in_ _charset  {
-			FCHARSET(1);
-		}
-		else {
-			FCHARSET(127);
-		}
+	if  'utf-8' _in_ _charset|| 'utf8' _in_ _charset  {
+		FCHARSET(1);
+	}
+	else {
+		FCHARSET(127);
+	}
 
-
-if FOPEN(_file,'r')
-{
-
-               	_buff="";
+	if FOPEN(_file,'r')
+	{
+		_buff="";
 		for _tmp = FREAD(_file);  _tmp != -1; _tmp = FREAD(_file) 
-			{
-				_buff += _tmp;	
-			}  
-       _title=TextBetween(_buff,'<title>','</title>');
-
-}
+		{
+			_buff += _tmp;	
+		}  
+		_title=TextBetween(_buff,'<title>','</title>');
+	}
 	FCLOSE(_file);
 	FCHARSET(1);
-        OnFileDrop2(_url,"url",_title)
-        
+	OnFileDrop2(_url,"url",_title)
 }
 
 

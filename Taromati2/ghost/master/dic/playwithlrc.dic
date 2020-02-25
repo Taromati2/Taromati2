@@ -1807,7 +1807,6 @@ OnFileDropEx
 		OnFileEatDrop(reference0)
 	}elseif rename==1
 		OnFileRenameDrop(reference0)
-
 	elseif shortcut==1
 		OnFileDrop2
 	else{
