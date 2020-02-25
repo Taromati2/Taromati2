@@ -3,7 +3,6 @@
 ///////// 五十音,记事本,大头贴,占卜
 ///////// by KikkaAIdb.
 
-
 ///---- 五十音[2010-3-22_by KikkaAIdb] -------------------------------------------------------------------------------------
 //あ い う え お
 //か き く け こ
@@ -147,67 +146,67 @@ Onnotebook
 Onupdatenotebook
 {
 	_txt="\0\s[26]\b[2]\_q\n\n" 
-        //if reference0 && reference1==NULL
-		_t=0
-		_c=0     
-		if  state=="input"
+	//if reference0 && reference1==NULL
+	_t=0
+	_c=0     
+	if  state=="input"
+	{
+		_t=reference0
+		_c=SQLite("-j","SELECT content FROM notes WHERE title='%(ID)'")
+		state=""
+		_txt+="请选择要更改的部分\n\n"
+		_txt+="\__q[Onupdatenotebook,%(_t),Title]标题：%(_t)\__q\n[110]"
+		_txt+="\__q[Onupdatenotebook,%(_t),Content]内容：\n%(_c)\__q\n[200]"
+		_txt+="\![*]\q[返回,Onnotebook]     \![*]\q[退出,Onovernotebook]\![set,choicetimeout,0]"
+	}
+	
+	
+	elseif reference1=="Title"
+	{
+		ID=reference0
+		_t=reference0
+		state="update.Title"
+		_txt+="\![open,inputbox,Onupdatenotebook,-1,%(_t)]标题：%(_t)\n"
+	}
+	
+	elseif reference1=="Content"
+	{
+		ID=reference0
+		_t=reference0
+		_c=SQLite("-j","SELECT content FROM notes WHERE title='%(ID)'")
+		state="update.Content"
+		_txt+="\![open,inputbox,Onupdatenotebook,-1,%(_c)]内容：%(_c)\n"
+	}
+	
+	elseif state=="update.Title"
+	{   
+		if STRLEN(reference0)>0
 		{
-			_t=reference0
-			_c=SQLite("-j","SELECT content FROM notes WHERE title='%(ID)'")
-			state=""
-			_txt+="请选择要更改的部分\n\n"
-			_txt+="\__q[Onupdatenotebook,%(_t),Title]标题：%(_t)\__q\n[110]"
-			_txt+="\__q[Onupdatenotebook,%(_t),Content]内容：\n%(_c)\__q\n[200]"
-			_txt+="\![*]\q[返回,Onnotebook]     \![*]\q[退出,Onovernotebook]\![set,choicetimeout,0]"
+			_temp=SQLite("UPDATE notes SET title='%(reference0)' WHERE title='%(ID)'");
+			_txt+="更改已完成\n"
 		}
-		
-		
-		elseif reference1=="Title"
+		else
+			_txt+="未做更改\n"
+		state="input"
+		_txt+="\![*]\q[返回上一层,Onnotebook,%(ID)]     \![*]\q[退出,Onovernotebook]\![set,choicetimeout,0]"
+			
+	}
+	
+	elseif state=="update.Content"
+	{
+		_c=SQLite("-j","SELECT content FROM notes WHERE title='%(ID)'")
+		if STRLEN(reference0)>0
 		{
-			ID=reference0
-			_t=reference0
-			state="update.Title"
-			_txt+="\![open,inputbox,Onupdatenotebook,-1,%(_t)]标题：%(_t)\n"
+			_temp=SQLite("UPDATE notes SET content='%(reference0)' WHERE title='%(ID)'");
+			_temp=SQLite("UPDATE notes SET date='%(year)-%(month)-%(day)' WHERE title='%(ID)'");
+			_txt+="更改已完成\n"
 		}
-		
-		elseif reference1=="Content"
-		{
-			ID=reference0
-			_t=reference0
-			_c=SQLite("-j","SELECT content FROM notes WHERE title='%(ID)'")
-			state="update.Content"
-			_txt+="\![open,inputbox,Onupdatenotebook,-1,%(_c)]内容：%(_c)\n"
-		}
-		
-		elseif state=="update.Title"
-		{   
-			if STRLEN(reference0)>0
-			{
-				_temp=SQLite("UPDATE notes SET title='%(reference0)' WHERE title='%(ID)'");
-				_txt+="更改已完成\n"
-			}
-			else
-				_txt+="未做更改\n"
-			state="input"
-			_txt+="\![*]\q[返回上一层,Onnotebook,%(ID)]     \![*]\q[退出,Onovernotebook]\![set,choicetimeout,0]"
-				
-		}
-		
-		elseif state=="update.Content"
-        {
-			_c=SQLite("-j","SELECT content FROM notes WHERE title='%(ID)'")
-			if STRLEN(reference0)>0
-			{
-				_temp=SQLite("UPDATE notes SET content='%(reference0)' WHERE title='%(ID)'");
-				_temp=SQLite("UPDATE notes SET date='%(year)-%(month)-%(day)' WHERE title='%(ID)'");
-				_txt+="更改已完成\n"
-			}
-			else
-				_txt+="未做更改\n"
-			state="input"
-			_txt+="\![*]\q[返回上一层,Onnotebook]     \![*]\q[退出,Onovernotebook]\![set,choicetimeout,0]"
-		}
-		_txt
+		else
+			_txt+="未做更改\n"
+		state="input"
+		_txt+="\![*]\q[返回上一层,Onnotebook]     \![*]\q[退出,Onovernotebook]\![set,choicetimeout,0]"
+	}
+	_txt
 }
 
 
@@ -232,7 +231,7 @@ Onaddnotebook
 	if _argv[0]=="Title" {
 		if addnotebook_T!=null
 			"\0\s[26]请输入内容!\![open,inputbox,Onaddnotebook_C,-1]\n[300]\![set,choicetimeout,0]\q[◇退出,Onovernotebook,Onaddnotebook_C]\e"
-			else
+		else
 			Onaddnotebook;
 	}
 	elseif _argv[0]=="Content" {
