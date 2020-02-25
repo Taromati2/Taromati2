@@ -1,0 +1,519 @@
+﻿///////////////////////////////////////////
+////////// 花语和诞生花辞书
+////////// written by forjane 2009.09.02
+///////////////////////////////////////////
+
+
+//诞生花
+//------------------------------------------------
+OnBirthdayFlowerList
+{
+	if QuickStartVersion{
+		NeedUpdate
+		return
+	}
+	_txt = "\0\s[26]想看几月份的？\w9\n[150]\_q";
+	_table =("零","一","二","三","四","五","六","七","八","九","十","十一","十二");
+	_smonth = "";
+	_month = 0;
+	for _month = 1; _month <= 12; _month ++ {
+		_smonth = _table[_month] + '月';
+		_txt += "\_l[%((_month - 1) % 3 * 56 + 24 - (_month - 1)/ 10 * 12)]";
+		_txt += "\q[%(_smonth),OnBirthdayFlowerDays,%(_month)]";
+		if _month % 3 == 0 {
+			_txt += "\n";
+		}
+	}
+	_txt += "\n[150]\q[◇返回,OnOpenMenu,1]\n\q[◇终了,OnFlowerEnd]\e";
+	_txt;
+}
+
+
+OnBirthdayFlowerDays
+{
+	_month = reference0;
+	_day = 0;
+	_sum = (31,31,29,31,30,31,30,31,31,30,31,30,31)[_month];
+	_sday = "";
+	_txt = _month + "月的哪一天呢？\n[150]\_q";
+	for _day = 1; _day <= _sum; _day ++ {
+		_sday = _day + "日";
+		_txt += "\_l[%((_day - 1) % 6 * 32 + 24 - (_day + 20) / 30 * 7)]"
+		_txt += "\q[%(_sday),OnBirthdayFlower,%(_month),%(_day)]";
+		if _day % 6 == 0 && _day < _sum {
+			_txt += "\n";
+		}
+	}
+	_txt += "\n[150]\q[◇返回,OnBirthdayFlowerList]\n\q[◇终了,OnFlowerEnd]\e";
+	_txt;
+}
+
+
+OnBirthdayFlower
+{
+	_month = reference0;
+	_day = reference1;
+	_str = _month + "月" + _day + "日";
+	_file = "data\birthdayflower.txt";
+	_buff = "";
+	_txt = "\b[2]";
+	if FOPEN(_file, "r") {
+		_buff = FREAD(_file);
+		while _buff != -1 && _str !_in_ _buff {
+			_buff = FREAD(_file);
+		}
+		if _str _in_ _buff {
+			_txt += _str + "的诞生花：\n\n";
+			_buff = ERASE(_buff, 0, STRLEN(_str));
+			_txt += _buff + "\n[150]";
+			_txt += FREAD(_file) + "\n[150]" + FREAD(_file) + "\n[150]" + FREAD(_file) + "\n";
+		}
+	}
+	_txt += "\n\n\n\q[◇返回,OnBirthdayFlowerList]\n\q[◇终了,OnFlowerEnd]\e";
+	_txt;
+	FCLOSE(_file);
+}
+
+//花语
+//-----------------------------------------------
+
+FlowersMenu
+{
+	"\n\n[150]\q[◇返回,OnFlowers]\n\q[◇终了,OnFlowerEnd]\e";
+}
+
+OnFlowers
+{
+	"\0\s[26]\b[2]%(username)觉得哪种花比较好呢？\n\n[150]/
+	\q[◇玫瑰,OnMenuRose]\n/
+	\q[◇百合,OnMenuLily]\n/
+	\q[◇康乃馨,OnMenuCarnation]\n/
+	\q[◇郁金香,OnMenuTulip]\n/
+	\q[◇鸢尾花,OnMenuLuce]\n/
+	\q[◇水仙,OnMenuNarcissus]\n/
+	\q[◇菊花,OnMenuChrysanthemum]\n/
+	\q[◇风信子,OnMenuHyacinth]\n/
+	\q[◇牵牛花,OnMenuChoisy]\n/
+	\q[◇樱花,OnMenuSakura]\n/
+	\q[◇虞美人,OnMenuPoppy]\n/
+	\q[◇桔梗,OnMenuKikyou]\n/
+	\q[◇石竹,OnMenuCP]\n/
+	\q[◇其他花,OnMenuOthers]\n"
+	--
+	"\n\n[150]\q[◇返回,OnOpenMenu,1]\n\q[◇终了,OnFlowerEnd]\e";
+}
+
+OnMenuRose
+{
+	"\0\s[20]\b[2]玫瑰的话,\w9有很多种的样子。\w9\n\n[150]/
+	\q[◇玫瑰,OnFlowerRose,0]\n/
+	\q[◇玫瑰（黑）,OnFlowerRose,1]\n/
+	\q[◇玫瑰（红）,OnFlowerRose,2]\n/
+	\q[◇玫瑰（粉红）,OnFlowerRose,3]\n/
+	\q[◇玫瑰（白）,OnFlowerRose,4]\n/
+	\q[◇玫瑰（黄）,OnFlowerRose,5]\n/
+	\q[◇玫瑰（蓝）,OnFlowerRose,6]\n/
+	\q[◇玫瑰（捧花）,OnFlowerRose,7]\n/
+	\q[◇玫瑰（1朵）,OnFlowerRose,8]\n/
+	\q[◇玫瑰（999）,OnFlowerRose,9]\n"
+	--
+	FlowersMenu
+}
+
+OnMenuLily
+{
+	"\0\s[20]\b[2]百合的话,\w9有很多种的样子。\w9\n\n[150]/
+	\q[◇百合,OnFlowerLily,0]\n/
+	\q[◇百合（香水）,OnFlowerLily,1]\n/
+	\q[◇百合（白）,OnFlowerLily,2]\n/
+	\q[◇百合（葵）,OnFlowerLily,3]\n/
+	\q[◇百合（姬）,OnFlowerLily,4]\n/
+	\q[◇狐尾百合,OnFlowerLily,5]\n/
+	\q[◇玉米百合,OnFlowerLily,6]\n/
+	\q[◇编笠百合,OnFlowerLily,7]\n/
+	\q[◇圣诞百合,OnFlowerLily,8]\n/
+	\q[◇水仙百合,OnFlowerLily,9]\n"
+	--
+	FlowersMenu
+}
+
+OnMenuCarnation
+{
+	"\0\s[20]\b[2]康乃馨的话,\w9有很多种的样子。\w9\n\n[150]/
+	\q[◇康乃馨,OnFlowerCarnation,0]\n/
+	\q[◇康乃馨（红）,OnFlowerCarnation,1]\n/
+	\q[◇康乃馨（粉红）,OnFlowerCarnation,2]\n/
+	\q[◇康乃馨（白）,OnFlowerCarnation,3]\n"
+	--
+	FlowersMenu
+}
+
+OnMenuTulip
+{
+	"\0\s[20]\b[2]郁金香的话,\w9有很多种的样子。\w9\n\n[150]/
+	\q[◇郁金香,OnFlowerTulip,0]\n/
+	\q[◇郁金香（红）,OnFlowerTulip,1]\n/
+	\q[◇郁金香（粉）,OnFlowerTulip,21]\n/
+	\q[◇郁金香（黄）,OnFlowerTulip,3]\n/
+	\q[◇郁金香（紫）,OnFlowerTulip,4]\n/
+	\q[◇郁金香（白）,OnFlowerTulip,5]\n/
+	\q[◇郁金香（双色）,OnFlowerTulip,6]\n/
+	\q[◇郁金香（羽毛）,OnFlowerTulip,7]\n"
+	--
+	FlowersMenu
+}
+
+OnMenuLuce
+{
+	"\0\s[20]\b[2]鸢尾的话,\w9有很多种的样子。\w9\n\n[150]/
+	\q[◇鸢尾（爱丽斯）,OnFlowerLuce,0]\n/
+	\q[◇德国鸢尾,OnFlowerLuce,1]\n/
+	\q[◇小鸢尾,OnFlowerLuce,2]\n"
+	--
+	FlowersMenu
+}
+
+OnMenuNarcissus
+{
+	"\0\s[20]\b[2]水仙的话,\w9有很多种的样子。\w9\n\n[150]/
+	\q[◇中国水仙,OnFlowerNarcissus,0]\n/
+	\q[◇西洋水仙,OnFlowerNarcissus,1]\n/
+	\q[◇黄水仙,OnFlowerNarcissus,2]\n/
+	\q[◇山水仙,OnFlowerNarcissus,3]\n"
+	--
+	FlowersMenu
+}
+
+OnMenuChrysanthemum
+{
+	"\0\s[20]\b[2]菊花的话,\w9有很多种的样子。\w9\n\n[150]/
+	\q[◇菊花,OnFlowerChrysanthemum,0]\n/
+	\q[◇翠菊,OnFlowerChrysanthemum,1]\n/
+	\q[◇春菊,OnFlowerChrysanthemum,2]\n/
+	\q[◇六月菊,OnFlowerChrysanthemum,3]\n/
+	\q[◇冬菊,OnFlowerChrysanthemum,4]\n/
+	\q[◇法国小菊,OnFlowerChrysanthemum,5]\n/
+	\q[◇瓜叶菊,OnFlowerChrysanthemum,6]\n/
+	\q[◇波斯菊,OnFlowerChrysanthemum,7]\n/
+	\q[◇大波斯菊,OnFlowerChrysanthemum,8]\n/
+	\q[◇万寿菊,OnFlowerChrysanthemum,9]\n/
+	\q[◇矢车菊,OnFlowerChrysanthemum,10]\n/
+	\q[◇麦杆菊,OnFlowerChrysanthemum,11]\n/
+	\q[◇鳞托菊,OnFlowerChrysanthemum,12]\n/
+	\q[◇雏菊（延命菊）,OnFlowerChrysanthemum,13]\n/
+	\q[◇非洲菊（扶郎花）,OnFlowerChrysanthemum,14]\n"
+	--
+	FlowersMenu
+}
+
+OnMenuHyacinth
+{
+	"\0\s[20]\b[2]风信子的话,\w9有很多种的样子。\w9\n\n[150]/
+	\q[◇风信子,OnFlowerHyacinth,0]\n/
+	\q[◇紫色风信子,OnFlowerHyacinth,1]\n/
+	\q[◇淡紫色风信子,OnFlowerHyacinth,2]\n/
+	\q[◇白色风信子,OnFlowerHyacinth,3]\n/
+	\q[◇红色风信子,OnFlowerHyacinth,4]\n/
+ 	\q[◇桃红色风信子,OnFlowerHyacinth,5]\n/
+	\q[◇粉色风信子,OnFlowerHyacinth,6]\n/
+	\q[◇黄色风信子,OnFlowerHyacinth,7]\n/
+	\q[◇蓝色风信子,OnFlowerHyacinth,8]\n/	
+	\q[◇深蓝色风信子,OnFlowerHyacinth,9]\n"
+	--
+	FlowersMenu
+}
+
+OnMenuChoisy
+{
+	"\0\s[20]\b[2]牵牛花的话,\w9有很多种的样子。\w9\n\n[150]/
+	\q[◇牵牛花,OnFlowerChoisy,0]\n/
+	\q[◇矮牵牛,OnFlowerChoisy,1]\n/
+	\q[◇爱丽丝,OnFlowerChoisy,2]\n"
+	--
+	FlowersMenu
+}
+
+OnMenuSakura
+{
+	"\0\s[20]\b[2]樱花的话,\w9有很多种的样子。\w9\n\n[150]/
+	\q[◇樱花,OnFlowerSakura,0]\n/
+	\q[◇山樱,OnFlowerSakura,1]\n/
+	\q[◇西洋樱花,OnFlowerSakura,2]\n/
+	\q[◇冬樱花,OnFlowerSakura,3]\n/
+	\q[◇重瓣樱花,OnFlowerSakura,4]\n/
+	\q[◇樱花草,OnFlowerSakura,5]\n/
+	\q[◇山樱花,OnFlowerSakura,6]\n"
+	--
+	FlowersMenu
+}
+
+OnMenuPoppy
+{
+	"\0\s[20]\b[2]虞美人的话,\w9有很多种的样子。\w9\n\n[150]/
+	\q[◇虞美人,OnFlowerPoppy,0]\n/
+	\q[◇红色虞美人,OnFlowerPoppy,1]\n/
+	\q[◇白色虞美人,OnFlowerPoppy,2]\n/
+	\q[◇淡红虞美人,OnFlowerPoppy,3]\n/
+	\q[◇深红虞美人,OnFlowerPoppy,4]\n"
+	--
+	FlowersMenu
+}
+
+OnMenuKikyou
+{
+	"\0\s[20]\b[2]桔梗的话,\w9有很多种的样子。\w9\n\n[150]/
+	\q[◇桔梗,OnFlowerKikyou,0]\n/
+	\q[◇丸叶桔梗 ,OnFlowerKikyou,1]\n"
+	--
+	FlowersMenu
+}
+
+OnMenuCP
+{
+	"\0\s[20]\b[2]石竹的话,\w9有很多种的样子。\w9\n\n[150]/
+	\q[◇石竹,OnFlowerCP,0]\n/
+	\q[◇丁香石竹,OnFlowerCP,1]\n/
+	\q[◇五彩石竹,OnFlowerCP,2]\n/
+	\q[◇香石竹,OnFlowerCP,3]\n"
+	--
+	FlowersMenu
+}
+
+OnMenuOthers
+{
+	"\0\s[23]\b[2]其实,\w9橘花也知道一些其他花的花语哦\w9\n[150]/
+	\q[◇百日草,OnFlowerOthers,0]\n/
+	\q[◇薄荷,OnFlowerOthers,1]\n/
+	\q[◇薄雪草,OnFlowerOthers,2]\n/
+	\q[◇柏树,OnFlowerOthers,3]\n/
+	\q[◇并蒂莲,OnFlowerOthers,4]\n/
+	\q[◇薰衣草,OnFlowerOthers,5]\n/
+	\q[◇天堂鸟,OnFlowerOthers,6]\n/
+	\q[◇向日葵,OnFlowerOthers,7]\n/
+	\q[◇山茶花,OnFlowerOthers,8]\n/
+	\q[◇三色堇,OnFlowerOthers,9]\n/
+	\q[◇玛格丽特,OnFlowerOthers,10]\n/
+	\q[◇曼珠沙华,OnFlowerOthers,11]\n/
+	\q[◇火绒草,OnFlowerOthers,12]\n/
+	\q[◇荷花,OnFlowerOthers,13]\n/
+	\q[◇玉兰花,OnFlowerOthers,14]\n/
+	\q[◇茉莉花,OnFlowerOthers,15]\n/
+	\q[◇水仙菖,OnFlowerOthers,16]\n/
+	\q[◇晚香玉,OnFlowerOthers,17]\n/
+	\q[◇香罗兰,OnFlowerOthers,18]\n/
+	\q[◇吊兰,OnFlowerOthers,19]\n/
+	\q[◇柽柳,OnFlowerOthers,20]\n/
+	\q[◇枸橼,OnFlowerOthers,21]\n/
+	\q[◇火鹤,OnFlowerOthers,22]\n/
+	\q[◇菖蒲,OnFlowerOthers,23]\n/
+	\q[◇栀子,OnFlowerOthers,24]\n/
+	\q[◇仙客来,OnFlowerOthers,25]\n"
+	--
+	FlowersMenu
+}
+
+
+OnFlowerEnd 
+{
+	"\0\s[0]好的。\w9\w9\e" 
+	"\0\s[0]这样有帮上你的忙吗？\w9\w9\e" 
+}
+
+OnFlowerRose
+{
+	("\0\s[20]\b[1]玫瑰：爱情、爱与美、容光焕发、爱和艳情\n\n",/
+	"\0\s[20]\b[1]玫瑰（黑）：黑暗、挑战\n\n",/
+	"\0\s[20]\b[1]玫瑰（红）：热情、热爱着您、热恋\n\n",/
+	"\0\s[20]\b[1]玫瑰（粉红）：感动、爱的宣言、铭记于心、初恋\n\n",/
+	"\0\s[20]\b[1]玫瑰（白）：天真、纯洁、尊敬\n\n",/
+	"\0\s[20]\b[1]玫瑰（黄）：不贞、嫉妒、分手\n\n",/
+	"\0\s[20]\b[1]玫瑰（蓝）：神秘、妖娆\n\n",/
+	"\0\s[20]\b[1]玫瑰（捧花）：幸福之爱\n\n",/
+	"\0\s[20]\b[1]玫瑰（1朵）：一心一意\n\n",/
+	"\0\s[20]\b[1]玫瑰（999）：天长地久\n\n")[reference0];
+	--
+	FlowersMenu
+}
+
+OnFlowerLily
+{
+	("\0\s[20]\b[1]百合：顺利、心想事成、祝福、高贵\n\n",/
+	"\0\s[20]\b[1]百合（香水）：纯洁、婚礼的祝福、高贵\n\n",/
+	"\0\s[20]\b[1]百合（白）：纯洁、庄严、心心相印\n\n",/
+	"\0\s[20]\b[1]百合（葵）：胜利、荣誉、富贵\n\n",/
+	"\0\s[20]\b[1]百合（姬）：财富、荣誉、清纯、高雅\n\n",/
+	"\0\s[20]\b[1]狐尾百合：尊贵、欣欣向荣、杰出\n\n",/
+	"\0\s[20]\b[1]玉米百合：执著的爱、勇敢\n\n",/
+	"\0\s[20]\b[1]编笠百合：才能、威严、杰出\n\n",/
+	"\0\s[20]\b[1]圣诞百合：喜洋洋、庆祝、真情\n\n",/
+	"\0\s[20]\b[1]水仙百合：喜悦、期待相逢\n\n")[reference0];
+	--
+	FlowersMenu
+}
+
+OnFlowerCarnation
+{
+	("\0\s[20]\b[1]康乃馨：母亲我爱您、热情、真情\n\n",/
+	"\0\s[20]\b[1]康乃馨（红）：相信你的爱\n\n",/
+	"\0\s[20]\b[1]康乃馨（粉红）：热爱、亮丽\n\n",/
+	"\0\s[20]\b[1]康乃馨（白）：吾爱永在、真情、纯洁\n\n")[reference0];
+	--
+	FlowersMenu
+}
+
+OnFlowerTulip
+{
+	("\0\s[20]\b[1]郁金香：爱的表白、荣誉、祝福永恒\n\n",/
+	"\0\s[20]\b[1]郁金香（红）：爱的宣言、喜悦、热爱\n\n",/
+	"\0\s[20]\b[1]郁金香（粉）：美人、热爱、幸福\n\n",/
+	"\0\s[20]\b[1]郁金香（黄）：高贵、珍重、财富、绝望之爱\n\n",/
+	"\0\s[20]\b[1]郁金香（紫）：无尽的爱、最爱、永恒的爱\n\n",/
+	"\0\s[20]\b[1]郁金香（白）：纯情、纯洁\n\n",/
+	"\0\s[20]\b[1]郁金香（双色）：美丽的你、喜相逢\n\n",/
+	"\0\s[20]\b[1]郁金香（羽毛）：情意绵绵\n\n")[reference0];
+	--
+	FlowersMenu
+}
+
+OnFlowerLuce
+{
+	("\0\s[20]\b[1]鸢尾（爱丽斯）：好消息、使者、想念你\n\n",/
+	"\0\s[20]\b[1]德国鸢尾：神圣\n\n",/
+	"\0\s[20]\b[1]小鸢尾：协力抵挡、同心\n\n")[reference0];
+	--
+	FlowersMenu
+}
+
+OnFlowerNarcissus
+{
+	("\0\s[20]\b[1]中国水仙：多情、想你\n\n",/
+	"\0\s[20]\b[1]西洋水仙：期盼爱情、爱你、纯洁\n\n",/
+	"\0\s[20]\b[1]黄水仙：重温爱情\n\n",/
+	"\0\s[20]\b[1]山水仙：美好时光、欣欣向荣\n\n")[reference0];
+	--
+	FlowersMenu
+}
+
+OnFlowerChrysanthemum
+{
+	("\0\s[20]\b[1]菊花：清净、高洁、我爱你、真情\n\n",/
+	"\0\s[20]\b[1]翠菊：追想、可靠的爱情、请相信我\n\n",/
+	"\0\s[20]\b[1]春菊：为爱情占卜\n\n",/
+	"\0\s[20]\b[1]六月菊：别离\n\n",/
+	"\0\s[20]\b[1]冬菊：别离\n\n",/
+	"\0\s[20]\b[1]法国小菊：忍耐\n\n",/
+	"\0\s[20]\b[1]瓜叶菊：快乐\n\n",/
+	"\0\s[20]\b[1]波斯菊：纯真并，永远快乐着\n\n",/
+	"\0\s[20]\b[1]大波斯菊：少女纯情\n\n",/
+	"\0\s[20]\b[1]万寿菊：友情\n\n",/
+	"\0\s[20]\b[1]矢车菊：纤细、优雅\n\n",/
+	"\0\s[20]\b[1]麦杆菊：永恒的记忆、刻画在心\n\n",/
+	"\0\s[20]\b[1]鳞托菊：永远的爱\n\n",/
+	"\0\s[20]\b[1]雏菊（延命菊）：愉快、幸福、纯洁、天真、和平、希望、美人\n\n",/
+	"\0\s[20]\b[1]非洲菊（扶郎花）：神秘、兴奋\n\n")[reference0];
+	--
+	FlowersMenu
+}
+
+OnFlowerHyacinth
+{
+	("\0\s[20]\b[1]风信子：只要点燃生命之火，便可同享丰富人生\n\n",/
+	"\0\s[20]\b[1]紫色风信子：悲伤、妒忌\n\n",/
+	"\0\s[20]\b[1]淡紫色风信子：轻柔的气质、浪漫的情怀\n\n",/
+	"\0\s[20]\b[1]白色风信子：纯洁清淡或不敢表露的爱\n\n",/
+	"\0\s[20]\b[1]红色风信子：感谢你\n\n",/
+	"\0\s[20]\b[1]桃红色风信子：代表热情\n\n",/
+	"\0\s[20]\b[1]粉色风信子：淡雅清香\n\n",/
+	"\0\s[20]\b[1]黄色风信子：我很幸福\n\n",/
+	"\0\s[20]\b[1]蓝色风信子：高贵浓郁\n\n",/
+	"\0\s[20]\b[1]深蓝色风信子：因爱而有些忧郁\n\n")[reference0];
+	--
+	FlowersMenu
+}
+
+OnFlowerChoisy
+{
+	("\0\s[20]\b[1]牵牛花：爱情、冷静、虚幻\n\n",/
+	"\0\s[20]\b[1]矮牵牛：安全感、与你同心、有你,我就觉得温馨\n\n",/
+	"\0\s[20]\b[1]爱丽丝：勇于追求爱情、稳重\n\n")[reference0];
+	--
+	FlowersMenu
+}
+
+OnFlowerSakura
+{
+	("\0\s[20]\b[1]樱花：生命、幸福一生一世永不放弃，一生一世只爱你，命运的法则就是循环\n\n",/
+	"\0\s[20]\b[1]山樱：向你微笑、精神美\n\n",/
+	"\0\s[20]\b[1]西洋樱花：善良的教育\n\n",/
+	"\0\s[20]\b[1]冬樱花：东方的神秘\n\n",/
+	"\0\s[20]\b[1]重瓣樱花：文静\n\n",/
+	"\0\s[20]\b[1]樱花草：青春\n\n",/
+	"\0\s[20]\b[1]山樱花：纯洁、高尚、淡薄\n\n")[reference0];
+	--
+	FlowersMenu
+}
+
+OnFlowerPoppy
+{
+	("\0\s[20]\b[1]虞美人:安慰，遗忘，休息\n\n",/
+	"\0\s[20]\b[1]红色虞美人：虚荣\n\n",/
+	"\0\s[20]\b[1]白色虞美人：睡眠\n\n",/
+	"\0\s[20]\b[1]淡红虞美人：安慰\n\n",/
+	"\0\s[20]\b[1]深红虞美人：狂热，梦想\n\n")[reference0];
+	--
+	FlowersMenu
+}
+
+OnFlowerKikyou
+{
+	("\0\s[20]\b[1]桔梗：永恒的爱、无望的爱\n\n",/
+	"\0\s[20]\b[1]丸叶桔梗：屈服、悲伤\n\n")[reference0];
+	--
+	FlowersMenu
+}
+
+OnFlowerCP
+{
+	("\0\s[20]\b[1]石竹：纯洁的爱、才能、大胆、女性美\n\n",/
+	"\0\s[20]\b[1]丁香石竹：大胆、积极\n\n",/
+	"\0\s[20]\b[1]五彩石竹：女性美\n\n",/
+	"\0\s[20]\b[1]香石竹：热心\n\n")[reference0];
+	--
+	FlowersMenu
+}
+
+OnFlowerOthers
+{
+	("\0\s[20]\b[1]百日草：思念亡友、爱\n\n",/
+	"\0\s[20]\b[1]薄荷：再爱我一次\n\n",/
+	"\0\s[20]\b[1]薄雪草：念念不忘\n\n",/
+	"\0\s[20]\b[1]柏树：永葆青春\n\n",/
+	"\0\s[20]\b[1]并蒂莲：夫妻恩爱\n\n",/
+	"\0\s[20]\b[1]薰衣草：等待爱情、永远的孤独\n\n",/
+	"\0\s[20]\b[1]天堂鸟：潇洒、多情公子\n\n",/
+	"\0\s[20]\b[1]向日葵：爱慕、光辉、忠诚\n\n",/
+	"\0\s[20]\b[1]山茶花：可爱、谦让、理想的爱、了不起的魅力\n\n",/
+	"\0\s[20]\b[1]三色堇：沉思、请想念我\n\n",/
+	"\0\s[20]\b[1]玛格丽特：骄傲、满意、喜悦\n\n",/
+	"\0\s[20]\b[1]曼珠沙华（红色彼岸花）:悲伤的回忆\n\n",/
+	"\0\s[20]\b[1]火绒草：重要的回忆\n\n",/
+	"\0\s[20]\b[1]荷花：清白、高尚而谦虚；无邪、得不到的爱；君子\n\n",/
+	"\0\s[20]\b[1]玉兰花：报恩\n\n",/
+	"\0\s[20]\b[1]茉莉花：忠贞、尊敬、清纯、贞洁、质朴、玲珑、迷人、官能的、你是我的\n\n",/
+	"\0\s[20]\b[1]水仙菖：爱的枷锁\n\n",/
+	"\0\s[20]\b[1]晚香玉：危险的欢愉\n\n",/
+	"\0\s[20]\b[1]香罗兰：困境中保持贞节\n\n",/
+	"\0\s[20]\b[1]吊兰：朴实、天真、淡雅、纯洁、希望、宁静\n\n",/
+	"\0\s[20]\b[1]柽柳：罪\n\n",/
+	"\0\s[20]\b[1]枸橼：不懂幽默的美人\n\n",/
+	"\0\s[20]\b[1]火鹤：燃烧的心，热情，烦恼，关怀\n\n",/
+	"\0\s[20]\b[1]菖蒲：信仰者的幸福\n\n",/
+	"\0\s[20]\b[1]栀子：“喜悦”，就如生机盎然的夏天充满了未知的希望和喜悦\n\n",/
+	"\0\s[20]\b[1]喜迎贵客、好客\n\n")[reference0];
+	--
+	FlowersMenu
+}
+
+
+
+

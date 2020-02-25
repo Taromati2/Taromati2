@@ -1,0 +1,6688 @@
+﻿
+OnRpgGame
+{
+	if QuickStartVersion{
+		NeedUpdate
+		return
+	}
+	rpggame=1;
+        STRADD=1;
+        DEFADD=1;
+        IGN=1;
+        DEFMINUS=1;
+	if reference0 != "" 
+	{
+
+		if battlemode==0
+			OpenRpgGameMenu(reference0);;
+		elseif battlemode==1
+		{
+			if kikka==1 && towa==0
+				Onbattleselect0;
+			elseif kikka==0 && towa==1
+				Onbattleselect1;
+			else
+				OpenRpgGameMenu(reference0)
+		}
+		elseif battlemode==2
+			Onbattle;
+	}
+	else 
+	{
+		if battlemode==0
+			OpenRpgGameMenu;
+		elseif battlemode==1
+		{
+			if kikka==1 && towa==0
+				Onbattleselect0;
+			elseif kikka==0 && towa==1
+				Onbattleselect1;
+			else
+				OpenRpgGameMenu
+		}
+		elseif battlemode==2
+			Onbattle;
+	}
+}
+
+
+
+
+OpenRpgGameMenu
+{
+	_submenu = 0;
+	if _argc > 0 {
+		_submenu = TOINT(_argv[0]);
+	}
+	if _submenu!=2
+	battlemode=0
+	--
+		_sub = "◆,◇,◇,◇,◇,◇,◆,◇,◇,◇,◇,◇,◆,◇,◇,◇,◇,◇,◆,◇,◇,◇,◇,◇,◆,◇,◇,◇,◇,◇,◆";
+	
+	"\C\![quicksession,true]\1\b[-1]\0\c\![set,choicetimeout,0]\![set,autoscoll,false]\b[2]\q[%(_sub[_submenu])状态,OnSubRpgGameMenu,0]/
+		\_l[50]\q[%(_sub[_submenu + 5])装备,OnSubRpgGameMenu,1]/
+		\_l[100]\q[%(_sub[_submenu + 10])魔法,OnSubRpgGameMenu,2]/
+		\_l[150]\q[%(_sub[_submenu + 15])道具,OnSubRpgGameMenu,3]/
+        \_l[200]\q[%(_sub[_submenu + 20])商店,OnSubRpgGameMenu,4]/
+        \_l[250]\q[%(_sub[_submenu + 25])任务,OnSubRpgGameMenu,5]"
+		--
+		SubRpgGameMenu(_submenu);
+	
+}
+
+OnSubRpgGameMenu
+{
+	OpenRpgGameMenu(reference0);
+}
+
+SubRpgGameMenu
+{
+	
+	_submenu = TOINT(_argv[0]);       
+	信息参数;
+		case _submenu {
+			when 0 { 
+				状态;
+			}
+			when 1 {
+				装备;
+			}
+			when 2 {魔法;
+				
+			}
+			when 3 {道具;
+			}
+			when 4 {kikkashopMenu;		
+			}
+			
+			when 5 {mission;	
+			}
+	}
+}
+
+
+RpgGameVar
+{
+	if gamestart==NULL
+	{
+	//	rpggamereset;
+
+	weaponAnum[0]=1;
+	weaponBnum[0]=1;
+	armorAnum[0]=2;
+	bootsAnum[0]=2;
+	itemAnum[0]=2;
+	itemBnum[0]=2;
+		gamestart=1;
+	}
+	
+	if towashell == NULL
+	{
+		towashell=0;
+	}
+	
+	mlv =TOINT((lvl0 + lvl1 )/2 + mlvx);
+	lvl =TOINT((lvl0 + lvl1 )/2);
+        mcircle=TOINT(circle0+circle1)/2
+	expmax0 = 10 * (lvl0 + 1)*(lvl0 + 1);
+	expmax1 = 10 * (lvl1 + 1)*(lvl1 + 1);
+	A0 = (lvl0 + 8)*(lvl0 + 9)
+	A1 = (lvl1 + 8)*(lvl1 + 9)
+	AC0= (lvl0 + 8)*(lvl0 + 9)*(POW(1.1,circle0)-1);
+	AC1 = (lvl1 + 8)*(lvl1 + 9)*(POW(1.1,circle1)-1);
+	A2 = (mlv + 8 )*(mlv + 9);
+	B0 = (lvl0 + 16)*(lvl0 + 17)
+	B1 = (lvl1 + 16)*(lvl1 + 17)
+	BC0 = (lvl0 + 16)*(lvl0 + 17)*(POW(1.1,circle0)-1);
+	BC1 = (lvl1 + 16)*(lvl1 + 17)*(POW(1.1,circle1)-1);
+	B2 = (mlv+16)*(mlv+17);
+	_circleinfo0=KikkaCircleInfo(lvl0,circle0);
+	_circleinfo1=TowaCircleInfo(lvl1,circle1);
+	hpmax0 = TOINT(1.05*(A0+_circleinfo0[2]));
+	epmax0 = TOINT(40 + 10*lvl0);
+	epmax1 = TOINT(40 + 10*lvl1);
+	if epmax0>2000
+		epmax0=2000;
+	if epmax1>2000
+		epmax1=2000;
+	if ep0>epmax0
+        ep0=epmax0
+         if ep1>epmax1
+        ep1=epmax1
+	cpmax = 200;
+
+	_能量=亲密度+依赖度+萌度+幸福度+腹黑度+0.0;
+	_能量指数=TOINT(_能量);
+
+	str0 = TOINT(STRADD*(2*0.05*B0 + 20 + weaponequip_str0 + armorequip_str0+力量+_circleinfo0[3]));
+	str0_=TOINT(2*0.05*B0 + 20) + "+" + TOINT(weaponequip_str0 + armorequip_str0)+"+"+TOINT(力量)+"+"+TOINT(_circleinfo0[3]);
+	
+	def0 = TOINT(DEFADD*IGN*DEFMINUS*(0.8*0.05*B0 + armorequip_def0 + bootsequip_def0+0.5*敏捷+_circleinfo0[4]));
+	def0_ = TOINT(0.8*0.05*B0) + "+" + TOINT(armorequip_def0 + bootsequip_def0)+"+"+TOINT(0.5*敏捷)+"+"+TOINT(_circleinfo0[4]);
+	
+	ats0 = TOINT(0.05*B0 + weaponequip_ats0 + armorequip_ats0 + bootsequip_ats0+0.5*智力+_circleinfo0[5]);
+	ats0_=TOINT(0.05*B0) + "+" + TOINT(weaponequip_ats0 + armorequip_ats0 + bootsequip_ats0)+"+"+TOINT(0.5*智力)+"+"+TOINT(_circleinfo0[5]);
+	
+	adf0 = TOINT(15 + armorequip_adf0 + bootsequip_adf0+0.125*意志+_circleinfo0[6]);
+	adf0_ =15 + "+" + TOINT(armorequip_adf0 + bootsequip_adf0)+"+"+TOINT(0.125*意志)+"+"+TOINT(_circleinfo0[6]);
+	adf1 = TOINT(15 + armorequip_adf1 + bootsequip_adf1+0.25*意志+_circleinfo1[6]);
+	adf1_ =15 + "+" + TOINT(armorequip_adf1 + bootsequip_adf1)+"+"+TOINT(0.25*意志)+"+"+TOINT(_circleinfo1[6]);
+	
+	if towashell ==0
+	{
+		hpmax1 = TOINT(1.05*(A1+AC1));
+		str1 = TOINT(STRADD*(1.5*0.05*B1 + 20 + weaponequip_str1 + armorequip_str1+0.5*力量+_circleinfo1[3]));
+		str1_=TOINT(1.5*0.05*B1 + 20) + "+" + TOINT(weaponequip_str1 + armorequip_str1)+"+"+TOINT(0.5*力量)+"+"+TOINT(_circleinfo1[3]);
+		
+		def1 = TOINT(DEFADD*IGN*DEFMINUS*(0.78*0.05*B1 + armorequip_def1 + bootsequip_def1+0.25*敏捷+_circleinfo1[4]));
+		def1_ = TOINT(0.78*0.05*B1) + "+" + TOINT(armorequip_def1 + bootsequip_def1)+"+"+TOINT(0.25*敏捷)+"+"+TOINT(_circleinfo1[4]);
+		
+		ats1 =TOINT(1.5*0.05*B1 + weaponequip_ats1 + armorequip_ats1 + bootsequip_ats1+智力+_circleinfo1[5]);
+		ats1_=TOINT(1.5*0.05*B1) + "+" + TOINT(weaponequip_ats1 + armorequip_ats1 + bootsequip_ats1)+"+"+TOINT(智力)+"+"+TOINT(_circleinfo1[5]);
+	}
+	
+	elseif  towashell ==1
+	{
+		hpmax1 = TOINT(0.95*(A1+AC1));
+		str1 = TOINT(STRADD*(2*0.05*B1 + 20 + weaponequip_str1 + armorequip_str1+0.5*力量+_circleinfo1[3]));
+		str1_=TOINT(2*0.05*B1 + 20) + "+" + TOINT(weaponequip_str1 + armorequip_str1)+"+"+TOINT(0.5*力量)+"+"+TOINT(_circleinfo1[3]);
+		
+		def1 = TOINT(DEFADD*IGN*DEFMINUS*(0.9*0.05*B1 + armorequip_def1 + bootsequip_def1+0.25*敏捷+_circleinfo1[4]));
+		def1_ = TOINT(0.9*0.05*B1) + "+" + TOINT(armorequip_def1 + bootsequip_def1)+"+"+TOINT(0.25*敏捷)+"+"+TOINT(_circleinfo1[4]);
+		
+		
+		ats1 =TOINT(0.05*B1 + weaponequip_ats1 + armorequip_ats1 + bootsequip_ats1+智力+_circleinfo1[5]);
+		ats1_=TOINT(0.05*B1) + "+" + TOINT(weaponequip_ats1 + armorequip_ats1 + bootsequip_ats1)+"+"+TOINT(智力)+"+"+TOINT(_circleinfo1[5]);
+	}
+	
+	
+	elseif  towashell ==2
+	{
+		hpmax1 = TOINT(A1+AC1);
+		str1 = TOINT(STRADD*(1.8*0.05*B1 + 20 + weaponequip_str1 + armorequip_str1+0.5*力量+_circleinfo1[3]));
+		str1_=TOINT(1.8*0.05*B1 + 20) + "+" + TOINT(weaponequip_str1 + armorequip_str1)+"+"+TOINT(0.5*力量)+"+"+TOINT(_circleinfo1[3]);
+		
+		def1 = TOINT(DEFADD*IGN*DEFMINUS*(0.8*0.05*B1 + armorequip_def1 + bootsequip_def1+0.25*敏捷+_circleinfo1[4]));
+		def1_ = TOINT(0.8*0.05*B1) + "+" + TOINT(armorequip_def1 + bootsequip_def1)+"+"+TOINT(0.25*敏捷)+"+"+TOINT(_circleinfo1[4]);
+		
+		ats1 =TOINT(1.2*0.05*B1 + weaponequip_ats1 + armorequip_ats1 + bootsequip_ats1+智力+_circleinfo1[5]);
+		ats1_=TOINT(1.2*0.05*B1) + "+" + TOINT(weaponequip_ats1 + armorequip_ats1 + bootsequip_ats1)+"+"+TOINT(智力)+"+"+TOINT(_circleinfo1[5]);
+	}
+	
+	mhpmaxD = TOINT(0.5*A2);
+	mhpmaxC = TOINT(1*A2);
+	mhpmaxB = TOINT(2*A2);
+	mhpmaxA = TOINT(4*A2);
+	mhpmaxS = TOINT(8*A2);
+	mstrD = TOINT(MSTRADD*(0.86+level*0.1)*0.05*B2);
+	mstrC = TOINT(MSTRADD*(1.36+level*0.2)*0.05*B2);
+	mstrB = TOINT(MSTRADD*(1.86+level*0.3)*0.05*B2);
+	mstrA = TOINT(MSTRADD*(2.36+level*0.4)*0.05*B2);
+	mstrS = TOINT(MSTRADD*(2.86+level*0.5)*0.05*B2);
+	mdefD = TOINT(MIGN*MDEFMINUS*MDEFADD*(0.2+level*0.1)*0.05*B2);
+	mdefC = TOINT(MIGN*MDEFMINUS*MDEFADD*(0.4+level*0.1)*0.05*B2);
+	mdefB = TOINT(MIGN*MDEFMINUS*MDEFADD*(0.6+level*0.1)*0.05*B2);
+	mdefA = TOINT(MIGN*MDEFMINUS*MDEFADD*(0.8+level*0.1)*0.05*B2);
+	mdefS = TOINT(MIGN*MDEFMINUS*MDEFADD*(1+level*0.1)*0.05*B2);
+	matsD = TOINT(10+level*0.1*0.05*B2);
+	matsC = TOINT(20+level*0.2*0.05*B2);
+	matsB = TOINT(30+level*0.3*0.05*B2);
+	matsA = TOINT(40+level*0.4*0.05*B2);
+	matsS = TOINT(50+level*0.5*0.05*B2);
+	madfD = TOINT(50*怪物魔防+level*20-20);
+	madfC = TOINT(50*怪物魔防+level*20-20);
+	madfB = TOINT(50*怪物魔防+level*20-20);
+	madfA = TOINT(50*怪物魔防+level*20-20);
+	madfS = TOINT(50*怪物魔防+level*20-20);
+
+        if hp0>hpmax0
+        hp0=hpmax0
+         if hp1>hpmax1
+        hp1=hpmax1
+
+
+	nextexp0 = expmax0 - exp0;
+	nextexp1 = expmax1 - exp1;
+	
+	
+}
+KikkaCircleInfo
+{
+	_lvl0=TOINT(_argv[0]);
+	_circle0=TOINT(_argv[1]);
+	_AC0= (lvl0 + 8)*(_lvl0 + 9)*(POW(1.1,_circle0)-1);
+	_BC0 = (lvl0 + 16)*(_lvl0 + 17)*(POW(1.1,_circle0)-1);	
+	_hpmax0 = TOINT(1.05*_AC0);
+	_str0 = 2*0.05*_BC0
+	_def0 = 0.8*0.05*_BC0	
+	_ats0 = 0.05*_BC0
+	_adf0 =0.0125*_AC0
+	(_AC0,_BC0,_hpmax0,_str0,_def0,_ats0,_adf0)
+}
+TowaCircleInfo
+{
+	_lvl1=TOINT(_argv[0]);
+	_circle1=TOINT(_argv[1]);
+	_AC1= (_lvl1 + 8)*(_lvl1 + 9)*(POW(1.1,_circle1)-1);
+	_BC1 = (_lvl1 + 16)*(_lvl1 + 17)*(POW(1.1,_circle1)-1);	
+	_hpmax1 = TOINT(1.05*_AC1);
+	_str1 = 1.5*0.05*_BC1
+	_def1 =0.78*0.05*_BC1;
+	_ats1 =1.5*0.05*_BC1;
+	_adf1 =0.0125*_AC1	
+	if  towashell ==1
+	{
+	_hpmax1 = TOINT(0.95*_AC1);
+	_str1 = 2*0.05*_BC1
+	_def1 =0.9*0.05*_BC1;
+	_ats1 =0.5*0.05*_BC1;
+	}
+	elseif  towashell ==2
+	{
+	_hpmax1 = _AC1
+	_str1 = 1.8*0.05*_BC1
+	_def1 =0.8*0.05*_BC1;
+	_ats1 =1.2*0.05*_BC1;
+	}
+	(_AC1,_BC1,_hpmax1,_str1,_def1,_ats1,_adf1)
+}
+
+
+rpggamereset
+{
+	RpgGameVar;
+	exp0=0;
+	exptotal0=0;
+	exp1=0;
+	exptotal1=0;
+	lvl0=1;
+	lvl1=1;
+	hp0=hpmax0;
+	hp1=hpmax1;
+	ep0=epmax0;
+	ep1=epmax1;
+	cp0=0;
+	cp1=0;
+	weaponAnum=IARRAY;
+	weaponBnum=IARRAY;
+	armorAnum=IARRAY;
+        armorBnum=IARRAY;
+	bootsAnum=IARRAY;
+        bootsBnum=IARRAY;
+	itemAnum=IARRAY;
+	itemBnum=IARRAY;
+
+	weaponAnum[0]=1;
+	weaponBnum[0]=1;
+	armorAnum[0]=2;
+	bootsAnum[0]=2;
+	itemAnum[0]=2;
+	itemBnum[0]=2;
+	
+}
+
+
+状态
+{
+	if hp0==0
+	{
+		hp0=TOINT(0.1*hpmax0);
+	}
+	
+	if hp1==0
+	{
+		hp1=TOINT(0.1*hpmax1);
+	}
+	RpgGameVar;
+	_txt = "\_l[0,20]橘花\n/
+		\f[color,231,171,109]Level   \_l[48,-]\f[color,default]%(lvl0)         \_l[150,-]转生%(TOINT(circle0))级\n/
+		\f[color,231,171,109]HP      \_l[48,-]\f[color,default]%(hp0)/%(hpmax0)   %(ColorBar(6,150,hp0,hpmax0))\n/      
+		\f[color,231,171,109]EP      \_l[48,-]\f[color,default]%(ep0)/%(epmax0)    %(ColorBar(3,150,ep0,epmax0))\n/  
+		\f[color,231,171,109]CP      \_l[48,-]\f[color,default]%(cp0)/%(cpmax)    %(ColorBar(9,150,cp0,cpmax))\n/
+		\f[color,165,203,214]STR     \_l[48,-]\f[color,default]%(str0) （%(str0_)）\n/
+		\f[color,165,203,214]DEF     \_l[48,-]\f[color,default]%(def0) （%(def0_)）\n/
+		\f[color,165,203,214]ATS     \_l[48,-]\f[color,default]%(ats0) （%(ats0_)）\n/
+		\f[color,165,203,214]ADF     \_l[48,-]\f[color,default]%(adf0) （%(adf0_)）\n/
+		\f[color,231,171,109]EXP     \_l[48,-]\f[color,default]%(exp0) （%(TOINT(100*exp0/expmax0))%）    \_l[150,-]\f[color,231,171,109]EXPERIENCE \f[color,default]%(exptotal0)\n/
+		\f[color,231,171,109]NEXT    \_l[48,-]\f[color,default]%(nextexp0)    %(ColorBar(1,150,exp0,expmax0))\n\n/
+		斗和\n/
+		\f[color,231,171,109]Level   \_l[48,-]\f[color,default]%(lvl1)         \_l[150,-]转生%(TOINT(circle1))级\n/
+		\f[color,231,171,109]HP      \_l[48,-]\f[color,default]%(hp1)/%(hpmax1)   %(ColorBar(6,150,hp1,hpmax1))\n/ 
+		\f[color,231,171,109]EP      \_l[48,-]\f[color,default]%(ep1)/%(epmax1)   %(ColorBar(3,150,ep1,epmax1))\n/
+		\f[color,231,171,109]CP      \_l[48,-]\f[color,default]%(cp1)/%(cpmax)   %(ColorBar(9,150,cp1,cpmax))\n/
+		\f[color,165,203,214]STR     \_l[48,-]\f[color,default]%(str1) （%(str1_)）\n/
+		\f[color,165,203,214]DEF     \_l[48,-]\f[color,default]%(def1) （%(def1_)）\n/
+		\f[color,165,203,214]ATS     \_l[48,-]\f[color,default]%(ats1) （%(ats1_)）\n/
+		\f[color,165,203,214]ADF     \_l[48,-]\f[color,default]%(adf1) （%(adf1_)）\n/  
+		\f[color,231,171,109]EXP     \_l[48,-]\f[color,default]%(exp1) （%(TOINT(100*exp1/expmax1))%）     \_l[150,-]\f[color,231,171,109]EXPERIENCE \f[color,default]%(exptotal1)\n/
+		\f[color,231,171,109]NEXT    \_l[48,-]\f[color,default]%(nextexp1)      %(ColorBar(1,150,exp1,expmax1))\n/
+		\f[color,231,171,109]金钱    \_l[48,-]%(TOINT(money))";
+		_txt;
+	
+}
+
+
+
+
+信息参数
+{
+	
+	weaponA = IARRAY;
+	weaponB = IARRAY;
+	article = IARRAY;
+	
+	weaponA = ("weaponA,0,匕首,%(weaponAnum[0]),1,600,3,7","weaponA,1,黑刃,%(weaponAnum[1]),6,1000,7,10","weaponA,2,军刀,%(weaponAnum[2]),11,2000,10,20","weaponA,3,拳剑,%(weaponAnum[3]),16,5000,20,40","weaponA,4,花剑,%(weaponAnum[4]),21,8000,40,65","weaponA,5,西洋剑,%(weaponAnum[5]),26,9000,65,80","weaponA,6,星透剑,%(weaponAnum[6]),31,10000,80,90","weaponA,7,水纹剑,%(weaponAnum[7]),36,15000,90,120","weaponA,8,水晶剑,%(weaponAnum[8]),41,16000,120,130","weaponA,9,细剑,%(weaponAnum[9]),46,18000,130,150","weaponA,10,弯剑,%(weaponAnum[10]),51,22000,150,180","weaponA,11,长刺剑,%(weaponAnum[11]),56,27000,180,220","weaponA,12,银剑,%(weaponAnum[12]),61,33000,220,270","weaponA,13,诗剑,%(weaponAnum[13]),66,40000,270,320","weaponA,14,军剑,%(weaponAnum[14]),71,46000,320,370","weaponA,15,天琴剑,%(weaponAnum[15]),76,52000,370,420","weaponA,16,七星剑,%(weaponAnum[16]),81,60000,420,460","weaponA,17,亚伦之剑,%(weaponAnum[17]),86,65000,460,500","weaponA,18,古剑,%(weaponAnum[18]),91,70000,500,550","weaponA,19,青龙剑,%(weaponAnum[19]),96,75000,550,600","weaponA,20,常绿,%(weaponAnum[20]),101,80000,600,700","weaponA,21,受难十字剑,%(weaponAnum[21]),106,100000,700,800","weaponA,22,神圣能量剑,%(weaponAnum[22]),111,120000,800,900","weaponA,23,神之骑士剑,%(weaponAnum[23]),116,125000,900,1000","weaponA,24,女武神,%(weaponAnum[24]),121,140000,1100,1100","weaponA,25,常青剑,%(weaponAnum[25]),126,150000,1150,1200","weaponA,26,赛雷斯托,%(weaponAnum[26]),131,160000,1250,1350","weaponA,27,斩首剑,%(weaponAnum[27]),136,170000,1300,400","weaponA,28,断骨剑,%(weaponAnum[28]),141,190000,1450,1550","weaponA,29,神圣新星,%(weaponAnum[29]),146,200000,1500,1600");
+	
+	weaponB = ("weaponB,0,手枪,%(weaponBnum[0]),1,600,7,3","weaponB,1,刺针枪,%(weaponBnum[1]),6,1000,10,7","weaponB,2,狩猎枪,%(weaponBnum[2]),11,2000,20,10","weaponB,3,刺弹枪,%(weaponBnum[3]),16,5000,40,20","weaponB,4,鹰眼枪,%(weaponBnum[4]),21,8000,65,40","weaponB,5,步枪,%(weaponBnum[5]),26,9000,80,65","weaponB,6,冲锋枪,%(weaponBnum[6]),31,10000,90,80","weaponB,7,激光枪,%(weaponBnum[7]),36,15000,120,90","weaponB,8,离子枪,%(weaponBnum[8]),41,16000,130,120","weaponB,9,等粒子光炮,%(weaponBnum[9]),46,18000,150,130","weaponB,10,幻影,%(weaponBnum[10]),51,22000,180,150","weaponB,11,灰狼,%(weaponBnum[11]),56,27000,220,180","weaponB,12,火蜥蜴,%(weaponBnum[12]),61,33000,270,220","weaponB,13,骑兵枪,%(weaponBnum[13]),66,40000,320,270","weaponB,14,独眼巨人,%(weaponBnum[14]),71,46000,370,320","weaponB,15,脉冲炮,%(weaponBnum[15]),76,52000,420,370","weaponB,16,毒牙,%(weaponBnum[16]),81,60000,460,420","weaponB,17,天鹰,%(weaponBnum[17]),86,65000,500,460","weaponB,18,诡异之星,%(weaponBnum[18]),91,70000,550,500","weaponB,19,狙击神,%(weaponBnum[19]),96,75000,600,550","weaponB,20,双星,%(weaponBnum[20]),101,80000,700,600","weaponB,21,天鱼,%(weaponBnum[21]),106,100000,800,700","weaponB,22,世界主宰,%(weaponBnum[22]),111,120000,900,800","weaponB,23,毒针-M,%(weaponBnum[23]),116,125000,1000,900","weaponB,24,幻影-S,%(weaponBnum[24]),121,140000,1100,1100","weaponB,25,和平破坏者,%(weaponBnum[25]),126,150000,1200,1150","weaponB,26,暴徒,%(weaponBnum[26]),131,160000,1350,1250","weaponB,27,第五元素-R,%(weaponBnum[27]),136,170000,1400,300","weaponB,28,小夜曲,%(weaponBnum[28]),141,190000,1550,1450","weaponB,29,神圣之光,%(weaponBnum[29]),146,200000,1600,1500");
+	
+	
+	armorA = ("armorA,0,皮革背心,%(armorAnum[0]),1,100,5,0","armorA,1,金属背心,%(armorAnum[1]),8,800,10,2","armorA,2,皮革上衣,%(armorAnum[2]),16,2000,25,2","armorA,3,防御背心,%(armorAnum[3]),23,5000,45,4","armorA,4,金属夹克,%(armorAnum[4]),31,10000,75,4","armorA,5,防御大衣,%(armorAnum[5]),38,20000,100,6","armorA,6,纤维护铠,%(armorAnum[6]),46,25000,125,0","armorA,7,纤维大衣,%(armorAnum[7]),53,30000,160,4","armorA,8,树脂大衣,%(armorAnum[8]),61,40000,200,6","armorA,9,真空防护服,%(armorAnum[9]),68,50000,250,8","armorA,10,树脂装甲,%(armorAnum[10]),73,65000,310,12","armorA,11,龙皮铠,%(armorAnum[11]),81,75000,350,50","armorA,12,大地女神服,%(armorAnum[12]),88,85000,425,25,10,10","armorA,13,超重装甲服,%(armorAnum[13]),96,90000,455,40","armorA,14,钛服,%(armorAnum[14]),103,95000,500,0","armorA,15,运动外衣,%(armorAnum[15]),111,100000,600,0","armorA,16,龙树连体服,%(armorAnum[16]),118,120000,700,15","armorA,17,无袖外罩,%(armorAnum[17]),126,140000,800,0","armorA,18,汞合金守卫,%(armorAnum[18]),133,160000,900,0","armorA,19,巨人铠甲,%(armorAnum[19]),141,180000,1000,20");
+	
+	armorB = ("armorB,0,兽皮制服,%(armorBnum[0]),1,200,12,20","armorB,1,锁片薄衣,%(armorBnum[1]),8,1000,30,4","armorB,2,战斗服,%(armorBnum[2]),16,3000,50,6","armorB,3,黑大衣,%(armorBnum[3]),23,10000,80,8","armorB,4,反射大衣,%(armorBnum[4]),31,20000,105,10","armorB,5,女武神铠甲,%(armorBnum[5]),38,25000,120,10","armorB,6,蓝色猿羊绒,%(armorBnum[6]),46,30000,150,35","armorB,7,神圣修女服,%(armorBnum[7]),53,35000,155,50,50","armorB,8,女术士战袍,%(armorBnum[8]),61,45000,210,30","armorB,9,金耀晚礼服,%(armorBnum[9]),68,60000,260,30,50","armorB,10,八卦服,%(armorBnum[10]),73,70000,320,40","armorB,11,金色女伯爵,%(armorBnum[11]),81,80000,380,50,-30,100","armorB,12,女机师战甲,%(armorBnum[12]),88,90000,380,30,50,30","armorB,13,炮术师战甲,%(armorBnum[13]),96,120000,600,200","armorB,14,忍者服,%(armorBnum[14]),103,110000,750,0","armorB,15,可爱猫咪套装,%(armorBnum[15]),111,110000,750,0","armorB,16,黑丝绸,%(armorBnum[16]),118,150000,825,150","armorB,17,宇宙装甲,%(armorBnum[17]),126,200000,1100,0","armorB,18,加百列光辉,%(armorBnum[18]),133,200000,1100,25,0,25","armorB,19,尘世巨蟒,%(armorBnum[19]),141,250000,1600,300");
+	
+	bootsA=("bootsA,0,皮靴,%(bootsAnum[0]),1,200,2,0","bootsA,1,防滑靴,%(bootsAnum[1]),11,800,4,0","bootsA,2,工作鞋,%(bootsAnum[2]),21,1500,8,1","bootsA,3,双重防滑靴,%(bootsAnum[3]),31,3000,12,1","bootsA,4,手工鞋,%(bootsAnum[4]),41,5000,20,2","bootsA,5,合成防护靴,%(bootsAnum[5]),51,8000,30,2","bootsA,6,金属靴,%(bootsAnum[6]),61,11000,40,0","bootsA,7,纤维靴,%(bootsAnum[7]),71,14000,50,0","bootsA,8,高级皮靴,%(bootsAnum[8]),81,25000,90,1","bootsA,9,忍者短布鞋,%(bootsAnum[8]),91,30000,105,1","bootsA,10,树脂靴,%(bootsAnum[10]),101,35000,130,1","bootsA,11,机械靴,%(bootsAnum[11]),111,45000,180,2","bootsA,12,骑士护腿,%(bootsAnum[12]),121,50000,190,0","bootsA,13,斯托雷加B,%(bootsAnum[13]),131,55000,200,0","bootsA,14,龙神鞋,%(bootsAnum[14]),141,65000,200,10,0,20");
+	
+	bootsB=("bootsB,0,开孔长靴,%(bootsBnum[0]),1,100,1,3","bootsB,1,编织鞋,%(bootsBnum[1]),11,300,7,1","bootsB,2,工作安全鞋,%(bootsBnum[2]),21,2000,12,0","bootsB,3,军用鞋,%(bootsBnum[3]),31,3000,15,2","bootsB,4,天神之靴,%(bootsBnum[4]),41,10000,30,3","bootsB,5,风神之靴,%(bootsBnum[5]),51,10000,40,3","bootsB,6,流浪者,%(bootsBnum[6]),61,12000,50,3","bootsB,7,双子星,%(bootsBnum[7]),71,15000,60,1","bootsB,8,水晶高跟鞋,%(bootsBnum[8]),81,20000,70,0","bootsB,9,大地护胫,%(bootsBnum[9]),91,30000,115,0","bootsB,10,轻钢靴,%(bootsBnum[10]),101,40000,150,2","bootsB,11,月神之腫,%(bootsBnum[11]),111,50000,160,30,0,30","bootsB,12,英仙神靴,%(bootsBnum[12]),121,55000,205,3","bootsB,13,帕特农神靴,%(bootsBnum[13]),131,70000,195,50","bootsB,14,提坦神靴,%(bootsBnum[14]),141,80000,220,10,0,30");
+	
+	itemA = ("itemA,0,小回复药,%(itemAnum[0]),50,400","itemA,1,回复药,%(itemAnum[1]),100,1000","itemA,2,中回复药,%(itemAnum[2]),200,3000","itemA,3,大回复药,%(itemAnum[3]),300,6000","itemA,4,超回复药,%(itemAnum[4]),400,HP全回复","itemA,5,复苏药,%(itemAnum[5]),500,战斗不能解除","itemA,6,小经验丹,%(itemAnum[6]),10000,500","itemA,7,中经验丹,%(itemAnum[7]),100000,5000","itemA,8,大经验丹,%(itemAnum[8]),1000000,50000","itemA,9,小转生丹,%(itemAnum[9]),100000,5000","itemA,10,中转生丹,%(itemAnum[10]),1000000,50000","itemA,11,大转生丹,%(itemAnum[11]),10000000,500000");
+	
+	itemB = ("itemB,0,小型EP填充剂,%(itemBnum[0]),50,200","itemB,1,EP填充剂,%(itemBnum[1]),100,400","itemB,2,中型EP填充剂,%(itemBnum[2]),200,600","itemB,3,大型EP填充剂,%(itemBnum[3]),300,800","itemB,4,超级EP填充剂,%(itemBnum[4]),400,EP全回复");
+	
+	magicinfo;
+}
+
+
+On装备菜单
+{
+	equipmenu[reference0]=(TOINT(equipmenu[reference0])+1)%2;
+	
+	OpenRpgGameMenu(1);
+	
+}
+
+
+
+装备
+{	
+	
+	_txt = "\n";
+	_txt+=信息参数;
+		_txt+=RpgGameVar;
+	_txt+=超出反应;	
+	_txt += "橘花                                    \_l[140,-]斗和\n/
+		武器：\q[%(weapon0),offweapon0]         \_l[140,-]武器：\q[%(weapon1),offweapon1]\n/
+		防具（体）：\q[%(armor0),offarmor0]     \_l[140,-]防具（体）：\q[%(armor1),offarmor1]\n/
+		防具（脚）：\q[%(boots0),offboots0]     \_l[140,-]防具（脚）：\q[%(boots1),offboots1]\n/
+        ";
+		
+		
+        _weapon = (weaponA,weaponB);
+	_armor = (armorA,armorB);
+	_boots = (bootsA,bootsB);
+	
+	_txt+="\f[color,160,160,200]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]\__q[On装备菜单,0]───────────武器───────────\__q\f[cursorstyle,default]\f[cursorfontcolor,default]\f[default]\n";
+	if TOINT(equipmenu[0])==1
+	{
+		_txt += "名称   \_l[65,-]数量    \_l[95,-]STR    \_l[125,-]ATS\n";  
+		foreach _weapon; _i 
+		{
+			if _i[3] > 0 
+			{
+				_txt += "\f[color,231,171,109]%(_i[2])\f[color,default]   \_l[65,-]%(_i[3])   \f[color,165,203,214]\_l[95,-]%(_i[6])  \_l[125,-]%(_i[7])    \f[color,default]";     
+				if weapon0==NULL
+				{
+					_txt += "\_l[160,-]\q[橘花未装备,Onweapon0,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[3]),%(_i[6]),%(_i[7])]";
+				}
+				elseif weapon0!=NULL
+				{
+					if weaponID0==_i[1] && weaponsort0==_i[0]
+					{            
+						_txt += "\_l[160,-]\f[color,231,171,109]\q[橘花已装备,Onweapon0,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[3]),%(_i[6]),%(_i[7])]\f[color,default]";
+					}      
+					else
+					{     
+						_txt += "\_l[160,-]\q[橘花未装备,Onweapon0,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[3]),%(_i[6]),%(_i[7])]";
+					}          
+				}
+				
+				if weapon1==NULL
+				{
+					_txt += "\_l[230,-]\q[斗和未装备,Onweapon1,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[3]),%(_i[6]),%(_i[7])]\n";
+				}
+				elseif weapon1!=NULL
+				{        
+					if weaponID1==_i[1] && weaponsort1==_i[0]
+					{
+						
+						_txt += "\_l[230,-]\f[color,231,171,109]\q[斗和已装备,Onweapon1,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[3]),%(_i[6]),%(_i[7])]\f[color,default]\n";
+					}
+					
+					else
+					{     
+						_txt += "\_l[230,-]\q[斗和未装备,Onweapon1,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[3]),%(_i[6]),%(_i[7])]\n";
+					}
+				}   
+			}
+		}
+	}
+	
+	_txt+="\f[color,160,160,200]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]\__q[On装备菜单,1]──────────防具（体）─────────\__q\f[cursorstyle,default]\f[cursorfontcolor,default]\f[default]\n";
+	if TOINT(equipmenu[1])==1
+	{
+		_txt += "名称   \_l[65,-]数量    \_l[95,-]DEF    \_l[125,-]ADF\n";  
+		foreach _armor; _i 
+		{              
+			if _i[3] > 0 
+			{
+				
+				_txt += "\f[color,231,171,109]%(_i[2])\f[color,default]   \_l[65,-]%(_i[3])   \f[color,165,203,214]\_l[95,-]%(_i[6])  \_l[125,-]%(_i[7])    \f[color,default]";  
+				if armor0==NULL
+				{
+					_txt += "\_l[160,-]\q[橘花未装备,Onarmor0,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[3]),%(_i[6]),%(_i[7]),%(_i[8]),%(_i[9])]";
+				}
+				elseif armor0!=NULL
+				{      
+					if armorID0==_i[1] && armorsort0==_i[0]
+					{ 
+                        _txt += "\_l[160,-]\f[color,231,171,109]\q[橘花已装备,Onarmor0,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[3]),%(_i[6]),%(_i[7]),%(_i[8]),%(_i[9])]\f[color,default]";
+					}      
+					else
+					{     
+						_txt += "\_l[160,-]\q[橘花未装备,Onarmor0,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[3]),%(_i[6]),%(_i[7]),%(_i[8]),%(_i[9])]";
+					}          
+				}
+				
+				if armor1==NULL
+				{
+					_txt += "\_l[230,-]\q[斗和未装备,Onarmor1,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[3]),%(_i[6]),%(_i[7]),%(_i[8]),%(_i[9])]\n";
+				}
+				elseif armor1!=NULL
+				{        
+					if armorID1==_i[1] && armorsort1==_i[0]
+					{
+						
+						_txt += "\_l[230,-]\f[color,231,171,109]\q[斗和已装备,Onarmor1,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[3]),%(_i[6]),%(_i[7]),%(_i[8]),%(_i[9])]\f[color,default]\n";                                              
+					}
+					else
+					{     
+						_txt += "\_l[230,-]\q[斗和未装备,Onarmor1,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[3]),%(_i[6]),%(_i[7]),%(_i[8]),%(_i[9])]\n";
+					}
+				}   
+			}    
+		}
+	}
+	
+	_txt+="\f[color,160,160,200]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]\__q[On装备菜单,2]──────────防具（脚）─────────\__q\f[cursorstyle,default]\f[cursorfontcolor,default]\f[default]\n";
+	if TOINT(equipmenu[2])==1
+	{
+		_txt += "名称   \_l[65,-]数量    \_l[95,-]DEF    \_l[125,-]ADF\n";  
+		foreach _boots; _i 
+		{               
+			if _i[3] > 0 
+			{         
+				_txt += "\f[color,231,171,109]%(_i[2])\f[color,default]   \_l[65,-]%(_i[3])   \f[color,165,203,214]\_l[95,-]%(_i[6])  \_l[125,-]%(_i[7])    \f[color,default]"; 
+				if boots0==NULL
+				{
+					_txt += "\_l[160,-]\q[橘花未装备,Onboots0,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[3]),%(_i[6]),%(_i[7]),%(_i[8]),%(_i[9])]";
+				}
+				elseif boots0!=NULL
+				{
+					if bootsID0==_i[1] && bootssort0==_i[0]
+					{           
+                        _txt += "\_l[160,-]\f[color,231,171,109]\q[橘花已装备,Onboots0,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[3]),%(_i[6]),%(_i[7]),%(_i[8]),%(_i[9])]\f[color,default]";
+					}                           
+					else
+					{     
+						_txt += "\_l[160,-]\q[橘花未装备,Onboots0,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[3]),%(_i[6]),%(_i[7]),%(_i[8]),%(_i[9])]";
+					}          
+				}
+				
+				if boots1==NULL
+				{
+					_txt += "\_l[230,-]\q[斗和未装备,Onboots1,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[3]),%(_i[6]),%(_i[7]),%(_i[8]),%(_i[9])]\n";
+				}
+				elseif boots1!=NULL
+				{        
+					if bootsID1==_i[1] && bootssort1==_i[0]
+					{
+						
+						_txt += "\_l[230,-]\f[color,231,171,109]\q[斗和已装备,Onboots1,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[3]),%(_i[6]),%(_i[7]),%(_i[8]),%(_i[9])]\f[color,default]\n";
+					}                                 
+					else
+					{     
+						_txt += "\_l[230,-]\q[斗和未装备,Onboots1,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[3]),%(_i[6]),%(_i[7]),%(_i[8]),%(_i[9])]\n";
+					}
+				}   
+			}            
+		}
+	}
+	_txt += "\n";
+	_txt;
+}
+
+
+Onweapon0
+{
+	if weapon1==reference2 && reference3<=1
+		"\0数量不足，先卸载，后装备\x%(OpenRpgGameMenu(1))";
+	else
+	{
+		weaponsort0=reference0;
+		weaponID0=reference1;
+		weapon0=reference2;
+		if weaponsort0=="weaponA"
+			weaponequip_str0=TOINT(reference4);
+		elseif weaponsort0=="weaponB"
+		{
+			weaponequip_str0=TOINT(1.2*reference4);
+		}
+		weaponequip_ats0=TOINT(reference5);
+		OpenRpgGameMenu(1)
+	}
+}
+
+Onweapon1
+{
+	if weapon0==reference2 && reference3<=1
+		"\0数量不足，先卸载，后装备\x%(OpenRpgGameMenu(1))";
+	else
+	{
+		weaponsort1=reference0;
+		weaponID1=reference1;
+		weapon1=reference2;
+		if weaponsort1=="weaponA"
+		{
+			weaponequip_ats1=TOINT(1.2*reference5);
+		}
+		elseif weaponsort1=="weaponB"
+		{
+			weaponequip_ats1=TOINT(reference5);
+		}
+		weaponequip_str1=TOINT(reference4);
+		OpenRpgGameMenu(1);
+	}
+}
+
+
+Onarmor0
+{
+	if armor1==reference2 && reference3<=1
+		"\0数量不足，先卸载，后装备\x%(OpenRpgGameMenu(1))"
+		else
+	{
+		armorsort0=reference0;
+		
+		armorID0=reference1;
+		armor0=reference2;
+		armorequip_def0=reference4;
+		armorequip_adf0=reference5;
+		armorequip_str0=reference6;
+		armorequip_ats0=reference7;
+		
+		OpenRpgGameMenu(1);
+	}
+}
+
+Onarmor1
+{
+	if armor0==reference2 && reference3<=1
+		"\0数量不足，先卸载，后装备\x%(OpenRpgGameMenu(1))";
+	else
+	{
+		armorsort1=reference0;
+		
+		armorID1=reference1;
+		armor1=reference2;
+		armorequip_def1=reference4;
+		armorequip_adf1=reference5;
+		armorequip_str1=reference6;
+		armorequip_ats1=reference7;
+		OpenRpgGameMenu(1);
+	}
+}
+
+Onboots0
+{
+	if boots1==reference2 && reference3<=1
+		"\0数量不足，先卸载，后装备\x%(OpenRpgGameMenu(1))";
+	else
+	{
+		bootssort0=reference0;
+		
+		bootsID0=reference1;
+		boots0=reference2;
+		bootsequip_def0=reference4;
+		bootsequip_adf0=reference5;
+		bootsequip_ats0=reference7;
+		
+		OpenRpgGameMenu(1);
+	}
+}
+
+Onboots1
+{
+	if boots0==reference2 && reference3<=1
+		"\0数量不足，先卸载，后装备\x%(OpenRpgGameMenu(1))";
+	
+	else
+	{
+		bootssort1=reference0;
+		
+		bootsID1=reference1;
+		boots1=reference2;
+		bootsequip_def1=reference4;
+		bootsequip_adf1=reference5;
+		bootsequip_ats1=reference7;
+		
+		OpenRpgGameMenu(1);
+	}
+}
+
+
+Select.offweapon0
+{
+	weapon0=NULL;
+	weaponID0=NULL;
+	weaponequip_str0=0;
+	weaponequip_ats0=0;
+	OpenRpgGameMenu(1);
+}
+
+
+Select.offweapon1
+{
+	weapon1=NULL;
+	weaponID1=NULL;
+	weaponequip_str1=0;
+	weaponequip_ats1=0;
+	OpenRpgGameMenu(1);
+}
+
+Select.offarmor0
+{
+	armor0=NULL;
+	armorID0=NULL;
+	armorequip_def0=0;
+	armorequip_adf0=0;
+	OpenRpgGameMenu(1);
+}
+
+Select.offarmor1
+{
+	armor1=NULL;
+	armorID1=NULL;
+	armorequip_def1=0;
+	armorequip_adf1=0;
+	OpenRpgGameMenu(1);
+}
+
+Select.offboots0
+{
+	boots0=NULL;
+	bootsID0=NULL;
+	bootsequip_def0=0;
+	bootsequip_adf0=0;
+	OpenRpgGameMenu(1);
+}
+
+
+Select.offboots1
+{
+	boots1=NULL;
+	bootsID1=NULL;
+	bootsequip_def1=0;
+	bootsequip_adf1=0;
+	OpenRpgGameMenu(1);
+}
+
+
+
+
+
+
+magicinfo
+{
+	水系魔法=("水系魔法,0,回复术,回复,单体,1,10,1000","水系魔法,1,中回复术,回复,单体,30,20,3000","水系魔法,2,大回复术,回复,单体,60,30,6000","水系魔法,3,超回复术,回复,单体,90,40,HP全回复","水系魔法,4,回复术·复,回复,复体,10,20,1000","水系魔法,5,中回复术·复,回复,复体,40,30,3000","水系魔法,6,大回复术·复,回复,复体,70,40,6000","水系魔法,7,超回复术·复,回复,复体,100,50,HP全回复","水系魔法,8,复苏术,回复,单体,30,50,战斗不能解除","水系魔法,9,水之矢,攻击,单体,1,10,0,1","水系魔法,10,冰蓝冲击,攻击,单体,26,30,130,2.3","水系魔法,11,水蓝轰炸,攻击,复体,44,40,220,3.2","水系魔法,12,水星爆发,攻击,复体,62,80,300,4.3","水系魔法,13,冰狱冥嚎,攻击,复体,83,100,360,4.8","水系魔法,14,钻石星尘,攻击,复体,100,120,420,5.3","水系魔法,12,冰狱冥嚎,攻击,复体,100,120,530,6.2",);
+	
+	
+	火系魔法=("火系魔法,0,火之矢,攻击,单体,1,10,-25,0.75","火系魔法,1,炎之箭,攻击,单体,16,20,80,1.8","火系魔法,2,火之矢·改,攻击,单体,20,20,100,2","火系魔法,3,燃烧之息,攻击,单体,52,50,260,3.6","火系魔法,4,火山之咆哮,攻击,复体,64,60,320,4.2","火系魔法,5,龙卷火焰,攻击,复体,80,80,400,5","火系魔法,6,新星大爆炸,攻击,复体,120,120,600,7");
+	
+	土系魔法=("土系魔法,0,石之锤,攻击,单体,1,10,0,1","土系魔法,1,岩石之息,攻击,单体,4,10,20,1.2","土系魔法,2,陨石冲击,攻击,单体,6,10,20,1.3","土系魔法,3,大地之障,辅助,单体,12,10,完全防御一次","土系魔法,4,岩石之云,攻击,单体,14,20,70,1.7","土系魔法,5,大地之枪,攻击,单体,28,30,140,2.4","土系魔法,6,泰坦之咆哮,攻击,复体,40,40,200,3","土系魔法,7,大地之毁灭,攻击,复体,60,60,300,4","土系魔法,8,盖亚之盾,辅助,复体,90,90,完全防御一次");
+	
+	风系魔法=("风系魔法,0,风之轮,攻击,单体,1,10,-25,0.75","风系魔法,1,风之领域,攻击,单体,5,10,25,1.25","风系魔法,2,狂怒风暴,攻击,单体,26,20,130,2.3","风系魔法,3,天龙卷,攻击,复体,34,30,170,2.7","风系魔法,4,等离子之波,攻击,复体,48,40,240,3.4","风系魔法,5,审判之雷,攻击,复体,72,70,360,4.6","风系魔法,6,太阳风暴,攻击,复体,100,100,500,6");
+	
+	
+}
+
+魔法
+{
+	//battlemode=0;
+	On魔法列表;
+}
+
+
+
+On魔法列表
+{
+	"\b[2]\![quicksession,true]";
+	--
+		magicinfo
+		if magicMenu == 0{
+			target=0
+			"\n" + ColorText("\__q[OnmagicMenu,1]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]───────────橘花↓─────────\f[cursorstyle,default]\f[cursorfontcolor,default]\f[cursorfontcolor,default]\__q","color=160,160,200") + "\n";
+			--
+				Magicmenu(0);
+			
+			
+		}
+		elseif magicMenu == 1 {
+			target=1
+			"\n" + ColorText("\__q[OnmagicMenu,0]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]───────────斗和↓─────────\f[cursorstyle,default]\f[cursorfontcolor,default]\__q","color=160,160,200") + "\n";
+			--
+				Magicmenu(1);
+		}
+		--
+		battleinfo;
+		
+}
+
+OnmagicMenu
+{
+	
+	magicMenu = reference0;
+	if battlemode==0
+	{
+		OpenRpgGameMenu(2);
+	}
+	elseif battlemode==2
+	{
+		On魔法列表;
+			
+	}
+}
+
+
+Magicmenu
+{
+	_txt="";	
+	_txt+="\_l[0,-]魔法名称     \_l[80,-]属性    \_l[115,-]范围     \_l[145,-]消耗EP     \_l[185,-]效果\n";
+//	_txt+="\_l[120,-]\f[color,65,203,214]水系魔法\f[color,default]\n";
+	_lvl=lvl0;
+	if target==1
+		_lvl=lvl1;
+	_txt+="\f[color,160,160,200]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]\__q[On魔法菜单,0]──────────水系魔法──────────\__q\f[cursorstyle,default]\f[cursorfontcolor,default]\f[default]\n";
+	if TOINT(magicmenu[0])==1
+	{
+		foreach 水系魔法; _i {
+			if _lvl>=TOINT(_i[5])
+			{
+				if _i[3] == "回复"     {
+					_txt += "\_l[0,-]\f[color,65,203,214]%(_i[2])      \_l[80,-]%(_i[3])  \_l[115,-]%(_i[4])   \_l[145,-]%(_i[6])     \_l[185,-]%(_i[7])\f[color,default]     \_l[260,-]\q[使用,Onusemagic,%(_i[0]),%(_i[2]),%(_i[3]),%(_i[4]),%(_i[5]),%(_i[6]),%(_i[7])]\n";         
+				}
+				elseif _i[3] == "攻击"  {
+					if battlemode==1
+						_txt += "\_l[0,-]\f[color,65,203,214]%(_i[2])      \_l[80,-]%(_i[3])  \_l[115,-]%(_i[4])   \_l[145,-]%(_i[6])     \_l[185,-]%(_i[7])\f[color,default]     \_l[260,-]\q[使用,Onusemagic,%(_i[0]),%(_i[2]),%(_i[3]),%(_i[4]),%(_i[5]),%(_i[6]),%(_i[7]),%(_i[8])]\n";    
+					else
+						_txt += "\_l[0,-]\f[color,65,203,214]%(_i[2])      \_l[80,-]%(_i[3])   \_l[115,-]%(_i[4])   \_l[145,-]%(_i[6])   \_l[185,-]%(_i[7])\f[color,default]\n";
+				}
+			}
+		}
+	
+	}
+//	_txt+="\_l[120,-]\f[color,255,0,0]火系魔法\f[color,default]\n";
+	_txt+="\f[color,160,160,200]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]\__q[On魔法菜单,1]──────────火系魔法──────────\__q\f[cursorstyle,default]\f[cursorfontcolor,default]\f[default]\n";
+	if TOINT(magicmenu[1])==1
+	{	
+		foreach 火系魔法; _i {
+			if _lvl>=TOINT(_i[5])
+			{   
+				if battlemode==1
+					_txt += "\_l[0,-]\f[color,255,0,0]%(_i[2])      \_l[80,-]%(_i[3])  \_l[115,-]%(_i[4])   \_l[145,-]%(_i[6])     \_l[185,-]%(_i[7])\f[color,default]     \_l[260,-]\q[使用,Onusemagic,%(_i[0]),%(_i[2]),%(_i[3]),%(_i[4]),%(_i[5]),%(_i[6]),%(_i[7]),%(_i[8])]\n";    
+				else
+					_txt += "\_l[0,-]\f[color,255,0,0]%(_i[2])     \_l[80,-]%(_i[3])    \_l[115,-]%(_i[4])   \_l[145,-]%(_i[6])  \_l[185,-]%(_i[7])\f[color,default] \n";
+			}              
+			
+		}
+	
+	}
+	
+//	_txt+="\_l[120,-]\f[color,231,171,109]土系魔法\f[color,default]\n";
+	_txt+="\f[color,160,160,200]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]\__q[On魔法菜单,2]──────────土系魔法──────────\__q\f[cursorstyle,default]\f[cursorfontcolor,default]\f[default]\n";
+	if TOINT(magicmenu[2])==1
+	{	
+		foreach 土系魔法; _i {
+			if _lvl>=TOINT(_i[5])
+			{   
+				if battlemode==1
+					_txt += "\_l[0,-]\f[color,231,171,109]%(_i[2])      \_l[80,-]%(_i[3])  \_l[115,-]%(_i[4])   \_l[145,-]%(_i[6])     \_l[185,-]%(_i[7])\f[color,default]     \_l[260,-]\q[使用,Onusemagic,%(_i[0]),%(_i[2]),%(_i[3]),%(_i[4]),%(_i[5]),%(_i[6]),%(_i[7]),%(_i[8])]\n";    
+				else
+					_txt += "\_l[0,-]\f[color,231,171,109]%(_i[2])      \_l[80,-]%(_i[3])   \_l[115,-]%(_i[4])   \_l[145,-]%(_i[6])  \_l[185,-]%(_i[7])\f[color,default] \n";
+			}              
+			
+		}
+		
+	}
+	
+//	_txt+="\_l[120,-]\f[color,194,243,99]风系魔法\f[color,default]\n";
+		_txt+="\f[color,160,160,200]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]\__q[On魔法菜单,3]──────────风系魔法──────────\__q\f[cursorstyle,default]\f[cursorfontcolor,default]\f[default]\n";
+	if TOINT(magicmenu[3])==1
+	{
+		foreach 风系魔法; _i {
+			if _lvl>=TOINT(_i[5])
+			{   
+				if battlemode==1
+					_txt += "\_l[0,-]\f[color,194,243,99]%(_i[2])      \_l[80,-]%(_i[3])  \_l[115,-]%(_i[4])   \_l[145,-]%(_i[6])     \_l[185,-]%(_i[7])\f[color,default]     \_l[260,-]\q[使用,Onusemagic,%(_i[0]),%(_i[2]),%(_i[3]),%(_i[4]),%(_i[5]),%(_i[6]),%(_i[7]),%(_i[8])]\n";    
+				else
+					_txt += "\_l[0,-]\f[color,194,243,99]%(_i[2])      \_l[80,-]%(_i[3])    \_l[115,-]%(_i[4])   \_l[145,-]%(_i[6])  \_l[185,-]%(_i[7])\f[color,default] \n";
+			}              
+			
+		}
+	}
+	if battlemode==2
+	{
+		_txt+="\n\q[返回,On休息]";
+		
+	}
+	
+	_txt
+		
+		
+}
+
+On魔法菜单
+{
+
+	magicmenu[reference0]=(TOINT(magicmenu[reference0])+1)%2;
+	if battlemode==0||battlemode==2
+	{
+		OpenRpgGameMenu(2);
+	}
+	else
+		Onmagic(target);
+}
+
+
+
+Onusemagic
+{
+	
+	if (reference2=="回复"||reference2=="辅助") && reference3=="单体"
+		
+	{
+		if target==0
+			"给谁使用\n/
+			\q[橘花,Onkikka0,%(reference0),%(reference1),%(reference2),%(reference3),%(reference4),%(reference5),%(reference6)]\n/
+			\q[斗和,Ontowa0,%(reference0),%(reference1),%(reference2),%(reference3),%(reference4),%(reference5),%(reference6)]\n/
+			\n\n\n\n\q[返回,Onbackusemagic0]";
+			else
+			"给谁使用\n/
+			\q[橘花,Onkikka1,%(reference0),%(reference1),%(reference2),%(reference3),%(reference4),%(reference5),%(reference6)]\n/
+			\q[斗和,Ontowa1,%(reference0),%(reference1),%(reference2),%(reference3),%(reference4),%(reference5),%(reference6)]\n/
+			\n\n\n\n\q[返回,Onbackusemagic1]";
+	}
+	
+	
+	elseif (reference2=="回复"||reference2=="辅助") && reference3=="复体"
+	{
+		if target==0
+			Ondouble0(reference0,reference1,reference2,reference3,reference4,reference5,reference6);
+		else
+			Ondouble1(reference0,reference1,reference2,reference3,reference4,reference5,reference6);
+	}
+	
+	
+	elseif reference2=="攻击"
+	{
+		if target==0
+			Onmagicatk0(reference0,reference1,reference2,reference3,reference4,reference5,reference6,reference7);
+		else
+			Onmagicatk1(reference0,reference1,reference2,reference3,reference4,reference5,reference6,reference7);
+		
+	} 
+}
+
+Onbackusemagic0
+{
+	if battlemode==0
+	{
+		OpenRpgGameMenu(2);
+	}
+	elseif battlemode==2
+	{
+        On休息
+	}
+	else
+	{        
+		Onbattleselect0
+	} 
+	
+	
+}
+
+Onbackusemagic1
+{
+	
+	if battlemode==0
+	{
+		OpenRpgGameMenu(2);
+	}
+	elseif battlemode==2
+	{
+        On休息
+	}
+	else
+	{        
+		Onbattleselect1
+	} 
+	
+	
+}
+
+KikkaUsedMagic
+{
+	if battlemode==0
+	{
+        OpenRpgGameMenu(2);
+	}
+	elseif battlemode==2
+	{
+        On休息;
+	}
+	else
+	{        
+        if hp1>0
+		{
+			Onbattleselect;
+		}
+		else
+		{
+			怪物反击;
+		}
+	}
+	
+}
+
+KikkaUsedFall
+{
+	if battlemode==0
+	{
+		OpenRpgGameMenu(2);
+	}
+	elseif battlemode==2
+	{
+        On休息;
+	}
+	else
+	{        
+		Onbattleselect0;
+	} 
+}
+
+TowaUsedMagic
+{
+	if battlemode==0
+	{
+        OpenRpgGameMenu(2);
+	}
+	elseif battlemode==2
+	{
+        On休息;
+	}
+	else
+	{        
+		怪物反击;
+	} 
+}
+
+TowaUsedFall
+{
+	if battlemode==0
+	{
+		OpenRpgGameMenu(2);
+	}
+	elseif battlemode==2
+	{
+        On休息;
+	}
+	else
+	{        
+		Onbattleselect1;
+	} 
+}
+
+
+
+Onkikka0
+{
+	
+	魔法名称=reference1;
+	效果数值=TOINT(reference6);
+	
+	EP消耗=TOINT(reference5);
+	
+	
+	if reference6=="HP全回复" && ep0>=EP消耗
+	{
+		
+		"橘花对自己使用了%(魔法名称)，橘花HP回复%(hpmax0-hp0)\x";
+		hp0=hpmax0;
+		ep0-=EP消耗;
+			--
+			KikkaUsedMagic;
+	}
+	
+	elseif reference6=="战斗不能解除" && ep0>=EP消耗
+	{
+		"不能这样使用%(魔法名称)\x";
+		--
+			KikkaUsedFall;
+	}
+	elseif reference6=="完全防御一次" && ep0>=EP消耗
+	{
+                 	kikkadefend=1;
+		ep0-=EP消耗;
+		"橘花对自己使用了%(魔法名称)\x";
+		--
+				KikkaUsedMagic;
+	}
+	
+
+
+	elseif ep0>=EP消耗
+	{
+	        _hp=hp0;
+	        hp0+=效果数值;
+	        if hp0>hpmax0
+				hp0=hpmax0;
+	        ep0-=EP消耗;
+		"橘花对自己使用了%(魔法名称)，橘花HP回复%(hp0-_hp)\x";
+	--
+		KikkaUsedMagic;
+	}
+	else
+	{"EP不足，不能驱动魔法\x"
+	
+	--
+	KikkaUsedFall;
+	}
+	
+	
+}
+
+Onkikka1
+{
+	
+	魔法名称=reference1;
+	效果数值=TOINT(reference6);
+	
+	EP消耗=TOINT(reference5);
+	
+	if hp0>0
+	{
+		if reference6=="HP全回复" && ep1>=EP消耗
+		{
+			"斗和对橘花使用了%(魔法名称)，橘花HP回复%(hpmax0-hp0)\x";
+			hp0=hpmax0;
+			ep1-=EP消耗;
+				--
+				TowaUsedMagic;
+		}
+		elseif reference6=="战斗不能解除" && ep1>=EP消耗
+		{
+			
+			"不能这样使用%(魔法名称)\x";
+			--
+				TowaUsedFall;
+		}
+		
+
+	        elseif reference6=="完全防御一次" && ep1>=EP消耗
+    	  {
+                  	kikkadefend=1;
+		"斗和对橘花使用了%(魔法名称)\x";
+		ep1-=EP消耗;
+		--
+				TowaUsedMagic;
+    	}
+	
+		elseif ep1>=EP消耗
+		{
+			_hp=hp0;
+			hp0+=效果数值;
+			if hp0>hpmax0
+				hp0=hpmax0;
+			ep1-=EP消耗;
+				"斗和对橘花使用了%(魔法名称)，橘花HP回复%(hp0-_hp)\x";
+			--
+				TowaUsedMagic;
+		}
+		
+		else
+        {"EP不足，不能驱动魔法\x";
+		--
+			TowaUsedFall;
+        }
+	}
+    elseif hp0==0 && reference6=="战斗不能解除" && ep1>=EP消耗
+    {
+		
+		"斗和对橘花使用了%(魔法名称)，橘花恢复战斗能力，橘花HP回复%(hpmax0-hp0)\x";
+		hp0=hpmax0;
+		ep1-=EP消耗;
+            --
+			怪物反击;
+    }
+	
+	elseif  ep1<EP消耗
+	{
+		"EP不足，不能驱动魔法\x";
+		--
+            TowaUsedFall;
+	} 
+	else
+	{
+		"不能对失去战斗能力的橘花使用%(魔法名称)\x";
+		--
+			TowaUsedFall;
+	}
+}
+
+
+Ontowa0
+{
+	
+	魔法名称=reference1;
+	效果数值=TOINT(reference6);
+	
+	EP消耗=TOINT(reference5);
+	
+	if hp1>0
+	{
+		if reference6=="HP全回复" && ep0>=EP消耗
+		{
+			"橘花对斗和使用了%(魔法名称)，斗和HP回复%(hpmax1-hp1)\x";
+			hp1=hpmax1;
+			ep0-=EP消耗;
+				--
+				KikkaUsedMagic;
+		}
+		elseif reference6=="战斗不能解除" && ep0>=EP消耗
+		{
+			
+			"不能这样使用%(魔法名称)\x";
+			--
+				KikkaUsedFall;
+		}
+	        elseif reference6=="完全防御一次" && ep0>=EP消耗
+	        {
+                 	 towadefend=1;
+		ep0-=EP消耗;
+		"橘花对斗和使用了%(魔法名称)\x";
+		--
+				KikkaUsedMagic;
+            	}
+	
+
+
+		elseif ep0>=EP消耗
+		{
+			_hp=hp1;
+			hp1+=效果数值;
+			if hp1>hpmax1
+				hp1=hpmax1;
+			ep0-=EP消耗;
+				"橘花对斗和使用了%(魔法名称)，斗和HP回复%(hp1-_hp)\x";
+            --
+				KikkaUsedMagic;
+		}
+		else
+        {"EP不足，不能驱动魔法\x";
+		--
+			KikkaUsedFall;
+        }
+	}
+    elseif hp1==0 && reference6=="战斗不能解除" && ep0>=EP消耗
+    {
+		"橘花对斗和使用了%(魔法名称)，斗和恢复战斗能力，斗和HP回复%(hpmax1-hp1)\x";
+		hp1=hpmax1;
+		ep0-=EP消耗;
+            --     
+			KikkaUsedMagic;     
+    }
+	
+	elseif  ep0<EP消耗
+	{
+		"EP不足，不能驱动魔法\x";
+		--
+			KikkaUsedFall;
+	} 
+	
+	else
+	{
+		"不能对失去战斗能力的斗和使用%(魔法名称)\x"; 
+		--
+			KikkaUsedFall;
+	}  
+}
+
+
+Ontowa1
+{
+	
+	魔法名称=reference1;
+	效果数值=TOINT(reference6);
+	EP消耗=TOINT(reference5);
+	
+	if reference6=="HP全回复" && ep1>=EP消耗
+	{
+		"斗和对自己使用了%(魔法名称)，斗和HP回复%(hpmax1-hp1)\x";
+        hp1=hpmax1;
+		ep1-=EP消耗;
+			--
+			TowaUsedMagic;
+	}
+	elseif reference6=="战斗不能解除" && ep1>=EP消耗
+	{
+		"不能这样使用%(魔法名称)\x";
+		--
+			TowaUsedFall;
+	}
+
+	elseif reference6=="完全防御一次" && ep1>=EP消耗
+	{
+		towadefend=1;
+		ep1-=EP消耗;
+		"斗和对自己使用了%(魔法名称)\x";
+		--
+			TowaUsedMagic;
+	}
+	
+
+	elseif ep1>=EP消耗
+	{
+	        _hp=hp1;
+	        hp1+=效果数值;
+	        if hp1>hpmax1
+				hp1=hpmax1;
+	        ep1-=EP消耗;
+		"斗和对自己使用了%(魔法名称)，斗和HP回复%(hp1-_hp)\x";
+	--
+		TowaUsedMagic;
+	}
+	
+	else
+	{"EP不足，不能驱动魔法\x";  
+	--
+		TowaUsedFall;
+	}
+}
+
+
+Ondouble0
+{
+	魔法名称=_argv[1];
+	效果数值=TOINT(_argv[6]);
+	
+	EP消耗=TOINT(_argv[5]);
+	
+	if hp1>0
+	{
+		if _argv[6]=="HP全回复" && ep0>=EP消耗
+		{
+			"橘花使用了%(魔法名称)，橘花HP回复%(hpmax0-hp0)，斗和HP回复%(hpmax1-hp1)\x";
+			hp0=hpmax0;
+			hp1=hpmax1;
+			ep0-=EP消耗;
+				--
+				KikkaUsedMagic;
+		}
+		
+
+        elseif _argv[6]=="完全防御一次" && ep0>=EP消耗
+    	  {
+		kikkadefend=1;
+		towadefend=1;
+		"橘花使用了%(魔法名称)\x";
+		ep0-=EP消耗;
+		--
+				KikkaUsedMagic;
+    	}
+		elseif ep0>=EP消耗
+		{
+			_hp0=hp0;
+			_hp1=hp1;
+			hp0+=效果数值;
+			hp1+=效果数值;
+			if hp0>hpmax0
+				hp0=hpmax0;
+			if hp1>hpmax1
+				hp1=hpmax1;
+			ep0-=EP消耗;
+				"橘花使用了%(魔法名称)，橘花HP回复%(hp0-_hp0)，斗和HP回复%(hp1-_hp1)\x";
+			--
+				KikkaUsedMagic;
+		}
+		
+		else
+        {
+			"EP不足，不能驱动魔法\x";
+			--
+				KikkaUsedFall;
+        }
+	}
+	
+	
+	elseif hp1==0
+	{
+		if _argv[6]=="HP全回复" && ep0>=EP消耗
+        {
+			"橘花使用了%(魔法名称)，橘花HP回复%(hpmax0-hp0)\x";
+			hp0=hpmax0;
+			ep0-=EP消耗;
+				--
+				KikkaUsedMagic;
+        }
+		
+		elseif ep0>=EP消耗
+		{
+			_hp=hp0;
+			hp0+=效果数值;
+			if hp0>hpmax0
+				hp0=hpmax0;
+			ep0-=EP消耗;
+				"橘花使用了%(魔法名称)，橘花HP回复%(hp0-_hp)\x";
+			--
+				KikkaUsedMagic;
+		}
+		else
+        {
+			"EP不足，不能驱动魔法\x";
+			--
+				KikkaUsedFall;
+        }
+	}
+}
+
+
+Ondouble1
+{
+	魔法名称=_argv[1];
+	效果数值=TOINT(_argv[6]);
+	
+	EP消耗=TOINT(_argv[5]);
+	
+	if hp0>0
+	{
+		if _argv[6]=="HP全回复" && ep1>=EP消耗
+		{
+			"斗和使用了%(魔法名称)，橘花HP回复%(hpmax0-hp0)，斗和HP回复%(hpmax1-hp1)\x";
+			hp0=hpmax0;
+			hp1=hpmax1;
+			ep1-=EP消耗;
+				--
+				TowaUsedMagic;
+			
+		}
+		elseif _argv[6]=="完全防御一次" && ep1>=EP消耗
+    	  {
+		kikkadefend=1;
+		towadefend=1;
+		ep1-=EP消耗;
+		"斗和使用了%(魔法名称)\x";
+		--
+				TowaUsedMagic;;
+    	}
+		elseif ep0>=EP消耗
+		{
+			_hp0=hp0;
+			_hp1=hp1;
+			hp0+=效果数值;
+			hp1+=效果数值;
+			if hp0>hpmax0
+				hp0=hpmax0;
+			if hp1>hpmax1
+				hp1=hpmax1;
+			ep1-=EP消耗;
+				"斗和使用了%(魔法名称)，橘花HP回复%(hp0-_hp0)，斗和HP回复%(hp1-_hp1)\x";
+			--
+				TowaUsedMagic;
+		}
+		
+		else
+        {
+			"EP不足，不能驱动魔法\x";
+			--
+				TowaUsedFall;
+        }
+	}
+	
+	
+	
+	elseif hp0==0
+	{
+		if _argv[6]=="HP全回复" && ep1>=EP消耗
+		{
+			"斗和使用了%(魔法名称)，斗和HP回复%(hpmax1-hp1)\x";
+			hp1=hpmax1;
+			ep1-=EP消耗;
+				--
+				TowaUsedMagic;
+		}
+		elseif ep1>=EP消耗
+		{
+			_hp=hp1;
+			hp1+=效果数值;
+			if hp1>hpmax1
+				hp1=hpmax1;
+			ep1-=EP消耗;
+				"斗和使用了%(魔法名称)，斗和HP回复%(hp1-_hp)\x";
+			--
+				TowaUsedMagic;
+		}
+		
+		else
+        {
+			"EP不足，不能驱动魔法\x";
+			--
+				TowaUsedFall;
+        }
+		
+	}
+	
+}
+
+
+准备魔法0
+{
+	magicready0=0;
+	mhp-=魔法伤害0;
+		ep0-=EP消耗;
+		"橘花对%(怪物名字)使用了%(魔法名称0)，%(怪物名字)损血%(魔法伤害0)\x";
+	--
+		if 魔法伤害1>=TOINT(0.33*mhpmax)   
+		{
+			cp0+=3;
+		} 
+		else
+		{
+			cp0+=10;
+		}
+		--
+			if hp1>0
+			{
+				Onbattleselect;
+			}
+			else
+			{
+				怪物反击;
+			}
+			
+			
+}
+准备魔法1
+{
+	magicready1=0;
+	mhp-=魔法伤害1;
+		ep1-=EP消耗;
+		"斗和对%(怪物名字)使用了%(魔法名称1)，%(怪物名字)损血%(魔法伤害1)\x";
+	--
+		if 魔法伤害1>=TOINT(0.33*mhpmax)    
+		{
+			cp1+=3;
+		} 
+		else
+		{
+			cp1+=10;
+		}
+		
+		--   
+			怪物反击;
+		
+		
+}
+
+Onmagicatk0
+{
+	魔法种类=_argv[0];
+	魔法名称0=_argv[1];
+	效果数值=TOINT(_argv[6]);
+	NUMS=_argv[7];
+	EP消耗=TOINT(_argv[5]);
+	
+    if ep0>=EP消耗
+	{
+		if 魔法种类=="水系魔法"
+		{
+			魔法伤害=TOINT(ANG*NUMS*水有效率*(4.10*ats0-2.80*madf+效果数值));
+		}
+		
+		elseif 魔法种类=="火系魔法"
+		{
+			魔法伤害=TOINT(ANG*NUMS*火有效率*(4.10*ats0-2.80*madf+效果数值));
+		}
+		
+		elseif 魔法种类=="土系魔法"
+		{
+			魔法伤害=TOINT(ANG*NUMS*土有效率*(4.10*ats0-2.80*madf+效果数值));
+		}
+		
+		
+        elseif 魔法种类=="风系魔法"
+		{
+			魔法伤害=TOINT(ANG*NUMS*风有效率*(4.10*ats0-2.80*madf+效果数值));
+		}
+		
+		if 魔法伤害<0
+		{
+			魔法伤害=0;
+		}
+                if mdefend==1
+               {
+               魔法伤害=0;
+               mdefend=0;
+               }
+                 magicready0=1;
+		魔法伤害0=魔法伤害;
+			"橘花正在准备魔法\x";
+		--
+			if hp1>0
+			{
+				Onbattleselect;
+			}
+			else
+			{
+				怪物反击;
+			}
+	}
+	else
+	{"EP不足，不能驱动魔法\x";
+	
+	--
+		Onbattleselect0;
+	
+	}
+	
+}
+
+
+
+Onmagicatk1
+{
+	魔法种类=_argv[0];
+	魔法名称1=_argv[1];
+	效果数值=TOINT(_argv[6]);
+	NUMS=_argv[7];
+	EP消耗=TOINT(_argv[5]);
+	
+    if ep1>=EP消耗
+	{
+		if 魔法种类=="水系魔法"
+		{
+			魔法伤害=TOINT(ANG*NUMS*水有效率*(4.10*ats1-2.80*madf+效果数值));
+		}
+		
+		elseif 魔法种类=="火系魔法"
+		{
+			魔法伤害=TOINT(ANG*NUMS*火有效率*(4.10*ats1-2.80*madf+效果数值));
+		}
+		
+		elseif 魔法种类=="土系魔法"
+		{
+			魔法伤害=TOINT(ANG*NUMS*土有效率*(4.10*ats1-2.80*madf+效果数值));
+		}
+		
+		
+        elseif 魔法种类=="风系魔法"
+		{
+			魔法伤害=TOINT(ANG*NUMS*风有效率*(4.10*ats1-2.80*madf+效果数值));
+		}
+		if 魔法伤害<0
+		{
+			魔法伤害=0;
+		}
+               if mdefend==1
+               {
+               魔法伤害=0;
+               mdefend=0;
+               }
+		magicready1=1;
+		魔法伤害1=魔法伤害;
+			"斗和正在准备魔法\x";
+		--
+			怪物反击;
+        
+	}
+	else
+	{"EP不足，不能驱动魔法\x";
+	--
+		Onbattleselect1;
+	
+	}  
+}
+
+道具
+{
+	battlemode=0;
+	On道具列表;
+}
+
+On道具列表
+{
+	
+	信息参数;
+		_txt="\b[2]\![quicksession,true]\n";
+	
+	_txt+="\_l[0,-]名称    \_l[80,-]效果   \_l[160,-]买入价格 \_l[215,-]已有数量  \n";
+	foreach itemA; _i {
+		if _i[3]>0 
+		{
+			_txt += "\f[color,194,243,99]\_l[0,-]%(_i[2])\f[color,default]    \f[color,194,243,99]\_l[80,-]%(_i[5])\f[color,default]     \f[color,231,171,109]\_l[160,-]%(_i[4])\f[color,default]   \_l[215,-]%(_i[3]) \_l[260,-] \q[使用,Onuseitemselect,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[5])]\n";
+		}
+		
+		
+	}
+	
+	foreach itemB; _i {
+		if _i[3]>0 
+		{
+			_txt += "\f[color,165,203,214]\_l[0,-]%(_i[2])\f[color,default]    \f[color,165,203,214]\_l[80,-]%(_i[5])\f[color,default]    \f[color,231,171,109]\_l[160,-]%(_i[4])\f[color,default]  \_l[215,-]%(_i[3]) \_l[260,-] \q[使用,Onuseitemselect,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[5])]\n";
+		}
+	}
+	
+	if battlemode==2
+	{
+		_txt+="\_l[-,300]\q[返回,On休息]";
+		
+	}
+	_txt+=battleinfo;
+	_txt;
+	
+}
+
+Onuseitemselect
+{
+	"给谁使用\n/
+		\q[橘花,Onuseitem0,%(reference0),%(reference1),%(reference2),%(reference3)]\n/
+		\q[斗和,Onuseitem1,%(reference0),%(reference1),%(reference2),%(reference3)]\n/
+		\n[half]\q[返回,OnRpgGame,3]";
+		
+		
+		
+}
+
+Onuseitemselect0
+{
+	"给谁使用\n/
+		\q[橘花,Onkikkauseitem0,%(reference0),%(reference1),%(reference2),%(reference3)]\n/
+		\q[斗和,Onkikkauseitem1,%(reference0),%(reference1),%(reference2),%(reference3)]\n/
+		\n[half]\q[返回,item0]";
+		
+}
+
+Onuseitemselect1
+{
+	"给谁使用\n/
+		\q[橘花,Ontowauseitem0,%(reference0),%(reference1),%(reference2),%(reference3)]\n/
+		\q[斗和,Ontowauseitem1,%(reference0),%(reference1),%(reference2),%(reference3)]\n/
+		\n[half]\q[返回,item1]";
+}
+
+
+
+Onuseitem0
+{
+	道具类型=reference0;
+	道具代码=reference1;
+	道具名称=reference2;
+	效果数值=TOINT(reference3);
+	
+	if 道具类型=="itemA"
+	{
+		if reference3=="HP全回复"||reference3=="战斗不能解除"
+		{
+			"对橘花使用了%(道具名称),HP回复%(hpmax0-hp0)\x";
+			hp0=hpmax0;
+			itemAnum[道具代码]-=1;
+		}
+		elseif "经验丹" _in_ 道具名称
+		{
+			"当前橘花经验为%(exp0)\n"
+			--
+			exp0+=效果数值;
+			exptotal0+=效果数值;
+			itemAnum[道具代码]-=1;
+			"对橘花使用了%(道具名称),橘花经验增加%(效果数值)，橘花经验为%(exp0)\n";
+			--
+			橘花升级+"\x";
+				
+		}
+		elseif "转生丹" _in_ 道具名称
+		{
+			"当前橘花转生修为为%(expcircle0)\n"
+			--
+			expcircle0+=效果数值;
+			itemAnum[道具代码]-=1;
+			"对橘花使用了%(道具名称),橘花转生修为增加%(效果数值)，橘花转生修为为%(expcircle0)\x";
+		}		
+		elseif hp0+效果数值>=hpmax0
+		{
+			"对橘花使用了%(道具名称),HP回复%(hpmax0-hp0)\x";
+			hp0=hpmax0;
+			itemAnum[道具代码]-=1;
+		}
+		
+		elseif hp0+效果数值<hpmax0
+		{
+			hp0+=效果数值;
+			"对橘花使用了%(道具名称),HP回复%(效果数值)\x";
+			itemAnum[道具代码]-=1;
+		}
+    }
+	elseif 道具类型=="itemB"
+	{
+		
+		if reference3=="EP全回复"
+		{
+			"对橘花使用了%(道具名称),EP回复%(epmax0-ep0)\x";
+			ep0=epmax0;
+			itemBnum[道具代码]-=1;
+		}
+		
+		
+		
+		elseif ep0+效果数值>=epmax0
+		{
+			"对橘花使用了%(道具名称),EP回复%(epmax0-ep0)\x";
+			ep0=epmax0;
+			itemBnum[道具代码]-=1;
+		}
+		
+		elseif ep0+效果数值<epmax0
+		{
+			ep0+=效果数值;
+			"对橘花使用了%(道具名称),EP回复%(效果数值)\x";
+			itemBnum[道具代码]-=1;
+		}
+    }
+	
+	--
+		if battlemode==0
+		{
+			OpenRpgGameMenu(3);
+		}
+		elseif battlemode==2
+		{        
+			On休息;
+		} 
+		
+		
+}
+
+
+Onuseitem1
+{
+	道具类型=reference0;
+	道具代码=reference1;
+	道具名称=reference2;
+	效果数值=TOINT(reference3);
+	
+	if 道具类型=="itemA"
+	{
+		if reference3=="HP全回复"||reference3=="战斗不能解除"
+		{
+			"对斗和使用了%(道具名称),HP回复%(hpmax1-hp1)\x";
+			hp1=hpmax1;
+			itemAnum[道具代码]-=1;
+		}
+		elseif "经验丹" _in_ 道具名称
+		{
+			"当前斗和经验为%(exp1)\n"
+			--
+			exp1+=效果数值;
+			exptotal1+=效果数值;
+			itemAnum[道具代码]-=1;
+			"对斗和使用了%(道具名称),斗和经验增加%(效果数值)，斗和经验为%(exp1)\n";
+			--
+			斗和升级+"\x";
+
+		}
+		elseif "转生丹" _in_ 道具名称
+		{
+			"当前斗和转生修为为%(expcircle1)\n"
+			--
+			expcircle1+=效果数值;
+			itemAnum[道具代码]-=1;
+			"对斗和使用了%(道具名称),斗和转生修为增加%(效果数值)，斗和转生修为为%(expcircle1)\x";
+		}
+		elseif hp1+效果数值>=hpmax1
+		{
+			"对斗和使用了%(道具名称),HP回复%(hpmax1-hp1)\x";
+			hp1=hpmax1;
+			itemAnum[道具代码]-=1;
+		}
+		
+		elseif hp1+效果数值<hpmax1
+		{
+			hp1+=效果数值;
+			"对斗和使用了%(道具名称),HP回复%(效果数值)\x";
+			itemAnum[道具代码]-=1;
+		}
+	}
+	elseif 道具类型=="itemB"
+	{
+		if reference3=="EP全回复"
+		{
+			"对斗和使用了%(道具名称),EP回复%(epmax1-ep1)\x";
+			ep1=epmax1;
+			itemBnum[道具代码]-=1;
+		}
+		
+		
+		
+		elseif ep1+效果数值>=epmax1
+		{
+			"对斗和使用了%(道具名称),EP回复%(epmax1-ep1)\x";
+			ep1=epmax1;
+			itemBnum[道具代码]-=1;
+		}
+		
+		elseif ep1+效果数值<epmax1
+		{
+			ep1+=效果数值;
+			"对斗和使用了%(道具名称),EP回复%(效果数值)\x";
+			itemBnum[道具代码]-=1;
+		}
+	}
+	
+	--
+		if battlemode==0
+		{
+			OpenRpgGameMenu(3);
+		}
+		elseif battlemode==2
+		{        
+			On休息;
+		} 
+		
+		
+}
+
+
+Onkikkauseitem0
+{
+	道具类型=reference0;
+	道具代码=reference1;
+	道具名称=reference2;
+	效果数值=TOINT(reference3);
+	
+	if 道具类型=="itemA"
+	{
+		
+		if reference3=="HP全回复"||reference3=="战斗不能解除"
+		{
+			"橘花对自己使用了%(道具名称),HP回复%(hpmax0-hp0)\x";
+			hp0=hpmax0;
+			itemAnum[道具代码]-=1;
+		}
+		
+		
+		elseif hp0+效果数值>=hpmax0
+		{
+			"橘花对自己使用了%(道具名称),HP回复%(hpmax0-hp0)\x";
+			hp0=hpmax0;
+			itemAnum[道具代码]-=1;
+		}
+		
+		elseif hp0+效果数值<hpmax0
+		{
+			hp0+=效果数值;
+			"橘花对自己使用了%(道具名称),HP回复%(效果数值)\x";
+			itemAnum[道具代码]-=1;
+		}
+	}
+	elseif 道具类型=="itemB"
+	{
+		
+		
+		if reference3=="EP全回复"
+		{
+			"橘花对自己使用了%(道具名称),EP回复%(epmax0-ep0)\x";
+			ep0=epmax0;
+			itemBnum[道具代码]-=1;
+		}
+		
+		elseif ep0+效果数值>=epmax0
+		{
+			"橘花对自己使用了%(道具名称),EP回复%(epmax0-ep0)\x";
+			ep0=epmax0;
+			itemBnum[道具代码]-=1;
+		}
+		
+		elseif ep0+效果数值<epmax0
+		{
+			ep0+=效果数值;
+			"橘花对自己使用了%(道具名称),EP回复%(效果数值)\x";
+			itemBnum[道具代码]-=1;
+		}
+	}
+	
+	--
+		if hp1>0
+		{
+			Onbattleselect;
+		}
+		else
+		{
+			怪物反击;
+		}
+		
+}
+
+
+
+Onkikkauseitem1
+{
+	道具类型=reference0;
+	道具代码=reference1;
+	道具名称=reference2;
+	效果数值=TOINT(reference3);
+	
+	if hp1>0
+	{
+		
+		if 道具类型=="itemA"
+		{
+			
+			if reference3=="HP全回复"||reference3=="战斗不能解除"
+			{
+				"橘花对斗和使用了%(道具名称),HP回复%(hpmax1-hp1)\x";
+				hp1=hpmax1;
+				itemAnum[道具代码]-=1;
+			}
+			
+			
+			
+			elseif hp1+效果数值>=hpmax1
+			{
+				"橘花对斗和使用了%(道具名称),HP回复%(hpmax1-hp1)\x";
+				hp1=hpmax1;
+				itemAnum[道具代码]-=1;
+			}
+			
+			elseif hp1+效果数值<hpmax1
+			{
+				hp1+=效果数值;
+				"橘花对斗和使用了%(道具名称),HP回复%(效果数值)\x";
+				itemAnum[道具代码]-=1;
+			}
+		}
+		elseif 道具类型=="itemB"
+		{
+			
+			if reference3=="EP全回复"
+			{
+				"橘花对斗和使用了%(道具名称),EP回复%(epmax1-ep1)\x";
+				ep1=epmax1;
+				itemBnum[道具代码]-=1;
+			}
+			
+			elseif ep1+效果数值>=epmax1
+			{
+				"橘花对斗和使用了%(道具名称),EP回复%(epmax1-ep1)\x";
+				ep1=epmax1;
+				itemBnum[道具代码]-=1;
+			}
+			
+			elseif ep1+效果数值<epmax1
+			{
+				ep1+=效果数值;
+				"橘花对斗和使用了%(道具名称),EP回复%(效果数值)\x";
+				itemBnum[道具代码]-=1;
+			}
+		}
+		
+	}
+	
+	elseif hp1==0
+	{
+		if 道具类型=="itemA"
+		{
+			
+			if reference3=="战斗不能解除"
+			{
+				"橘花对斗和使用了%(道具名称),斗和恢复战斗能力，并且HP回复%(hpmax1-hp1)\x";
+				hp1=hpmax1;
+				itemAnum[道具代码]-=1;
+			}
+		}
+		
+		else
+		{ 
+			"不能对失去战斗能力斗和使用%(道具名称)\x"; 
+			
+			--
+				Onbattleselect0;rerturn;
+			
+		}
+	}
+	
+	--
+		if hp0>0
+		{
+			Onbattleselect;
+		}
+		else
+		{
+			怪物反击;
+		}
+		
+		
+}
+
+
+Ontowauseitem0
+{
+	道具类型=reference0;
+	道具代码=reference1;
+	道具名称=reference2;
+	效果数值=TOINT(reference3);
+	
+	if hp0>0
+	{
+		
+		if 道具类型=="itemA"
+		{
+			
+			if reference3=="HP全回复"||reference3=="战斗不能解除"
+			{
+				"斗和对橘花使用了%(道具名称),HP回复%(hpmax0-hp0)\x";
+				hp0=hpmax0;
+				itemAnum[道具代码]-=1;
+			}
+			
+			
+			elseif hp0+效果数值>=hpmax0
+			{
+				"斗和对橘花使用了%(道具名称),HP回复%(hpmax0-hp0)\x";
+				hp0=hpmax0;
+				itemAnum[道具代码]-=1;
+			}
+			
+			elseif hp0+效果数值<hpmax0
+			{
+				hp0+=效果数值;
+				"斗和对橘花使用了%(道具名称),HP回复%(效果数值)\x";
+				itemAnum[道具代码]-=1;
+			}
+		}
+		elseif 道具类型=="itemB"
+		{
+			
+			
+			if reference3=="EP全回复"
+			{
+				"斗和对橘花使用了%(道具名称),EP回复%(epmax0-ep0)\x";
+				ep0=epmax0;
+				itemBnum[道具代码]-=1;
+			}
+			elseif ep0+效果数值>=epmax0
+			{
+				"斗和对橘花使用了%(道具名称),EP回复%(epmax0-ep0)\x";
+				ep0=epmax0;
+				itemBnum[道具代码]-=1;
+			}
+			
+			elseif ep0+效果数值<epmax0
+			{
+				ep0+=效果数值;
+				"斗和对橘花使用了%(道具名称),EP回复%(效果数值)\x";
+				itemBnum[道具代码]-=1;
+			}
+		}
+		
+	}
+	
+	elseif hp0==0
+	{
+		if 道具类型=="itemA"
+		{
+			
+			if reference3=="战斗不能解除"
+			{
+				"斗和对橘花使用了%(道具名称),橘花恢复战斗能力，并且HP回复%(hpmax0-hp0)\x";
+				hp0=hpmax0;
+				itemAnum[道具代码]-=1;
+			}
+		}
+		
+		
+		else
+		{ 
+			"不能对失去战斗能力橘花使用%(道具名称)\x";
+			
+			--
+				Onbattleselect1;return;
+			
+		}
+		
+	}
+	
+	--
+		怪物反击;
+	
+}
+
+
+Ontowauseitem1
+{
+	道具类型=reference0;
+	道具代码=reference1;
+	道具名称=reference2;
+	效果数值=TOINT(reference3);
+	
+	if 道具类型=="itemA"
+	{
+		
+		if reference3=="HP全回复"||reference3=="战斗不能解除"
+		{
+			"斗和对自己使用了%(道具名称),HP回复%(hpmax1-hp1)\x";
+			hp1=hpmax1;
+			itemAnum[道具代码]-=1;
+		}
+		
+		
+		
+		elseif hp1+效果数值>=hpmax1
+		{
+			"斗和对自己使用了%(道具名称),HP回复%(hpmax1-hp1)\x";
+			hp1=hpmax1;
+			itemAnum[道具代码]-=1;
+		}
+		
+		elseif hp1+效果数值<hpmax1
+		{
+			hp1+=效果数值;
+			"斗和对自己使用了%(道具名称),HP回复%(效果数值)\x";
+			itemAnum[道具代码]-=1;
+		}
+	}
+	elseif 道具类型=="itemB"
+	{
+		if reference3=="EP全回复"
+		{
+			"斗和对自己使用了%(道具名称),EP回复%(epmax1-ep1)\x";
+			ep1=epmax1;
+			itemBnum[道具代码]-=1;
+		}
+		
+		elseif ep1+效果数值>=epmax1
+		{
+			"斗和对自己使用了%(道具名称),EP回复%(epmax1-ep1)\x";
+			ep1=epmax1;
+			itemBnum[道具代码]-=1;
+		}
+		
+		elseif ep1+效果数值<epmax1
+		{
+			ep1+=效果数值;
+			"斗和对自己使用了%(道具名称),EP回复%(效果数值)\x";
+			itemBnum[道具代码]-=1;
+		}
+	}
+	
+	--
+		
+		怪物反击;
+}
+
+
+超出反应
+{
+	信息参数;
+		--
+		
+		
+		_weapon = (weaponA,weaponB);
+	_armor = (armorA,armorB);
+	_boots = (bootsA,bootsB);
+	foreach _weapon; _i {
+		if _i[3]==0 && weaponID0==_i[1] && weaponsort0==_i[0]
+		{
+			
+			weaponID0=NULL;
+			weapon0=NULL;
+			weaponequip_str0=0;
+			
+		}
+		
+		
+		
+		if _i[3]==0 && weaponID1==_i[1] && weaponsort1==_i[0]
+		{
+			
+			weaponID1=NULL;
+			weapon1=NULL;
+			weaponequip_str1=0;
+			
+		}
+		
+		if _i[3]==1 && weaponID0==_i[1] && weaponsort0==_i[0] && weaponID1==_i[1] && weaponsort1==_i[0] 
+		{
+			
+			weaponID1=NULL;
+			weapon1=NULL;
+			weaponequip_str1=0; 
+			
+		}
+		
+	}
+	
+	
+	
+	foreach _armor; _i {
+		
+		if _i[3]==0 && armorID0==_i[1] && armorsort0==_i[0]
+		{
+			
+			armorID0=NULL;
+			armor0=NULL;
+			armorequip_def0=0;
+			armorequip_adf0=0;
+			
+		}
+		
+		
+		
+		if _i[3]==0 && armorID1==_i[1] && armorsort1==_i[0]
+		{
+			armorID1=NULL;
+			armor1=NULL;
+			armorequip_def1=0;
+			armorequip_adf1=0;
+			
+		}
+		
+		if _i[3]==1 && armorID0==_i[1] && armorsort0==_i[0] && armorID1==_i[1] && armorsort1==_i[0] 
+		{
+			armorID1=NULL;
+			armor1=NULL;
+			armorequip_def1=0;
+			armorequip_adf1=0; 
+			
+		}
+	}
+	
+	foreach _boots; _i {
+		if _i[3]==0 && bootsID0==_i[1] && bootssort0==_i[0]
+		{
+			
+			bootsID0=NULL;
+			boots0=NULL;
+			bootsequip_def0=0;
+			bootsequip_adf0=0;
+			
+		}
+		
+		
+		
+		if _i[3]==0 && bootsID1==_i[1] && bootssort1==_i[0]
+		{
+			bootsID1=NULL;
+			boots1=NULL;
+			bootsequip_def1=0;
+			bootsequip_adf1=0; 
+			
+		}
+		
+		if _i[3]==1 && bootsID0==_i[1] && bootssort0==_i[0] && bootsID1==_i[1] && bootssort1==_i[0] 
+		{
+			bootsID1=NULL;
+			boots1=NULL;
+			bootsequip_def1=0;
+			bootsequip_adf1=0; 
+			
+		}
+	}
+	
+}
+
+kikkashopMenu
+{
+	信息参数;
+		--
+		
+		
+		if shopMenu == 0{
+			"\n" + ColorText("\__q[OnshopMenu,1]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]───────────武器店↓─────────\f[cursorstyle,default]\f[cursorfontcolor,default]\__q","color=160,160,200");
+			--
+				weaponshop;
+			
+			
+		}
+		elseif shopMenu == 1 {
+			"\n" + ColorText("\__q[OnshopMenu,2]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]───────────防具店↓─────────\f[cursorstyle,default]\f[cursorfontcolor,default]\__q","color=160,160,200");
+			--
+				armorshop;
+		}
+		
+        elseif shopMenu == 2 
+			
+		{
+			"\n" + ColorText("\__q[OnshopMenu,3]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]───────────道具店↓─────────\f[cursorstyle,default]\f[cursorfontcolor,default]\__q","color=160,160,200");
+			--
+				itemshop;
+		}
+		
+		
+		elseif shopMenu == 3
+			
+		{
+			"\n" + ColorText("\__q[OnshopMenu,4]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]───────────旅店↓─────────\f[cursorstyle,default]\f[cursorfontcolor,default]\__q","color=160,160,200");
+			--
+				Hotel;
+		}
+		
+	        elseif shopMenu == 4
+			
+		{
+			"\n" + ColorText("\__q[OnshopMenu,0]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]─────────转生系统↓─────────\f[cursorstyle,default]\f[cursorfontcolor,default]\__q","color=160,160,200");
+			--
+				Circle;
+		}
+
+		
+}
+
+
+
+
+OnshopMenu
+{
+	shopMenu = reference0;
+	OpenRpgGameMenu(4);
+}
+
+
+
+weaponshop
+{
+	
+	
+	if weaponshopmode == 0{
+		"\n" + ColorText("\__q[Onweaponshopmode,1]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]───────────购买↓──────────\f[cursorstyle,default]\f[cursorfontcolor,default]\__q","color=160,160,200");
+		--
+			weaponbuy;
+		
+	}
+	
+	
+	
+	elseif weaponshopmode == 1{
+		"\n" + ColorText("\__q[Onweaponshopmode,0]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]───────────卖出↓──────────\f[cursorstyle,default]\f[cursorfontcolor,default]\__q","color=160,160,200");
+		--
+			weaponsell;
+		
+	}
+	
+}
+
+
+armorshop
+{
+	
+	
+	if armorshopmode == 0{
+		"\n" + ColorText("\__q[Onarmorshopmode,1]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]───────────购买↓──────────\f[cursorstyle,default]\f[cursorfontcolor,default]\__q","color=160,160,200");
+		--
+			armorbuy;
+		
+	}
+	
+	
+	
+	elseif armorshopmode == 1{
+		"\n" + ColorText("\__q[Onarmorshopmode,0]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]───────────卖出↓──────────\f[cursorstyle,default]\f[cursorfontcolor,default]\__q","color=160,160,200");
+		--
+			armorsell;
+		
+	}
+	
+}
+
+
+itemshop
+{
+	
+	
+	if itemshopmode == 0{
+		"\n" + ColorText("\__q[Onitemshopmode,1]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]───────────购买↓──────────\f[cursorstyle,default]\f[cursorfontcolor,default]\__q","color=160,160,200");
+		--
+			itembuy;
+		
+	}
+	
+	
+	
+	elseif itemshopmode == 1{
+		"\n" + ColorText("\__q[Onitemshopmode,0]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]───────────卖出↓──────────\f[cursorstyle,default]\f[cursorfontcolor,default]\__q","color=160,160,200");
+		--
+			itemsell;
+		
+	}
+	
+}
+
+
+Hotel
+{
+	"\n\q[住宿,Onlodging]\n";
+		
+}
+
+Circle
+{
+	_circleinfo0=KikkaCircleInfo(lvl0,circle0);
+	_circleinfo1=TowaCircleInfo(lvl1,circle1);
+	_newcircleinfo0=KikkaCircleInfo(lvl0,circle0+1);
+	_newcircleinfo1=TowaCircleInfo(lvl1,circle1+1);
+   _txt= "\n\_l[80]橘花当前转生等级：%(circle0)\n/
+%(lvl0)级时当前转生属性 \_l[160]%(lvl0)级时下阶转生属性\n/
+物理攻击：%(TOINT(_circleinfo0[3]))  \_l[160]物理攻击：%(TOINT(_newcircleinfo0[3]))\n/
+魔法攻击：%(TOINT(_circleinfo0[5])) \_l[160]魔法攻击：%(TOINT(_newcircleinfo0[5]))\n/
+物理防御：%(TOINT(_circleinfo0[4])) \_l[160]物理防御：%(TOINT(_newcircleinfo0[4]))\n/
+魔法防御：%(TOINT(_circleinfo0[6])) \_l[160]魔法防御：%(TOINT(_newcircleinfo0[6]))\n/
+生命上限：%(TOINT(_circleinfo0[2])) \_l[160]生命上限：%(TOINT(_newcircleinfo0[2]))\n/
+\n[half]消耗修为：%(GetExp(20+10*circle0))    \_l[160]拥有修为：%(expcircle0)\n/
+\n\_l[80]斗和当前转生等级：%(circle1)\n/
+%(lvl1)级时当前转生属性 \_l[180]%(lvl1)级时下阶转生属性\n/
+物理攻击：%(TOINT(_circleinfo1[3]))  \_l[160]物理攻击：%(TOINT(_newcircleinfo1[3]))\n/
+魔法攻击：%(TOINT(_circleinfo1[5])) \_l[160]魔法攻击：%(TOINT(_newcircleinfo1[5]))\n/
+物理防御：%(TOINT(_circleinfo1[4])) \_l[160]物理防御：%(TOINT(_newcircleinfo1[4]))\n/
+魔法防御：%(TOINT(_circleinfo1[6])) \_l[160]魔法防御：%(TOINT(_newcircleinfo1[6]))\n/
+生命上限：%(TOINT(_circleinfo1[2])) \_l[160]生命上限：%(TOINT(_newcircleinfo1[2]))\n/
+\n[half]消耗修为：%(GetExp(20+10*circle1))    \_l[160]拥有修为：%(expcircle1)\n/
+
+\n\q[转生说明,OnCircleIntro]                  \q[转生,OnCircle]                \q[恢复,OnCircleRecover]\n/
+     "
+_txt=REPLACE(_txt,"物理攻击",ColorText("物理攻击","color=%(ColorIdx(11))"));
+_txt=REPLACE(_txt,"魔法攻击",ColorText("魔法攻击","color=%(ColorIdx(11))"));
+_txt=REPLACE(_txt,"物理防御",ColorText("物理防御","color=%(ColorIdx(11))"));
+_txt=REPLACE(_txt,"魔法防御",ColorText("魔法防御","color=%(ColorIdx(11))"));
+_txt=REPLACE(_txt,"生命上限",ColorText("生命上限","color=%(ColorIdx(11))"));
+_txt=REPLACE(_txt,"消耗修为",ColorText("消耗修为","color=%(ColorIdx(11))"));
+_txt=REPLACE(_txt,"拥有修为",ColorText("拥有修为","color=%(ColorIdx(11))"));
+_txt=REPLACE(_txt,"当前转生属性 ",ColorText("当前转生属性","color=%(ColorIdx(12))"));
+_txt=REPLACE(_txt,"下阶转生属性",ColorText("下阶转生属性","color=%(ColorIdx(12))"));
+_txt=REPLACE(_txt,"%(lvl0)级时",ColorText("%(lvl0)级时","color=%(ColorIdx(12))"));
+_txt=REPLACE(_txt,"%(lvl1)级时",ColorText("%(lvl1)级时","color=%(ColorIdx(12))"));
+_txt=REPLACE(_txt,"橘花当前转生等级：%(circle0)",ColorText("橘花当前转生等级：%(circle0)","color=%(ColorIdx(13))"));
+_txt=REPLACE(_txt,"斗和当前转生等级：%(circle1)",ColorText("斗和当前转生等级：%(circle1)","color=%(ColorIdx(13))"));
+_txt;
+
+
+
+}
+
+OnCircleIntro
+{
+    "\_q当游戏进行到后期因等级过高，伤害逐渐饱和很难进行一回和时，就得转生了，转生一次需要最低等级20级以上，转生一次人物等级会降低，但相应属性会比原有人物等级属性更高，人物等级越高，转生增加一级越容易，而转生等级越高，转生经验所需就越高，但是转生人物属性提升越大,转生不影响原有装备，但怪物等级范围也得到相应提升，转生一次花费的金钱为10000，请酌情考虑是否转生。\_q\x"
+  --
+	OpenRpgGameMenu(4);
+
+}
+
+OnCircle
+{
+	_exp=exp0+GetExp(lvl0)
+		_expcircle=GetExp(lvl0)-GetExp(lvl0-1)
+	if TOINT(exptotaltemp0)==0
+		_exp=exptotal0
+	_expcircletemp=expcircle0//88250
+	_circle=0
+	_circle0=circle0
+	if  _expcircle>0&&_exp>TOINT(_circle)
+	{
+		_expcircletemp+=_expcircle	
+		_circle=GetExp(20+10*_circle0);
+		while _expcircletemp>_circle
+		{
+			_expcircletemp-=TOINT(_circle)
+			_circle0++
+			_circle=GetExp(20+10*_circle0);
+			_n=1;
+		}
+			_exp-=_expcircle
+	}
+	_level0=GetLevel(_exp)
+	_expcircle0=_expcircle
+	_exp=exp1+GetExp(lvl1)
+	_expcircle=GetExp(lvl1)-GetExp(lvl1-1)
+	if TOINT(expcircletotal1)==0
+		_exp=exptotal1
+	_expcircletemp=expcircle1
+	_circle=0
+	_circle0=circle0
+	if  _expcircle>0&&_exp>TOINT(_circle)
+	{
+		_expcircletemp+=_expcircle	
+		_circle=GetExp(20+10*_circle0);
+		while _expcircletemp>_circle
+		{
+			_expcircletemp-=TOINT(_circle)
+			_circle0++
+			_circle=GetExp(20+10*_circle0);
+			_n=1;
+		}
+			_exp-=_expcircle
+	}
+	_level1=GetLevel(_exp)
+	_expcircle1=_expcircle
+"确定要转生吗？注意转生后橘花等级会变成%(_level0)级，橘花可得修为%(_expcircle0)，斗和等级会变成%(_level1)级，斗和可得修为%(_expcircle1)\n/
+	    \q[是,OnCircleConfirm]\n/
+		\q[否,OnCircleCancel]";
+
+}
+
+
+GetExpCircle
+{
+	_circle=_argv[0]
+	_exp=0
+	while _circle>0
+	{
+		
+		_exp+=GetExp(20+10*_circle);
+		_circle--
+	}
+	_exp;
+}
+
+
+
+OnCircleRecover
+{
+"确定要恢复吗？注意转生等级会置零。转生丹带来的效果将会消失（恢复为经验），请慎重考虑！！！\n/
+	    \q[是,OnCircleRecoverConfirm]\n/
+		\q[否,OnCircleCancel]";
+}
+
+
+Onlodging
+{
+	"确定花%(100+5*(lvl0-1))金住宿？\n/
+		\q[是,Onyeslodging]\n/
+		\q[否,Onnotlodging]";
+}
+
+
+Onyeslodging
+{
+	if money>=100+5*(lvl0-1)
+	{
+		"橘花和斗和休息了一晚上,体力和精力全恢复了\x";
+		hp0=hpmax0;
+		ep0=epmax0;
+		hp1=hpmax1;
+		ep1=epmax1;
+		money-=100+5*(lvl0-1);
+	}
+	else
+	"金额不足，不能住宿\x"
+	--
+		OpenRpgGameMenu(4);
+}
+
+
+
+Onnotlodging
+{
+	OpenRpgGameMenu(4);
+}
+
+
+GetExp
+{
+	_lvl=TOINT(_argv[0]);
+	_exp=0;
+	for _i=1;_i<_lvl;_i++
+	{
+		_exp+=10 * (_i + 1)*(_i + 1);
+	}
+
+	_exp
+
+}
+
+
+
+GetLevel
+{
+	_i=0;
+	_exp=TOINT(_argv[0]);
+	_sum=0;
+	while _sum<_exp
+	{
+		_i++;
+		_sum+=10 * (_i + 1)*(_i + 1);
+
+	}
+	_i;
+}
+
+OnCircleRecoverConfirm
+{
+	if circle0>0
+	{
+		exptotal0=exptotal0+expcircletotal0+expcircle0
+		lvl0=GetLevel(exptotal0);
+		expcircletotal0=0
+		exptotaltemp0=0;
+		circle0=0;
+		expcircle0=0;
+		exp0=exptotal0%GetExp(lvl0);
+	"恢复成功，当前橘花等级为%(lvl0)级\x";
+	}
+	else
+		"橘花转生等级为0，不能恢复\x";
+
+	--
+	if circle1>0
+	{
+		exptotal1=exptotal1+expcircletotal1+expcircle1
+		lvl1=GetLevel(exptotal1);
+		expcircletotal1=0
+		exptotaltemp1=0
+		circle1=0;
+		expcircle1=0;
+		exp1=exptotal1%GetExp(lvl1);
+	"恢复成功，当前斗和等级为%(lvl1)级\x";
+	}
+	else
+		"斗和转生等级为0，不能恢复\x";
+
+--
+		OpenRpgGameMenu(4);
+}
+
+
+OnCircleTest
+{
+	_exp=GetExp(_argv[0])
+	_circle0=0;
+	while _exp>0
+	{
+	_exp-=GetExp(20+_circle0)
+	_circle0++;
+	}
+	_circle0
+}
+
+OnCircleConfirm
+{
+	if TOINT(money)>=10000
+	{
+		if lvl0>=20
+		{
+			_expcircle=GetExp(lvl0)-GetExp(lvl0-1)
+			_exp=exp0+GetExp(lvl0)
+			_circle=0
+			_n=0;
+			if  _expcircle>0
+			{
+				expcircle0+=_expcircle	
+				_circle=GetExp(20+10*circle0);	
+				while expcircle0>TOINT(_circle)
+				{
+					expcircle0-=TOINT(_circle)
+					expcircletotal0=TOINT(expcircletotal0+_circle)
+					circle0++;
+					_n=1
+					_circle=GetExp(20+10*circle0);
+				}
+				_exp-=_expcircle
+				expcircletotal0-=_expcircle
+				money=TOINT(money-5000);
+			}
+		
+			_expnext=_circle-expcircle0
+			lvl0=GetLevel(_exp);
+			exp0=_exp%GetExp(lvl0);
+			if _n
+			{
+		"转生成功，当前橘花转生等级为%(circle0)级\x";
+			}
+			else
+			"转生失败，还差%(_expnext)转生修为继续转生，下级修为%(_circle)，当前橘花转生等级为%(circle0)级\x";
+	
+		}
+		else
+		{
+		"橘花转生失败，未达到20级，不能转生\x";
+		}
+		--
+		if lvl1>=20
+		{
+			_expcircle=GetExp(lvl1)-GetExp(lvl1-1)
+			_exp=exp1+GetExp(lvl1)
+			_circle=0
+			_n=0;
+			if  _expcircle>0
+			{
+				expcircle1+=_expcircle
+				_circle=GetExp(20+10*circle1);
+				while expcircle1>TOINT(_circle)
+				{
+					expcircle1-=TOINT(_circle)
+					expcircletotal1=TOINT(expcircletotal1+_circle)
+					circle1++;
+					_n=1
+					_circle=GetExp(20+10*circle1);
+				}
+				_exp-=_expcircle
+				expcircletotal1-=_expcircle
+				money=TOINT(money-5000);
+			}
+			_expnext=_circle-expcircle1
+			lvl1=GetLevel(_exp);
+			exp1=_exp%GetExp(lvl1);
+			if _n
+			{
+		"转生成功，斗和转生等级为%(circle1)级\x";
+			}
+			else
+			"转生失败，还差%(_expnext)转生修为继续转生，下级修为%(_circle)，斗和转生等级为%(circle1)级\x";
+
+		}
+		else
+		{
+		"斗和转生失败，未达到20级，不能转生\x";
+		}
+		
+	}
+	else
+	{
+		"转生失败，金钱不足，不能转生，转生一次花费的金钱为10000，请酌情考虑是否转生。\x";
+	}
+	
+
+
+--
+	OpenRpgGameMenu(4);
+
+
+
+}
+
+OnCircleCancel
+{
+	OpenRpgGameMenu(4);
+}
+
+
+
+Onweaponshopmode
+{
+	weaponshopmode = reference0;
+	OpenRpgGameMenu(4);
+}
+
+Onarmorshopmode
+{
+	armorshopmode = reference0;
+	OpenRpgGameMenu(4);
+}
+
+Onitemshopmode
+{
+	itemshopmode = reference0;
+	OpenRpgGameMenu(4);
+}
+
+
+Onmissionclass
+{
+	missionclass = reference0;
+	OpenRpgGameMenu(5);
+}
+
+
+weaponbuy
+{
+	
+	_txt="\n";
+	
+	_txt+="\_l[0,-]名称    \_l[65,-]STR   \_l[110,-]ATS   \_l[155,-]购买价格   \_l[210,-]已有数量\n";
+	foreach weaponA; _i {
+		if lvl>=TOINT(_i[4]-10)
+			
+		{
+			_txt += "\f[color,231,171,109]\_l[0,-]%(_i[2])\f[color,default] \f[color,165,203,214]\_l[65,-]%(_i[6])   \_l[110,-]%(_i[7])\f[color,default]  \f[color,231,171,109]\_l[155,-]%(_i[5])\f[color,default]  \_l[210,-]%(_i[3]) \_l[260,-] \q[购买,Onbuy,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[5])]\n";
+		}
+		
+		
+	}
+	
+	_txt;
+	
+}
+
+
+
+
+
+weaponsell
+{
+	_txt="\n";
+	
+	
+	
+	
+	_txt+="\_l[0,-]名称    \_l[65,-]STR    \_l[110,-]ATS   \_l[155,-]卖出价格   \_l[210,-]已有数量\n";
+	foreach weaponA; _i {
+		if _i[3] > 0
+		{
+			_txt += "\f[color,231,171,109]\_l[0,-]%(_i[2])\f[color,default] \f[color,165,203,214]\_l[65,-]%(_i[6])  \_l[110,-]%(_i[7])\f[color,default]  \f[color,231,171,109]\_l[155,-]%(TOINT(0.6*_i[5]))\f[color,default]  \_l[210,-]%(_i[3]) \_l[260,-] \q[卖出,Onsellnum,%(_i[0]),%(_i[1]),%(_i[2]),%(TOINT(0.6*_i[5]))]\n";
+		}
+		
+	}
+	
+	foreach weaponB; _i {
+		if _i[3] > 0
+		{
+			_txt += "\f[color,231,171,109]\_l[0,-]%(_i[2])\f[color,default] \f[color,165,203,214]\_l[65,-]%(_i[6])  \_l[110,-]%(_i[7])\f[color,default]  \f[color,231,171,109]\_l[155,-]%(TOINT(0.6*_i[5]))\f[color,default]  \_l[210,-]%(_i[3]) \_l[260,-] \q[卖出,Onsellnum,%(_i[0]),%(_i[1]),%(_i[2]),%(TOINT(0.6*_i[5]))]\n";
+		}
+		
+	}
+	
+	
+	_txt;
+	
+	
+	
+}
+
+
+armorbuy
+{
+	_txt="\n"
+		
+		_txt+="\_l[0,-]名称    \_l[65,-]DEF    \_l[95,-]ADF  \_l[120,-]STR  \_l[145,-]ATS \_l[170,-]购买价格   \_l[220,-]已有数量\n";
+	
+	_txt+="──────────防具（体）─────────\n";
+	foreach armorA; _i 
+	{
+		if lvl>=TOINT(_i[4]-15)
+		{
+			_txt += "\f[color,231,171,109]\_l[0,-]%(_i[2])\f[color,default] \f[color,165,203,214]\_l[65,-]%(_i[6])  \_l[95,-]%(_i[7])  \_l[120,-]%(_i[8])  \_l[145,-]%(_i[9])\f[color,default]  \f[color,231,171,109]\_l[170,-]%(_i[5])\f[color,default]  \_l[220,-]%(_i[3]) \_l[260,-] \q[购买,Onbuy,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[5])]\n";
+		}
+	}
+	
+	
+	_txt+="──────────防具（脚）─────────\n";
+	
+	foreach bootsA; _i 
+	{
+		if lvl>=TOINT(_i[4]-20)
+		{
+			_txt += "\f[color,231,171,109]\_l[0,-]%(_i[2])\f[color,default] \f[color,165,203,214]\_l[65,-]%(_i[6])  \_l[95,-]%(_i[7])  \_l[120,-]%(_i[8])  \_l[145,-]%(_i[9])\f[color,default]    \f[color,231,171,109]\_l[170,-]%(_i[5])\f[color,default]  \_l[220,-]%(_i[3]) \_l[260,-] \q[购买,Onbuy,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[5])]\n";
+		}
+	}
+	
+	_txt;
+	
+}
+
+
+armorsell
+{
+	_txt="\n";
+	
+	
+	
+	
+	_txt+="\_l[0,-]名称    \_l[65,-]DEF    \_l[95,-]ADF  \_l[120,-]STR  \_l[145,-]ATS \_l[170,-]卖出价格   \_l[220,-]已有数量\n";
+	_txt+="──────────防具（体）─────────\n";
+	foreach armorA; _i {
+		if _i[3] > 0
+		{
+			_txt += "\f[color,231,171,109]\_l[0,-]%(_i[2])\f[color,default] \f[color,165,203,214]\_l[65,-]%(_i[6])  \_l[95,-]%(_i[7])  \_l[120,-]%(_i[8])  \_l[145,-]%(_i[9])\f[color,default]   \f[color,231,171,109]\_l[170,-]%(TOINT(0.6*_i[5]))\f[color,default]  \_l[220,-]%(_i[3]) \_l[260,-] \q[卖出,Onsellnum,%(_i[0]),%(_i[1]),%(_i[2]),%(TOINT(0.6*_i[5]))]\n";
+		}
+		
+	}
+	
+	foreach armorB; _i {
+		if _i[3] > 0
+		{
+			_txt += "\f[color,231,171,109]\_l[0,-]%(_i[2])\f[color,default] \f[color,165,203,214]\_l[65,-]%(_i[6])  \_l[95,-]%(_i[7])  \_l[120,-]%(_i[8])  \_l[145,-]%(_i[9])\f[color,default]   \f[color,231,171,109]\_l[170,-]%(TOINT(0.6*_i[5]))\f[color,default]  \_l[220,-]%(_i[3]) \_l[260,-] \q[卖出,Onsellnum,%(_i[0]),%(_i[1]),%(_i[2]),%(TOINT(0.6*_i[5]))]\n";
+		}
+		
+	}
+	
+	
+	_txt+="──────────防具（脚）─────────\n";
+	foreach bootsA; _i {
+		if _i[3] > 0
+		{
+			_txt += "\f[color,231,171,109]\_l[0,-]%(_i[2])\f[color,default]  \f[color,165,203,214]\_l[65,-]%(_i[6])  \_l[95,-]%(_i[7])  \_l[120,-]%(_i[8])  \_l[145,-]%(_i[9])\f[color,default] \f[color,231,171,109]\_l[170,-]%(TOINT(0.6*_i[5]))\f[color,default]  \_l[220,-]%(_i[3]) \_l[260,-] \q[卖出,Onsellnum,%(_i[0]),%(_i[1]),%(_i[2]),%(TOINT(0.6*_i[5]))]\n";
+		}
+		
+	}
+	
+	foreach bootsB; _i {
+		if _i[3] > 0
+		{
+			_txt += "\f[color,231,171,109]\_l[0,-]%(_i[2])\f[color,default]   \f[color,165,203,214]\_l[65,-]%(_i[6])  \_l[95,-]%(_i[7])  \_l[120,-]%(_i[8])  \_l[145,-]%(_i[9])\f[color,default]  \f[color,231,171,109]\_l[170,-]%(TOINT(0.6*_i[5]))\f[color,default]  \_l[220,-]%(_i[3]) \_l[260,-] \q[卖出,Onsellnum,%(_i[0]),%(_i[1]),%(_i[2]),%(TOINT(0.6*_i[5]))]\n";
+		}
+		
+	}
+	
+	_txt;
+	
+	
+	
+}
+
+
+
+itembuy
+{
+	
+	_txt="\n";
+	
+	_txt+="\_l[0,-]名称    \_l[80,-]效果    \_l[160,-]购买价格   \_l[220,-]已有数量\n";
+	foreach itemA; _i {
+		
+		_txt += "\f[color,194,243,99]\_l[0,-]%(_i[2])\f[color,default]   \f[color,194,243,99]\_l[80,-]%(_i[5])\f[color,default]  \f[color,231,171,109]\_l[160,-]%(_i[4])\f[color,default]  \_l[220,-]%(_i[3]) \_l[260,-] \q[购买,Onitembuynum,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[4])]\n";
+		
+		
+		
+	}
+	
+	foreach itemB; _i {
+		
+		_txt += "\f[color,165,203,214]\_l[0,-]%(_i[2])\f[color,default]    \f[color,165,203,214]\_l[80,-]%(_i[5])\f[color,default]   \f[color,231,171,109]\_l[160,-]%(_i[4])\f[color,default]  \_l[220,-]%(_i[3]) \_l[260,-] \q[购买,Onitembuynum,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[4])]\n";
+		
+		
+		
+	}
+	
+	_txt;
+	
+}
+
+
+
+itemsell
+{
+	
+	_txt="\n";
+	
+	_txt+="\_l[0,-]名称    \_l[80,-]效果    \_l[160,-]卖出价格   \_l[220,-]已有数量\n";
+	foreach itemA; _i {
+		if _i[3] > 0
+		{
+			_txt += "\f[color,194,243,99]\_l[0,-]%(_i[2])\f[color,default]   \f[color,194,243,99]\_l[80,-]%(_i[5])\f[color,default]    \f[color,231,171,109]\_l[160,-]%(TOINT(0.6*_i[4]))\f[color,default]  \_l[220,-]%(_i[3]) \_l[260,-] \q[卖出,Onsellnum,%(_i[0]),%(_i[1]),%(_i[2]),%(TOINT(0.6*_i[4]))]\n";
+			
+		}
+	}
+	
+	foreach itemB; _i {
+		if _i[3] > 0
+		{
+			_txt += "\f[color,165,203,214]\_l[0,-]%(_i[2])\f[color,default]   \f[color,165,203,214]\_l[80,-]%(_i[5])\f[color,default]    \f[color,231,171,109]\_l[160,-]%(TOINT(0.6*_i[4]))\f[color,default]  \_l[220,-]%(_i[3]) \_l[260,-] \q[卖出,Onsellnum,%(_i[0]),%(_i[1]),%(_i[2]),%(TOINT(0.6*_i[4]))]\n";
+			
+		}
+		
+		  }
+	
+	_txt;
+}
+
+
+Onbuy
+{
+	
+	if  reference4==NULL && reference5==NULL
+	{
+		"\0\s[40]确定花%(reference3)购买%(reference2)？\n/
+			\q[◇是,Onbuy,%(reference0),%(reference1),%(reference2),%(reference3),＆,1]\n/
+			\q[◇否,Onbuy,%(reference0),%(reference1),%(reference2),%(reference3),＆,0]";
+	}
+	if reference4=="＆" && reference5==1
+	{
+		
+		
+		if money>=TOINT(reference3)
+		{      
+			
+			if reference0=="weaponA"
+			{
+				weaponAnum[reference1]=TOINT(weaponAnum[reference1]+1);
+				money-=TOINT(reference3);
+				"\0\s[5]购买成功,花费%(TOINT(reference3))金\x";
+				--
+					OpenRpgGameMenu(4);
+			}
+			
+            elseif reference0=="armorA"
+			{
+                armorAnum[reference1]=TOINT(armorAnum[reference1]+1);
+				money-=TOINT(reference3);
+				"\0\s[5]购买成功,花费%(TOINT(reference3))金\x";
+				--
+					OpenRpgGameMenu(4);
+			}
+            elseif reference0=="bootsA"
+			{
+                bootsAnum[reference1]=TOINT(bootsAnum[reference1]+1);
+				money-=TOINT(reference3);
+				"\0\s[5]购买成功,花费%(TOINT(reference3))金\x";
+				--
+					OpenRpgGameMenu(4);
+			}
+		}
+		
+		else 
+		{
+			"金钱不足，购买失败\x";
+			--
+                OpenRpgGameMenu(4);
+		}
+		
+	}
+	
+	elseif reference4=="＆" && reference5==0
+	{
+		OpenRpgGameMenu(4);
+	}
+    
+	
+}
+
+
+
+
+Onsellnum
+{
+	物品种类=reference0;
+	物品代码=reference1;
+	物品名称=reference2;
+	物品价格=reference3;
+	
+	if reference4==""&&(物品名称==weapon0||物品名称==armor0||物品名称==boots0||物品名称==weapon1||物品名称==armor1||物品名称==boots1)
+	{
+		"当前%(物品名称)正在装备，确定要卖出吗？\n/
+			\q[是,Onsellnum,%(物品种类),%(物品代码),%(物品名称),%(物品价格),yes]\n/
+			\q[不用了,Onsellnum,%(物品种类),%(物品代码),%(物品名称),%(物品价格),no]";
+	}
+	
+	elseif reference4=="yes"
+		"请输入卖出数量\n\![open,inputbox,Onsell]\n\n\n\q[取消,cancelshop]";
+	elseif reference4=="no"
+		OpenRpgGameMenu(4);
+	else
+		"请输入卖出数量\n\![open,inputbox,Onsell]\n\n\n\q[取消,cancelshop]";
+	
+}
+
+
+Select.cancelshop
+{
+	
+	OpenRpgGameMenu(4);
+	
+	
+}
+
+Onsell
+{      
+	if reference0<=0
+	{
+		"请输入大于0的数字\![open,inputbox,Onsell]";
+		
+	}
+	
+	else
+	{
+		
+		卖出数量=reference0;
+		
+		if  reference5==NULL && reference6==NULL
+		{
+			"确定以%(物品价格)的单价卖出%(卖出数量)件%(物品名称)？\n/
+				\q[◇是,Onsell,%(卖出数量),%(物品种类),%(物品代码),%(物品名称),%(物品价格),＆,1]\n/
+				\q[◇否,Onsell,%(卖出数量),%(物品种类),%(物品代码),%(物品名称),%(物品价格),＆,0]";
+		}
+		if reference5=="＆" && reference6==1
+		{
+			if reference1=="weaponA" 
+			{
+				
+				if weaponAnum[reference2]>=卖出数量
+				{ 
+					weaponAnum[reference2]=TOINT(weaponAnum[reference2]-卖出数量);
+					"卖出成功,得到%(TOINT(物品价格*卖出数量))金\x";
+					money+=TOINT(物品价格*卖出数量);
+					--
+						OpenRpgGameMenu(4);
+				}
+				
+				else 
+				{
+					
+					"数量不足,卖出失败\x";
+					--
+						OpenRpgGameMenu(4);
+				}
+				
+			}
+			
+			elseif reference1=="weaponB"
+			{
+				if weaponBnum[reference2]>=卖出数量
+				{
+					weaponBnum[reference2]=TOINT(weaponBnum[reference2]-卖出数量);
+					"卖出成功,得到%(TOINT(物品价格*卖出数量))金\x";
+					money+=TOINT(物品价格*卖出数量);
+					--
+						OpenRpgGameMenu(4);
+				}
+				
+				else 
+				{
+					"%(TOINT(reference2))数量不足,卖出失败\x";
+					--
+						OpenRpgGameMenu(4);
+				}
+				
+				
+			}
+			
+			
+			if reference1=="armorA"
+			{
+				if armorAnum[reference2]>=卖出数量
+				{ 
+					armorAnum[reference2]=TOINT(armorAnum[reference2]-卖出数量);
+					"卖出成功,得到%(TOINT(物品价格*卖出数量))金\x";
+					money+=TOINT(物品价格*卖出数量);
+					--
+						OpenRpgGameMenu(4);
+				}
+				
+				else 
+				{
+					
+					"数量不足,卖出失败\x";
+					--
+						OpenRpgGameMenu(4);
+				}
+				
+			}
+			
+			elseif reference1=="armorB"
+			{
+				if armorBnum[reference2]>=卖出数量
+				{
+					armorBnum[reference2]=TOINT(armorBnum[reference2]-卖出数量);
+					"卖出成功,得到%(TOINT(物品价格*卖出数量))金\x";
+					money+=TOINT(物品价格*卖出数量);
+					--
+						OpenRpgGameMenu(4);
+				}
+				
+				else 
+				{
+					"数量不足,卖出失败\x";
+					--
+						OpenRpgGameMenu(4);
+				}
+				
+				
+			}
+			
+			elseif reference1=="bootsA"
+			{
+				if bootsAnum[reference2]>=卖出数量
+				{
+					bootsAnum[reference2]=TOINT(bootsAnum[reference2]-卖出数量);
+					"卖出成功,得到%(TOINT(物品价格*卖出数量))金\x";
+					money+=TOINT(物品价格*卖出数量);
+					--
+						OpenRpgGameMenu(4);
+				}
+				
+				else 
+				{
+					"数量不足,卖出失败\x";
+					--
+						OpenRpgGameMenu(4);
+				}
+				
+				
+			}
+			
+			
+			elseif reference1=="bootsB"
+			{
+				if bootsBnum[reference2]>=卖出数量
+				{
+					bootsBnum[reference2]=TOINT(bootsBnum[reference2]-卖出数量);
+					"卖出成功,得到%(TOINT(物品价格*卖出数量))金\x";
+					money+=TOINT(物品价格*卖出数量);
+					--
+						OpenRpgGameMenu(4);
+				}
+				
+				else 
+				{
+					"数量不足,卖出失败\x";
+					--
+						OpenRpgGameMenu(4);
+				}
+				
+			}
+			
+			elseif reference1=="itemA"
+			{
+				if itemAnum[reference2]>=卖出数量
+				{ 
+					itemAnum[reference2]=TOINT(itemAnum[reference2]-卖出数量);
+					"卖出成功,得到%(TOINT(物品价格*卖出数量))金\x";
+					money+=TOINT(物品价格*卖出数量);
+					--
+						OpenRpgGameMenu(4);
+				}
+				
+				else 
+				{
+					
+					"数量不足,卖出失败\x";
+					--
+						OpenRpgGameMenu(4);
+				}
+				
+			}
+			
+			elseif reference1=="itemB"
+			{
+				if itemBnum[reference2]>=卖出数量
+				{
+					itemBnum[reference2]=TOINT(itemBnum[reference2]-卖出数量);
+					"卖出成功,得到%(TOINT(物品价格*卖出数量))金\x";
+					money+=TOINT(物品价格*卖出数量);
+					--
+						OpenRpgGameMenu(4);
+				}
+				
+				else 
+				{
+					"数量不足,卖出失败\x";
+					--
+						OpenRpgGameMenu(4);
+				}
+				
+				
+			}
+			
+			
+       }
+	   
+	   
+	   elseif reference4=="＆" && reference5==0
+	   {
+		   OpenRpgGameMenu(4);
+	   }
+	   
+}
+}
+
+
+
+
+Onitembuynum
+{
+	道具种类=reference0;
+	道具代码=reference1;
+	道具名称=reference2;
+	道具价格=reference3;	
+	"\0\s[40]请输入购买数量\n\![open,inputbox,Onitembuy]\n/
+		\n\n\q[取消,cancelshop]";
+		
+}
+
+
+
+
+
+
+Onitembuy
+{
+	if reference0<=0
+    {
+		"\0\s[40]请输入大于0的数字\![open,inputbox,Onsell]";
+		
+		
+		
+    }
+	
+	else
+	{
+		
+		
+		
+		购买数量=reference0
+			if  reference5==NULL && reference6==NULL
+			{     
+				"确定以%(道具价格)的单价购买%(购买数量)件%(道具名称)？\n/
+					\q[◇是,Onitembuy,%(购买数量),%(道具种类),%(道具代码),%(道具名称),%(道具价格),＆,1]\n/
+					\q[◇否,Onitembuy,%(购买数量),%(道具种类),%(道具代码),%(道具名称),%(道具价格),＆,0]";
+			}
+			if reference5=="＆" && reference6==1
+			{
+		        if   money>=TOINT(道具价格*购买数量)
+                             {
+                                money-=TOINT(道具价格*购买数量);
+				if reference1=="itemA"
+                                {
+					itemAnum[reference2]=TOINT(itemAnum[reference2]+购买数量);
+                                      
+					"购买成功,花费%(道具价格*购买数量)金\x";
+					--
+						OpenRpgGameMenu(4);
+				}
+				elseif reference1=="itemB"
+                                {
+					itemBnum[reference2]=TOINT(itemBnum[reference2]+购买数量);
+						"购买成功,花费%(道具价格*购买数量)金\x"
+						--
+						OpenRpgGameMenu(4);
+				}
+			 }
+                       	else 
+	             	{
+			"金钱不足，购买失败\x";
+			--
+                          OpenRpgGameMenu(4);
+	            	}
+                        	
+				
+			}
+			
+			elseif reference5=="＆" && reference6==0
+			{
+				OpenRpgGameMenu(4);
+			}
+	}  
+}
+
+
+
+
+
+mission
+{
+	
+	RpgGameVar;
+	if hp0==0
+	{
+		hp0=TOINT(0.1*hpmax0);
+	}
+	
+	if hp1==0
+	{
+		hp1=TOINT(0.1*hpmax1);
+	}
+	
+	if missionclass == 0{
+		"\n" + ColorText("\__q[Onmissionclass,1]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]──────────D级任务↓─────────\f[cursorstyle,default]\f[cursorfontcolor,default]\__q\n","color=160,160,200");
+		--
+			missionclassD;
+		
+	}
+	
+	
+	
+	elseif missionclass == 1{
+		"\n" + ColorText("\__q[Onmissionclass,2]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]──────────C级任务↓─────────\f[cursorstyle,default]\f[cursorfontcolor,default]\__q\n","color=160,160,200");
+		--
+			missionclassC;
+		
+	}
+	
+	
+	elseif missionclass == 2{
+		"\n" + ColorText("\__q[Onmissionclass,3]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]──────────B级任务↓─────────\f[cursorstyle,default]\f[cursorfontcolor,default]\__q\n","color=160,160,200");
+		--
+			missionclassB;
+		
+	}
+	
+	elseif missionclass == 3{
+		"\n" + ColorText("\__q[Onmissionclass,4]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]──────────A级任务↓─────────\f[cursorstyle,default]\f[cursorfontcolor,default]\__q\n","color=160,160,200");
+		--
+			missionclassA;
+		
+	}
+	
+	elseif missionclass == 4{
+		"\n" + ColorText("\__q[Onmissionclass,0]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]──────────S级任务↓───────── \f[cursorstyle,default]\f[cursorfontcolor,default]\__q\n","color=160,160,200");
+		--
+			missionclassS;
+		
+	}	
+	--
+		battlenum=victorynum+battlefailednum+escapenum;
+	"\_l[-,250]\n履历：\n/
+		战斗次数：     %(battlenum)\n/
+		战斗胜利次数： %(victorynum)（%(100.0*victorynum/battlenum)%）\n/
+		战斗不能次数： %(losehpnum)\n/
+		战斗失败次数： %(battlefailednum)（%(100.0*battlefailednum/battlenum)%）\_l[240,-]\q[养成界面,OnKikkaMenu,2]\n/
+		逃跑次数：     %(escapenum)（%(100.0*escapenum/battlenum)%）       \_l[240,-]\q[退出冒险,Onesc]";
+		
+		
+}
+
+
+
+
+
+
+missionclassD
+{
+	
+	"\q[领取奖励,Onaward]\n/
+		\__q[Onmission,D,1]在农场消灭10只怪物，赏金%(TOINT(0.5*50*lvl))\__q   \n/
+		\__q[Onmission,D,1.1]在平原消灭10只怪物，赏金%(TOINT(0.5*1.1*50*lvl))\__q   \n/
+		\__q[Onmission,D,1.2]在山地消灭10只怪物，赏金%(TOINT(0.5*1.2*50*lvl))\__q   \n/
+		\__q[Onmission,D,1.3]在河谷消灭10只怪物，赏金%(TOINT(0.5*1.3*50*lvl))\__q   \n/
+		\__q[Onmission,D,1.4]在山谷消灭10只怪物，赏金%(TOINT(0.5*1.4*50*lvl))\__q   \n/
+		\__q[Onmission,D,1.5]在湿地消灭10只怪物，赏金%(TOINT(0.5*1.5*50*lvl))\__q   \n/
+		\__q[Onmission,D,1.6]在地下封印区入口消灭10只怪物，赏金%(TOINT(0.5*1.6*50*lvl))\__q   \n/
+		\__q[Onmission,D,1.7]在地下封印区上层消灭10只怪物，赏金%(TOINT(0.5*1.7*50*lvl))\__q   \n/
+		\__q[Onmission,D,1.8]在地下封印区中层消灭10只怪物，赏金%(TOINT(0.5*1.8*50*lvl))\__q   \n/
+		\__q[Onmission,D,1.9]在地下封印区下层消灭10只怪物，赏金%(TOINT(0.5*1.9*50*lvl))\__q   \n/
+		\__q[Onmission,D,2]在地下封印区核心消灭10只怪物，赏金%(TOINT(0.5*2*50*lvl))/%(TOINT(0.5*4*50*lvl))\__q   \n/
+		";
+}
+
+missionclassC
+{
+	
+	"\q[领取奖励,Onaward]\n/
+		\__q[Onmission,C,1]在农场消灭10只怪物，赏金%(TOINT(1*50*lvl))\__q  \n/
+		\__q[Onmission,C,1.1]在平原消灭10只怪物，赏金%(TOINT(1*1.1*50*lvl))\__q   \n/
+		\__q[Onmission,C,1.2]在山地消灭10只怪物，赏金%(TOINT(1*1.2*50*lvl))\__q   \n/
+		\__q[Onmission,C,1.3]在河谷消灭10只怪物，赏金%(TOINT(1*1.3*50*lvl))\__q   \n/
+		\__q[Onmission,C,1.4]在山谷消灭10只怪物，赏金%(TOINT(1*1.4*50*lvl))\__q   \n/
+		\__q[Onmission,C,1.5]在湿地消灭10只怪物，赏金%(TOINT(1*1.5*50*lvl))\__q   \n/
+		\__q[Onmission,C,1.6]在地下封印区入口消灭10只怪物，赏金%(TOINT(1*1.6*50*lvl))\__q   \n/
+		\__q[Onmission,C,1.7]在地下封印区上层消灭10只怪物，赏金%(TOINT(1*1.7*50*lvl))\__q   \n/
+		\__q[Onmission,C,1.8]在地下封印区中层消灭10只怪物，赏金%(TOINT(1*1.8*50*lvl))\__q   \n/
+		\__q[Onmission,C,1.9]在地下封印区下层消灭10只怪物，赏金%(TOINT(1*1.9*50*lvl))\__q   \n/
+		\__q[Onmission,C,2]在地下封印区核心消灭10只怪物，赏金%(TOINT(1*2*50*lvl))/%(TOINT(1*5*50*lvl))\__q   \n/
+		";
+}
+
+
+
+missionclassB
+{
+	
+	"\q[领取奖励,Onaward]\n/
+		\__q[Onmission,B,1]在农场消灭10只怪物，赏金%(TOINT(2*50*lvl))\__q   \n/
+		\__q[Onmission,B,1.1]在平原消灭10只怪物，赏金%(TOINT(2*1.1*50*lvl))\__q   \n/
+		\__q[Onmission,B,1.2]在山地消灭10只怪物，赏金%(TOINT(2*1.2*50*lvl))\__q   \n/
+		\__q[Onmission,B,1.3]在河谷消灭10只怪物，赏金%(TOINT(2*1.3*50*lvl))\__q   \n/
+		\__q[Onmission,B,1.4]在山谷消灭10只怪物，赏金%(TOINT(2*1.4*50*lvl))\__q   \n/
+		\__q[Onmission,B,1.5]在湿地消灭10只怪物，赏金%(TOINT(2*1.5*50*lvl))\__q   \n/
+		\__q[Onmission,B,1.6]在地下封印区入口消灭10只怪物，赏金%(TOINT(2*1.6*50*lvl))\__q   \n/
+		\__q[Onmission,B,1.7]在地下封印区上层消灭10只怪物，赏金%(TOINT(2*1.7*50*lvl))\__q   \n/
+		\__q[Onmission,B,1.8]在地下封印区中层消灭10只怪物，赏金%(TOINT(2*1.8*50*lvl))\__q   \n/
+		\__q[Onmission,B,1.9]在地下封印区下层消灭10只怪物，赏金%(TOINT(2*1.9*50*lvl))\__q   \n/
+		\__q[Onmission,B,2]在地下封印区核心消灭10只怪物，赏金%(TOINT(2*2*50*lvl))/%(TOINT(2*6*50*lvl))\__q   \n/
+		";
+}
+
+
+
+missionclassA
+{
+	
+	"\q[领取奖励,Onaward]\n/
+		\__q[Onmission,A,1]在农场消灭10只怪物，赏金%(TOINT(4*50*lvl))\__q   \n/
+		\__q[Onmission,A,1.1]在平原消灭10只怪物，赏金%(TOINT(4*1.1*50*lvl))\__q   \n/
+		\__q[Onmission,A,1.2]在山地消灭10只怪物，赏金%(TOINT(4*1.2*50*lvl))\__q   \n/
+		\__q[Onmission,A,1.3]在河谷消灭10只怪物，赏金%(TOINT(4*1.3*50*lvl))\__q   \n/
+		\__q[Onmission,A,1.4]在山谷消灭10只怪物，赏金%(TOINT(4*1.4*50*lvl))\__q   \n/
+		\__q[Onmission,A,1.5]在湿地消灭10只怪物，赏金%(TOINT(4*1.5*50*lvl))\__q   \n/
+		\__q[Onmission,A,1.6]在地下封印区入口消灭10只怪物，赏金%(TOINT(4*1.6*50*lvl))\__q   \n/
+		\__q[Onmission,A,1.7]在地下封印区上层消灭10只怪物，赏金%(TOINT(4*1.7*50*lvl))\__q   \n/
+		\__q[Onmission,A,1.8]在地下封印区中层消灭10只怪物，赏金%(TOINT(4*1.8*50*lvl))\__q   \n/
+		\__q[Onmission,A,1.9]在地下封印区下层消灭10只怪物，赏金%(TOINT(4*1.9*50*lvl))\__q   \n/
+		\__q[Onmission,A,2]在地下封印区核心消灭10只怪物，赏金%(TOINT(4*2*50*lvl))/%(TOINT(4*7*50*lvl))\__q   \n/
+		";
+}
+
+
+missionclassS
+{
+	
+	"\q[领取奖励,Onaward]\n/
+		\__q[Onmission,S,1]在农场消灭10只怪物，赏金%(TOINT(8*50*lvl))\__q   \n/
+		\__q[Onmission,S,1.1]在平原消灭10只怪物，赏金%(TOINT(8*1.1*50*lvl))\__q   \n/
+		\__q[Onmission,S,1.2]在山地消灭10只怪物，赏金%(TOINT(8*1.2*50*lvl))\__q   \n/
+		\__q[Onmission,S,1.3]在河谷消灭10只怪物，赏金%(TOINT(8*1.3*50*lvl))\__q   \n/
+		\__q[Onmission,S,1.4]在山谷消灭10只怪物，赏金%(TOINT(8*1.4*50*lvl))\__q   \n/
+		\__q[Onmission,S,1.5]在湿地消灭10只怪物，赏金%(TOINT(8*1.5*50*lvl))\__q   \n/
+		\__q[Onmission,S,1.6]在地下封印区入口消灭10只怪物，赏金%(TOINT(8*1.6*50*lvl))\__q   \n/
+		\__q[Onmission,S,1.7]在地下封印区上层消灭10只怪物，赏金%(TOINT(8*1.7*50*lvl))\__q   \n/
+		\__q[Onmission,S,1.8]在地下封印区中层消灭10只怪物，赏金%(TOINT(8*1.8*50*lvl))\__q   \n/
+		\__q[Onmission,S,1.9]在地下封印区下层消灭10只怪物，赏金%(TOINT(8*1.9*50*lvl))\__q   \n/
+		\__q[Onmission,S,2]在地下封印区核心消灭10只怪物，赏金%(TOINT(8*2*50*lvl))/%(TOINT(8*8*50*lvl))\__q   \n/
+		";
+}
+
+
+Onaward
+{
+	
+    if award==1 && class=="D"
+	{
+		money+=TOINT(0.5*level*50*lvl);
+		"\0\s[5]已领取D级任务奖励，得到%(TOINT(0.5*level*50*lvl))金\x";
+		
+		award=0;
+		
+		--
+			OpenRpgGameMenu(5);
+	}
+	
+	
+	elseif award==1 && class=="C"
+	{
+		money+=TOINT(1*level*50*lvl);
+		"\0\s[5]已领取C级任务奖励，得到%(TOINT(level*1*50*lvl))金\x";
+		award=0;
+		--
+			OpenRpgGameMenu(5);
+	}
+	
+	
+	
+	elseif award==1 && class=="B"
+	{
+		money+=TOINT(2*level*50*lvl);
+		"\0\s[5]已领取B级任务奖励，得到%(TOINT(level*2*50*lvl))金\x";
+		award=0;
+		--
+			OpenRpgGameMenu(5);
+	}
+	
+	
+	elseif award==1 && class=="A"
+	{
+		money+=TOINT(4*level*50*lvl);
+		"\0\s[5]已领取A级任务奖励，得到%(TOINT(level*4*50*lvl))金\x";
+		award=0;
+		--
+			OpenRpgGameMenu(5);
+	}
+	
+	elseif award==1 && class=="S"
+	{
+		money+=TOINT(8*level*50*lvl);
+		"\0\s[5]已领取S级任务奖励，得到%(TOINT(level*8*50*lvl))金\x";
+		award=0;
+		--
+			OpenRpgGameMenu(5);
+	}
+		
+	else
+	{
+		"\0\s[8]未达到奖励条件，领取失败\x";
+		--
+			OpenRpgGameMenu(5);
+	}
+	
+	
+}
+
+Onmission
+{
+	class=reference0;
+	level=reference1;
+	RpgGameVar;
+	mnum=0;
+	award=0;
+	if level==1
+	{
+		"橘花和斗和来到了农场\x";
+	}
+	
+	elseif level==1.1
+	{
+		"橘花和斗和来到了平原\x";
+	}
+	
+	elseif level==1.2
+	{
+		"橘花和斗和来到了山地\x";
+	}
+	
+	elseif level==1.3
+	{
+		"橘花和斗和来到了河谷\x";
+	}
+	
+	elseif level==1.4
+	{
+		"橘花和斗和来到了山谷\x";
+	}
+	
+	elseif level==1.5
+	{
+		"橘花和斗和来到了湿地\x";
+	}
+	
+	elseif level==1.6
+	{
+		"橘花和斗和来到了地下封印区入口\x";
+	}
+	
+	elseif level==1.7
+	{
+		"橘花和斗和来到了在地下封印区上层\x";
+	}
+	
+	elseif level==1.8
+	{
+		"橘花和斗和来到了地下封印区中层\x";
+	}
+	
+	elseif level==1.9
+	{
+		"橘花和斗和来到了地下封印区下层\x";
+	}
+	
+	elseif level==2
+	{
+		"橘花和斗和来到了地下封印区核心\x";
+		
+	}
+	
+	--
+		Onbattle;
+	
+}
+
+Onbattle
+{
+	
+	battlemode=2;
+	f=RAND(100);
+	if f>15 && f<=50
+	{
+		"什么也没发现。\n/
+			\q[继续逛,Onbattle]\n/
+			\q[休息一下,On休息]\n/
+			\q[回去吧,back]";
+	}
+	elseif f>5 && f<=15
+	{
+		i=RAND(9);
+		if i<5
+		{
+			"发现%(itemA[(mlv/18)%5][2])\n/
+				\q[继续逛,Onbattle]\n/
+				\q[休息一下,On休息]\n/
+				\q[回去吧,back]";
+				itemAnum[(mlv/18)%5]=TOINT(itemAnum[(mlv/18)%5]+1);
+			
+		}
+		
+		elseif i>=5
+		{
+			"发现%(itemB[(mlv/18)%5][2])\n/
+				\q[继续逛,Onbattle]\n/
+				\q[休息一下,On休息]\n/
+				\q[回去吧,back]";
+				itemBnum[(mlv/18)%5]=TOINT(itemBnum[(mlv/18)%5]+1);
+		}
+	}
+	
+	
+	elseif f<=5
+	{
+		"发现%(5*mlv)金\n/
+			\q[继续逛,Onbattle]\n/
+			\q[休息一下,On休息]\n/
+			\q[回去吧,back]";
+			money+=5*mlv;
+	}
+	
+	elseif f>50
+	{
+
+		if mnum==9
+		{
+			b=RAND(2);
+			if b==1 && level==2
+			{
+				怪物名字="幻想乐曲复合体";
+				"发现终级BOSS：%(怪物名字),要退却吗？\n/
+					\q[退却,Onbattle]\n/
+					\q[迎战,Onbossfight]";
+			}
+	                else
+			{
+				怪物名字=monster;
+				"发现%(怪物名字),进入战斗\x";
+				--
+					Onbattleinter;
+			}
+		}
+		else
+		{
+			怪物名字=monster;
+			"发现%(怪物名字),进入战斗\x";
+			--
+				Onbattleinter;
+		}
+		
+		
+		
+	}
+	
+	
+}
+
+Onbattleinter
+{
+	ANG=1;
+	STRADD=1;
+	DEFADD=1;
+	DEFMINUS=1;
+	IGN=1;
+	MIGN=1;
+	MANG=1;
+	MSTRADD=1;
+	MDEFADD=1;
+	MDEFMINUS=1;
+        SILENT=0;
+	bosslevel=1;
+	if _argc>0
+		bosslevel=_argv[0]
+	if class=="D" 
+	{  
+		怪物魔防=-2;
+		mlvx=RAND(3+mcircle);
+		RpgGameVar;
+		
+		battlebegin(bosslevel*level*mhpmaxD,mstrD,mdefD,matsD,madfD,1);
+	}
+	
+	elseif class=="C"
+	{  
+		怪物魔防=-1;
+		mlvx=RAND(6+2*mcircle);
+		RpgGameVar;
+		
+		battlebegin(bosslevel*level*mhpmaxC,mstrC,mdefC,matsC,madfC,2);
+	}
+	
+	elseif class=="B"
+	{ 
+		怪物魔防=0;
+		mlvx=RAND(9+3*mcircle);
+		RpgGameVar;
+		battlebegin(bosslevel*level*mhpmaxB,mstrB,mdefB,matsB,madfB,4);
+	}
+	elseif class=="A"
+	{
+		怪物魔防=1;
+		mlvx=RAND(12+4*mcircle);
+		RpgGameVar;             
+		battlebegin(bosslevel*level*mhpmaxA,mstrA,mdefA,matsA,madfA,8);
+	}
+	
+	elseif class=="S"
+	{
+		怪物魔防=1;
+		mlvx=RAND(15+5*mcircle);
+		RpgGameVar;             
+		battlebegin(bosslevel*level*mhpmaxS,mstrS,mdefS,matsS,madfS,16);
+	}
+}
+
+Onbossfight
+{
+
+if class=="D"
+	level=4;
+elseif class=="C"
+	level=5;
+elseif class=="B"
+	level=6;
+elseif class=="A"
+	level=7;
+elseif class=="S"
+	level=8;
+
+		Onbattleinter(2);
+	
+}
+
+monster
+{
+	if level==1
+	{
+		"黄鼠狼怪";
+		"田鼠怪";
+		"菠萝怪";
+	}
+	
+	
+	elseif level==1.1
+	{
+		"野猪怪"
+			"黑熊怪"
+			"大蜥蜴"
+	}
+	
+	elseif level==1.2
+	{
+		"野狼怪";
+		"剑齿兽";
+		"食人怪";
+	}
+	
+	elseif level==1.3
+	{
+		"剪刀蟹";
+		"暴躁气泡";
+		"骸骨鱼";
+	}
+	
+	elseif level==1.4
+	{
+		"剑齿吸血魔";
+		"烈炎草";
+	}
+	
+	elseif level==1.5
+	{
+		"贪婪锷鱼";
+		"凶暴巨锷";
+	}
+	
+    elseif level==1.6
+	{
+		"侦察飞行器";
+		"机械守卫";
+	}
+	
+    elseif level==1.7
+	{
+		"光子裁决";
+		"高能装甲";
+		
+	}
+	
+	elseif level==1.8
+	{
+		"毁灭者D型";
+		"毁灭者S型";
+		"毁灭者M型";
+	}
+	
+	elseif level==1.9
+	{
+		"守护之臂R";
+		"守护之臂L";
+	}
+	
+	
+	elseif level==2
+	{
+		"幻想乐曲";
+		"幻想乐曲II";
+		"幻想乐曲III";
+	}
+	
+	
+}
+
+
+battleinfo
+{
+	
+	
+	if cp0>200
+	{ 
+		cp0=200;
+	}
+    if cp1>200
+	{
+		cp1=200;
+	}
+	
+	
+	战技0=("0,助威,辅助,复体,3,20,STR+50%","1,双管齐下,攻击,单体,15,20,-100,2","2,列波三连射,攻击,单体,20,20,325,3","3,金刚击,攻击,单体,25,20,驱动解除,1","4,欢乐激发,回复,复体,26,20,3000","5,樱花排击炮,攻击S,单体,3,100,1000,10","6,橘花排击炮,攻击S,单体,24,100,1200,12","7,真·双管齐下,攻击,单体,43,30,600,6","8,真·列波三连射,攻击,单体,67,40,900,9","9,真·金刚击,攻击,单体,70,50,驱动解除,9","10,欢乐激发2,回复,复体,67,25,6000","11,真·樱花排击炮,攻击S,单体,80,100,2800,28","13,真·橘花排击炮,攻击S,单体,100,100,3200,32","14,奥义·天下无双,攻击S,单体,120,100,4800,48");
+	
+	战技1=("0,双连击,攻击,单体,3,20,-100,2","1,烈火取栗,攻击,单体,15,20,-100,3","2,爱的轨迹,攻击,单体,26,20,325,3","3,安魂曲,攻击S,单体,3,100,1000,10","4,女王之怒,攻击S,单体,24,100,1200,12","5,真·烈火取栗,攻击,单体,43,30,600,6","6,真·爱的轨迹,攻击,单体,67,40,900,9","7,真·安魂曲,攻击S,单体,80,100,2800,28","8,真·女王之怒,攻击S,单体,100,100,3200,32","9,奥义·量子风暴,攻击S,单体,120,100,4800,48");
+	
+	--
+		
+		"\![quicksession,true]\1\![set,choicetimeout,0]\_l[0,0]橘花%(kikka)\f[color,231,171,109]等级\f[color,default]%(lvl0) \f[color,231,171,109]Next\f[color,default]%(nextexp0) \_l[150,-]斗和%(towa)\f[color,231,171,109]等级\f[color,default]%(lvl1) \f[color,231,171,109]Next\f[color,default]%(nextexp1)\n/
+		\f[color,231,171,109]HP\f[color,default]\_l[30,-]%(hp0)/%(hpmax0) %(ColorBar(6,20,hp0,hpmax0)) \_l[150,-]\f[color,231,171,109]HP\f[color,default]\_l[180,-]%(hp1)/%(hpmax1) %(ColorBar(6,170,hp1,hpmax1))\n/    
+        \f[color,231,171,109]EP\f[color,default]\_l[30,-]%(ep0)/%(epmax0) %(ColorBar(3,20,ep0,epmax0)) \_l[150,-]\f[color,231,171,109]EP\f[color,default]\_l[180,-]%(ep1)/%(epmax1) %(ColorBar(3,170,ep1,epmax1))\n/ 
+        \f[color,231,171,109]CP\f[color,default]\_l[30,-]%(cp0)/%(cpmax) %(ColorBar(9,20,cp0,cpmax)) \_l[150,-]\f[color,231,171,109]CP\f[color,default]\_l[180,-]%(cp1)/%(cpmax) %(ColorBar(9,170,cp1,cpmax))\n/
+		
+		\_l[0,-]\__q[OnMonsterInfo]Class%(class)怪物\__q  \f[color,231,171,109]Level \f[color,default]%(mlv)  \_l[150,-]\f[color,231,171,109]HP \f[color,default]  %(ColorBar(6,170,mhp,mhpmax)) \_l[180,-]%(mhp)/%(mhpmax)\n";
+}
+
+
+OnMonsterInfo
+{
+	"\1%(怪物名字)属性攻击有效率：\n/
+		水：%(TOINT(100*水有效率))\n/
+		火：%(TOINT(100*火有效率))\n/
+		土：%(TOINT(100*土有效率))\n/
+		风：%(TOINT(100*风有效率))  \_l[170,-]\q[返回,backtoinfo]";
+		
+}
+
+
+Select.backtoinfo
+{
+	if battlemode==1
+	{
+		if kikka==1 && towa==0&&hp0>0||hp1==0
+			Onbattleselect0;
+		elseif kikka==0 && towa==1&&hp1>0||hp0==0
+			Onbattleselect1;
+	}
+	elseif battlemode==2
+		Onbattle;
+	else
+		OnRpgGame(5);
+
+}
+
+
+
+
+battlebegin
+{
+	
+	battlemode=1;
+	if hp0==0
+	{
+		hp0=TOINT(0.1*hpmax0);
+	}
+	
+	if hp1==0
+	{
+		hp1=TOINT(0.1*hpmax1);
+	}
+	mhpmax=TOINT(_argv[0]);
+	mhp=mhpmax;
+	助威回合=-1;
+	嚎叫回合=-1;
+	示威回合=-1;
+	黑暗诅咒回合=-1;
+	噬血诅咒回合=-1;
+        威胁回合=-1;
+        挑逗回合=-1
+        忽略回合=-1
+        敌视回合=-1
+        愤怒暴发回合=-1
+        禁寂之音回合=-1
+	mstr=_argv[1];
+	mdef=_argv[2];
+	mats=_argv[3];
+	madf=_argv[4];
+	bata =_argv[5];
+	kikka=1;
+	towa=0;
+	battleturn=0;
+	magicready0=0;
+	magicready1=0;
+	mmagicready=-1;
+	kikkadefend=0;
+	towadefend=0;
+	mdefend=0;
+	
+
+
+
+
+	if level==1
+	{
+		水有效率=1.3;
+		火有效率=1.3;
+		土有效率=1;
+		风有效率=1;
+	}
+	
+	elseif level==1.1
+	{
+		水有效率=1.3;
+		火有效率=1.3;
+		土有效率=1;
+		风有效率=1;
+	}
+	
+	elseif level==1.2
+	{
+		水有效率=1.3;
+		火有效率=1.3;
+		土有效率=1;
+		风有效率=1;
+	}
+	
+	elseif level==1.3
+	{
+		水有效率=0.6;
+		火有效率=1.4;
+		土有效率=1;
+		风有效率=1;
+	}
+	
+	elseif level==1.4
+	{
+		水有效率=1.5;
+		火有效率=0.6;
+		土有效率=1;
+		风有效率=1;
+	}
+	
+	elseif level==1.5
+	{
+		水有效率=0.5;
+		火有效率=1.5;
+		土有效率=1;
+		风有效率=1;
+	}
+	
+	elseif level==1.6
+	{
+		水有效率=1;
+		火有效率=1;
+		土有效率=1.2;
+		风有效率=0.8;
+	}
+	
+	elseif level==1.7
+	{
+		水有效率=1.2;
+		火有效率=1.2;
+		土有效率=1.2;
+		风有效率=1.2;
+	}
+	
+	else
+	{
+		水有效率=1;
+		火有效率=1;
+		土有效率=1;
+		风有效率=1;
+	}
+	
+	
+	RpgGameVar;
+				--
+					Onbattleselect;
+				
+				
+				
+				
+}
+
+
+
+Onbattleselect
+{
+_txt=""
+	if mhp <= 0
+	{
+		mhp = 0;;
+	}
+	if hp0<0
+	{
+		hp0=0;
+		losehpnum+=1;
+		magicready0=0;
+		_txt+="\0\s[35]橘花失去战斗能力\x";
+	}     
+		if hp1<0
+		{
+			hp1=0;
+			losehpnum+=1;
+			magicready1=0;
+			_txt+="斗和失去战斗能力\x";
+		}
+
+
+
+
+			if battleturn==0 && hp0>0  && mhp>0
+			{
+				
+				kikka=1;
+				towa=0;
+				battleturn=(battleturn+1)%2;
+			       	_txt+=Onbattleselect0;
+	
+			}
+		
+	                  elseif battleturn==0 && hp0==0 &&hp1>0 && mhp>0
+			{
+				kikka=0;
+				towa=1;
+                             battleturn=(battleturn+1)%2;
+                             _txt+=Onbattleselect1; 
+                        }
+
+			elseif battleturn==1 && hp1>0  && mhp>0
+			{
+				_txt+=战技回合判定;
+				kikka=0;
+				towa=1;
+				battleturn=(battleturn+1)%2;
+				_txt+=Onbattleselect1;
+			}
+			elseif battleturn==1 && hp1==0&&hp0>0 && mhp>0
+	               {
+				kikka=1;
+				towa=0;
+                                battleturn=(battleturn+1)%2;
+                                _txt+=Onbattleselect0;
+ 
+                        }
+			
+                	elseif hp0==0 && hp1==0 && mhp>0
+			{
+				_txt+="战斗失败，回到主目录\x";
+				battlefailednum+=1;
+                                battlemode=0;
+				_txt+=OpenRpgGameMenu(5);
+				
+			}
+			
+			elseif hp0>0 && hp1>0 && mhp==0
+			{
+				_txt+="\t\0\s[5]战斗胜利了。\x";
+			        _txt+=战斗结束;
+			}
+			elseif hp0>0 && hp==0 && mhp==0
+			{
+				_txt+="\t\0\s[5]战斗胜利了。\x";
+				_txt+=战斗结束;
+			}
+			
+			elseif hp0==0 && hp1>0 && mhp==0
+			{
+				_txt+="\t\0\s[5]战斗胜利了。\x";
+				_txt+=战斗结束;
+			}
+
+				_txt+=battleinfo;
+                	_txt;		
+}
+
+
+
+
+
+
+Onbattleselect0
+{
+	if magicready0==1
+	{
+		准备魔法0;
+	}
+	else
+	{
+		"\0\s[26]橘花应该\n"
+                   --
+                       if SILENT==1
+                    "\f[color,192,192,192]攻击\f[color,default]\n" 
+                       else
+			"\q[攻击,attack0]\n"
+                        --
+			"\q[魔法,Onmagic,0,targetmode]\n"
+                        --
+                        if SILENT==1
+                        "\f[color,192,192,192]战技\f[color,default]\n" 
+                        else
+			"\q[战技,spattack0]\n"
+                        --
+			"\q[道具,item0]\n/
+			\q[逃跑,escape]";
+	}
+	--
+		battleinfo;
+	
+}
+
+
+Onbattleselect1
+{
+	if magicready1==1
+	{
+		准备魔法1;
+	}
+	else
+	{
+		if towashell==0
+		{
+			"\0\s[26]当前斗和形态为人形态,斗和应该\n"
+                            --
+			                       if SILENT==1
+                    "\f[color,192,192,192]攻击\f[color,default]\n" 
+                       else
+			"\q[攻击,attack1]\n"
+                           --
+				"\q[吸烟,smoke]\n/
+				\q[魔法,Onmagic,1,targetmode]\n"
+			--
+                        if SILENT==1
+                        "\f[color,192,192,192]战技\f[color,default]\n" 
+                        else
+			"\q[战技,spattack1]\n"
+                        --
+				"\q[道具,item1]\n/
+				\q[逃跑,escape]";
+		}
+		
+		if towashell==1
+		{
+			"\0\s[26]当前斗和形态为动物形态,斗和应该\n"
+                         --
+			                       if SILENT==1
+                    "\f[color,192,192,192]攻击\f[color,default]\n" 
+                       else
+			"\q[攻击,attack1]\n"
+                             --
+				"\q[吸烟,smoke]\n"
+                              --
+                            if SILENT==1
+                           "\f[color,192,192,192]兽技\f[color,default]\n" 
+                              else
+				"\q[兽技,beastsp]\n"
+                                  --
+				"\q[道具,item1]\n/
+				\q[逃跑,escape]";
+		}
+		
+		if towashell==2
+		{
+			"\0\s[26]当前斗和形态为半兽形态,斗和应该\n"
+                          --
+			                       if SILENT==1
+                    "\f[color,192,192,192]攻击\f[color,default]\n" 
+                       else
+			"\q[攻击,attack1]\n"
+                          --
+				"\q[吸烟,smoke]\n/
+				\q[魔法,Onmagic,1,targetmode]\n"
+			--
+                        if SILENT==1
+                        "\f[color,192,192,192]战技\f[color,default]\n" 
+                        else
+			"\q[战技,spattack1]\n"
+                        --
+                            if SILENT==1
+                           "\f[color,192,192,192]兽技\f[color,default]\n" 
+                              else
+				"\q[兽技,beastsp]\n"
+                                  --
+				"\q[道具,item1]\n/
+				\q[逃跑,escape]";
+		}
+		
+	}
+	
+	--
+		battleinfo;
+	
+}
+
+
+Select.smoke
+{
+	
+	if towashell==0   
+	{     
+		if smoke==NULL
+		{   
+			smoke=1;
+			"斗和正在抽烟，尼古丁含量上升中。\x";
+		}
+		elseif smoke==1
+		{   
+			smoke=2;
+			"斗和正在抽烟，尼古丁含量50%。\x";
+		}
+		elseif smoke==2
+		{   
+			towashell=1;
+			smoke=NULL;
+			"斗和正在抽烟，尼古丁含量100%。斗和转变形态,当前为动物形态。\x";
+		}
+	}
+	
+	elseif towashell==1
+	{     
+		if smoke==NULL
+		{   
+			smoke=1;
+			"斗和正在抽烟，尼古丁含量上升中。\x";
+		}
+		elseif smoke==1
+		{   
+			smoke=2;
+			"斗和正在抽烟，尼古丁含量50%。\x";
+		}
+		elseif smoke==2
+		{   
+			towashell=2;
+			smoke=NULL;
+			"斗和正在抽烟，尼古丁含量100%。斗和转变形态，当前为半兽形态。\x";
+		}
+	}
+	
+	
+	elseif towashell==2
+	{     
+		if smoke==NULL
+		{   
+			smoke=1;
+			"斗和正在抽烟，尼古丁含量上升中。\x";
+		}
+		elseif smoke==1
+		{   
+			smoke=2;
+			"斗和正在抽烟，尼古丁含量50%。\x";
+		}
+		elseif smoke==2
+		{   
+			towashell=0;
+			smoke=NULL;
+			"斗和正在抽烟，尼古丁含量100%。斗和转变形态，当前为人形态\x";
+		}
+	}
+	--
+		if battlemode==1
+		{
+			怪物反击;
+		}
+		elseif battlemode==2
+		{
+			On休息;
+		}
+		
+}
+
+
+
+
+
+
+
+
+Select.attack0
+{
+	m=RAND(100);
+	
+	if m>=10
+	{
+		
+		
+		伤害 = TOINT(ANG*3.9*str0-2.82*mdef);
+		if 伤害<0
+			伤害=0;
+              if mdefend==1
+               {
+               伤害=0;
+               mdefend=0;
+               }
+		mhp-=伤害;
+			"\0\s[32]橘花命中目标，%(怪物名字)损血%(伤害)\x";
+		
+	}
+	
+	else 
+	{
+		
+		伤害 = TOINT(1.5*ANG*(3.9*str0-2.82*mdef));
+		if 伤害<0
+			伤害=0;
+              if mdefend==1
+               {
+               伤害=0;
+               mdefend=0;
+               }
+		mhp-=伤害;
+			"\0\s[32]橘花对目标发动会心一击，%(怪物名字)损血%(伤害)\x";
+		
+	}
+	
+	--
+		if 伤害>=TOINT(0.33*mhpmax)   
+		{
+			cp0+=3;
+		} 
+		else
+		{
+			cp0+=10;
+		}
+		
+		--
+			if hp1>0
+			{
+				Onbattleselect;
+			}
+			else
+			{
+				怪物反击;
+			}
+			
+			
+			--
+				battleinfo;
+			
+}
+
+Select.attack1
+{
+	m=RAND(100);
+	
+	if m>=10
+	{
+		
+		
+		伤害 = TOINT(3.9*ANG*str1-2.82*mdef);
+		if 伤害<0
+			伤害=0
+               if mdefend==1
+               {
+               伤害=0;
+               mdefend=0;
+               };     
+		mhp-=伤害;
+			"\0\s[26]斗和命中目标，%(怪物名字)损血%(伤害)\x";
+		
+	}
+	
+	else 
+	{
+		
+		伤害 = TOINT(1.5*ANG*(3.9*str1-2.82*mdef));
+		if 伤害<0
+			伤害=0;  
+              if mdefend==1
+               {
+               伤害=0;
+               mdefend=0;
+               }		     
+		mhp-=伤害;
+			"\0\s[26]斗和对目标发动会心一击，%(怪物名字)损血%(伤害)\x";
+		
+		
+	}
+	
+	--
+		if 伤害>=TOINT(0.33*mhpmax)        
+		{
+			cp1+=3; 
+		} 
+		else
+		{
+			cp1+=10;   
+		}
+		
+		
+		
+		--
+			
+			怪物反击;
+		
+		--
+			battleinfo;
+}
+
+
+Onmagic
+{
+	magicinfo;
+	if reference1=="targetmode"
+	target=reference0;
+	_txt="\![quicksession,true]\b[2]";
+	_txt+=Magicmenu(target);
+	if target==0
+	_txt+="\n\q[返回,Onbattleselect0]";
+	elseif target==1
+	_txt+="\n\q[返回,Onbattleselect1]";
+	_txt;
+	
+	--
+		battleinfo;
+	
+}
+
+
+Select.spattack0
+{
+	_txt="\![quicksession,true]\b[2]\n";
+	_txt+="\_l[0,-]战技名称     \_l[90,-]属性    \_l[130,-]范围     \_l[170,-]消耗CP     \_l[210,-]效果\n"; 
+	
+	foreach 战技0; _i 
+	{
+		if lvl0>=TOINT(_i[4])
+		{
+			
+			_txt += "\_l[0,-]%(_i[1])     \_l[90,-]%(_i[2])   \_l[130,-]%(_i[3])   \_l[170,-]%(_i[5])  \_l[210,-]%(_i[6]) \_l[260,-]\q[使用,Onusesp0,%(_i[1]),%(_i[2]),%(_i[3]),%(_i[4]),%(_i[5]),%(_i[6]),%(_i[7])]\n";
+			
+		}
+		
+	}
+	_txt+="\n\n\n\n\n\q[返回,Onbattleselect0]";
+	_txt;
+	
+	--
+		battleinfo;
+	
+}
+
+
+
+Select.spattack1
+{
+	_txt="\![quicksession,true]\b[2]\n";
+	_txt+="\_l[0,-]战技名称     \_l[90,-]属性    \_l[130,-]范围     \_l[170,-]消耗CP     \_l[210,-]效果\n" ;
+	
+	foreach 战技1; _i { 
+		if lvl0>=TOINT(_i[4])
+		{
+			
+			
+			_txt += "\_l[0,-]%(_i[1])     \_l[90,-]%(_i[2])   \_l[130,-]%(_i[3])   \_l[170,-]%(_i[5])  \_l[210,-]%(_i[6]) \_l[260,-]\q[使用,Onusesp1,%(_i[1]),%(_i[2]),%(_i[3]),%(_i[4]),%(_i[5]),%(_i[6]),%(_i[7])]\n";
+			
+		}
+		
+		
+	}
+	_txt+="\n\n\n\n\n\q[返回,Onbattleselect1]";
+	_txt;
+	
+	--
+		battleinfo;
+	
+}
+
+
+Onusesp0
+{
+	
+	战技名称=reference0;
+	属性=reference1;
+	效果数值=reference5;
+	NUMS=reference6;
+	CP消耗=TOINT(reference4);
+	
+	
+	if cp0>=CP消耗
+	{
+		
+		if 属性=="辅助"
+		{
+			cp0-=CP消耗;
+				STRADD=1.5;
+			助威回合=3;
+			"橘花发动了%(战技名称)，橘花STR上升50%，斗和STR上升50%。\x";
+		}
+		
+		elseif 属性=="回复"
+		{
+			效果数值=TOINT(效果数值);
+			if hp1>0
+			{
+				if hp0+效果数值>=hpmax0 &&  hp1+效果数值>=hpmax1 && cp1>=CP消耗
+				{
+					"橘花发动了%(战技名称)，橘花HP回复%(hpmax0-hp0)，斗和HP回复%(hpmax1-hp1)\x";
+					hp0=hpmax0;
+					hp1=hpmax1;
+					cp0-=CP消耗;    
+						
+				}
+				
+				elseif hp0+效果数值<hpmax0 && hp1+效果数值<hpmax1 && cp1>=CP消耗
+				{
+					"橘花发动了%(战技名称)，橘花HP回复%(效果数值)，斗和HP回复%(效果数值)\x";
+					hp0+=效果数值;
+					hp1+=效果数值;
+					cp0-=CP消耗;
+				}
+				
+				elseif hp0+效果数值>=hpmax0 &&  hp1+效果数值<hpmax1 && cp1>=CP消耗
+				{   
+					"橘花发动了%(战技名称)，橘花HP回复%(hpmax0-hp0)，斗和HP回复%(效果数值)\x";
+					hp0=hpmax0;
+					hp1+=效果数值;
+					cp0-=CP消耗;
+				}
+				
+				
+				elseif hp0+效果数值<hpmax0 &&  hp1+效果数值>=hpmax1 && cp1>=CP消耗
+				{
+					"橘花发动了%(战技名称)，橘花HP回复%(效果数值)，斗和HP回复%(hpmax1-hp1)\x";
+					hp0+=效果数值;
+					hp1=hpmax1;
+					cp0-=CP消耗;
+				}
+			}
+			
+			else 
+			{
+				if hp0+效果数值>=hpmax0 && cp1>=CP消耗
+				{
+					"橘花发动了%(战技名称)，HP回复%(hpmax0-hp0)\x";
+					hp0=hpmax0;
+					cp0-=CP消耗;
+				}
+				
+				elseif hp0+效果数值<hpmax0 && cp1>=CP消耗
+				{
+					"橘花发动了%(战技名称)，HP回复%(效果数值)\x";
+					hp0+=效果数值;
+					cp0-=CP消耗;
+						
+				}
+			}
+			
+		}
+		
+		
+		elseif 属性=="攻击"
+		{
+			if 效果数值=="驱动解除"
+			{
+				
+				战技伤害=TOINT(ANG*NUMS*(3.9*str0-2.82*mdef));
+				
+				
+				if 战技伤害<0
+				{
+					战技伤害=0;
+				}
+                                if mdefend==1
+                                {
+                                战技伤害=0;
+                                mdefend=0;
+                                }
+				mhp-=战技伤害;
+					cp0-=CP消耗;
+					
+					if mmagicready!=-1
+					{
+						mmagicready=-1;
+						
+						"橘花对%(怪物名字)使用了%(战技名称)，%(怪物名字)损血%(战技伤害),%(怪物名字)驱动的魔法解除\x";
+						
+					}
+					else
+					{
+						"橘花对%(怪物名字)使用了%(战技名称)，%(怪物名字)损血%(战技伤害)\x";
+					}
+					--
+						if 战技伤害>=(1/3)*mhpmax    
+						{
+							cp0+=3;
+						} 
+						else
+						{
+							cp0+=10;
+						}
+						
+						
+			}
+			
+			else
+			{
+				
+				战技伤害=TOINT(ANG*NUMS*(3.9*str0-2.82*mdef+效果数值));
+				
+				
+				if 战技伤害<0
+				{
+					战技伤害=0;
+				}
+                                if mdefend==1
+                                {
+                                战技伤害=0;
+                                mdefend=0;
+                                }
+				mhp-=战技伤害;
+					cp0-=CP消耗;
+					"橘花对%(怪物名字)使用了%(战技名称)，%(怪物名字)损血%(战技伤害)\x";
+				
+				--
+					if 战技伤害>=(1/3)*mhpmax    
+					{
+						cp0+=3;
+					} 
+					else
+					{
+						cp0+=10;
+					}
+			}
+		}
+		
+		
+		elseif 属性=="攻击S"
+		{
+			
+			if cp0>=100 && cp0<200
+			{
+				
+				战技伤害=TOINT(ANG*NUMS*(3.9*str0-2.82*mdef+效果数值));
+				
+				
+				
+				
+				if 战技伤害<0
+				{
+					战技伤害=0;
+				}
+                                if mdefend==1
+                                {
+                                战技伤害=0;
+                                mdefend=0;
+                                }
+				mhp-=战技伤害;
+					cp0-=CP消耗;
+					"橘花对%(怪物名字)使用了%(战技名称)，%(怪物名字)损血%(战技伤害)\x";
+				
+				--
+					if 战技伤害>=(1/3)*mhpmax    
+					{
+						cp0+=3;
+					} 
+					else
+					{
+						cp0+=10;
+					}
+					
+					
+			} 
+			
+			
+			elseif cp0==200
+			{
+				
+				if 战技名称=="奥义·天下无双"  
+				{
+					战技伤害=TOINT(ANG*3*NUMS*(3.9*str0-2.82*mdef+1.5*效果数值));
+				}
+				else
+				{
+					战技伤害=TOINT(ANG*2*NUMS*(3.9*str0-2.82*mdef+1.5*效果数值));
+				}
+				if 战技伤害<0
+				{
+					战技伤害=0;
+				}
+                                if mdefend==1
+                                {
+                                战技伤害=0;
+                                mdefend=0;
+                                }
+				mhp-=战技伤害;
+					cp0-=200;
+				"橘花对%(怪物名字)使用了%(战技名称)，%(怪物名字)损血%(战技伤害)\x";
+				
+				--
+					if 战技伤害>=(1/3)*mhpmax    
+					{
+						cp0+=3;
+					} 
+					else
+					{
+						cp0+=10;   
+					}
+					
+					
+			}    
+			
+			
+		}
+		
+		
+		--
+			RpgGameVar;
+		
+		--
+			if hp1>0
+			{
+				Onbattleselect;
+			}
+			else
+			{
+				怪物反击;
+			}
+       }
+	   
+	   else
+	   {
+		   "CP不足，不能发动战技\x";	   
+		   --
+			   Onbattleselect0;
+	   }
+	   
+}
+
+Onusesp1
+{
+	
+	
+	
+	战技名称=reference0;
+	属性=reference1;
+	效果数值=reference5;
+	NUMS=reference6;
+	CP消耗=TOINT(reference4);
+	
+	
+	if cp1>=CP消耗
+	{
+		
+		if 属性=="攻击"
+		{
+			
+			战技伤害=TOINT(ANG*NUMS*(3.9*str1-2.82*mdef+效果数值));
+			
+			
+			if 战技伤害<0
+			{
+				战技伤害=0;
+			}
+                                if mdefend==1
+                                {
+                                战技伤害=0;
+                                mdefend=0;
+                                }
+			mhp-=战技伤害;
+				cp1-=CP消耗;
+				"斗和对%(怪物名字)使用了%(战技名称)，%(怪物名字)损血%(战技伤害)\x";
+			
+			--
+				if 战技伤害>=(1/3)*mhpmax    
+				{
+					cp1+=3;
+				} 
+				else
+				{
+					cp1+=10; 
+				}
+				
+				
+				
+		}
+		
+		
+		elseif 属性=="攻击S"
+		{
+			
+			if cp1>=100 && cp1<200
+			{
+				
+				战技伤害=TOINT(ANG*NUMS*(3.9*str1-2.82*mdef+效果数值));
+				
+				
+				if 战技伤害<0
+				{
+					战技伤害=0;
+				}
+                                if mdefend==1
+                                {
+                                战技伤害=0;
+                                mdefend=0;
+                                }
+				mhp-=战技伤害;
+					cp1-=CP消耗;
+					"斗和对%(怪物名字)使用了%(战技名称)，%(怪物名字)损血%(战技伤害)\x";
+				
+				--
+					if 战技伤害>=(1/3)*mhpmax    
+					{
+						cp1+=3;
+					} 
+					else
+					{
+						cp1+=10;
+					}
+					
+					
+			} 
+			
+			
+			elseif cp1==200
+			{
+				
+				if 战技名称=="奥义·量子风暴"
+				{
+					战技伤害=TOINT(ANG*3*NUMS*(3.9*str1-2.82*mdef+1.5*效果数值));
+				}
+				else
+				{
+					战技伤害=TOINT(ANG*2*NUMS*(3.9*str1-2.82*mdef+1.5*效果数值));
+				}
+				
+				if 战技伤害<0
+				{
+					战技伤害=0;
+				}
+                                if mdefend==1
+                                {
+                                战技伤害=0;
+                                mdefend=0;
+                                }
+				mhp-=战技伤害;
+					cp1-=200;
+				"斗和对%(怪物名字)使用了%(战技名称)，%(怪物名字)损血%(战技伤害)\x";
+				
+				--
+					if 战技伤害>=(1/3)*mhpmax    
+					{
+						cp1+=3;
+					} 
+					else
+					{
+						cp1+=10;
+					}
+					
+					
+			}    
+			
+			
+		}
+		--
+			RpgGameVar;
+		
+		--
+			怪物反击;
+       }
+	   
+	   
+	   
+	   else
+	   {
+		   "CP不足，不能发动战技\x";
+		   
+		   --
+			   Onbattleselect1;
+		   
+	   }
+	   
+}
+
+
+Select.beastsp
+{
+	"\b[2]\![set,choicetimeout,0]\![quicksession,true]\__q[Onusebeastsp,0,25]猫爪三连击：攻击三次，消耗CP25\__q\n/
+		\__q[Onusebeastsp,1,30]嚎叫：我方物理防御提升50%，有效三回合，消耗CP30\__q\n/
+		\__q[Onusebeastsp,2,20]示威：下一次攻击时，无视对方防御力，消耗CP20\__q\n/
+		\__q[Onusebeastsp,3,30]黑暗诅咒：对方物理防御减50%，有效三回合，消耗CP30\__q\n/
+		\__q[Onusebeastsp,4,20]噬血诅咒：攻击时给予对方的伤害翻倍，有效一回合，消耗CP20\__q\n/
+		\__q[Onusebeastsp,5,100]牺牲：用自身HP的50%换取敌方HP的50%，消耗CP100\__q\n/
+		\__q[Onusebeastsp,6,50]偷取：偷取对方20%的HP。消耗CP50\n/
+		\n\n\n\n\q[返回,Onbattleselect1]\n/
+		";
+}
+
+Onusebeastsp
+{
+	兽技ID=reference0;
+	消耗SP=TOINT(reference1);
+	if cp1>=消耗SP
+	{
+		if 兽技ID==0
+		{
+			
+			兽技伤害=TOINT(ANG*3*(3.9*str1-2.82*mdef));
+			if 兽技伤害<0
+			{
+				兽技伤害=0;
+			}
+                                if mdefend==1
+                                {
+                                兽技伤害=0;
+                                mdefend=0;
+                                }
+			mhp-=兽技伤害;
+				"斗和对%(怪物名字)使用了猫爪三连击，%(怪物名字)损血%(兽技伤害)\x";
+		}
+		elseif 兽技ID==1
+		{
+			DEFADD=1.5;
+			嚎叫回合=3;
+			"斗和使用了嚎叫，DEF提升50%。\x";
+		}
+		elseif 兽技ID==2
+		{
+			IGN=0;
+			示威回合=1;
+			"斗和使用了示威，%(怪物名字)DEF被无视了。\x";
+		}
+		elseif 兽技ID==3
+		{
+			MDEFMINUS=0.5;
+			黑暗诅咒回合=3;
+			"斗和使用了黑暗诅咒，%(怪物名字)DEF降低50%。\x";
+		}
+		elseif 兽技ID==4
+		{
+			ANG=2;
+			噬血诅咒回合=1;
+			"斗和使用了噬血诅咒\x";
+		}
+		elseif 兽技ID==5
+		{
+			hp1=TOINT(0.5*hp1);
+			mhp=TOINT(0.5*mhp);
+			"斗和使用了牺牲，斗和HP减少%(TOINT(0.5*hp1)),%(怪物名字)HP减少%(TOINT(0.5*mhp))\x";
+		}
+		elseif 兽技ID==6
+		{
+			if hp1+0.2*mhp>=hp1max
+			{
+				"斗和使用了偷取，斗和HP增加%(TOINT(hpmax1-hp1)),%(怪物名字)HP减少%(TOINT(0.2*mhp))\x";
+				--
+					hp1=hpmax1;
+			}
+			else 
+			{ 
+				hp1+=0.2*mhp;
+				"斗和使用了偷取，斗和HP增加%(TOINT(0.2*mhp)),%(怪物名字)HP减少%(TOINT(0.2*mhp))\x";
+			}
+			--
+				mhp=TOINT(0.8*mhp);
+			
+			
+		}
+		--
+			cp1-=消耗SP;
+			RpgGameVar;
+		--
+			
+			if class=="D"
+			{
+				mdef=mdefD;
+			}
+			
+			elseif class=="C"
+			{
+				mdef=mdefC;
+			}
+			
+			elseif class=="B"
+			{
+				mdef=mdefB;
+			}
+			
+			elseif class=="A"
+			{
+				mdef=mdefA;
+			}
+			
+			elseif class=="S"
+			{
+				mdef=mdefS;
+			}
+			--
+				怪物反击;
+			
+	}
+	
+	else
+	{
+		"CP不足\x";
+		--
+			Onbattleselect1;
+	}
+	
+	
+}
+
+战技回合判定
+{
+	
+	if 助威回合>0
+	{
+        助威回合--;
+	}
+	elseif 助威回合==0
+	{
+		助威回合=-1;
+		--
+			STRADD=1;
+		"橘花使用的助威技能失效了\x";
+	}
+    
+	--
+		if 嚎叫回合>0
+		{
+			嚎叫回合--;
+		}
+		elseif 嚎叫回合==0
+		{
+			嚎叫回合=-1;
+			--
+				DEFADD=1;
+			"斗和使用的嚎叫技能失效了\x";
+		}
+		
+		--
+			
+			if 示威回合>0
+			{
+				示威回合--;
+			}
+			
+			elseif 示威回合==0
+			{
+				示威回合=-1;
+				--
+					IGN=1;
+				"斗和使用的示威技能失效了\x";
+			}
+			
+			--
+				
+				if 黑暗诅咒回合>0
+				{
+					黑暗诅咒回合--;
+				}
+				elseif 黑暗诅咒回合==0
+				{
+					黑暗诅咒回合=-1;
+					--
+						MDEFMINUS=1;
+					"斗和使用的黑暗诅咒技能失效了\x";
+				}
+				
+				--
+					
+					if 噬血诅咒回合>0
+					{
+						噬血诅咒回合--;
+					}
+					elseif 噬血诅咒回合==0
+					{
+						噬血诅咒回合=-1;
+						--
+							ANG=1;
+						"斗和使用的噬血诅咒技能失效了\x";
+					}
+					--
+						RpgGameVar;
+}
+
+Select.item0
+{
+	信息参数;
+		_txt="\![quicksession,true]\b[2]\n";
+	
+	_txt+="\_l[0,-]名称    \_l[80,-]效果   \_l[155,-]买入价格 \_l[210,-]已有数量  \n";
+	foreach itemA; _i {
+		if _i[3]>0 
+		{
+			_txt += "\f[color,194,243,99]\_l[0,-]%(_i[2]) \_l[80,-]%(_i[5])\f[color,default]  \f[color,231,171,109]\_l[155,-]%(_i[4])\f[color,default]   \_l[210,-]%(_i[3]) \_l[260,-] \q[使用,Onuseitemselect0,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[5])]\n";
+		}
+		
+		
+	}
+	
+	foreach itemB; _i 
+	{
+		if _i[3]>0 
+		{
+			_txt += "\f[color,165,203,214]\_l[0,-]%(_i[2]) \_l[80,-]%(_i[5])\f[color,default]  \f[color,231,171,109]\_l[155,-]%(_i[4])\f[color,default]   \_l[210,-]%(_i[3]) \_l[260,-] \q[使用,Onuseitemselect0,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[5])]\n";
+		}
+		
+		
+	}
+	_txt+="\n\n\n\n\q[返回,Onbattleselect0]";
+	_txt;
+	--
+		battleinfo;
+	
+}
+
+Select.item1
+{
+	信息参数;
+		_txt="\![quicksession,true]\b[2]\n";
+	
+	_txt+="\_l[0,-]名称    \_l[80,-]效果   \_l[155,-]买入价格 \_l[210,-]已有数量  \n";
+	foreach itemA; _i {
+		if _i[3]>0 
+		{
+			_txt += "\f[color,194,243,99]\_l[0,-]%(_i[2]) \_l[80,-]%(_i[5])\f[color,default]  \f[color,231,171,109]\_l[155,-]%(_i[4])\f[color,default]  \_l[210,-]%(_i[3]) \_l[260,-] \q[使用,Onuseitemselect1,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[5])]\n";
+		}
+	}
+	foreach itemB; _i {
+		if _i[3]>0 
+		{
+			_txt += "\f[color,165,203,214]\_l[0,-]%(_i[2]) \_l[80,-]%(_i[5])\f[color,default]  \f[color,231,171,109]\_l[155-]%(_i[4])\f[color,default]  \_l[210,-]%(_i[3]) \_l[260,-] \q[使用,Onuseitemselect1,%(_i[0]),%(_i[1]),%(_i[2]),%(_i[5])]\n";
+		}
+		
+	}
+	
+	
+	_txt+="\n\n\n\n\q[返回,Onbattleselect1]";
+	_txt;
+	--
+		battleinfo;
+	
+}
+
+Select.escape
+{
+	escapenum+=1;
+	e=RAND(100);
+	if (e < 50) 
+	{
+		"\0\s[5]逃跑成功。\x";
+		--
+			OpenRpgGameMenu(5);
+	}
+	elseif (e >= 50)
+	{
+		"\0\s[9]逃跑失败。\x";
+		--
+			怪物反击;
+	}
+	
+}
+
+
+怪物反击
+{
+	怪物战技回合判定
+        --
+	if mhp>0
+	{
+		
+		if mmagicready==0
+		{
+			怪物准备魔法0;
+		}
+		elseif mmagicready==1
+		{
+            怪物准备魔法1;
+		}
+		elseif mmagicready==2
+		{
+            怪物准备魔法2;
+		}
+		
+		
+		else 
+		{
+			
+			_temp = RAND(100);
+			if (_temp <= 50 && hp0>0) || hp1==0
+			{
+				反击(0);
+			}
+			elseif (_temp > 50 && hp1>0) || hp0==0
+			{
+				反击(1);
+			}
+		}
+	}
+	else
+	{
+		"\0\s[5]战斗胜利了\x";
+		--
+			战斗结束;
+	}
+	
+	--
+		battleinfo;
+	
+}
+
+怪物准备魔法0
+{
+	mmagicready=-1;
+	_魔法伤害=TOINT(MNUMS*MANG*(4.10*mats-2.80*adf0+反击效果数值));
+	if _魔法伤害<0
+	{
+		_魔法伤害=0;
+	}
+	反击魔法伤害=_魔法伤害;
+         if kikkadefend==1;
+          {
+             反击魔法伤害=0;
+             kikkadefend=0;
+           }
+		hp0-=反击魔法伤害;
+		"\0\s[33]%(怪物名字)对橘花发动了%(反击魔法名称)，橘花损血%(反击魔法伤害)\x";
+	--
+		Onbattleselect;
+}
+
+怪物准备魔法1
+{
+	mmagicready=-1;
+	_魔法伤害=TOINT(MNUMS*MANG*(4.10*mats-2.80*adf0+反击效果数值));
+	if _魔法伤害<0
+	{
+		_魔法伤害=0;
+	}
+	反击魔法伤害=_魔法伤害;
+        if towadefend==1;
+          {
+             反击魔法伤害=0;
+             towadefend=0;
+           }
+		hp1-=反击魔法伤害;
+		"\0%(怪物名字)对斗和发动了%(反击魔法名称)，斗和损血%(反击魔法伤害)\x";
+	--
+		Onbattleselect;
+}
+
+怪物准备魔法2
+{
+	mmagicready=-1;
+	"\0\s[33]%(怪物名字)发动了%(反击魔法名称)，";
+	--
+		_魔法伤害=TOINT(MNUMS*MANG*(4.10*mats-2.80*adf0+反击效果数值));
+	if _魔法伤害<0
+	{
+		_魔法伤害=0;
+	}
+	反击魔法伤害=_魔法伤害;
+        if kikkadefend==1;
+          {
+             反击魔法伤害=0;
+             kikkadefend=0;
+           }
+		hp0-=反击魔法伤害;
+		"橘花损血%(反击魔法伤害)，";
+	--
+		_魔法伤害=TOINT(MNUMS*MANG*(4.10*mats-2.80*adf1+反击效果数值));
+	if _魔法伤害<0
+	{
+		_魔法伤害=0;
+	}
+	反击魔法伤害=_魔法伤害;
+           if towadefend==1;
+          {
+             反击魔法伤害=0;
+             towadefend=0;
+           }
+
+		hp1-=反击魔法伤害;
+		"斗和损血%(反击魔法伤害)\x";
+				--
+					Onbattleselect;
+}
+
+反击
+{
+	_target=_argv[0];
+	_mmagic=IARRAY;		
+	m=RAND(100);
+	
+	if m>=10 && m<40 && mlv>=15
+	{
+		
+		if level==1 || level==1.1 || level==1.2
+			
+		{
+			c=RAND(9);
+			if c>=5
+			{
+				foreach 土系魔法; _i 
+				{
+					if mlv>=TOINT(_i[5]) 
+					{
+						
+						_mmagic,=_i;
+					}
+					
+				}
+				
+				_mmagic,=""
+				x=ARRAYSIZE(_mmagic)-2;
+				if x>0
+				{
+					x=RAND(x)+1;
+				}
+				反击效果数值=_mmagic[x][7];
+				反击魔法名称=_mmagic[x][2];
+				MNUMS=_mmagic[x][8];
+				反击范围=_mmagic[x][4];
+                                if 反击效果数值=="完全防御一次"
+                                 {
+                                      mdefend=1
+                                    "%(怪物名字)发动了%(反击魔法名称)\x"
+                                  }
+                                else
+                                {
+				if _target==0
+					mmagicready=0;
+				elseif  _target==1
+					mmagicready=1;
+				if 反击范围=="复体"&&hp0>0&&hp1>0
+					mmagicready=2;
+				"%(怪物名字)正在准备魔法\x";
+				}
+			}
+			
+			else
+			{
+				foreach 风系魔法; _i 
+				{
+					if mlv>=TOINT(_i[5]) 
+					{
+						
+						_mmagic,=_i;
+					}
+					
+				}
+				
+				_mmagic,=""
+				x=ARRAYSIZE(_mmagic)-2;
+				if x>0
+				{
+					x=RAND(x)+1;
+				}
+				反击效果数值=_mmagic[x][7];
+				反击魔法名称=_mmagic[x][2];
+                                
+				MNUMS=_mmagic[x][8];
+				反击范围=_mmagic[x][4];
+				if _target==0
+					mmagicready=0;
+				elseif  _target==1
+					mmagicready=1;
+				if 反击范围=="复体"&&hp0>0&&hp1>0
+					mmagicready=2;
+				"%(怪物名字)正在准备魔法\x";
+			}
+			
+		}
+		
+		elseif level==1.3 || level==1.5
+		{
+			foreach 水系魔法; _i 
+			{
+				if mlv>=TOINT(_i[5]) && _i[3]=="攻击"
+				{
+					
+					_mmagic,=_i;
+				}
+				
+			}
+			
+			_mmagic,=""
+			x=ARRAYSIZE(_mmagic)-2;
+			if x>0
+			{
+				x=RAND(x)+1;
+			}
+			反击效果数值=_mmagic[x][7];
+			反击魔法名称=_mmagic[x][2];
+			MNUMS=_mmagic[x][8];
+			反击范围=_mmagic[x][4];
+			if _target==0
+				mmagicready=0;
+			elseif  _target==1
+				mmagicready=1;
+			if 反击范围=="复体"&&hp0>0&&hp1>0
+				mmagicready=2;
+			"%(怪物名字)正在准备魔法\x";
+			
+		}
+		
+		
+		elseif level==1.4
+		{
+			foreach 火系魔法; _i 
+			{
+				if mlv>=TOINT(_i[5])
+				{
+					
+					_mmagic,=_i;
+				}
+				
+			}
+			
+			_mmagic,=""
+			x=ARRAYSIZE(_mmagic)-2;
+			if x>0
+			{
+				x=RAND(x)+1;
+			}
+			反击效果数值=_mmagic[x][7];
+			反击魔法名称=_mmagic[x][2];
+			MNUMS=_mmagic[x][8];
+			反击范围=_mmagic[x][4];
+			if _target==0
+				mmagicready=0;
+			elseif  _target==1
+				mmagicready=1;
+			if 反击范围=="复体"&&hp0>0&&hp1>0
+				mmagicready=2;
+			"%(怪物名字)正在准备魔法\x";
+		}
+		
+		elseif level==1.6
+			
+		{
+			foreach 风系魔法; _i 
+			{
+				if mlv>=TOINT(_i[5])
+				{
+					
+					_mmagic,=_i;
+				}
+				
+			}
+			
+			_mmagic,=""
+			x=ARRAYSIZE(_mmagic)-2;
+			if x>0
+			{
+				x=RAND(x)+1;
+			}
+			反击效果数值=_mmagic[x][7];
+			反击魔法名称=_mmagic[x][2];
+			MNUMS=_mmagic[x][8];
+			反击范围=_mmagic[x][4];
+			if _target==0
+				mmagicready=0;
+			elseif  _target==1
+				mmagicready=1;
+			if 反击范围=="复体"&&hp0>0&&hp1>0
+				mmagicready=2;
+			"%(怪物名字)正在准备魔法\x";
+			
+		}
+		
+		else
+			
+		{
+			c=RAND(9);
+			
+			if c>=8 && c<=9
+			{
+				foreach 水系魔法; _i 
+				{
+					if mlv>=TOINT(_i[5]) && _i[3]=="回复"
+					{
+						
+						_mmagic,=_i;
+					}
+					
+				}
+				_mmagic,=""
+				x=ARRAYSIZE(_mmagic)-2;
+				if x>0
+				{
+					x=RAND(x)+1;
+				}
+				反击效果数值=TOINT(_mmagic[x][7]);
+				if _mmagic[x][7]=="战斗不能解除" || _mmagic[x][7]=="HP全回复"
+				{
+					怪伤害0 = TOINT(3.9*mstr-2.82*def0);
+					if 怪伤害0<0
+					{
+						怪伤害0=0;
+					}
+                                     if kikkadefend==1;
+                                         {
+                                   怪伤害0=0;
+                                 kikkadefend=0;
+                                   }
+					hp0 -= 怪伤害0;
+						"\0\s[33]橘花被攻击了，损血%(怪伤害0)\x";
+				}
+				
+				
+				elseif mhp + 反击效果数值>=mhpmax
+				{
+					mhp=mhpmax;
+					
+					"%(怪物名字)发动了%(_mmagic[x][2])，HP回复%(mhpmax-mhp)\x";
+				}
+				elseif mhp + 反击效果数值<mhpmax
+				{
+					mhp+=反击效果数值;
+					"%(怪物名字)发动了%(_mmagic[x][2])，HP回复%(反击效果数值)\x";
+				}
+				
+			}
+			
+			elseif c>=6 && c<=7
+			{
+				foreach 水系魔法; _i 
+				{
+					if mlv>=TOINT(_i[5]) && _i[3]=="攻击"
+					{
+						
+						_mmagic,=_i;
+					}
+					
+				}
+				
+				_mmagic,=""
+				x=ARRAYSIZE(_mmagic)-2;
+                        	if x>0
+				{
+					x=RAND(x)+1;
+				}
+				反击效果数值=_mmagic[x][7];
+				反击魔法名称=_mmagic[x][2];
+				MNUMS=_mmagic[x][8];
+				反击范围=_mmagic[x][4];
+				if _target==0
+					mmagicready=0;
+				elseif  _target==1
+					mmagicready=1;
+				if 反击范围=="复体"&&hp0>0&&hp1>0
+					mmagicready=2;
+				"%(怪物名字)正在准备魔法\x";
+			}
+			
+			
+			elseif c>=4 && c<=5
+			{
+				foreach 火系魔法; _i 
+				{
+					if mlv>=TOINT(_i[5]) 
+					{
+						
+						_mmagic,=_i;
+					}
+					
+				}
+				
+				_mmagic,=""
+				x=ARRAYSIZE(_mmagic)-2;
+                        	if x>0
+				{
+					x=RAND(x)+1;
+				}
+				反击效果数值=_mmagic[x][7];
+				反击魔法名称=_mmagic[x][2];
+				MNUMS=_mmagic[x][8];
+				反击范围=_mmagic[x][4];
+				if _target==0
+					mmagicready=0;
+				elseif  _target==1
+					mmagicready=1;
+				if 反击范围=="复体"&&hp0>0&&hp1>0
+					mmagicready=2;
+				"%(怪物名字)正在准备魔法\x";
+			}
+			
+			elseif c>=2 && c<=3
+			{
+				foreach 土系魔法; _i 
+				{
+					if mlv>=TOINT(_i[5]) 
+					{
+						
+						_mmagic,=_i;
+					}
+					
+				}
+				
+				_mmagic,=""
+				x=ARRAYSIZE(_mmagic)-2;
+                        	if x>0
+				{
+					x=RAND(x)+1;
+				}
+				反击效果数值=_mmagic[x][7];
+				反击魔法名称=_mmagic[x][2];
+				MNUMS=_mmagic[x][8];
+				反击范围=_mmagic[x][4];
+                            if 反击效果数值=="完全防御一次"
+                                 {
+                                      mdefend=1
+                                    "%(怪物名字)发动了%(反击魔法名称)\x"
+                                  }
+                                else
+                                {
+				if _target==0
+					mmagicready=0;
+				elseif  _target==1
+					mmagicready=1;
+				if 反击范围=="复体"&&hp0>0&&hp1>0
+					mmagicready=2;
+				"%(怪物名字)正在准备魔法\x";
+				}
+			}
+			
+			
+			elseif c>=0 && c<=1
+			{
+				foreach 风系魔法; _i 
+				{
+					if mlv>=TOINT(_i[5]) 
+					{
+						
+						_mmagic,=_i;
+					}
+					
+				}
+				
+				_mmagic,=""
+				x=ARRAYSIZE(_mmagic)-2;
+                        	if x>0
+				{
+					x=RAND(x)+1;
+				}
+				反击效果数值=_mmagic[x][7];
+				反击魔法名称=_mmagic[x][2];
+				MNUMS=_mmagic[x][8];
+				反击范围=_mmagic[x][4];
+				if _target==0
+					mmagicready=0;
+				elseif  _target==1
+					mmagicready=1;
+				if 反击范围=="复体"&&hp0>0&&hp1>0
+					mmagicready=2;
+				"%(怪物名字)正在准备魔法\x";
+			}
+			
+             }
+			 
+			 
+         }
+		
+  
+     elseif m>=40 && m<70 && (class=="S"||level>=2)
+               {
+           
+                    if level==2&&class!="S"
+                   "\![raise,Onmspattack,1,%(_target)]"
+                   {
+                          if MANG!=2
+                                 {
+                     "\![raise,Onmspattack,1,%(_target)]"
+                     "\![raise,Onmspattack,0,%(_target)]"
+                     "\![raise,Onmspattack,2,%(_target)]"
+                                 }
+                         else 
+                                 {
+                              "\![raise,Onmspattack,1,%(_target)]"
+                                 }
+
+                     }
+                  
+                          
+                            {
+                              if MANG!=2
+                                 {
+                        "\![raise,Onmspattack,1,%(_target)]"
+                        "\![raise,Onmspattack,3,%(_target)]"
+                        "\![raise,Onmspattack,4,%(_target)]"
+                                 }
+                             else 
+                                 {
+                              "\![raise,Onmspattack,1,%(_target)]"
+                                 }
+
+                            } 
+                          
+                        return;
+                               
+               }
+      elseif m>=70 && m<80  && (class=="S"||level>=2)&&mhp<=0.3*mhpmax
+               {
+                  
+              
+                             if MANG!=2
+                                 {
+                            "\![raise,Onmspattack,1,%(_target)]"
+                            "\![raise,Onmspattack,6,%(_target)]"
+                            "\![raise,Onmspattack,5,%(_target)]"
+                                 }
+                              else 
+                                 {
+                              "\![raise,Onmspattack,1,%(_target)]"
+                                 }
+                             
+                          
+                        return;
+                  
+
+    
+               }
+                
+
+
+
+         elseif m>=0 && m<10 && mlv>=15&&_target==0
+		 {
+			 怪伤害0 = TOINT(1.5*MANG*(3.9*mstr-2.82*def0));
+			 if 怪伤害0<0
+			 {
+				 怪伤害0=0;
+			 }
+                        if kikkadefend==1;
+                                         {
+                                   怪伤害0=0;
+                                 kikkadefend=0;
+                                   }
+			 hp0 -= 怪伤害0;
+				 "\0\s[33]%(怪物名字)对橘花发动会心一击，橘花损血%(怪伤害0)\x";
+			 
+		 } 
+		 
+		 elseif m>=0 && m<10 && mlv>=15&&_target==1
+		 {
+			 怪伤害1 = TOINT(1.5*MANG*(3.9*mstr-2.82*def1));
+			 if 怪伤害1<0
+			 {
+				 怪伤害1=0;
+			 }
+                        if towadefend==1;
+                                         {
+                                   怪伤害1=0;
+                                towadefend=0;
+                                   }
+			 hp1 -= 怪伤害1;
+				 "%(怪物名字)对斗和发动会心一击，斗和损血%(怪伤害1)\x";
+			 
+		 } 
+		 
+		 else
+		 {
+			 
+			 if _target==0
+			 {
+				 怪伤害0 = TOINT(MANG*(3.9*mstr-2.82*def0));
+				 if 怪伤害0<0
+				 {
+					 怪伤害0=0;
+				 }
+                               if kikkadefend==1;
+                                         {
+                                   怪伤害0=0;
+                                 kikkadefend=0;
+                                   }
+				 hp0 -= 怪伤害0;
+					 "\0\s[33]橘花被攻击了，损血%(怪伤害0)\x";
+			 }
+			 
+             elseif _target==1
+			 {
+				 怪伤害1 = TOINT(MANG*(3.9*mstr-2.82*def1));
+				 if 怪伤害1<0
+				 {
+					 怪伤害1=0;
+				 }
+                            if towadefend==1;
+                                         {
+                                   怪伤害1=0;
+                                towadefend=0;
+                                   }
+				 hp1 -= 怪伤害1;
+					 "斗和被攻击了，损血%(怪伤害1)\x";
+			 }
+			 
+		 }
+		 
+		 
+		 --
+			 Onbattleselect;
+		 
+		 --
+			 battleinfo;
+}
+
+
+
+
+Onmspattack
+{
+战技ID=reference0;
+_target=TOINT(reference1);
+ if hp0<=0
+ 指定人格="斗和"
+elseif hp1<=0
+ 指定人格="橘花"
+else
+指定人格="橘花和斗和"
+      if 战技ID==0
+         {
+           
+         MSTRADD=1.5
+         威胁回合=3
+         "%(怪物名字)使用了威胁，%(怪物名字)STR提升50%。\x"
+
+         }
+      elseif 战技ID==1
+         {
+            if _target==0
+            {
+             战技伤害=TOINT(MANG*2*(3.9*mstr-2.82*def0))
+             if 战技伤害<0
+              战技伤害=0
+               if kikkadefend==1;
+                                         {
+                                   战技伤害=0;
+                                kikkadefend=0;
+                                   }
+              hp0-=战技伤害
+              指定人格="橘花"
+            }
+            elseif _target==1
+             {
+             战技伤害=TOINT(MANG*2*(3.9*mstr-2.82*def1))
+            if 战技伤害<0
+              战技伤害=0
+               if towadefend==1;
+                                         {
+                                   战技伤害=0;
+                                towadefend=0;
+                                   }
+            hp1-=战技伤害
+            指定人格="斗和"
+            }
+            "%(怪物名字)对%(指定人格)使用了双连击，%(指定人格)损血%(战技伤害)\x"
+         }
+      elseif 战技ID==2   
+         {
+         MDEFADD=1.5    
+         挑逗回合=3
+          "%(怪物名字)使用了挑逗，DEF提升50%。\x"
+         }
+      elseif 战技ID==3
+         {
+         IGN=0;
+         忽略回合=1
+         "%(怪物名字)使用了忽略，%(指定人格)DEF被无视了。\x"
+         }
+      elseif 战技ID==4
+         {
+         DEFMINUS=0.5
+         敌视回合=3
+          "%(怪物名字)使用了敌视，%(指定人格)DEF降低50%。\x"
+         }
+      elseif 战技ID==5
+         {
+         MANG=2
+         愤怒暴发回合=1
+         "%(怪物名字)使用了愤怒暴发\x"
+         }
+      elseif 战技ID==6
+         {
+         禁寂之音回合=3
+         SILENT=1;
+          "%(怪物名字)使用了禁寂之音，%(指定人格)被封技了\x"
+         }
+   -- 
+RpgGameVar;
+怪物属性
+		 --
+			 Onbattleselect;
+		 
+		 --
+			 battleinfo;
+}
+
+怪物属性
+{
+
+	               if class=="D"
+			{
+                                mstr=mstrD;
+				mdef=mdefD;
+			}
+			
+			elseif class=="C"
+			{
+                                mstr=mstrC;
+				mdef=mdefC;
+			}
+			
+			elseif class=="B"
+			{
+                                mstr=mstrB;
+				mdef=mdefB;
+			}
+			
+			elseif class=="A"
+			{
+                                mstr=mstrA;
+				mdef=mdefA;
+			}
+			
+			elseif class=="S"
+			{
+                                mstr=mstrS;
+				mdef=mdefS;
+			}
+
+
+
+}
+
+
+怪物战技回合判定
+{
+	
+	if 威胁回合>0
+	{
+        威胁回合--;
+	}
+	elseif 威胁回合==0
+	{
+		威胁回合=-1;
+		--
+			MSTRADD=1;
+		"%(怪物名字)使用的威胁技能失效了\x";
+	}
+    
+	--
+		if 挑逗回合>0
+		{
+			挑逗回合--;
+		}
+		elseif 挑逗回合==0
+		{
+			挑逗回合=-1;
+			--
+				MDEFADD=1;
+			"%(怪物名字)使用的挑逗技能失效了\x";
+		}
+		
+		--
+			
+			if 忽略回合>0
+			{
+				忽略回合--;
+			}
+			
+			elseif 忽略回合==0
+			{
+				忽略回合=-1;
+				--
+					IGN=1;
+				"%(怪物名字)使用的忽略技能失效了\x";
+			}
+			
+			--
+				
+				if 敌视回合>0
+				{
+					敌视回合--;
+				}
+				elseif 敌视回合==0
+				{
+			        	敌视回合=-1;
+					--
+						DEFMINUS=1;
+					"%(怪物名字)使用的敌视技能失效了\x";
+				}
+				
+				--
+					
+					if 禁寂之音回合>0
+					{
+						禁寂之音回合--;
+					}
+					elseif 禁寂之音回合==0
+					{
+						禁寂之音回合=-1;
+						--
+							SILENT=0;
+						"%(怪物名字)使用的禁寂之音技能失效了\x";
+					}
+					--
+						RpgGameVar;
+                                                怪物属性;
+}
+
+
+战斗结束
+{       
+	
+	battlemode=2;
+	if mhp <= 0
+	{
+		mhp = 0;
+	}
+	
+	
+	if hp0==0
+	{
+		hp0=TOINT(0.1*hpmax0);
+	}
+	
+	if hp1==0
+	{
+		hp1=TOINT(0.1*hpmax1);
+	}
+	--
+		intimacy+=1;
+	victorynum+=1;
+	mnum+=1;
+	_reward=bosslevel*level*mlv*bata
+	money+=TOINT(4*_reward);
+	exp0+=TOINT(2*_reward);
+	exptotal0+=TOINT(2*_reward);
+	exp1+=TOINT(2*_reward);
+	exptotal1+=TOINT(2*_reward);
+	_luck=幸运;
+	
+	if level==4
+	{
+		w=RAND(50);
+	}
+	elseif level==5
+	{
+		w=RAND(40);
+	}
+	elseif level==6
+	{
+		w=RAND(30);
+	}
+	elseif level==7
+	{
+		w=RAND(20);
+	}
+	else
+	{
+		_k=1;
+		if _luck<=-1
+		{
+			_k=-1;
+			_luck*=_k
+		}
+		if class=="D"
+			j=400-_k*log(1.04,_luck+1);;
+		elseif class=="C"
+			j=300-_k*log(1.05,_luck+1);
+		elseif class=="B"
+			j=200-_k*log(1.07,_luck+1);
+		elseif class=="A"
+			j=100-_k*log(1.16,_luck+1);
+                elseif class=="S"
+			j=50-_k*log(1.35,_luck+1);
+		w=RAND(j/level);
+	}
+	--
+		
+		if w>10 && w<=20    
+		{
+			
+			i=RAND(10);
+			if i>=5
+			{
+				if mlv<80
+				{
+					i=RAND(mlv/16);
+					"获得%(itemA[i][2])\n";
+				}
+				else
+				{
+					_a=ARRAYSIZE(itemA)
+					if mlv<100
+					_a=5
+					i=RAND(_a);
+					"获得%(itemA[i][2])\n";
+				}
+				itemAnum[i]=TOINT(itemAnum[i]+1)
+			} 
+			
+			elseif i<5
+			{
+				if mlv<80
+				{
+					i=RAND(mlv/20);
+					"获得%(itemB[i][2])\n";
+				}
+				else
+				{
+					i=RAND(4);
+					"获得%(itemB[i][2])\n";
+				}
+				itemBnum[i]=TOINT(itemBnum[i]+1);
+			} 
+		}
+		
+		elseif w>6 && w<=10
+		{
+			if mlv<130
+			{
+				i=RAND(2+mlv/10);
+				"获得%(bootsB[i][2])\n";
+			}
+			else
+			{
+				i=RAND(14);
+				"获得%(bootsB[i][2])\n";
+			}
+			bootsBnum[i]=TOINT(bootsBnum[i]+1);
+		}  
+		
+		
+		elseif w>2 && w<=6
+		{
+			
+			if mlv<130
+			{
+				i=RAND(2+mlv/5);
+				"获得%(weaponB[i][2])\n";
+			}
+			
+			else
+			{
+				i=RAND(29);
+				"获得%(weaponB[i][2])\n";
+			}
+			weaponBnum[i]=TOINT(weaponBnum[i]+1);
+		}       
+		
+		
+		elseif w<=2
+		{
+			
+			if mlv<126
+			{
+				i=RAND(2+mlv/7);
+				"获得%(armorB[i][2])\n";
+			}
+			else
+			{
+				i=RAND(19);
+				"获得%(armorB[i][2])\n";
+			}
+			armorBnum[i]=TOINT(armorBnum[i]+1);
+		}   
+		
+		--
+			"橘花获得经验%(TOINT(2*_reward))，斗和获得经验%(TOINT(2*_reward))\n";
+		
+		--
+			"获得金钱%(TOINT(4*_reward))\n" ; 
+			--
+			橘花升级+斗和升级;
+			
+			--
+				if mnum<10
+				{
+					"\t\0\q[继续逛,Onbattle]\n/
+						\q[休息一下,On休息]\n/
+						\q[回去吧,back]";
+				}
+				
+				
+				elseif mnum>=10
+				{
+					award=1;
+					
+					"任务完成,回去领取奖励？\n/
+						\q[回去吧,back]\n/  
+						\q[继续逛,Onbattle]";           
+						
+				}
+				
+				
+				--
+					
+					battleinfo;
+				
+}
+
+Select.back
+{
+	
+	OpenRpgGameMenu(5);
+	
+	
+}
+
+橘花升级
+{
+	nextexp0 = expmax0 - exp0;
+	_txt=""
+	while nextexp0<=0
+	{
+		nextexp_0=nextexp0;
+		lvl0 += 1;
+		exp0 = -nextexp_0;
+		RpgGameVar;
+		hp0=hpmax0;
+		ep0=epmax0;	
+		_txt+="\0\s[5]橘花升级了！\n\w9目前等级：%(lvl0)\n";
+			_魔法0 = (水系魔法,火系魔法,土系魔法,风系魔法);
+		foreach _魔法0; _i
+		{
+			if lvl0==TOINT(_i[5])
+			{
+				_txt+="\0\s[5]橘花学得新魔法%(_i[2])\n";	
+			}
+		}
+			foreach 战技0; _i
+		{
+			if lvl0==TOINT(_i[4])
+			{
+				_txt+="\0\s[5]橘花学得新战技%(_i[1])\n";
+				
+			}
+		}
+		nextexp0 = expmax0 - exp0;
+	}
+	_txt;
+}
+
+斗和升级
+{
+	nextexp1 = expmax1 - exp1;
+	_txt=""
+	while nextexp1<=0
+	{
+		nextexp_1=nextexp1;
+		lvl1 += 1;
+		exp1 = -nextexp_1;
+		RpgGameVar;
+		hp1=hpmax1;
+		ep1=epmax1;
+		
+		_txt+="\0\s[5]斗和升级了！\n\w9目前等级：%(lvl1)\n";
+		_魔法1 = (水系魔法,火系魔法,土系魔法,风系魔法);
+			foreach _魔法1; _i
+		{
+			if lvl1==TOINT(_i[5])
+			{
+				_txt+="斗和学得新魔法%(_i[2])\n";
+				
+			}
+		}
+		
+			foreach 战技1; _i
+		{
+			if lvl1==TOINT(_i[4])
+			{
+				
+				_txt+="\0\s[5]斗和学得新战技%(_i[1])\n";
+				
+			}
+		}
+		nextexp1 = expmax1 - exp1;
+	}
+	_txt;
+}
+
+
+Onesc
+{
+	"\0\s[40]确定退出冒险吗？\n/
+		\q[是,yesesc]\n/
+		\q[否,noesc]";
+}
+
+Select.yesesc
+{
+        ClearRpgGameVar;
+	
+	--
+		OpenMenu(2);
+	
+}
+
+Select.noesc
+{
+	OpenRpgGameMenu(5);
+	
+	
+}
+
+On休息
+{
+		battlemode=2;
+		"\0休息一下回复体力吧，接下来要做什么呢？\n/
+		\q[吸烟,smoke]\n/
+		\q[使用道具,On道具列表]\n/
+		\q[使用魔法,On魔法列表]\n/
+		\q[继续逛,Onbattle]\n/
+		\q[回去吧,back]";
+		--
+		battleinfo;
+
+		
+}
+
+
+
+ClearRpgGameVar
+{
+	
+	ERASEVAR("rpggame");
+	ERASEVAR("weaponA");
+	ERASEVAR("weaponB");
+	ERASEVAR("article");
+	ERASEVAR("armorA");
+	ERASEVAR("armorB");
+	ERASEVAR("bootsA");
+	ERASEVAR("bootsB");
+	ERASEVAR("itemA");
+	ERASEVAR("itemB");
+	ERASEVAR("boxnum");
+	ERASEVAR("水系魔法");
+	ERASEVAR("火系魔法");
+	ERASEVAR("土系魔法");
+	ERASEVAR("风系魔法");
+	ERASEVAR("weapon");
+	ERASEVAR("armor");
+	ERASEVAR("boots");
+	ERASEVAR("战技0");
+	ERASEVAR("战技1");
+	ERASEVAR("魔法0");
+	ERASEVAR("魔法1");
+	ERASEVAR("spattack0");
+	ERASEVAR("spattack1");
+	ERASEVAR("magicA");
+	ERASEVAR("mmagicready0");
+	ERASEVAR("mmagicready1");
+	ERASEVAR("mlv");
+	ERASEVAR("mlvx");
+	ERASEVAR("lvl");
+	ERASEVAR("expmax0");
+	ERASEVAR("expmax1");
+	ERASEVAR("A0");
+	ERASEVAR("A1");
+	ERASEVAR("A2");
+	ERASEVAR("B0");
+	ERASEVAR("B1");
+	ERASEVAR("B2");
+	ERASEVAR("hpmax0");
+	ERASEVAR("epmax0");
+	ERASEVAR("epmax1");
+	ERASEVAR("cpmax");
+	ERASEVAR("str0");
+	ERASEVAR("STRADD");
+	ERASEVAR("str0_");
+	ERASEVAR("def0");
+	ERASEVAR("DEFADD");
+	ERASEVAR("def0_");
+	ERASEVAR("ats0");
+	ERASEVAR("ats0_");
+	ERASEVAR("adf0");
+	ERASEVAR("adf0_");
+	ERASEVAR("adf1");
+	ERASEVAR("adf1_");
+	ERASEVAR("hpmax1");
+	ERASEVAR("str1");
+	ERASEVAR("str1_");
+	ERASEVAR("def1");
+	ERASEVAR("def1_");
+	ERASEVAR("ats1");
+	ERASEVAR("ats1_");
+	ERASEVAR("mhpmaxD");
+	ERASEVAR("mhpmaxC");
+	ERASEVAR("mhpmaxB");
+	ERASEVAR("mhpmaxA");
+	ERASEVAR("mstrD");
+	ERASEVAR("level");
+	ERASEVAR("mstrC");
+	ERASEVAR("mstrB");
+	ERASEVAR("mstrA");
+	ERASEVAR("mdefD");
+	ERASEVAR("IGN");
+	ERASEVAR("DEFMINUS");
+	ERASEVAR("mdefC");
+	ERASEVAR("mdefB");
+	ERASEVAR("mdefA");
+	ERASEVAR("matsD");
+	ERASEVAR("matsC");
+	ERASEVAR("matsB");
+	ERASEVAR("matsA");
+	ERASEVAR("madfD");
+	ERASEVAR("怪物魔防");
+	ERASEVAR("madfC");
+	ERASEVAR("madfB");
+	ERASEVAR("madfA");
+	ERASEVAR("nextexp0");
+	ERASEVAR("nextexp1");
+	ERASEVAR("ANG");
+	ERASEVAR("ADD");
+	ERASEVAR("魔法名称");
+	ERASEVAR("效果数值");
+	ERASEVAR("EP消耗");
+	ERASEVAR("magicready0");
+	ERASEVAR("mhp");
+	ERASEVAR("魔法伤害0");
+	ERASEVAR("魔法伤害1");
+	ERASEVAR("mhpmax");
+	ERASEVAR("magicready1");
+	ERASEVAR("魔法种类");
+	ERASEVAR("魔法名称0");
+	ERASEVAR("NUMS");
+	ERASEVAR("魔法伤害");
+	ERASEVAR("水有效率");
+	ERASEVAR("madf");
+	ERASEVAR("火有效率");
+	ERASEVAR("土有效率");
+	ERASEVAR("风有效率");
+	ERASEVAR("魔法名称");
+	ERASEVAR("道具类型");
+	ERASEVAR("道具代码");
+	ERASEVAR("道具名称");
+	ERASEVAR("物品种类");
+	ERASEVAR("物品代码");
+	ERASEVAR("物品名称");
+	ERASEVAR("物品价格");
+	ERASEVAR("卖出数量");
+	ERASEVAR("道具种类");
+	ERASEVAR("道具价格");
+	ERASEVAR("购买数量");
+	ERASEVAR("award");
+	ERASEVAR("class");
+	ERASEVAR("mnum");
+	ERASEVAR("f");
+	ERASEVAR("怪物名字");
+	ERASEVAR("kikka");
+	ERASEVAR("towa");
+	ERASEVAR("助威回合");
+	ERASEVAR("嚎叫回合");
+	ERASEVAR("示威回合");
+	ERASEVAR("黑暗诅咒回合");
+	ERASEVAR("噬血诅咒回合");
+	ERASEVAR("mstr");
+	ERASEVAR("mdef");
+	ERASEVAR("mats");
+	ERASEVAR("bata");
+	ERASEVAR("battleturn");
+	ERASEVAR("mmagicready");
+	ERASEVAR("伤害");
+	ERASEVAR("战技名称");
+	ERASEVAR("属性");
+	ERASEVAR("CP消耗");
+	ERASEVAR("战技伤害");
+	ERASEVAR("兽技ID");
+	ERASEVAR("消耗SP");
+	ERASEVAR("兽技伤害");
+	ERASEVAR("e");
+	ERASEVAR("反击魔法伤害");
+	ERASEVAR("c");
+	ERASEVAR("反击效果数值");
+	ERASEVAR("反击魔法名称");
+	ERASEVAR("MNUMS");
+	ERASEVAR("怪伤害0");
+	ERASEVAR("怪伤害1");
+	ERASEVAR("w");
+	ERASEVAR("j");
+	ERASEVAR("nextexp_0");
+	ERASEVAR("nextexp_1");
+	ERASEVAR("HP0");
+	ERASEVAR("HP1");
+	ERASEVAR("ss0");
+	ERASEVAR("ss1");
+	ERASEVAR("ss2");
+	ERASEVAR("atk");
+	ERASEVAR("r0");
+	ERASEVAR("SP0");
+	ERASEVAR("SP1");
+	ERASEVAR("STR0ADD");
+	ERASEVAR("STR1ADD");
+	ERASEVAR("DEF0ADD");
+	ERASEVAR("DEF1ADD");
+	ERASEVAR("DEF0MINUS");
+	ERASEVAR("DEF1MINUS");
+	ERASEVAR("IGN0");
+	ERASEVAR("IGN1");
+	ERASEVAR("MANG");
+	ERASEVAR("MDEFADD");
+	ERASEVAR("MDEFMINUS");
+	ERASEVAR("SILENT");
+	ERASEVAR("STR0");
+	ERASEVAR("STR1");
+	ERASEVAR("DEF0");
+	ERASEVAR("DEF1");
+	ERASEVAR("防御回合");
+	ERASEVAR("神威祈福回合");
+	ERASEVAR("呐喊回合");
+	ERASEVAR("赎罪回合");
+	ERASEVAR("天使之光回合");
+	ERASEVAR("天使之怒回合");
+	ERASEVAR("沉默回合");
+	ERASEVAR("威胁回合");
+	ERASEVAR("挑逗回合");
+	ERASEVAR("忽略回合");
+	ERASEVAR("愤怒暴发回合");
+	ERASEVAR("禁寂之音回合");
+	ERASEVAR("SILENT0");
+	ERASEVAR("SILENT1");
+	ERASEVAR("DEF");
+	ERASEVAR("物理伤害");
+	ERASEVAR("战技ID");
+	ERASEVAR("t");
+	ERASEVAR("HP2");
+	ERASEVAR("攻击者");
+	ERASEVAR("其他人格数量");
+	ERASEVAR("战败者");
+	ERASEVAR("DEF2");
+	ERASEVAR("自身名字");
+	ERASEVAR("target");
+	ERASEVAR("rpggame");
+	ERASEVAR("kikkadefend");
+	ERASEVAR("towadefend");
+	ERASEVAR("mdefend");
+	ERASEVAR("mcircle");
+	ERASEVAR("bosslevel");
+}

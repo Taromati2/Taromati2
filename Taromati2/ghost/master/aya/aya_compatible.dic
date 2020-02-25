@@ -1,0 +1,202 @@
+﻿//******************************************************************************
+//SHIORI/3.0制御スクリプト for AYA
+//互換処理
+//******************************************************************************
+
+// aya5.dll設定（旧）
+#globaldefine	AYAINFO_VERSION	0
+#globaldefine	AYAINFO_CHARSET	1
+#globaldefine	AYAINFO_PATH	2
+#globaldefine	AYAINFO_NAME	3
+#globaldefine	AYAINFO_AUTHOR	4
+
+// 旧互換性保持のためのシステム関数補完（読み替えのみで対応可能なもの）
+#globaldefine	SETSEPARATOR	SETDELIM
+#globaldefine	TONUMBER2		TOINT
+#globaldefine	TOSTRING2		TOSTR
+#globaldefine	TONUMBER		CVINT
+#globaldefine	TOSTRING		CVSTR
+#globaldefine	ISFUNCTION		ISFUNC
+#globaldefine	BINSTRTONUM		BINSTRTOI
+#globaldefine	HEXSTRTONUM		HEXSTRTOI
+#globaldefine	ERASEVARIABLE	ERASEVAR
+#globaldefine	MSTRLEN			STRLEN
+#globaldefine	MSTRSTR			STRSTR
+#globaldefine	MSUBSTR			SUBSTR
+#globaldefine	MERASE			ERASE
+#globaldefine	MINSERT			INSERT
+#globaldefine	NAMETOVALUE		EVAL
+#globaldefine	CALLBYNAME		EVAL
+
+//******************************************************************************
+//文 version 4 システム関数 / システム変数の補完
+//汎用関数
+//******************************************************************************
+
+ASC
+{
+	if !_argc;                              " "
+	elseif GETTYPE(_argv[0]) != 1;          " "
+	elseif _argv[0] < 0 || _argv[0] > 0x7f; " "
+	else;                                   CHR(_argv[0])
+}
+
+//----
+
+IASC
+{
+	if !_argc;                     -1
+	elseif GETTYPE(_argv[0]) != 3; -1
+	elseif !STRLEN(_argv[0]);      -1
+	else;                          CHRCODE(_argv[0])
+}
+
+//----
+
+ISINSIDE
+{
+	if _argc < 3;                                             0
+	elseif  (_argv[1] <= _argv[0] && _argv[0] <= _argv[2]) ||/
+			(_argv[2] <= _argv[0] && _argv[0] <= _argv[1]);   1
+	else;                                                     0
+}
+
+//----
+
+ISREAL
+{
+	if !_argc;                     0
+	elseif GETTYPE(_argv[0]) == 2; 1
+	else;                          0
+}
+
+//----
+
+ISINTEGER
+{
+	if !_argc;                     0
+	elseif GETTYPE(_argv[0]) == 1; 1
+	else;                          0
+}
+
+
+//******************************************************************************
+//文 version 4 システム関数 / システム変数の補完
+//REQ系関数
+//******************************************************************************
+
+//----
+
+REQ.KEY
+{
+	if !_argc; return
+
+	switch GETTYPE(_i = _argv[0]) {
+		// エラー
+		""
+
+		// 位置指定
+		var.req.key[_i];
+
+		// 位置指定（実数）　整数化して処理
+		var.req.key[TOINT(_i)]
+
+		// 文字列はエラー
+		""
+	}
+}
+
+//----
+
+REQ.HEADER
+{
+	REQ.KEY(_argv)
+}
+
+//----
+
+REQ.VALUE
+{
+	if !_argc; return
+
+	switch GETTYPE(_i = _argv[0]) {
+		// エラー
+		""
+
+		// 位置指定
+		var.req.value[_i];
+
+		// 位置指定（実数）　整数化して処理
+		var.req.value[TOINT(_i)]
+
+		// 名前指定
+		{
+			_sz = ARRAYSIZE(var.req.key)
+			for _j = 0; _j < _sz; _j++ {
+				if (var.req.key[_j] == _i) {
+					var.req.value[_j]
+					break
+				}
+			}
+		}
+	}
+}
+
+//******************************************************************************
+//文 version 4 システム関数 / システム変数の補完
+//LIB系関数
+//******************************************************************************
+LIB.KEY
+{
+	if !_argc; return
+
+	switch GETTYPE(_i = _argv[0]) {
+		// エラー
+		""
+
+		// 位置指定
+		var.lib.key[_i];
+
+		// 位置指定（実数）　整数化して処理
+		var.lib.key[TOINT(_i)]
+
+		// 文字列はエラー
+		""
+	}
+}
+
+//----
+
+LIB.HEADER
+{
+	LIB.KEY(_argv)
+}
+
+//----
+
+LIB.VALUE
+{
+	if !_argc; return
+
+	switch GETTYPE(_i = _argv[0]) {
+		// エラー
+		""
+
+		// 位置指定
+		var.lib.value[_i];
+
+		// 位置指定（実数）　整数化して処理
+		var.lib.value[TOINT(_i)]
+
+		// 名前指定
+		{
+			_sz = ARRAYSIZE(var.lib.key)
+			for _j = 0; _j < _sz; _j++ {
+				if (var.lib.key[_j] == _i) {
+					var.lib.value[_j]
+					break
+				}
+			}
+		}
+	}
+}

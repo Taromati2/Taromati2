@@ -1,0 +1,247 @@
+﻿///////// 文　ゴーストテンプレート
+///////// 文字列リソース辞书
+///////// written by umeici.
+
+//**** 文字列リソース *******************************************************************
+
+//---- ユーザー名 -----------------------------------------------------------------------
+On_username
+{
+	username
+}
+
+//---- ネットワーク更新の基准位置となるURL ----------------------------------------------
+On_homeurl
+{
+	"https://raw.githubusercontent.com/steve02081504/Kikka/master/Taromati2/"
+}
+
+//---- ポータルサイトのボタンキャプション -----------------------------------------------
+On_portalrootbutton.caption
+{
+	"Bottle"
+}
+
+//---- ポータルサイトのリスト -----------------------------------------------------------
+On_sakura.portalsites
+{
+	"/
+	MATERIA%ASC(1)http://usada.sakura.vg/%ASC(2)/
+	SSP%ASC(1)http://ssp.shillest.net%ASC(2)/
+	CROW%ASC(1)http://crow.aqrs.jp%ASC(2)/
+	%ASC(1)%ASC(2)/
+	Disc-2%ASC(1)http://disc2.s56.xrea.com%ASC(2)/
+	ゴーストセンター%ASC(1)http://www.aqrs.jp/ngc/%ASC(2)/
+	GHOST TOWN%ASC(1)http://ghost.sakura.vg%ASC(2)/
+	噂と评判[改]%ASC(1)http://review.sakura.ne.jp/%ASC(2)/
+	"
+}
+
+//---- 本体侧おすすめサイトのボタンキャプション -----------------------------------------
+On_recommendrootbutton.caption
+{
+	"推荐网址"
+}
+
+//---- 本体侧おすすめサイトのリスト -----------------------------------------------------
+On_sakura.recommendsites
+{
+	"/
+	上海アリス幻乐団%ASC(1)http://www16.big.or.jp/~zun/%ASC(2)/
+	面屋%ASC(1)http://lovelove.rabi-en-rose.net/%ASC(2)/
+	犬丼帝国%ASC(1)http://wls.hp.infoseek.co.jp/%ASC(2)/
+	吉田研究所%ASC(1)/http://www2.tky.3web.ne.jp/~yosshin/%ASC(2)/
+	橙汁%ASC(1)/http://daidai.moo.jp/%ASC(2)/
+	%ASC(1)%ASC(2)/
+	弾幕型%ASC(1)/http://arcader.nobody.jp/danmaku/%ASC(2)"
+
+       --
+       _txt=""
+       SETDELIM(recommendsites,"*");
+       _count=ARRAYSIZE(recommendsites)-1
+       for _i=0;_i<_count;_i++
+       {
+
+       _txt+=recommendsites[_i][0,'|']+"%ASC(1)"+recommendsites[_i][1,'|']+"%ASC(2)"
+
+       }
+      _txt
+}
+
+
+
+//---- kero侧おすすめサイトのボタンキャプション -----------------------------------------
+On_kero.recommendbuttoncaption
+{
+	"推荐"
+}
+
+//---- kero侧おすすめサイトのリスト -----------------------------------------------------
+//On_kero.recommendsites
+//{
+//	""
+//}
+On_kero.OnPlayOX
+{
+    "ddd"
+
+
+}
+
+//---- ネットワーク更新ボタンのキャプション ---------------------------------------------
+On_updatebutton.caption
+{
+	"更新"
+}
+
+//---- readmeボタンのキャプション -------------------------------------------------------
+On_readmebutton.caption
+{
+	"read me"
+}
+
+//---- 消灭指示ボタンのキャプション -----------------------------------------------------
+On_vanishbutton.caption
+{
+	"消灭指示"
+}
+
+//---- 消灭指示ボタン表示切り替え -------------------------------------------------------
+
+On_vanishbutton.visible
+{
+	vanishbutton.visible
+}
+
+/*
+On_kero.dressuprootbutton.caption
+{
+	"衣物"
+}
+
+On_headlinesenserootbutton.caption
+{
+	"在线新闻"
+}
+
+
+On_pluginrootbutton.caption
+{
+	"外挂"
+}
+On_biffbutton.caption
+{
+	"检查邮件"
+}
+//縮放
+On_shellscalerootbutton.caption
+{
+	"縮放"
+}
+//其他機能
+On_utilityrootbutton.caption
+{
+	"便利机能"
+}
+On_configurationrootbutton.caption
+{
+	"选项"
+}
+//切換
+On_ghostrootbutton.caption
+{
+	"切換人格"
+}
+//召喚
+On_callghostrootbutton.caption
+{
+	"呼叫人格"
+}
+//外見
+On_shellrootbutton.caption
+{
+	"外表"
+}
+//服裝
+On_dressuprootbutton.caption
+{
+	"衣物"
+}
+//對話框
+On_balloonrootbutton.caption
+{
+	"对话框"
+}
+//歷史記錄
+On_historyrootbutton.caption
+{
+	"历史操作"
+}
+//關閉人格
+On_closebutton.caption
+{
+	"关闭人格"
+}
+//關閉SSP
+On_quitbutton.caption
+{
+	"退出SSP"
+}
+
+//最小化
+On_hidebutton.caption
+{
+	"最小化"
+}
+//相關情報
+On_inforootbutton.caption
+{
+	"相关情报"
+}
+*/
+//---- 起动中の他のゴースト名取得 -------------------------------------------------------
+On_otherghostname
+{
+	// 现在起动中のゴーストのリストを作成する
+                if fjswitch
+                fjswitch="-1";
+	ghostexlist = ""
+	_i = 0
+	while _i >= 0 {
+		_ghostname = NAMETOVALUE("reference%_i")
+		if _ghostname != "" {
+			if _i > 0; ghostexlist += ","
+			ghostexlist += _ghostname[0]
+			_i++
+		}
+		else; _i = -1
+	}
+	ghostexcount = ARRAYSIZE(ghostexlist)
+}
+
+//---- SHIORI 関连情报 ------------------------------------------------------------------
+On_version
+{
+	GETSETTING(AYAINFO_VERSION)
+}
+
+On_name
+{
+	"AYA"
+}
+
+//---- Owned SSTP 用 uniqueid 取得 ------------------------------------------------------
+On_uniqueid
+{
+	uniqueid = reference0
+}
+
+//---- hwnd 取得 ------------------------------------------------------------------------
+On_hwnd
+{
+	sakurahwnd    = reference0[0]
+	kerohwnd      = reference0[1]
+	sakurablnhwnd = reference1[0]
+	keroblnhwnd   = reference1[1]
+}
+

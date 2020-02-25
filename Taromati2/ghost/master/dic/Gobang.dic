@@ -1,0 +1,2493 @@
+﻿
+#define BLACK 0
+#define WHITE 15
+#define true 1
+#define false 0
+#define PATH data
+
+
+OnGobangInIt
+{
+	if QuickStartVersion{
+		NeedUpdate
+		return
+	}
+	if wzq.Model==NULL
+		wzq.Model=0  //0人->机 1机->人 2对翌
+	player.gamenum=0;
+	_txt=""
+	_txt+="\s[2]%(username)要和橘花下五子棋啊，\w9\w9\s[40]来吧，橘花可不是那么好赢的哦。\n"
+	_txt+="\n[half]\q[◇新游戏,OnGobangNewGame]"
+	_txt+="\n\q[◇返回上一层,OnOpenMenu,2]     \q[◇结束,OnGobangGameOver]"
+	mess=""
+	
+	_txt
+}
+
+
+
+
+
+OnGobangNewGame
+{
+
+ Black=1;
+ White=0;
+ Nought=-1;
+if Num==NULL
+ Num=145
+ playingGobang=1
+ running="playingGobang"
+if row.x[70]==NULL && row.y[70]==NULL && row.c[70]==NULL
+initdat
+if qp==NULL
+qp=1
+if qz==NULL
+qz=1
+if Powerofcomputer==NULL
+Powerofcomputer=1
+m_count=0
+if player.playnum==0
+GobangVarReset
+DuanWei;
+player.baseparam.duanwei=GetYingDuanwei
+
+
+_w="";
+_w+=ClearGobang
+aiturn=0	
+if m_count==0 && wzq.Model==1
+_w+=OnuserBd(7,7)
+
+wzq.Model=(wzq.Model+1)%2
+_w+=OnGobangShow;
+_w;
+}
+
+
+DuanWei
+{
+
+if duanwei==NULL
+duanwei=3
+if duanwei==3
+{
+fight=49
+defense=55
+mark=1230
+
+if Powerofcomputer==1
+Num=145
+elseif Powerofcomputer==2
+Num=150
+elseif Powerofcomputer==3
+Num=155
+elseif Powerofcomputer==4
+Num=160
+
+}
+elseif duanwei==4
+{
+fight=69
+defense=54
+mark=1830
+
+if Powerofcomputer==1
+Num=155
+elseif Powerofcomputer==2
+Num=160
+elseif Powerofcomputer==3
+Num=165
+elseif Powerofcomputer==4
+Num=170
+}
+elseif duanwei==5
+{
+fight=74
+defense=60
+mark=2300
+   if RAND(2)
+    {
+   fight=59
+   defense=78
+   mark=2350
+    }
+
+if Powerofcomputer==1
+Num=165
+elseif Powerofcomputer==2
+Num=170
+elseif Powerofcomputer==3
+Num=175
+elseif Powerofcomputer==4
+Num=180
+
+}
+elseif duanwei==6
+{
+fight=70
+defense=78
+mark=2600
+    if RAND(2)
+    {
+   fight=81
+   defense=69
+   mark=3010
+    }
+
+if Powerofcomputer==1
+Num=175
+elseif Powerofcomputer==2
+Num=180
+elseif Powerofcomputer==3
+Num=185
+elseif Powerofcomputer==4
+Num=190
+
+}
+elseif duanwei==7
+{
+fight=80
+defense=81
+mark=3600
+   if RAND(2)
+    {
+    fight=83
+    defense=85
+    mark=3890
+    }
+
+if Powerofcomputer==1
+Num=185
+elseif Powerofcomputer==2
+Num=190
+elseif Powerofcomputer==3
+Num=195
+elseif Powerofcomputer==4
+Num=200
+
+
+}
+elseif duanwei==8
+{
+fight=87
+defense=90
+mark=4700
+   if RAND(2)
+    {
+    fight=94
+    defense=80
+    mark=4750
+    }
+
+if Powerofcomputer==1
+Num=195
+elseif Powerofcomputer==2
+Num=200
+elseif Powerofcomputer==3
+Num=205
+elseif Powerofcomputer==4
+Num=210
+
+}
+elseif duanwei==9
+{
+fight=94
+defense=93
+mark=5300
+
+
+if Powerofcomputer==1
+Num=205
+elseif Powerofcomputer==2
+Num=210
+elseif Powerofcomputer==3
+Num=215
+elseif Powerofcomputer==4
+Num=220
+}
+
+}
+
+
+
+ClearGobang
+{
+
+
+
+for _i=0;_i<4;_i++
+               {
+		player.win[_i]=-1;
+               }
+
+
+
+for _i=0;_i<=14;_i++
+{
+	for _j=0 ; _j<=14;_j++
+	{
+	state[_i*15+_j]=6;
+		
+	}
+}
+ windata.x=IARRAY
+ windata.y=IARRAY
+ order.x=IARRAY
+ order.y=IARRAY
+
+
+}
+
+
+GobangVarReset
+{
+
+        player.baseparam.duanwei=0;
+	player.baseparam.mark=0;
+	player.winnum=0;
+	player.losenum=0;
+        player.playnum=0
+	player.mingci=0;
+	player.junum=0;
+
+
+}
+
+
+OnGobangGameOver       //游戏结束
+{
+"\0\s[0]\b[0]不玩了吗。"
+
+playingGobang=0;
+ClearGobangVar
+
+--
+"\e"
+
+}
+
+GetYingDuanwei
+{
+        if player.baseparam.mark>=500 && player.baseparam.mark<1000
+		 {1;return}
+	elseif player.baseparam.mark>=1000 && player.baseparam.mark<2400
+		 {2;return}
+	elseif player.baseparam.mark>=2400&& player.baseparam.mark<3900 
+		 {3;return}
+	elseif player.baseparam.mark>=3900&& player.baseparam.mark<5500 
+		 {4;return}
+	elseif player.baseparam.mark>=5500&& player.baseparam.mark<7200 
+		 {5;return}
+	elseif player.baseparam.mark>=7200&& player.baseparam.mark<9000 
+		 {6;return}
+	elseif player.baseparam.mark>=9000&& player.baseparam.mark<11000 
+		 {7;return}
+	elseif player.baseparam.mark>=11000&& player.baseparam.mark<15000 
+                 {8;return}
+	elseif player.baseparam.mark>=20000
+                 {9;return}
+	else 
+                 {0;return}
+}
+
+
+OnGobangOption
+{
+
+
+if reference0=="qp"
+  {
+qp=reference1
+棋盘=reference2
+  }
+ 
+elseif reference0=="qz"
+  {
+qz=reference1
+棋子=reference2
+  }
+ 
+elseif reference0=="ql"
+  {
+Powerofcomputer=reference1
+棋力=reference2
+
+  }
+
+elseif reference0=="duanwei"
+  {
+duanwei=reference1
+段位=reference2
+  }
+
+elseif reference0=="xz"
+  {
+wzq.Model=reference1
+先走=reference2
+  }
+
+
+
+_txt="\C\![quicksession,true]\c\![set,choicetimeout,0]\b[2]"
+_txt+="棋盘设定：当前为%(棋盘)\n\q[◇棋盘1,OnGobangOption,qp,1,棋盘1]  \q[◇棋盘2,OnGobangOption,qp,2,棋盘2]\n/
+ 棋子设定：当前为%(棋子) \n\q[◇棋子1,OnGobangOption,qz,1,棋子1]  \q[◇棋子2,OnGobangOption,qz,2,棋子2]\n/
+ 棋力设定：当前为%(棋力)\n \q[◇入门,OnGobangOption,ql,1,入门]   \q[◇业余,OnGobangOption,ql,2,业余]  \q[◇专业,OnGobangOption,ql,3,专业]  \q[◇大师,OnGobangOption,ql,4,大师]\n/
+ 段位设定：当前为%(段位) \n \q[◇3段,OnGobangOption,duanwei,3,3段]  \q[◇4段,OnGobangOption,duanwei,4,4段]  \q[◇5段,OnGobangOption,duanwei,5,5段]  \q[◇6段,OnGobangOption,duanwei,6,6段] \q[◇7段,OnGobangOption,duanwei,7,7段]  \q[◇8段,OnGobangOption,duanwei,8,8段]  \q[◇9段,OnGobangOption,duanwei,9,9段]\n/
+ 先走模式：当前为%(先走) \n\q[◇%(username)先走,OnGobangOption,xz,0,%(username)先走]   \q[◇橘花先走,OnGobangOption,xz,1,橘花先走]\n/
+"
+
+
+_txt+="\n\q[◇返回上一层,OnGobangNewGame]     \q[◇结束,OnGobangGameOver]"
+_txt
+}
+
+ClearGobangVar      //消除变量
+{
+        ERASEVAR("playingGobang");
+        ERASEVAR("state");
+        ERASEVAR("State");
+	ERASEVAR("Mark1");
+	ERASEVAR("Mark2");
+	ERASEVAR("Mark");
+        ERASEVAR("EXIST");
+        ERASEVAR("row.x");
+        ERASEVAR("row.y");
+        ERASEVAR("row.c");
+        ERASEVAR("user");
+        ERASEVAR("pc");
+        ERASEVAR("windata.x");
+        ERASEVAR("windata.y");
+        ERASEVAR("order.x");
+        ERASEVAR("order.y");
+	ERASEVAR("xx");
+	ERASEVAR("yy");
+	ERASEVAR("x");
+	ERASEVAR("y");
+	ERASEVAR("nx");
+	ERASEVAR("ny");
+	ERASEVAR("nowx");
+	ERASEVAR("nowy");
+	ERASEVAR("whowin");
+	ERASEVAR("col");
+	ERASEVAR("wzq.nturn");
+	ERASEVAR("Number");
+	ERASEVAR("wisex");
+	ERASEVAR("wisey");
+	ERASEVAR("k1");
+	ERASEVAR("MAX");
+	ERASEVAR("Fail");
+	ERASEVAR("Win");
+	ERASEVAR("Overyesorno");
+	ERASEVAR("Mode");
+	ERASEVAR("Count");
+	ERASEVAR("Onelineflag");
+	ERASEVAR("Nowlineflag");
+	ERASEVAR("x0");
+	ERASEVAR("y0");
+	ERASEVAR("c0");
+	ERASEVAR("x2");
+	ERASEVAR("y2");
+	ERASEVAR("x3");
+	ERASEVAR("y3");
+	ERASEVAR("x4");
+	ERASEVAR("y4");
+	ERASEVAR("x5");
+	ERASEVAR("y5");
+	ERASEVAR("x6");
+	ERASEVAR("y6");
+	ERASEVAR("c6");
+	ERASEVAR("Precount");
+	ERASEVAR("Oldlineflag");
+	ERASEVAR("a.x");
+	ERASEVAR("a.y");
+	ERASEVAR("b.x");
+	ERASEVAR("b.y");
+	ERASEVAR("c.x");
+	ERASEVAR("c.y");
+	ERASEVAR("d.x");
+	ERASEVAR("d.y");
+	ERASEVAR("user_x");
+	ERASEVAR("user_y");
+	ERASEVAR("N");
+	ERASEVAR("wzq.twinner.winner");
+	ERASEVAR("wzq.nowd2");
+	ERASEVAR("aigo.x");
+	ERASEVAR("aigo.y");
+	ERASEVAR("ans.Num,2");
+	ERASEVAR("ans.bExist");
+	ERASEVAR("ans.Num");
+	ERASEVAR("ans.Points");
+	ERASEVAR("d");
+}
+
+
+//___________________________________________________________________________________________
+
+DrawQZ//画棋子
+{
+
+
+_x=5
+_xx=4
+_y=60
+_yy=4
+
+
+_txt=""
+
+_nx=TOINT(_argv[0])
+_ny=TOINT(_argv[1])
+_style=_argv[2]
+
+	        if _nx>15||_ny>15 
+                 return;
+
+		if _style==false 
+		{       
+                         if qz==1
+			 _txt+="\_l[%(_nx*18+_x+_xx),%(_ny*18+_y+_yy)]\_b[PATH/whiteStone_17.png,inline]"
+                         elseif qz==2
+                         _txt+="\_l[%(_nx*18+_x+_xx),%(_ny*18+_y+_yy)]\_b[PATH/whiteStone_17_2.png,inline]"
+		}
+		else
+		{
+                         if qz==1
+			_txt+="\_l[%(_nx*18+_x+_xx),%(_ny*18+_y+_yy)]\_b[PATH/blackStone_17.png,inline]"
+                         elseif qz==2
+                         _txt+="\_l[%(_nx*18+_x+_xx),%(_ny*18+_y+_yy)]\_b[PATH/blackStone_17_2.png,inline]"
+                         
+		}
+
+                if nx==_nx&&ny==_ny
+                  _txt+="\_l[%(_nx*18+_x+_xx),%(_ny*18+_y+_yy)]\_b[PATH/bond.png,inline]"
+
+_txt
+}
+
+//_____________________________________________________________________________________
+OnGobangShow
+{
+
+_txt="\C\![quicksession,true]\c\0\s[26]\![set,choicetimeout,0]\b[2]"
+_txt+="\n游戏局数：%(player.playnum)       \_l[100,-]赢次数：%(player.winnum)        \_l[200,-]输次数：%(player.losenum)\n积分：%(player.baseparam.mark)              \_l[100,-]段位：%(player.baseparam.duanwei)段"
+_txt+="\n\q[◇新游戏,OnGobangNewGame]  \_l[80,-]\q[◇悔棋,OnRegret] \_l[160,-]\q[◇设定,OnGobangOption]   \_l[240,-]\q[◇结束,OnGobangGameOver]"
+
+
+if reference0=="aitime"
+{
+if aiturn==1
+{
+_txt+=ComputerThink
+}
+}
+
+x=5
+xx=4
+y=60
+yy=4
+if qp==NULL
+qp=1
+
+if qp==1
+{
+
+_txt+="\_l[%(x),%(y)]\_b[PATH/Gobangqp.bmp,inline,--option=opaque]"
+}
+elseif qp==2
+   {
+  x=4
+ xx=6
+ yy=5
+_txt+="\_l[%(x),%(y)]\_b[PATH/Gobangqp2.bmp,inline,--option=opaque]"
+   }
+
+_whowin=Whowincheck
+for _i = 0; _i < 15; _i++ 
+   {
+		for _j = 0; _j < 15; _j++ 
+              {
+               if _whowin==-1
+                _txt+="\_l[%(_j*18+x+xx),%(_i*18+y+yy)]\__q[Ondownzi,%(_j),%(_i)]\_b[PATH/blank.png,inline]\__q"
+              }
+   }
+
+   if Whowincheck==0
+   {
+    mess="\_l[0,0]白棋胜了" 
+   }
+    elseif Whowincheck==1
+  {
+    mess="\_l[0,0]黑棋胜了"
+   }
+
+for _ny=0; _ny<15;_ny++
+{
+	for _nx=0 ; _nx<15;_nx++
+	{
+		if state[_nx*15+_ny]==WHITE
+                _txt+=DrawQZ(_nx,_ny,false)
+		elseif state[_nx*15+_ny]==BLACK
+                _txt+=DrawQZ(_nx,_ny,true)
+ 
+               
+                if _ny==0
+                  {
+                    xx=10
+                    yy=-1
+                  _txt+="\_l[%(_nx*18+x+xx),%(_ny*18+y+yy)]%(_nx)"
+                  }
+                if _nx==0
+                  {
+                    xx=2
+                    yy=4
+                    if _ny>0
+                  _txt+="\_l[%(_nx*18+x+xx),%(_ny*18+y+yy)]%(_ny)"
+                  }
+                  
+
+	}
+}
+
+_txt+=mess
+
+if aiturn==1&&Whowincheck==-1
+_txt+="\_w[1]\![raise,OnGobangShow,aitime]"
+
+_txt
+
+}
+
+
+
+
+
+
+
+
+//___________________________________________________________________________________________
+
+OnuserAd//黑色下子
+{
+nx=reference0
+ny=reference1
+if _argc>0
+{
+nx=_argv[0]
+ny=_argv[1]
+}
+_txt="\C\![quicksession,true]\c"
+//_txt=""
+
+    if state[nx*15+ny]==6 && Whowincheck==-1
+     {
+                _txt+="\![sound,play,PATH\Stone.wav]"
+                state[nx*15+ny]=BLACK;
+                turnback=true;
+		order.x[m_count]=nx;
+		order.y[m_count]=ny;
+		m_count++;
+                nowx=nx;
+                nowy=ny;
+                mess="\0\_l[0,0]第%(m_count)步，黑子（%(nx),%(ny)）"
+                aiturn=1
+    }
+
+  if Whowincheck==1
+    {
+     player.winnum++
+     player.playnum++
+     if Powerofcomputer==1
+     player.baseparam.mark+=TOINT(mark*0.02);
+     elseif Powerofcomputer==2
+     player.baseparam.mark+=TOINT(mark*0.03);
+     elseif Powerofcomputer==3
+     player.baseparam.mark+=TOINT(mark*0.04);
+     elseif Powerofcomputer==4
+     player.baseparam.mark+=TOINT(mark*0.05);
+    }
+
+_txt+=OnGobangShow
+_txt
+}
+//___________________________________________________________________________________________
+
+
+OnuserBd//白色下子
+{
+nx=reference0
+ny=reference1
+if _argv[0]!=NULL
+nx=TOINT(_argv[0])
+if _argv[1]!=NULL
+ny=TOINT(_argv[1])
+_txt="\C\![quicksession,true]\c"
+   if state[nx*15+ny]==6
+    {
+                _txt+="\![sound,play,PATH\Stone.wav]"
+                state[nx*15+ny]=WHITE;
+                turnback=true;
+                order.x[m_count]=nx;
+		order.y[m_count]=ny;
+		m_count++;
+                nowx=nx;
+                nowy=ny;
+                mess="\0\_l[0,0]第%(m_count)步，白子（%(nx),%(ny)）"
+   }
+
+   if Whowincheck==0
+   {
+   player.losenum++
+   player.playnum++
+   }
+_txt+=OnGobangShow
+_txt
+}
+
+//_____________________________________________________________________________________
+OnRegret
+{
+   if Whowincheck==-1
+     {
+         if m_count>=10 
+             {
+               state[(order.x[m_count-1])*15+order.y[m_count-1]]=6;		
+	       m_count--
+               state[(order.x[m_count-1])*15+order.y[m_count-1]]=6;		
+	       m_count--
+               OnGobangShow
+             }
+         else
+         {
+          mess="\0\_l[0,0]小于6回合不能悔棋"
+          OnGobangShow
+         }
+     }
+
+   else
+     {
+         mess="\0\_l[0,0]游戏已结束不能悔棋"
+        OnGobangShow
+     }
+}
+
+
+Whowincheck
+{
+
+
+ 
+ col=(15,0);
+ for _i=0;_i<5;_i++ 
+  {
+  windata.x[_i]=_i;
+  windata.y[_i]=0;
+  windata.x[5+_i]=0;
+  windata.y[5+_i]=_i;
+  windata.x[10+_i]=_i;
+  windata.y[10+_i]=_i;
+  windata.x[15+_i]=_i;
+  windata.y[15+_i]=-_i;
+  }
+for _m=0;_m<2;_m++
+ {
+   for _i=0;_i<15;_i++
+    {
+    for _j=0;_j<15;_j++ 
+      {
+       if state[_i*15+_j]==6 
+           { continue;}
+       for _n=0;_n<4;_n++ 
+	{
+	 for _k=0;_k<5;_k++ 
+	  {
+	   if _i+windata.x[_n*5+_k]<0 ||_i+windata.x[_n*5+_k]>14 ||_j+windata.y[_n*5+_k]<0 ||_j+windata.y[_n*5+_k]>14 
+	     { break;}
+	   if state[(_i+windata.x[_n*5+_k])*15+_j+windata.y[_n*5+_k]]!=col[_m]
+	   {break;}
+	   }
+	   if _k==5
+	          {
+	          ;
+		  }
+	       if _k==5 && _m==0 
+                {0;return;}
+	     if _k==5 && _m==1 
+                   { 1;return}
+             
+               
+	    }
+	  }
+     }
+  }
+   -1;return
+ }
+
+//_____________________________________________________________________________________
+Ondownzi//外部调用此函数下子
+{
+nx=reference0
+ny=reference1
+if _argv[0]!=NULL
+nx=TOINT(_argv[0])
+if _argv[1]!=NULL
+ny=TOINT(_argv[1])
+_txt = ""
+if nx<0||nx>14||ny<0||nx>14
+  {
+  OnGobangShow;
+   return
+}
+
+if wzq.Model==2 
+{
+	if wzq.nturn==1
+	{
+		 OnuserAd(nx,ny);
+		wzq.nturn =!turnback
+		//setback(nx,ny,false);
+	}
+	else
+	{
+		OnuserBd(nx,ny);
+		wzq.nturn =turnback
+		//setback(nx,ny,true);
+	}
+}
+
+else
+		{ 
+
+                        _txt+=OnuserAd(nx,ny)
+  
+		}
+
+
+_txt
+}
+
+
+
+
+//_____________________________________________________________________________________
+ComputerThink
+{
+
+_txt = "\C\![quicksession,true]\c"
+
+if Whowincheck==1
+{
+OnGobangShow;return
+}
+
+for _i=0;_i<15;_i++
+{
+     for _j=0;_j<15;_j++
+       {
+        State[_i*15+_j]=state[_i*15+_j];
+       }
+}
+Number=m_count;
+
+if player.gamenum>-5 
+_txt+=wise
+
+else
+{
+	wisex=0;
+	wisey=1;
+}
+
+
+//if GetTickCount()%10==0) wisex=-1;
+
+if state[wisex*15+wisey]==0 || state[wisex*15+wisey]==15|| wisex<0 || wisex>14 || wisey<0 || wisey>14
+{
+   while state[wisex*15+wisey]!=6
+    {
+  wisex=rand()%15;
+  wisey=rand()%15;
+
+  //wisex=rand()%15;
+  //wisey=rand()%15;
+	k1=0.8;
+        
+	
+	if fight-defense>12
+          k1=0.8;
+	elseif fight-defense>6
+          k1=0.7;
+	elseif fight-defense>=0
+          k1=0.6;
+	elseif fight-defense>-5
+          k1=0.5;
+	elseif fight-defense>-8
+          k1=0.45;
+	else 
+        k1=0.4;
+        
+	for _i=0;_i<15;_i++
+        {
+		 for _j=0;_j<15;_j++
+	        {
+		Mark[_i*15+_j]=Mark1[_i*15+_j]*k1+Mark2[_i*15+_j]*(1-k1);
+                 }
+        }
+	MAX=0.0;
+	for _i=0;_i<15;_i++ 
+          {
+		for _j=0;_j<15;_j++ 
+	     {
+		if Mark[_i*15+_j]>MAX
+		{
+			wisex=_i;
+			wisey=_j;
+			MAX=Mark[_i*15+_j];
+		}
+             }
+          }
+     }
+  }
+aiturn=0
+_txt+=OnuserBd(wisex,wisey)
+_txt
+}
+
+
+
+//_____________________________________________________________________________________
+
+
+wise
+  {
+ 
+	_wisex1=0
+        _wisey1=0
+        _wisex2=0
+        _wisey2=0
+	_M1=0.0
+        _M2=0.0
+	_data=(998.0,25.0,18.0);
+
+
+	//fight=enemy[Nowmen.who].fight;
+	//defense=enemy[Nowmen.who].defence;
+	//duanwei=enemy[Nowmen.who].duanwei;
+    if duanwei<=3 
+    _data[1]=2000.0 ;
+  for _i=0;_i<15;_i++ 
+    {
+	for _j=0;_j<15;_j++ 
+	  {
+	if State[_i*15+_j]==BLACK 
+           EXIST[_i*15+_j]=Black;
+	if State[_i*15+_j]==WHITE 
+           EXIST[_i*15+_j]=White;
+	if State[_i*15+_j]==6     
+           EXIST[_i*15+_j]=Nought;
+	  }
+     }
+   for _i=0;_i<15;_i++ 
+    {
+	 for _j=0;_j<15;_j++
+	   {
+		Mark2[_i*15+_j]=0.0;
+	       if EXIST[_i*15+_j]!=Nought
+                 continue;
+	   for _k=0;_k<=Num;_k++
+		 {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20
+			{
+			 if _i+row.x[_k*7+_m]<0 || _j+row.y[_k*7+_m]<0 ||_i+row.x[_k*7+_m]>14 || _j+row.y[_k*7+_m]>14
+			 break;
+			 if EXIST[(_i+row.x[_k*7+_m])*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+		  if row.x[_k*7+_m]==20 
+                    Mark2[_i*15+_j]+=row.y[_k*7+_m];
+		 }
+             
+	  }
+    }
+  for _i=0;_i<15;_i++
+    {
+	for _j=0;_j<15;_j++
+	  {
+	   if EXIST[_i*15+_j]==Black
+               EXIST[_i*15+_j]=White;
+	   elseif EXIST[_i*15+_j]==White
+               EXIST[_i*15+_j]=Black;
+	   }
+    }
+ /*  将黑白互换  */
+
+for _i=0;_i<15;_i++
+{
+ for _j=0;_j<15;_j++
+	   {
+		Mark1[_i*15+_j]=0.0;
+		if EXIST[_i*15+_j]!=Nought
+                   continue;
+	   for _k=0;_k<=Num;_k++
+		 {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20
+			{
+			 if  _i+row.x[_k*7+_m] <0 || _j+row.y[_k*7+_m] <0 || _i+row.x[_k*7+_m] >14 || _j+row.y[_k*7+_m] >14
+			 break;
+			 if EXIST[(_i+row.x[_k*7+_m])*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+		  if row.x[_k*7+_m]==20
+                     Mark1[_i*15+_j]+=row.y[_k*7+_m];
+		 }
+	 }
+}
+	 _M1=0.0;
+	 _M2=0.0;
+	 Fail=0;
+	 Win=0;
+ if Number==1 && nowx<3 || nowx>13 || nowy<3 || nowy>13
+	 {
+	  wisex=7;
+	  wisey=8;
+	  return;
+	  }
+      for _i=0;_i<15;_i++
+        {
+	 for _j=0;_j<15;_j++
+	  {
+  Mark1[_i*15+_j]=Mark2[_i*15+_j]*0.20+Mark1[_i*15+_j];
+  Mark2[_i*15+_j]=Mark1[_i*15+_j]*0.10+Mark2[_i*15+_j];
+	  }
+        }
+    for _i=0;_i<15;_i++
+      {
+      for _j=0;_j<15;_j++
+	{
+	 if Mark2[_i*15+_j]>=900
+             Fail++;
+	 if Mark1[_i*15+_j]>=200
+             Win++;
+	 }
+       }
+   if Win<1 && Fail>=2
+	{
+	  Overyesorno=1;
+	  return;
+	 }
+    for _i=0;_i<15;_i++
+       {
+	 for _j=0;_j<15;_j++
+	   {
+	if Mark1[_i*15+_j]>_M1
+		{
+		 _M1=Mark1[_i*15+_j];
+		 _wisex1=_i;
+		 _wisey1=_j;
+		}
+        elseif Mark1[_i*15+_j]==_M1 && RAND(2)==1
+		{
+		 _M1=Mark1[_i*15+_j];
+		 _wisex1=_i;
+		 _wisey1=_j;
+		}
+        if Mark2[_i*15+_j]>_M2
+		{
+		_M2=Mark2[_i*15+_j];
+		 _wisex2=_i;
+		 _wisey2=_j;
+		}
+        elseif Mark2[_i*15+_j]==_M2 && RAND(2)==1
+		 {
+		 _M2=Mark2[_i*15+_j];
+		 _wisex2=_i;
+		 _wisey2=_j;
+		 }
+	    }
+        }
+   _Errorx=_wisex2;
+   _Errory=_wisey2;
+   _Errorx1=_wisex1;
+   _Errory1=_wisey1;
+ if _M1==0 && _M2==0 && Number<3
+      {
+       wisex=8;
+       wisey=8;
+       return;
+       }
+   for _i=0;_i<3;_i++
+	{
+	 if _M1>=_data[_i]
+	   {
+		wisex=_wisex1;
+		wisey=_wisey1;
+		Mode=3;
+		return;
+	   }
+	 if _M2>=_data[_i]
+	   {
+        Mode= 2;
+		wisex=_wisex2;
+		wisey=_wisey2;
+		return;
+	   }
+	 }
+      if _M1==0 && _M2==0 && Number<3
+       {
+        Mode=100;
+	wisex=8;
+	wisey=8;
+	return;
+       }
+      if _M1==0 && _M2==0 && State[8*15+8]!=6
+	  {
+	  Overyesorno=1;
+	  }
+   if Number==1
+    {
+      _m=RAND(8)
+     case _m
+      {
+      if _m==0
+       {
+      wisex=nowx+1;
+      wisey=nowy+1;
+      return;
+       }
+      elseif _m==1
+       {
+       wisex=nowx-1;
+       wisey=nowy-1;
+       return;
+       }
+       elseif _m==2
+       {
+       wisex=nowx+1;
+       wisey=nowy;
+       return;
+       }
+       elseif _m==3
+       {
+       wisex=nowx-1;
+       wisey=nowy;
+       return;
+       }
+       elseif _m==4
+       {
+       wisex=nowx+1;
+       wisey=nowy-1;
+       return;
+       }
+       elseif _m==5
+       {
+       wisex=nowx-1;
+       wisey=nowy+1;
+       return;
+       }
+       elseif _m==6
+       {
+       wisex=nowx;
+       wisey=nowy+1;
+       return;
+       }
+       elseif _m==7
+       {
+       wisex=nowx;
+       wisey=nowy-1;
+       return;
+       }
+     }
+    }
+if Powerofcomputer==1||Powerofcomputer==2||Powerofcomputer==3||Powerofcomputer==4
+{
+/*  3 chong zhu he */
+   for _i=0;_i<15;_i++
+    {
+	for _j=0;_j<15;_j++
+	  {
+	if State[_i*15+_j]==BLACK
+         EXIST[_i*15+_j]=White;
+	if State[_i*15+_j]==WHITE
+         EXIST[_i*15+_j]=Black;
+	if State[_i*15+_j]==6
+         EXIST[_i*15+_j]=Nought;
+	  }
+    }
+ if fight>=80
+  {
+   if wisdomone1==1
+    {
+    Mode= 1;
+    return;
+    }
+  }
+     for _i=0;_i<15;_i++
+     {
+	for _j=0;_j<15;_j++
+	  {
+	   if EXIST[_i*15+_j]==Black
+            EXIST[_i*15+_j]=Black;
+	   elseif EXIST[_i*15+_j]==White
+            EXIST[_i*15+_j]=White;
+	  }
+     }
+  if defense>80
+  {
+   if wisdomone1==1
+        { return;}
+  }
+}
+if Powerofcomputer==2||Powerofcomputer==3||Powerofcomputer==4
+ {
+/*  4 chong zhu he */
+   for _i=0;_i<15;_i++
+     {
+	for _j=0;_j<15;_j++
+	  {
+	if State[_i*15+_j]==BLACK
+           EXIST[_i*15+_j]=White;
+	if State[_i*15+_j]==WHITE
+            EXIST[_i*15+_j]=Black;
+	if State[_i*15+_j]==6
+           EXIST[_i*15+_j]=Nought;
+	  }
+     }
+if fight>75
+ {
+  if wisdomtwo1==1
+   {
+   Mode=1;
+   return;
+   }
+ }
+  for _i=0;_i<15;_i++
+     {
+	for _j=0;_j<15;_j++
+	  {
+	   if EXIST[_i*15+_j]==Black
+            EXIST[_i*15+_j]=Black;
+	   elseif EXIST[_i*15+_j]==White
+            EXIST[_i*15+_j]=White;
+	   }
+     }
+  if defense>75
+    {
+   if wisdomtwo1==1
+       {   return;}
+    }
+}
+if Powerofcomputer==3||Powerofcomputer==4
+{
+   /*  5 chong zhu he */
+  for _i=0;_i<15;_i++
+      {
+	for _j=0;_j<15;_j++
+	  {
+	if State[_i*15+_j]==BLACK
+         EXIST[_i*15+_j]=White;
+	if State[_i*15+_j]==WHITE
+         EXIST[_i*15+_j]=Black;
+	if State[_i*15+_j]==6
+         EXIST[_i*15+_j]=Nought;
+	  }
+       }
+if fight>85
+{
+ if wisdomGobang1==1
+     {
+     Mode= 1;
+     return;
+     }
+}
+     for _i=0;_i<15;_i++
+      {
+	for _j=0;_j<15;_j++
+	  {
+	   if EXIST[_i*15+_j]==Black
+           EXIST[_i*15+_j]=Black;
+	   elseif EXIST[_i*15+_j]==White
+           EXIST[_i*15+_j]=White;
+	   }
+      }
+if defense>85
+{
+   if wisdomGobang1==1  {    return;}
+}
+if fight>80
+{
+if AddJ==1 { return; }
+}
+if defense>70
+{
+if AddF==1  { return; }
+}
+
+if fight>=7
+{
+if GouAdd==1 { return;}
+}
+
+}
+if Powerofcomputer==4
+ {
+/*  Gou zhao 3 chong zhu he */
+   for _i=0;_i<15;_i++
+     {
+	for _j=0;_j<15;_j++
+	  {
+	if State[_i*15+_j]==BLACK
+           EXIST[_i*15+_j]=White;
+	if State[_i*15+_j]==WHITE
+           EXIST[_i*15+_j]=Black;
+	if State[_i*15+_j]==6
+           EXIST[_i*15+_j]=Nought;
+	  }
+     }
+ if fight>80 && wisdomthree1==1
+   {
+    Mode= 1;
+    return;
+   }
+/*  Gou zhao 4 chong zhu he */
+ if fight>75 && wisdomfour1==1
+     {     return;}
+/*  Gou zhao 5 chong zhu he*/
+ if fight>80 && wisdomgouGobang1==1
+       {  return;}
+ 
+//  Gou  2 cong zhu he 
+if fight>70 && wisdomsee1 && RAND(6)
+{
+    Mode= 1;
+    return;
+}
+
+
+
+}
+
+
+if Number>=5
+ {
+   if duanwei>=3
+  {
+     for Count=1;Count<=5;Count++
+    {
+       if fight>=70
+         {  
+           if zhuhe(1)==1
+	      {
+             return;
+	      }
+         }
+      if defense>=70
+        {
+	 if zhuhe(2)==1
+	    {
+           return;
+	    }
+        }
+     }
+  }
+ if fight>=75
+  {
+   for Count=2;Count<=4;Count++
+    {
+        if Gouzhuhe(1)==1
+        {         return; }
+    }
+  }
+   Count=0;
+ if fight>3
+  {
+ if Gouzhuhe(1)==1 && RAND(6)   {  return;}
+  }
+ }
+
+   if _M1==0 && _M2==0  {  wisex=8; wisey=8; return; };
+
+   if RAND(2)==1 
+   {
+   Mode= 0;
+   }
+    for _i=0;_i<15;_i++
+      {
+	 for _j=0;_j<15;_j++
+	   { Mark1[_i*15+_j]=Mark1[_i*15+_j]*1.2;}
+      }
+    for _i=0;_i<15;_i++
+      {
+	 for _j=0;_j<15;_j++
+	   {
+	if Mark1[_i*15+_j]>_M1
+		{
+		 _M1=Mark1[_i*15+_j];
+		 _wisex1=_i;
+		 _wisey1=_j;
+		}
+    elseif Mark1[_i*15+_j]==_M1 && RAND(2)==1
+		{
+		 _M1=Mark1[_i*15+_j];
+		 _wisex1=_i;
+		 _wisey1=_j;
+		}
+    if Mark2[_i*15+_j]>_M2
+		{
+		_M2=Mark2[_i*15+_j];
+		 _wisex2=_i;
+		 _wisey2=_j;
+		}
+   elseif Mark2[_i*15+_j]==_M2 && RAND(2)==1
+		 {
+		 _M2=Mark2[_i*15+_j];
+		 _wisex2=_i;
+		 _wisey2=_j;
+		 }
+	    }
+        }
+        k1=0.8 ;
+
+	if fight-defense>12
+          k1=0.8;
+	elseif fight-defense>6
+          k1=0.7;
+	elseif fight-defense>=0
+          k1=0.6;
+	elseif fight-defense>-5
+          k1=0.5f;
+	elseif fight-defense>-8
+          k1=0.45;
+	else  
+        k1=0.4;
+	for _i=0;_i<15;_i++
+          {
+		 for _j=0;_j<15;_j++
+	      {
+		Mark[_i*15+_j]=Mark1[_i*15+_j]*k1+Mark2[_i*15+_j]*(1-k1);
+	      }
+           }
+	MAX=0.0 ;
+	for _i=0;_i<15;_i++
+         {
+		for _j=0;_j<15;_j++
+	    {
+		if Mark[_i*15+_j]>MAX
+		{
+			wisex=_i;
+			wisey=_j;
+			MAX=Mark[_i*15+_j];
+		}
+	    }
+         }
+    return;
+	/*
+   if fight-defense>10 || _M1>=_M2  && RAND(4)!=0
+    {
+   wisex=_wisex1;
+   wisey=_wisey1;
+   return;
+    }
+   else
+    {
+     wisex=_wisex2;
+     wisey=_wisey2;
+     return;
+    }
+	*/
+}
+
+//______________________________________________________________________________ 
+wisdomone1
+  {
+	
+    for _i=0;_i<15;_i++
+       {
+	 for _j=0;_j<15;_j++
+	  {
+		if EXIST[_i*15+_j]!=Nought
+                    continue;
+	   for _k=44;_k<=143;_k++
+	     {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20 
+			{
+		 if  _i+row.x[_k*7+_m] <0 ||  _j+row.y[_k*7+_m] <0|| _i+row.x[_k*7+_m]>14 || _j+row.y[_k*7+_m]>14
+			 break;
+		 if EXIST[_i+row.x[_k*7+_m]*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+		  if row.x[_k*7+_m]==20
+		  {
+   if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.y[_k*7+_m-1]==0
+ Onelineflag=0;
+elseif row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.x[_k*7+_m-1]==0
+ Onelineflag=1;
+elseif row.x[_k*7+_m-1] * row.y[_k*7+_m-1]>0
+ Onelineflag=2;
+elseif row.x[_k*7+_m-1] * row.y[_k*7+_m-1]<0
+ Onelineflag=3;
+
+                      if  wisdomone2(_i,_j)==1
+		       {
+		       1; return 
+		       }
+		  }
+            }
+        }
+     }
+	 0; return 
+}
+
+//______________________________________________________________________________ 
+wisdomone2
+   {
+_i=TOINT(_argv[0])
+_j=TOINT(_argv[1])
+
+    for _k=216;_k<=331;_k++
+	 {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20 
+			{
+			 if  _i+row.x[_k*7+_m] <0 ||  _j+row.y[_k*7+_m] <0 || _i+row.x[_k*7+_m] >14 || _j+row.y[_k*7+_m] >14 
+			 break;
+			 if EXIST[_i+row.x[_k*7+_m]*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+
+		    if row.x[_k*7+_m]==20
+		  {
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.y[_k*7+_m-1]==0
+ Nowlineflag=0;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.x[_k*7+_m-1]==0
+ Nowlineflag=1;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]>0
+ Nowlineflag=2;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]<0
+ Nowlineflag=3;
+ if Nowlineflag==Onelineflag
+ continue; 
+  else 
+ Onelineflag=Nowlineflag;
+ if  wisdomone3(row.y[_k*7+_m]+_i,row.c[_k*7+_m]+_j)==1
+    { 1;return }
+
+		  }
+       }
+        0;return
+}
+
+//______________________________________________________________________________ 
+
+wisdomone3
+ {
+
+_i=TOINT(_argv[0])
+_j=TOINT(_argv[1])
+       
+	   for _k=44;_k<=143;_k++
+		 {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20 
+			{
+			 if _i+row.x[_k*7+_m]<0 || _j+row.y[_k*7+_m]<0||_i+row.x[_k*7+_m]>14 || _j+row.y[_k*7+_m]>14
+			 break;
+		 if EXIST[(_i+row.x[_k*7+_m])*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+		  if row.x[_k*7+_m]==20
+		  {
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.y[_k*7+_m-1]==0
+ Nowlineflag=0;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.x[_k*7+_m-1]==0
+ Nowlineflag=1;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]>0
+ Nowlineflag=2;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]<0
+ Nowlineflag=3;
+ if Nowlineflag==Onelineflag
+ continue; 
+ else  
+  Onelineflag=Nowlineflag;
+		  wisex=_i;
+		  wisey=_j;
+		  1;return 
+		  }
+	  }
+	   0;return
+  }
+
+//______________________________________________________________________________ 
+
+/*   4 cong zhu he */
+
+wisdomtwo1
+  {
+	
+    for _i=0;_i<15;_i++
+      {
+	 for _j=0;_j<15;_j++
+	   {
+		if EXIST[_i*15+_j]!=Nought
+                   continue;
+	   for _k=44;_k<=143;_k++
+              { 
+		  _m=0;
+		  while row.x[_k*7+_m]!=20 
+			{
+		 if _i+row.x[_k*7+_m]<0 || _j+row.y[_k*7+_m]<0 ||_i+row.x[_k*7+_m]>14 || _j+row.y[_k*7+_m]>14
+			 break;
+		 if EXIST[(_i+row.x[_k*7+_m])*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+		  if row.x[_k*7+_m]==20
+		  {
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.y[_k*7+_m-1]==0
+        Onelineflag=0;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.x[_k*7+_m-1]==0
+        Onelineflag=1;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]>0
+        Onelineflag=2;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]<0
+        Onelineflag=3;
+		       if  wisdomtwo2(_i,_j)==1
+		        {
+		         1;return;
+		        }
+	           }
+                }
+            }
+        }
+	  0;return;
+}
+
+//______________________________________________________________________________ 
+wisdomtwo2
+   {
+_i=TOINT(_argv[0])
+_j=TOINT(_argv[1])
+	   for _k=216;_k<=331;_k++
+		 {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20
+			{
+			 if _i+row.x[_k*7+_m]<0 || _j+row.y[_k*7+_m]<0 ||_i+row.x[_k*7+_m]>14 || _j+row.y[_k*7+_m]>14
+			 break;
+			 if EXIST[(_i+row.x[_k*7+_m])*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+		  if row.x[_k*7+_m]==20
+		  {
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.y[_k*7+_m-1]==0
+          Nowlineflag=0;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.x[_k*7+_m-1]==0
+          Nowlineflag=1;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]>0
+          Nowlineflag=2;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]<0
+          Nowlineflag=3;
+   if Nowlineflag==Onelineflag
+         continue;
+   else {
+	      Onelineflag=Nowlineflag;
+	}
+	  if  wisdomtwo3(row.y[_k*7+_m]+_i,row.c[_k*7+_m]+_j)==1
+                   {1;return;}
+		  }
+       }
+       0;return;
+}
+
+
+
+
+
+
+
+
+//______________________________________________________________________________ 
+
+wisdomtwo3
+   {
+_i=TOINT(_argv[0])
+_j=TOINT(_argv[1])
+   
+	   for _k=216;_k<=331;_k++
+		 {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20
+			{
+			 if _i+row.x[_k*7+_m]<0 || _j+row.y[_k*7+_m]<0 ||_i+row.x [k*7+m]>14 ||_j+row.y[_k*7+_m]>14
+			 break;
+			 if EXIST[(_i+row.x[_k*7+_m])*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+		  if row.x[_k*7+_m]==20
+		  {
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.y[_k*7+_m-1]==0
+          Nowlineflag=0;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.x[_k*7+_m-1]==0
+          Nowlineflag=1;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]>0
+          Nowlineflag=2;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]<0
+          Nowlineflag=3;
+   if Nowlineflag==Onelineflag
+         continue;
+   else {
+	      Onelineflag=Nowlineflag;
+	}
+	  if  wisdomtwo4(row.y[_k*7+_m]+_i,row.c[_k*7+_m]+_j)==1
+                    {1;return;}
+		  }
+       }
+       0;return;
+}
+//______________________________________________________________________________ 
+wisdomtwo4
+ {
+_i=TOINT(_argv[0])
+_j=TOINT(_argv[1])
+           
+	   for _k=44;_k<=143;_k++
+		 {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20
+			{
+			 if _i+row.x[_k*7+_m]<0 || _j+row.y[_k*7+_m]<0 ||_i+row.x [k*7+m]>14 ||_j+row.y[_k*7+_m]>14
+			 break;
+			 if EXIST[(_i+row.x[_k*7+_m])*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+		  if row.x[_k*7+_m]==20
+		  {
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.y[_k*7+_m-1]==0
+          Nowlineflag=0;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.x[_k*7+_m-1]==0
+          Nowlineflag=1;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]>0
+          Nowlineflag=2;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]<0
+          Nowlineflag=3;
+ if Nowlineflag==Onelineflag
+         continue;
+else 
+ Onelineflag=Nowlineflag;
+		  wisex=_i;
+		  wisey=_j;
+		  1;return;
+		  }
+	  }
+	  0;return;
+  }
+
+
+//______________________________________________________________________________ 
+
+/*   Gou zhao  3  shan cong zhu he */
+wisdomthree1
+  {
+	
+    for _i=0;_i<15;_i++
+    {
+	 for _j=0;_j<15;_j++
+	   {
+		if EXIST[_i*15+_j]!=Nought
+                  continue;
+	   for _k=44;_k<=143;_k++
+	       {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20
+			{
+		 if _i+row.x[_k*7+_m]<0 || _j+row.y[_k*7+_m]<0||_i+row.x[_k*7+_m]>14 || _j+row.y[_k*7+_m]>14
+			 break;
+		 if EXIST[(_i+row.x[_k*7+_m])*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+		  if row.x[_k*7+_m]==20
+		  {
+if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.y[_k*7+_m-1]==0
+        Onelineflag=0;
+elseif row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.x[_k*7+_m-1]==0
+        Onelineflag=1;
+elseif row.x[_k*7+_m-1] * row.y[_k*7+_m-1]>0
+        Onelineflag=2;
+elseif row.x[_k*7+_m-1] * row.y[_k*7+_m-1]<0
+        Onelineflag=3;
+		      if  wisdomthree2(_i,_j)==1
+		       {
+		        1;return;
+		       }
+		  }
+             }
+         }
+    }
+	  0;return;
+}
+
+//______________________________________________________________________________ 
+wisdomthree2
+   {
+_i=TOINT(_argv[0])
+_j=TOINT(_argv[1])
+     
+	   for _k=216;_k<=331;_k++
+		 {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20
+			{
+			 if _i+row.x[_k*7+_m]<0 || _j+row.y[_k*7+_m]<0 ||_i+row.x [k*7+m]>14 ||_j+row.y[_k*7+_m]>14
+			 break;
+			 if EXIST[(_i+row.x[_k*7+_m])*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+
+		    if row.x[_k*7+_m]==20
+		  {
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.y[_k*7+_m-1]==0
+          Nowlineflag=0;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.x[_k*7+_m-1]==0
+          Nowlineflag=1;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]>0
+          Nowlineflag=2;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]<0
+          Nowlineflag=3;
+ if Nowlineflag==Onelineflag
+         continue;  
+   else  
+  Onelineflag=Nowlineflag;
+ if  wisdomthree3(row.y[_k*7+_m]+_i,row.c[_k*7+_m]+_j)==1
+     { 1;return;}
+		  }
+       }
+       0;return;
+}
+//______________________________________________________________________________ 
+wisdomthree3
+   {
+
+_i=TOINT(_argv[0])
+_j=TOINT(_argv[1])
+     
+	   for _k=216;_k<=331;_k++
+		 {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20
+			{
+			 if _i+row.x[_k*7+_m]<0 || _j+row.y[_k*7+_m]<0 ||_i+row.x [k*7+m]>14 ||_j+row.y[_k*7+_m]>14
+			 break;
+			 if EXIST[(_i+row.x[_k*7+_m])*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+
+		    if row.x[_k*7+_m]==20
+		  {
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.y[_k*7+_m-1]==0
+          Nowlineflag=0;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.x[_k*7+_m-1]==0
+          Nowlineflag=1;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]>0
+          Nowlineflag=2;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]<0
+          Nowlineflag=3;
+ if Nowlineflag==Onelineflag
+         continue;
+else  
+Onelineflag=Nowlineflag;
+ wisex=_i+row.y[_k*7+_m];
+ wisey=_j+row.c[_k*7+_m];
+ 1;return;
+	 }
+       }
+       0;return;
+}
+
+/* --------  Gou zao  5  san cong zu he ------------ */
+//______________________________________________________________________________ 
+wisdomgouGobang1
+  {
+	
+    for _i=0;_i<15;_i++
+      {
+	 for _j=0;_j<15;_j++
+	   {
+		if EXIST[_i*15+_j]!=Nought
+                  continue;
+	   for _k=44;_k<=143;_k++
+	       {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20
+			{
+		 if _i+row.x[_k*7+_m]<0 || _j+row.y[_k*7+_m]<0||_i+row.x[_k*7+_m]>14 || _j+row.y[_k*7+_m]>14
+			 break;
+		 if EXIST[(_i+row.x[_k*7+_m])*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+		  if row.x[_k*7+_m]==20
+		  {
+if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.y[_k*7+_m-1]==0
+        Onelineflag=0;
+elseif row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.x[_k*7+_m-1]==0
+        Onelineflag=1;
+elseif row.x[_k*7+_m-1] * row.y[_k*7+_m-1]>0
+        Onelineflag=2;
+elseif row.x[_k*7+_m-1] * row.y[_k*7+_m-1]<0
+        Onelineflag=3;
+		       if  wisdomgouGobang2(_i,_j)==1
+		       {
+		  1;return;
+		       }
+		  }
+             }
+         }
+    }
+	  0;return;
+}
+//______________________________________________________________________________ 
+wisdomgouGobang2
+   {
+_i=TOINT(_argv[0])
+_j=TOINT(_argv[1])
+	   for _k=216;_k<=331;_k++
+		 {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20
+			{
+			 if _i+row.x[_k*7+_m]<0 || _j+row.y[_k*7+_m]<0 ||_i+row.x [k*7+m]>14 ||_j+row.y[_k*7+_m]>14
+			 break;
+			 if EXIST[(_i+row.x[_k*7+_m])*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+
+		    if row.x[_k*7+_m]==20
+		  {
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.y[_k*7+_m-1]==0
+          Nowlineflag=0;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.x[_k*7+_m-1]==0
+          Nowlineflag=1;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]>0
+          Nowlineflag=2;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]<0
+          Nowlineflag=3;
+ if Nowlineflag==Onelineflag
+         continue;
+else  
+Onelineflag=Nowlineflag;
+ if wisdomgouGobang3(row.y[_k*7+_m]+_i,row.c[_k*7+_m]+_j)==1
+  { 1;return;}
+		  }
+       }
+       0;return;
+}
+
+//______________________________________________________________________________ 
+wisdomgouGobang3
+   {
+_i=TOINT(_argv[0])
+_j=TOINT(_argv[1])
+     
+	   for _k=216;_k<=331;_k++
+		 {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20
+			{
+			 if _i+row.x[_k*7+_m]<0 || _j+row.y[_k*7+_m]<0 ||_i+row.x [k*7+m]>14 ||_j+row.y[_k*7+_m]>14
+			 break;
+			 if EXIST[(_i+row.x[_k*7+_m])*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+
+		    if row.x[_k*7+_m]==20
+		  {
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.y[_k*7+_m-1]==0
+          Nowlineflag=0;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.x[_k*7+_m-1]==0
+          Nowlineflag=1;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]>0
+          Nowlineflag=2;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]<0
+          Nowlineflag=3;
+ if Nowlineflag==Onelineflag
+         continue;
+else 
+ Onelineflag=Nowlineflag;
+ if  wisdomgouGobang4(row.y[_k*7+_m]+_i,row.c[_k*7+_m]+_j)==1
+ {1;return;}
+		  }
+       }
+       0;return;
+}
+//______________________________________________________________________________ 
+wisdomgouGobang4
+   {
+_i=TOINT(_argv[0])
+_j=TOINT(_argv[1])
+     
+	   for _k=216;_k<=331;_k++
+		 {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20
+			{
+			 if _i+row.x[_k*7+_m]<0 || _j+row.y[_k*7+_m]<0 ||_i+row.x [k*7+m]>14 ||_j+row.y[_k*7+_m]>14
+			 break;
+			 if EXIST[(_i+row.x[_k*7+_m])*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+
+		    if row.x[_k*7+_m]==20
+		  {
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.y[_k*7+_m-1]==0
+          Nowlineflag=0;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.x[_k*7+_m-1]==0
+          Nowlineflag=1;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]>0
+          Nowlineflag=2;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]<0
+          Nowlineflag=3;
+ if Nowlineflag==Onelineflag
+         continue;
+else  
+Onelineflag=Nowlineflag;
+ if  wisdomgouGobang5(row.y[_k*7+_m]+_i,row.c[_k*7+_m]+_j)==1
+   { 1;return;}
+		  }
+       }
+       0;return;
+}
+
+//______________________________________________________________________________ 
+wisdomgouGobang5
+   {
+_i=TOINT(_argv[0])
+_j=TOINT(_argv[1])
+	   for _k=216;_k<=331;_k++
+		 {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20
+			{
+			 if _i+row.x[_k*7+_m]<0 || _j+row.y[_k*7+_m]<0 ||_i+row.x [k*7+m]>14 ||_j+row.y[_k*7+_m]>14
+			 break;
+			 if EXIST[(_i+row.x[_k*7+_m])*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+
+		    if row.x[_k*7+_m]==20
+		  {
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.y[_k*7+_m-1]==0
+          Nowlineflag=0;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.x[_k*7+_m-1]==0
+          Nowlineflag=1;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]>0
+          Nowlineflag=2;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]<0
+          Nowlineflag=3;
+ if Nowlineflag==Onelineflag
+         continue;
+else 
+Onelineflag=Nowlineflag;
+ wisex=_i+row.y[_k*7+_m];
+ wisey=_j+row.c[_k*7+_m];
+ 1;return;
+	 }
+       }
+       0;return;
+}
+
+//______________________________________________________________________________ 
+/*******************************************/
+
+/* --------   5  cong zhu he ------------ */
+
+wisdomGobang1
+  {
+
+    for _i=0;_i<15;_i++
+     {
+	 for _j=0;_j<15;_j++
+	   {
+		if EXIST[_i*15+_j]!=Nought
+      continue;
+	   for _k=44;_k<=143;_k++
+	      {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20
+			{
+		 if _i+row.x[_k*7+_m]<0 || _j+row.y[_k*7+_m]<0||_i+row.x[_k*7+_m]>14 || _j+row.y[_k*7+_m]>14
+			 break;
+		 if EXIST[(_i+row.x[_k*7+_m])*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+		  if row.x[_k*7+_m]==20
+		  {
+if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.y[_k*7+_m-1]==0
+        Onelineflag=0;
+elseif row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.x[_k*7+_m-1]==0
+        Onelineflag=1;
+elseif row.x[_k*7+_m-1] * row.y[_k*7+_m-1]>0
+        Onelineflag=2;
+elseif row.x[_k*7+_m-1] * row.y[_k*7+_m-1]<0
+        Onelineflag=3;
+		      if  wisdomGobang2(_i,_j)==1
+		       {
+		   1;return;
+		       }
+	          }
+             }
+         }
+    }
+	  0;return;
+}
+//______________________________________________________________________________ 
+wisdomGobang2
+   {
+_i=TOINT(_argv[0])
+_j=TOINT(_argv[1])
+    
+	   for _k=216;_k<=331;_k++
+		 {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20
+			{
+			 if _i+row.x[_k*7+_m]<0 || _j+row.y[_k*7+_m]<0 ||_i+row.x [k*7+m]>14 ||_j+row.y[_k*7+_m]>14
+			 break;
+			 if EXIST[(_i+row.x[_k*7+_m])*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+
+		    if row.x[_k*7+_m]==20
+		  {
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.y[_k*7+_m-1]==0
+          Nowlineflag=0;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.x[_k*7+_m-1]==0
+          Nowlineflag=1;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]>0
+          Nowlineflag=2;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]<0
+          Nowlineflag=3;
+ if Nowlineflag==Onelineflag
+         continue;
+else
+       Onelineflag=Nowlineflag;
+ if  wisdomGobang3(row.y[_k*7+_m]+_i,row.c[_k*7+_m]+_j)==1
+    {1;return};
+
+		  }
+       }
+       0;return;
+}
+
+//______________________________________________________________________________ 
+wisdomGobang3
+   {
+_i=TOINT(_argv[0])
+_j=TOINT(_argv[1])
+	   for _k=216;_k<=331;_k++
+		 {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20
+			{
+			 if _i+row.x[_k*7+_m]<0 || _j+row.y[_k*7+_m]<0 ||_i+row.x [k*7+m]>14 ||_j+row.y[_k*7+_m]>14
+			 break;
+			 if EXIST[(_i+row.x[_k*7+_m])*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+
+		    if row.x[_k*7+_m]==20
+		  {
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.y[_k*7+_m-1]==0
+          Nowlineflag=0;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.x[_k*7+_m-1]==0
+          Nowlineflag=1;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]>0
+          Nowlineflag=2;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]<0
+          Nowlineflag=3;
+ if Nowlineflag==Onelineflag
+         continue;
+else
+       Onelineflag=Nowlineflag;
+ if  wisdomGobang4(row.y[_k*7+_m]+_i,row.c[_k*7+_m]+_j)==1
+    {1;return};
+		  }
+       }
+       0;return;
+}
+//______________________________________________________________________________ 
+wisdomGobang4
+   {
+_i=TOINT(_argv[0])
+_j=TOINT(_argv[1])
+	   for _k=216;_k<=331;_k++
+		 {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20
+			{
+			 if _i+row.x[_k*7+_m]<0 || _j+row.y[_k*7+_m]<0 ||_i+row.x [k*7+m]>14 ||_j+row.y[_k*7+_m]>14
+			 break;
+			 if EXIST[(_i+row.x[_k*7+_m])*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+
+		    if row.x[_k*7+_m]==20
+		  {
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.y[_k*7+_m-1]==0
+          Nowlineflag=0;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.x[_k*7+_m-1]==0
+          Nowlineflag=1;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]>0
+          Nowlineflag=2;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]<0
+          Nowlineflag=3;
+ if Nowlineflag==Onelineflag
+         continue;
+else
+       Onelineflag=Nowlineflag;
+ if  wisdomGobang5(row.y[_k*7+_m]+_i,row.c[_k*7+_m]+_j)==1
+    {1;return};
+		  }
+       }
+       0;return;
+}
+//______________________________________________________________________________ 
+wisdomGobang5
+ {
+_i=TOINT(_argv[0])
+_j=TOINT(_argv[1])           
+	   for _k=44;_k<=143;_k++
+		 {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20
+			{
+			 if _i+row.x[_k*7+_m]<0 || _j+row.y[_k*7+_m]<0 ||_i+row.x [k*7+m]>14 ||_j+row.y[_k*7+_m]>14
+			 break;
+			 if EXIST[(_i+row.x[_k*7+_m])*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+		  if row.x[_k*7+_m]==20
+		  {
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.y[_k*7+_m-1]==0
+          Nowlineflag=0;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.x[_k*7+_m-1]==0
+          Nowlineflag=1;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]>0
+          Nowlineflag=2;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]<0
+          Nowlineflag=3;
+ if Nowlineflag==Onelineflag
+         continue;
+else
+       Onelineflag=Nowlineflag;
+		  wisex=_i;
+		  wisey=_j;
+		  1;return;
+		  }
+	  }
+	  0;return;
+  }
+//______________________________________________________________________________ 
+
+/* --------  Gou zhao  2  shan cong zhu he ------------ */
+
+wisdomsee1
+  {
+    for _i=0;_i<15;_i++
+      {
+	 for _j=0;_j<15;_j++
+	   {
+		if EXIST[_i*15+_j]!=Nought
+      continue;
+	   for _k=44;_k<=143;_k++
+	      {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20
+			{
+		 if _i+row.x[_k*7+_m]<0 || _j+row.y[_k*7+_m]<0||_i+row.x[_k*7+_m]>14 || _j+row.y[_k*7+_m]>14
+			 break;
+		 if EXIST[(_i+row.x[_k*7+_m])*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+		  if row.x[_k*7+_m]==20
+		  {
+if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.y[_k*7+_m-1]==0
+        Onelineflag=0;
+elseif row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.x[_k*7+_m-1]==0
+        Onelineflag=1;
+elseif row.x[_k*7+_m-1] * row.y[_k*7+_m-1]>0
+        Onelineflag=2;
+elseif row.x[_k*7+_m-1] * row.y[_k*7+_m-1]<0
+        Onelineflag=3;
+		       if  wisdomsee2(_i,_j)==1
+		       {
+		        1;return;
+		       }
+		  }
+             }
+         }
+    }
+	  0;return;
+}
+
+//______________________________________________________________________________ 
+
+wisdomsee2
+   {
+_i=TOINT(_argv[0])
+_j=TOINT(_argv[1])     
+	   for _k=216;_k<=331;_k++
+		 {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20
+			{
+			 if _i+row.x[_k*7+_m]<0 || _j+row.y[_k*7+_m]<0 ||_i+row.x [k*7+m]>14 ||_j+row.y[_k*7+_m]>14
+			 break;
+			 if EXIST[(_i+row.x[_k*7+_m])*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+
+		    if row.x[_k*7+_m]==20
+		  {
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.y[_k*7+_m-1]==0
+          Nowlineflag=0;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.x[_k*7+_m-1]==0
+          Nowlineflag=1;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]>0
+          Nowlineflag=2;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]<0
+          Nowlineflag=3;
+ if Nowlineflag==Onelineflag
+         continue;
+else
+       Onelineflag=Nowlineflag;
+ wisex=_i+row.y[_k*7+_m];
+ wisey=_j+row.c[_k*7+_m];
+ 1;return;
+	 }
+       }
+       0;return;
+}
+
+/* --------  Gou zhao  4  shan cong zhu he ------------ */
+//______________________________________________________________________________ 
+
+wisdomfour1
+  {
+    for _i=0;_i<15;_i++
+     {
+	 for _j=0;_j<15;_j++
+	   {
+		if EXIST[_i*15+_j]!=Nought
+      continue;
+	   for _k=44;_k<=143;_k++
+	      {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20
+			{
+		 if _i+row.x[_k*7+_m]<0 || _j+row.y[_k*7+_m]<0||_i+row.x[_k*7+_m]>14 || _j+row.y[_k*7+_m]>14
+			 break;
+		 if EXIST[(_i+row.x[_k*7+_m])*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+		  if row.x[_k*7+_m]==20
+		  {
+if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.y[_k*7+_m-1]==0
+        Onelineflag=0;
+elseif row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.x[_k*7+_m-1]==0
+        Onelineflag=1;
+elseif row.x[_k*7+_m-1] * row.y[_k*7+_m-1]>0
+        Onelineflag=2;
+elseif row.x[_k*7+_m-1] * row.y[_k*7+_m-1]<0
+        Onelineflag=3;
+
+		      if  wisdomfour2(_i,_j)==1
+		       {
+		      1;return;
+		       }
+		  }
+             }
+         }
+     }
+	  0;return;
+}
+//______________________________________________________________________________ 
+
+wisdomfour2
+   {
+    _i=TOINT(_argv[0])
+    _j=TOINT(_argv[1])  
+	   for _k=216;_k<=331;_k++
+		 {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20
+			{
+			 if _i+row.x[_k*7+_m]<0 || _j+row.y[_k*7+_m]<0 ||_i+row.x [k*7+m]>14 ||_j+row.y[_k*7+_m]>14
+			 break;
+			 if EXIST[(_i+row.x[_k*7+_m])*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+
+		    if row.x[_k*7+_m]==20
+		  {
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.y[_k*7+_m-1]==0
+          Nowlineflag=0;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.x[_k*7+_m-1]==0
+          Nowlineflag=1;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]>0
+          Nowlineflag=2;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]<0
+          Nowlineflag=3;
+ if Nowlineflag==Onelineflag
+         continue;
+else
+       Onelineflag=Nowlineflag;
+ if  wisdomfour3(row.y[_k*7+_m]+_i,row.c[_k*7+_m]+_j)==1
+    {1;return};
+		  }
+       }
+       0;return;
+}
+
+//______________________________________________________________________________ 
+
+wisdomfour3
+   {
+       _i=TOINT(_argv[0])
+       _j=TOINT(_argv[1]) 
+	   for _k=216;_k<=331;_k++
+		 {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20
+			{
+			 if _i+row.x[_k*7+_m]<0 || _j+row.y[_k*7+_m]<0 ||_i+row.x [k*7+m]>14 ||_j+row.y[_k*7+_m]>14
+			 break;
+			 if EXIST[(_i+row.x[_k*7+_m])*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+
+		    if row.x[_k*7+_m]==20
+		  {
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.y[_k*7+_m-1]==0
+          Nowlineflag=0;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.x[_k*7+_m-1]==0
+          Nowlineflag=1;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]>0
+          Nowlineflag=2;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]<0
+          Nowlineflag=3;
+ if Nowlineflag==Onelineflag
+         continue;
+else
+       Onelineflag=Nowlineflag;
+ if  wisdomfour4(row.y[_k*7+_m]+_i,row.c[_k*7+_m]+_j)==1
+    {1;return};
+		  }
+       }
+       0;return;
+}
+//______________________________________________________________________________ 
+wisdomfour4
+   {
+       _i=TOINT(_argv[0])
+       _j=TOINT(_argv[1]) 
+	   for _k=216;_k<=331;_k++
+		 {
+		  _m=0;
+		  while row.x[_k*7+_m]!=20
+			{
+			 if _i+row.x[_k*7+_m]<0 || _j+row.y[_k*7+_m]<0 ||_i+row.x [k*7+m]>14 ||_j+row.y[_k*7+_m]>14
+			 break;
+			 if EXIST[(_i+row.x[_k*7+_m])*15+_j+row.y[_k*7+_m]]==row.c[_k*7+_m]
+				_m++;
+				else
+				break;
+			}
+
+		    if row.x[_k*7+_m]==20
+		  {
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.y[_k*7+_m-1]==0
+          Nowlineflag=0;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]==0 && row.x[_k*7+_m-1]==0
+          Nowlineflag=1;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]>0
+          Nowlineflag=2;
+ if row.x[_k*7+_m-1] * row.y[_k*7+_m-1]<0
+          Nowlineflag=3;
+ if Nowlineflag==Onelineflag
+         continue;
+else
+       Onelineflag=Nowlineflag;
+ wisex=_i+row.y[_k*7+_m];
+ wisey=_j+row.c[_k*7+_m];
+ 1;return;
+	 }
+   }
+       0;return;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

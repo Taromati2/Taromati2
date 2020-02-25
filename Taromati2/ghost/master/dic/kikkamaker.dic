@@ -1,0 +1,267 @@
+﻿OnKikkaMake
+{
+	if QuickStartVersion{
+		NeedUpdate
+		return
+	}
+	_txt="\0\![quicksession,true]\![set,choicetimeout,0]\b[2]";
+	_txt+="\_l[-10,-10]";
+	_txt+="\_b[data\kikkamaker\img\intro.jpg,--option=opaque]"; 
+	_txt+="\_l[30,0]";
+	_txt+=ColorText("Kikka Maker\n","bold,height=45,name=Monotype Corsiva,color=%(ColorIdx(6))");
+	_txt+="\_l[90,-]";
+	_txt+=ColorText("橘花梦工厂","bold,height=20,name=Monotype Corsiva,color=%(ColorIdx(6))");
+	_txt+="\n";
+	_option=IARRAY;
+	_option,=ColorText("开始游戏\n","bold,height=15,name=Arial,color=%(ColorIdx(6))");
+	_option,=ColorText("继续游戏\n","bold,height=15,name=Arial,color=%(ColorIdx(6))");
+	_option,=ColorText("设定游戏\n","bold,height=15,name=Arial,color=%(ColorIdx(6))");
+	_option,=ColorText("退出游戏\n","bold,height=15,name=Arial,color=%(ColorIdx(6))");
+	_txt+="\_l[115,150]";
+	_txt+="\__q[OnKikkaMakerBegin]"+_option[0]+"\__q";
+	_txt+="\_l[115,-]";
+	_txt+="\__q[OnKikkaMakerLoad]"+_option[1]+"\__q";
+	_txt+="\_l[115,-]";
+	_txt+="\__q[OnKikkaMakerOption]"+_option[2]+"\__q";
+	_txt+="\_l[115,-]";
+	_txt+="\__q[OnOpenMenu,2]"+_option[3]+"\__q";
+	_txt+="\_l[18,300]";
+	_txt+=ColorText("银发的少女、黑色的猫咪，没有结局的故事\n","bold,height=12,name=Arial,color=%(ColorIdx(1))");
+
+
+	_txt;
+}
+
+
+OnKikkaMakerBegin
+{
+	_txt="";
+	towabirthday=IARRAY;
+	towabirthday=(TOINT(year)-100-10,4,1)
+	kikkabirthday=IARRAY;
+	kikkabirthday=(TOINT(year)-10,4,1);
+	_txt+=OnDataSelect
+	_txt;
+}
+
+
+OnDataSelect
+{
+	_txt="\C\![quicksession,true]\c\0\b[2]\![set,choicetimeout,0]";
+	_txt+="\_l[-10,-10]";
+	_txt+="\_b[data\kikkamaker\img\intro1.jpg,--option=opaque]"; 
+	_txt+="\_l[60,100]";
+	_option=IARRAY;
+	_option,=ColorText("▲","height=15,color=%(ColorIdx(6))");
+	_option,=ColorText("▼",",height=15,color=%(ColorIdx(6))");
+	_option,=ColorText("确定","height=15,color=%(ColorIdx(6))");
+	_option,=ColorText("返回","height=15,color=%(ColorIdx(6))");
+	_mon=(31,28,31,30,31,30,31,31,30,31,30,31);	
+	case reference1
+	{
+		when "month"
+		{
+			case reference2
+			{
+				when "up"
+				{
+					if reference0=="kikka"
+					{
+						if TOINT(kikkabirthday[0])%4==0
+							_mon[1]=29
+						kikkabirthday[1]=TOINT(kikkabirthday[1])+1
+						if kikkabirthday[1]==13
+						{
+							kikkabirthday[0]=TOINT(kikkabirthday[0])+1
+							kikkabirthday[1]=1
+						}
+						elseif kikkabirthday[1]==4
+						{
+							kikkabirthday[0]=TOINT(kikkabirthday[0])-1
+						}
+						
+					}
+					elseif reference0=="towa"
+					{
+						if TOINT(towabirthday[0])%4==0
+							_mon[1]=29
+						towabirthday[1]=TOINT(towabirthday[1])+1
+						if towabirthday[1]==13
+						{
+							towabirthday[0]=TOINT(towabirthday[0])+1
+							towabirthday[1]=1
+						}
+						elseif towabirthday[1]==4
+						{
+							towabirthday[0]=TOINT(towabirthday[0])-1
+						}
+					}
+						if TOINT(kikkabirthday[2])>_mon[TOINT(kikkabirthday[1])-1]
+						kikkabirthday[2]=_mon[TOINT(kikkabirthday[1])-1];
+						if TOINT(towabirthday[2])>_mon[TOINT(towabirthday[1])-1]
+						towabirthday[2]=_mon[TOINT(towabirthday[1])-1];
+				}
+
+				when "down"
+				{
+					if reference0=="kikka"
+					{
+						if TOINT(kikkabirthday[0])%4==0
+							_mon[1]=29
+						kikkabirthday[1]=TOINT(kikkabirthday[1])-1
+						if kikkabirthday[1]==0
+						{
+							kikkabirthday[0]=TOINT(kikkabirthday[0])-1
+							kikkabirthday[1]=12
+						}
+						elseif kikkabirthday[1]==3
+						{
+							kikkabirthday[0]=TOINT(kikkabirthday[0])+1
+						}
+					}
+					elseif reference0=="towa"
+					{
+						if TOINT(towabirthday[0])%4==0
+							_mon[1]=29
+						towabirthday[1]=TOINT(towabirthday[1])-1
+						if towabirthday[1]==0
+						{
+							towabirthday[0]=TOINT(towabirthday[0])-1
+							towabirthday[1]=12
+						}
+						elseif towabirthday[1]==3
+						{
+							towabirthday[0]=TOINT(towabirthday[0])+1
+						}
+					}
+					if TOINT(kikkabirthday[2])>_mon[TOINT(kikkabirthday[1])-1]
+						kikkabirthday[2]=_mon[TOINT(kikkabirthday[1])-1];
+						if TOINT(towabirthday[2])>_mon[TOINT(towabirthday[1])-1]
+						towabirthday[2]=_mon[TOINT(towabirthday[1])-1];
+				}
+			}
+		}
+		when "day"
+		{	
+			case reference2
+			{
+				when "up"
+				{
+					 if reference0=="kikka"
+					{
+						if TOINT(kikkabirthday[0])%4==0
+							_mon[1]=29
+						kikkabirthday[2]=TOINT(kikkabirthday[2])+1;
+						_mon=_mon[TOINT(kikkabirthday[1])-1];
+						if kikkabirthday[2]==_mon+1
+							kikkabirthday[2]=1;
+					}
+					elseif reference0=="towa"
+					{
+						if TOINT(towabirthday[0])%4==0
+							_mon[1]=29
+							towabirthday[2]=TOINT(towabirthday[2])+1;
+						_mon=_mon[TOINT(towabirthday[1])-1];
+						if towabirthday[2]==_mon+1
+							towabirthday[2]=1;
+					}
+				}
+
+				when "down"
+				{
+					 if reference0=="kikka"
+					{
+						if TOINT(kikkabirthday[0])%4==0
+							_mon[1]=29
+						kikkabirthday[2]=TOINT(kikkabirthday[2])-1;
+						_mon=_mon[TOINT(kikkabirthday[1])-1];
+						if kikkabirthday[2]==0
+							kikkabirthday[2]=_mon;
+					}
+					elseif reference0=="towa"
+					{
+						if TOINT(towabirthday[0])%4==0
+							_mon[1]=29
+							towabirthday[2]=TOINT(towabirthday[2])-1;
+						_mon=_mon[TOINT(towabirthday[1])-1];
+						if towabirthday[2]==0
+							towabirthday[2]=_mon;
+					}
+				}
+
+			}
+		}
+		when "blood"
+		{
+
+			if reference0=="kikka"
+				kikkablood=reference2;
+		}
+	}
+	if reference0=="return"
+	{
+		_txt+=ColorText("确定返回标题界面\n[150]","bold,height=15,name=Arial,color=%(ColorIdx(6))");
+		_option=IARRAY;
+		_option,=ColorText("是","height=15,color=%(ColorIdx(6))");
+		_option,=ColorText("否\n",",height=15,color=%(ColorIdx(6))");
+		_txt+="\_l[80,-]";
+		_txt+="\__q[OnKikkaMake]"+_option[0]+"\__q"
+		_txt+="\_l[160,-]";
+		_txt+="\__q[OnDataSelect,towa]"+_option[1]+"\__q"
+	}
+	elseif reference0!="kikka"
+	{
+		_txt+=ColorText("请选择斗和生日的月日\n[150]","height=16,color=%(ColorIdx(6))");
+		_txt+="\_l[132,-]";
+		_txt+="\__q[OnDataSelect,towa,month,up]"+_option[0]+"\__q"
+		_txt+="\_l[160,-]";
+		_txt+="\__q[OnDataSelect,towa,day,up]"+_option[0]+"\__q\n"
+		_txt+="\_l[90,-]";
+		_t=towabirthday[0]+'年'+towabirthday[1]+'月'+towabirthday[2]+'日\n';
+		_txt+=ColorText(_t,"height=16,color=%(ColorIdx(6))");
+		_txt+="\_l[132,-]";
+		_txt+="\__q[OnDataSelect,towa,month,down]"+_option[1]+"\__q"
+		_txt+="\_l[160,-]";
+		_txt+="\__q[OnDataSelect,towa,day,down]"+_option[1]+"\__q\n"
+
+		_txt+="\_l[40,300]";
+		_txt+="\__q[OnDataSelect,kikka]"+_option[2]+"\__q"
+		_txt+="\_l[200,300]";
+		_txt+="\__q[OnDataSelect,return]"+_option[3]+"\__q"
+	}
+	else
+	{
+		_txt+=ColorText("请选择橘花生日的月日和血型\n[150]","height=16,color=%(ColorIdx(6))");
+		_txt+="\_l[132,-]";
+		_txt+="\__q[OnDataSelect,kikka,month,up]"+_option[0]+"\__q"
+		_txt+="\_l[160,-]";
+		_txt+="\__q[OnDataSelect,kikka,day,up]"+_option[0]+"\__q\n"
+		_txt+="\_l[90,-]";
+		_t=kikkabirthday[0]+'年'+kikkabirthday[1]+'月'+kikkabirthday[2]+'日\n';
+		_txt+=ColorText(_t,"height=16,color=%(ColorIdx(6))");
+		_txt+="\_l[132,-]";
+		_txt+="\__q[OnDataSelect,kikka,month,down]"+_option[1]+"\__q"
+		_txt+="\_l[160,-]";
+		_txt+="\__q[OnDataSelect,kikka,day,down]"+_option[1]+"\__q\n"
+
+		_txt+="\n\_l[130,-]";
+		_txt+=ColorText("血型\n[150]","height=15,color=%(ColorIdx(6))");
+		_blood="A型,B型,AB型,O型";
+		_txt+="\_l[70,-]";			
+		for _i=0;_i<4;_i++
+		{
+			_tblood=_blood[_i];
+			if _tblood==kikkablood
+				_txt+="  \__q[OnDataSelect,kikka,blood,%(_tblood)]"+ColorText(_blood[_i],"height=15,color=%(ColorIdx(5))")+"\__q";
+			else
+				_txt+="  \__q[OnDataSelect,kikka,blood,%(_tblood)]"+ColorText(_blood[_i],"height=15,color=%(ColorIdx(6))")+"\__q"
+
+		}
+		_txt+="\_l[40,300]";
+		_txt+="\__q[OnStoryBegin]"+_option[2]+"\__q"
+		_txt+="\_l[200,300]";
+		_txt+="\__q[OnDataSelect,towa]"+_option[3]+"\__q"
+
+		}
+	_txt
+}

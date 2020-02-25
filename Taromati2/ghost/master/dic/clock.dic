@@ -1,0 +1,1185 @@
+///////////////////////////////////////////
+////////// 闹钟功能辞书
+////////// written by forjane 2009.09.23
+///////////////////////////////////////////
+
+
+
+
+/*
+
+OnMinuteChange
+{
+	KikkaGrow;
+	--
+	AlarmMonitor;
+}
+
+*/
+
+
+//**** 时间イベント ***************************************************************************************************
+
+OnSecondChange
+{
+	if Speech_Recognition
+	{
+		if (_t=VoiceToTxt)!=temp&&(j++)%2==0
+		{
+			temp=_t
+			_t=AIGet(_t)
+			TxtToVoice(_t,voicename)+_t;
+			j=0
+		}
+	}
+	/* 
+	if HaveNotGetUsername && HaveNotGetUsername != 2 && HaveNotGetPassword != 2{
+		HaveNotGetUsername = 2;
+		GetUsernameFirst;
+	}elseif HaveNotGetPassword && HaveNotGetUsername != 2 && HaveNotGetPassword != 2{
+		HaveNotGetPassword = 2;
+		GetPasswordFirst;
+	} */
+
+	if mode == "0"
+	{
+		if mikireflag == 1 && reference1 == 0
+		{
+			EndMikireTalk
+		}
+		mikireflag = reference1
+		if headpatflag == 1
+		{
+			if headpattime >= 30
+			{
+				headpatcount = 0
+				headpatflag = 0
+				headpattime = 0
+			}
+			else
+			{
+				headpattime++
+			}
+		}
+		if bustpatflag == 1
+		{
+			if bustpattime >= 30
+			{
+				bustpatcount = 0
+				bustpatflag = 0
+				bustpattime = 0
+			}
+			else
+			{
+				bustpattime++
+			}
+		}
+		if bustclickflag == 1
+		{
+			if bustclicktime >= 30
+			{
+				bustclickcount = 0
+				bustclickflag = 0
+				bustclicktime = 0
+			}
+			else
+			{
+				bustclicktime++
+			}
+		}
+	}
+}
+
+
+OnHourChange
+{
+
+}
+
+
+OnMinuteChange
+{
+	elapsedtimetotal += 1;  //计算人格起动总时间/单位分
+	elapsedtime = elapsedtimetotal * 60
+	KikkaGrow;
+	--
+	ClassMonitor
+	--
+	AlarmMonitor
+	--
+	ShutdownMonitor
+	--
+	if mode == "0"
+	{
+		_smoketime = TOINT(systemuptime) - TOINT(lastboottime)
+		if TOINT(_smoketime) % 3600 < 60 && _smoketime >= 60
+		{
+			{
+				_worktime = TOINT(_smoketime) / 3600
+				"\1\s[10]我们连续工作了%_worktime小时啊。\w9\s[12]\n把薪水交出来。\w9\w9\0\s[30]不是什么都没做吗。"
+				--
+				'\e'
+				'\w9\w9\1\s[10]\n\n[half]装可爱就是猫的工作啊。\w9\w9\0\s[6]\n\n[half]既然如此、快点开始工作吧。\w9\w9\1\n\n[half]…\w9…\w9…\e'
+			}
+			'\1\s[11]啊゛啊゛啊゛呀─────！！\w9\0\s[30]怎么了？\w9\w9\1\s[12]\n\n[half]那个断掉了─────！！\w9\w9\1\s[19]\b[-1]\w9\w9\0\s[30]\n\n[half]…\w9…\w9…\w9\w9\w9\w9\1\s[10]\c呼～～～。\w9\w9\n呃、\w9见笑了。\w9\w9\0\s[8]\n\n[half]…\w9…\w9…\e'
+			'\![raise,OnSmokingPlace]'
+		}
+		elseif minute == 0
+		{
+			if timerm == 0 
+			{
+				整点报时();
+			}
+		}
+		elseif (memoryload>=80&&TOINT(memorybusyrm[1])==0||memoryload>=TOINT(memorybusyrm[1])&&TOINT(memorybusyrm[1])!=0)&&TOINT(memorybusyrm[0])==0
+		{
+		   "\0\v\s[33]电脑卡死了，\w9\w9少开点窗口。\n\q[◇打开任务管理器,OnOpenTaskmgr]\![set,trayballoon,--icon=info,--timeout=10,--title=任务繁忙,--text=电脑卡死了，少开点窗口。]";
+		}
+		elseif minute == 13 && InAutoUpdate == 0 && AutoUpdate == 1//电脑不卡的情况下每时13分四分之一概率自动更新
+		{//选13是因为13不吉利:)
+			InAutoUpdate=1
+			"\![updatebymyself]\e"
+			""
+			""
+			""
+		}
+		elseif mikireflag == 1
+		{
+			 //---- 分 != 0 、かつ见切れていたら见切れ中のトークを行う
+			MikireTalk
+		}
+		elseif hour == 7 && minute == 30
+		{
+			"\0\s[5]早晨%(hour)点%(minute)分了，\w4该吃早餐了哦。%(Onbreakfast)\e"
+		}
+		elseif hour == 12 && minute == 10
+		{
+			"\0\s[5]已经%(hour)点%(minute)分了，\w4该吃午餐了哦。%(Onlunch)\e"
+		}
+		elseif hour == 18 && minute == 10
+		{
+			"\0\s[5]已经%(hour)点%(minute)分了，\w4该吃晚餐了哦。%(Onsupper)\e"
+		}
+		elseif hour == 23 && minute == 30
+		{
+			"\0\s[5]现在是%(hour)点%(minute)分，\w9\w4要不要考虑吃个宵夜呢。%(Onlatesupper)\e"
+		}
+		elseif reference2 == 1
+		{
+			if kasanariswitch == "1"
+			{
+				//重叠反应
+				Kasanari
+			}
+		}
+
+		--
+		AgendaMonitor;
+		--
+		if autoshell[0]
+		{
+			if TOINT(autoshell[1])==5&&(hour-autoshellflag[3])%4==0&&minute==0
+			{
+				autoshellflag[5]=1;
+			}
+			elseif TOINT(autoshell[1])==6&&(hour-autoshellflag[3])%2==0&&minute==0
+			{
+				autoshellflag[5]=1;
+			}
+			elseif TOINT(autoshell[1])==7&&minute==0
+			{
+				autoshellflag[5]=1;
+			}
+			if autoshellflag[5]==1
+			{
+				if tshellid==null
+				{
+					OnAutoChangeShell;
+					tshellid=shellid
+				}
+				--
+				if tshellid!=shellID
+				{
+					autoshellflag[5]=1;
+					OnChangeShell(tshellid);
+				}
+				else
+				{
+					tshellid=null
+					autoshellflag[5]=null;
+				}
+			}
+		}
+	}
+}
+
+ClassMonitor
+{
+	_classrm=OnClassDetailTimeCheck()
+	if _classrm!=""
+	{
+			_classrm+"\![set,trayballoon,--icon=info,--timeout=10,--title=课程提醒,--text=%(_classrm),--text=（点击气泡关闭提醒）]";
+	}
+}
+
+
+AlarmMonitor
+{
+	if alarmset[0] == "ON" && TOINT(alarmhour) == hour && TOINT(alarmmin) == minute {
+		alarmstart = 1;
+		if alarmset[1] == "当天" {
+			alarmset[0] = "OFF";
+		}
+	}
+	if alarmstart > 0 {
+		if alarmset[2] == "声音" {
+			_tmp = "您设定的时间到了";
+			if alarmstart > 1 {
+				_tmp = "已经超过您设定的时间%(alarmstart - 1)分钟了";
+			}
+			alarmstart ++;
+			"\c\![sound,play,%(REPLACE(alarmfile,'/','\\'))]\f[bold,true]闹钟提醒\f[bold,default]\n[150]现在是%(hour)点%(minute)分\n%(_tmp)！\n（点击对话框关闭提醒）";
+		}
+		elseif alarmset[2] == "气泡" {
+			_tmp = "您设定的时间到了";
+			if alarmstart > 1 {
+				_tmp = "已经超过您设定的时间%(alarmstart - 1)分钟了";
+			}
+			alarmstart ++;
+			"\![set,trayballoon,--icon=info,--timeout=10,--title=闹钟提醒,--text=现在是%(hour)点%(minute)分,--text=%(_tmp)！,--text=（点击气泡关闭提醒）]";
+		}
+	}
+}
+
+OnBalloonClose
+{
+	if "闹钟提醒" _in_ reference0 {
+		alarmstart = 0;
+		"\![sound,stop]\e"
+	}
+}
+
+
+OnTrayBalloonClick
+{
+	if reference0 == "闹钟提醒" {
+		alarmstart = 0;
+	}
+	if reference0 == "关机提醒" {
+		shutdownstart = 0;
+	}
+	if reference0 == "日程提醒" {
+		agendastart = 0;
+		eventtemp=null;
+	}
+}
+
+
+
+OnAlarmMenu
+{
+	AlarmMenu;
+}
+
+AlarmMenu
+{
+	_txt = "\_q\f[bold,true]\0闹钟功能\f[bold,default]\n\n[half]";
+	   _txt="\![quicksession,1]\![set,choicetimeout,0]";
+	if ISVAR("alarmset") == 0 {
+		alarmset = IARRAY;
+		alarmset[0] = "OFF";
+		alarmset[1] = "当天";
+		alarmset[2] = "声音";
+		alarmhour = 0;
+		alarmmin = 0;
+		alarmfile = "saori/Ring.mp3";
+	}
+	_txt += "\n[50]闹钟时间：\f[color,34,100,200]%(alarmhour)点%(alarmmin)分\f[color,default]\_l[128]\q[◇设定闹钟,OnAlarmSetTime]\n[150]";
+	if alarmset[0] == "ON" {
+		_txt += "闹钟开关：\q[◎ON,OnAlarmSet,0,ON]   \q[○OFF,OnAlarmSet,0,OFF]\n";
+	}
+	else {         
+		_txt += "闹钟开关：\q[○ON,OnAlarmSet,0,ON]   \q[◎OFF,OnAlarmSet,0,OFF]\n";
+	}
+	if alarmset[1] == "当天" {
+		_txt += "提醒频率：\q[◎当天提醒,OnAlarmSet,1,当天]   \q[○每天提醒,OnAlarmSet,1,每天]\n";
+	}
+	else {
+		_txt += "提醒频率：\q[○当天提醒,OnAlarmSet,1,当天]   \q[◎每天提醒,OnAlarmSet,1,每天]\n";
+	}
+	if alarmset[2] == "声音" {
+		_txt += "提醒模式：\q[◎播放声音,OnAlarmSet,2,声音]   \q[○任务栏气泡,OnAlarmSet,2,气泡]\n";
+	}
+	else {
+		_txt += "提醒模式：\q[○播放声音,OnAlarmSet,2,声音]   \q[◎任务栏气泡,OnAlarmSet,2,气泡]\n";
+	}
+	_txt += "闹钟铃声：\__q[OnSetAlarmFile]%(SPLITPATH(alarmfile)[2])%(SPLITPATH(alarmfile)[3])\__q"
+	_txt += "\n[150]\q[◇返回上一层,OnOpenMenu]    \q[◇终了,OnAlarmEnd]";
+	_txt;
+}	
+
+OnSetAlarmFile
+{
+	"\![open,dialog,open,--id=alarmfile,--title=请选择音乐文件,--filter=音乐文件(mid;wav;mp3;au;ogg;wma)|*.mid;*.wav;*.mp3;*.au;*.ogg;*.wma]"
+}
+
+DialogSetAlarmFile
+{
+	alarmfile = _argv[0];
+	AlarmMenu;
+}
+
+OnAlarmEnd
+{
+}
+
+OnAlarmSet
+{
+	alarmset[reference0] = reference1;
+	AlarmMenu;
+}
+
+OnAlarmSetTime
+{
+	"\0\s[2]要在什么时候提醒%(username)呢？";
+	--
+	"\![open,timeinput,OnAlarmSetComplete,60000,%(hour),%(minute),%(second)]";
+}
+
+OnAlarmSetComplete
+{
+	_txt = "在";
+	if alarmset[1] == "每天" {
+		_txt += "每天的";
+	}
+	_tmp = reference0;
+	_txt += "\f[color,34,100,200]%(_tmp[0])点%(_tmp[1])分\f[color,default]\w9以%(alarmset[2])的方式提醒。\n\w9这样可以吗？"
+	_txt += "\_q\n[200]\q[◆确定,OnAlarmSetConfirmed,1,%(_tmp)]    \q[◇取消,OnAlarmSetConfirmed,0]\_q\n";
+	_txt;
+}
+
+OnAlarmSetConfirmed
+{
+	if reference0 == 1 {
+		alarmhour = reference1;
+		alarmmin = reference2;
+				alarmset[0] ="ON"
+	}
+	AlarmMenu;
+}
+
+
+//------ 整点报时\[2008-09_by KikkaAIdb] ---------------------------------------------------------------------
+整点报时
+{
+	//工作列报时，已知某些情况下工作列报时会延迟，如在看着电影时
+	"\![raise,OnPlayBell]%(对话框报时)?\![set,trayballoon,--timeout=0,--title=橘花报时,--text=%(对话框报时)?]";	
+}
+
+OnTrayBalloonClick_
+{
+  if minute>=5 {
+	"%username刚才去哪里了呢？"
+	"%username刚才在做什么呢？\1呐,不知道..."
+	"%username终于注意到了啊？\1呐,不知道..."
+  }
+  else {
+	"嗯嗯～"
+	"好的～"
+  }
+}
+
+OnTrayBalloonTimeout
+{
+  "%username不理橘花呢？"
+  "%username？"
+  "%username在做别的事吗？"
+}
+
+OnPlayBell
+{
+	_i = FUNCTIONEX("saori\mciaudior.dll", "stop")
+	_j = FUNCTIONEX("saori\mciaudior.dll", "load", "bell.wav")
+	_k = FUNCTIONEX("saori\mciaudior.dll", "play")
+}
+
+
+OnPlayRing
+{
+	_i = FUNCTIONEX("saori\mciaudior.dll", "stop")
+	_j = FUNCTIONEX("saori\mciaudior.dll", "load", "Ring.mp3")
+	_k = FUNCTIONEX("saori\mciaudior.dll", "play")
+}
+
+
+OnPlayRm
+{
+	_i = FUNCTIONEX("saori\mciaudior.dll", "stop")
+	_j = FUNCTIONEX("saori\mciaudior.dll", "load", "tinkle.wav")
+	_k = FUNCTIONEX("saori\mciaudior.dll", "play")
+}
+
+
+对话框报时
+{
+	整点报时特殊();
+	整点报时公式();
+}
+
+
+整点报时公式
+{	
+	ANY("", "", "", "%(username).", 打招呼() + ".." );
+	--
+	"现在时间%(Timejud)%(hour12)点喔";
+	"现在时间已经%(hour)点了喔";
+	"已经%(Timejud)%(hour12)点了";
+	"现在%(hour)点了";
+}
+整点报时特殊
+{
+	case hour 
+	{
+		when 0 
+		{
+			"凌晨12点了呢.又是新的一天～";
+		}
+		when 1-4 
+		{
+			"%(hour)点了.%(username)还不睡吗";
+			"%(hour)点了.%(username)不睡吗.熬夜会变笨的喔";
+		}
+		when 5-6 
+		{
+			"%(hour)点了..要去看日出吗";
+			"呼哈～唔..%(hour)点了";
+		}
+		when 7-8 
+		{
+			"%(hour)点了.还沒清醒的话赶快打起精神喔";
+		}
+		when 9-11 
+		{
+			"%(hour)点了..据说是人一天中记忆能力最好的時段呢，要好好利用喔";
+		}
+		when 12 
+		{
+			"12点了.午餐时间～";
+		}
+		when 13-14 
+		{
+			"下午%(hour12)点了…總是很想睡的时间呢";
+		}
+		when 15-16 
+		{
+			"%(hour)点了.要不要來杯下午茶呢";
+		}
+		when 17-18 
+		{
+			"下午%(hour12)点.晚餐时间～";
+		}
+		when 19-23 
+		{
+			"%(hour)点了..接下來该做什么事呢";
+			"晚上%(hour12)点了呢..%(username)在做什么呢";
+			"晚上%(hour12)点了呢..这个时间%(username)应该都在电脑前吧";
+		}
+	}
+}
+
+
+打招呼
+{
+	if ( hour < 4 || hour > 16 )	{"晚安。";}
+	elseif ( hour < 10 )			{"早安。";}
+	else							{"午安。";}
+}
+
+//----- 时间判断 -------------------------------------
+Timejud
+{
+	if ( _argc == 0 )
+		_argv[0] = hour;
+	
+	case _argv[0] {
+		when 0-4	{ "凌晨"; "半夜"; }
+		when 5-7	{ "清晨";"早上"; }
+		when 8-10	{ "上午"; }
+		when 11-13	{ "中午"; }
+		when 14-17	{ "下午"; }
+		when 18-19	{ "傍晚"; }
+		when 20-22	{ "晚上"; }
+		when 23	{ "深夜"; }
+	}
+}
+
+Seasonjud
+{
+
+	  if ( _argc == 0 )
+		   _argv[0] = month;
+case _argv[0] {
+		when 1-2	{ "冬天";}
+		when 3-5	{ "春天"; }
+		when 6-8	{ "夏天";}
+		when 9-11	{ "秋天";}
+		when 12	        { "冬天";}
+	}
+}
+
+
+
+
+//---- 启动天数[2009-3_by KikkaAIdb]★ ---------------------------------------------------------------------------------------------
+//其实用GETSECCOUNT()来做的话更容易,不过那样存的参数就不能一目了然了...
+daysfromfirstboot
+{
+  _days=0;
+  _mon=(31,28,31,30,31,30,31,31,30,31,30,31);
+  _fy=TOINT(firstboottime[0]);
+  _fm=TOINT(firstboottime[1]);
+  _fd=TOINT(firstboottime[2]);
+  while _fy<=year {
+	if _fy%4==0
+	  _mon[1]=29;
+	if year==_fy {
+	  while _fm<month {
+		_days+=_mon[_fm-1];
+		_fm++;
+	  }
+	  _days=_days+day-_fd;
+	}
+	elseif _fy==TOINT(firstboottime[0]) {
+	  while _fm<=12 {
+		_days+=_mon[_fm-1];
+		_fm++;
+	  }
+	_fm=1;
+	}
+	else {
+	  if _fy%4==0
+		_days++;
+	  _days+=365;
+	}
+	_fy++;
+  }
+  _days;
+}
+
+
+
+
+
+
+//计算日期天数
+daysfromdate
+{
+  _days=0;
+  _mon=(31,28,31,30,31,30,31,31,30,31,30,31);
+  _fy=TOINT(_argv[0]);
+  _fm=TOINT(_argv[1]);
+  _fd=TOINT(_argv[2]);
+  while _fy<=year {
+	if _fy%4==0 && _fy % 100 != 0 ||_fy % 400 == 0
+	  _mon[1]=29;
+	if year==_fy {
+	  while _fm<month {
+		_days+=_mon[_fm-1];
+		_fm++;
+	  }
+	  _days=_days+day-_fd;
+	}
+	elseif _fy==year-1 {
+	  while _fm<=12 {
+		_days+=_mon[_fm-1];
+		_fm++;
+	  }
+	_fm=1;
+	}
+	else {
+	  if _fy%4==0 && _fy % 100 != 0 ||_fy % 400 == 0
+		_days++;
+	  _days+=365;
+	}
+	_fy++;
+  }
+
+  _fy=TOINT(_argv[0]);
+  _fm=TOINT(_argv[1]);
+  _fd=TOINT(_argv[2]);
+ while _fy>=year {
+   if _fy%4==0 && _fy % 100 != 0 ||_fy % 400 == 0
+	  _mon[1]=29;
+	if year==_fy {
+	  while _fm>month {
+		_days-=_mon[_fm-1];
+		_fm--;
+	  }
+	}
+	elseif _fy==year+1 {
+	  while _fm>=1 {
+		_days-=_mon[_fm-1];
+		_fm--;
+	  }
+	_fm=12;
+	}
+	else {
+	  if _fy%4==0 && _fy % 100 != 0 ||_fy % 400 == 0
+		_days--;
+	  _days-=365;
+	}
+	_fy--;
+  }
+
+
+  _days;
+}
+
+
+daystodate
+{
+	_days=0;
+	_mon=(31,28,31,30,31,30,31,31,30,31,30,31);
+	_fy=TOINT(_argv[0]);
+	_fm=TOINT(_argv[1]);
+	_fd=TOINT(_argv[2]);
+	_todays=TOINT(_argv[3]);
+	while _days<_todays 
+	{
+		 if _fy%4==0 && _fy % 100 != 0 ||_fy % 400 == 0
+			_mon[1]=29
+		_fd++;
+		_days++;
+		if _fd>_mon[_fm-1]
+		{
+			_fd=1;
+			_fm++
+		}
+		if _fm>12
+		{
+			_fy++;
+			_fm=1;
+		}
+	}
+	_days=0;
+	while _days>_todays 
+	{
+		 if _fy%4==0 && _fy % 100 != 0 ||_fy % 400 == 0
+			_mon[1]=29
+		_fd--;
+		_days--;
+		if _fd<1
+		{
+			_fd=_mon[_fm-1];
+			_fm--
+		}
+		if _fm<1
+		{
+			_fy--;
+			_fm=12;
+		}
+	}
+	(_fy,_fm,_fd);
+
+}
+
+
+daysbetweendate
+{
+  _days=0;
+  _mon=(31,28,31,30,31,30,31,31,30,31,30,31);
+  _fy=TOINT(_argv[0]);
+  _fm=TOINT(_argv[1]);
+  _fd=TOINT(_argv[2]);
+  _FY=TOINT(_argv[3]);
+  _FM=TOINT(_argv[4]);
+  _FD=TOINT(_argv[5]);
+		
+  while _fy<=_FY {
+	if _fy%4==0 && _fy % 100 != 0 ||_fy % 400 == 0
+	  _mon[1]=29;
+	if _FY==_fy {
+	  while _fm<_FM {
+		_days+=_mon[_fm-1];
+		_fm++;
+	  }
+	  _days=_days+_FD-_fd;
+	}
+	elseif _fy==_FY-1 {
+	  while _fm<=12 {
+		_days+=_mon[_fm-1];
+		_fm++;
+	  }
+	_fm=1;
+	}
+	else {
+	  if _fy%4==0 && _fy % 100 != 0 ||_fy % 400 == 0
+		_days++;
+	  _days+=365;
+	}
+	_fy++;
+  }
+
+	_days;
+
+}
+
+GetGMTDateTime
+{
+	_Value=TOINT(_argv[0]);
+	_Year = 1970; _Month = 1; _Day = 1;
+	_Hour = 8;_Min = 0;_Sec = 0;
+	//临时变量
+	_iYear = 0;_iDay = 0;
+	_iHour = 0;_iMin = 0;_iSec = 0;
+	//计算文件创建的年份
+	_iYear = _Value / (365 * 24 * 60 * 60);
+	_iYear = _Year + _iYear;
+	//计算文件除创建整年份以外还有多少天
+	_iDay = (_Value % (365 * 24 * 60 * 60)) / (24 * 60 * 60);
+	//把闰年的年份数计算出来
+	_RInt = 0;
+	for _i = 1970; _i < _iYear; _i++
+	{
+	    if _i % 4 == 0&&_i % 100 != 0 ||_i % 400 == 0
+	        _RInt = _RInt + 1;
+	}
+	//计算文件创建的时间(几时)
+	_iHour = ((_Value % (365 * 24 * 60 * 60)) % (24 * 60 * 60)) / (60 * 60);
+	_iHour = _Hour + _iHour;
+	//计算文件创建的时间(几分)
+	_iMin = (((_Value % (365 * 24 * 60 * 60)) % (24 * 60 * 60)) % (60 * 60)) / 60;
+	_iMin = _Min + _iMin;
+	//计算文件创建的时间(几秒)
+	_iSec = (((_Value % (365 * 24 * 60 * 60)) % (24 * 60 * 60)) % (60 * 60)) % 60;
+	_iSec = _Sec + _iSec;
+	_t=daystodate(_iYear,_Month,_Day,_iDay-_RInt)
+	_t,=(_iHour,_iMin,_iSec)
+	_t;
+//_iDay+_RInt;
+//_Value / (365 * 24 * 60 * 60);
+//GetGMTDateTime(GETSECCOUNT)
+}
+
+
+
+
+OnAnalogClock
+{
+
+"\0\s[5]打开时钟"
+--
+_result=FUNCTIONEX("saori\AnalogClock2_0\AnalogClock.dll","show","clock",100,-200,"sakura")
+
+
+
+}
+  OnClockTime
+ {
+	"\0\s[5]现在是%(reference0):%(reference1):%(reference2)\e"
+ }
+
+  OnClockClose
+ { 
+		AnalogClock=0
+	"\0\s[5]关闭时钟\e"
+ }
+
+
+
+//**** 设定关机时间 ***********************************************************************************
+OnSetShutdownMenu
+{
+	//"\0\s[4]为了防止失忆，自动关机功能暂停中...\e"
+	   //_path = FUNCTIONEX("saori/advanced_sysinfo","get_special_folder_path",'Windows');
+			//_file = REPLACE(_path,'\','\\') + '\\system32\\Shutdown.exe';
+			//"\![open,file,%(_file),-s]"
+	   _txt="\![quicksession,1]\![set,choicetimeout,0]";
+	   _txt += "\f[bold,true]\0自动关机\f[bold,default]\n\n[half]";
+	   if ISVAR("shutdownset") == 0 
+	   {
+		shutdownset = IARRAY;
+		shutdownset[0] = "OFF";
+		shutdownset[1] = "当天";
+		shutdowntime=(0,0)
+				shutdowndata=(0,0,0,0,0)
+	}
+	   _txt+="自动关机时间：\f[color,34,100,200]%(shutdowntime[0])点%(shutdowntime[1])分\f[color,default]\_l[180]\q[◇设定自动关机时间,OnSetShutdown]\n";
+	   _txt+="计划关机时间：\f[color,34,100,200]%(shutdowndata[0])年%(shutdowndata[1])月%(shutdowndata[2])日%(shutdowndata[3])点%(shutdowndata[4])分\f[color,default]\n"
+	   _txt+="\q[◇设定计划关机时间,OnShutdownPlan]\n"
+	   _txt+="\q[◇关闭关机对话框,OnCancelSetShutdown]\n"
+	   _txt+="\q[◇倒计时关机,OnCountShutdown]\n"
+	   
+
+
+
+	   if shutdownset[0] == "ON" {
+		_txt += "自动关机开关：\q[◎ON,OnShutdownSet,0,ON]\_l[180]\q[○OFF,OnShutdownSet,0,OFF]\n";
+	}
+	else { 
+		_txt += "自动关机开关：\q[○ON,OnShutdownSet,0,ON]\_l[180]\q[◎OFF,OnShutdownSet,0,OFF]\n";
+	}
+	if shutdownset[1] == "当天" {
+		_txt += "自动关机频率：\q[◎当天自动关机,OnShutdownSet,1,当天]\_l[180]\q[○每天自动关机,OnShutdownSet,1,每天]\n";
+	}
+	else {
+		_txt += "自动关机频率：\q[○当天自动关机,OnShutdownSet,1,当天]\_l[180]\q[◎每天自动关机,OnShutdownSet,1,每天]\n";
+	}
+		
+
+
+	   //\q[◇定时关机,OnSetShutdownTime]\n/
+	   //\q[◇倒关机,OnSetShutdownTime]\n/
+_txt += "\n[half]\q[◇返回上一层,OnOpenMenu,3]    \q[◇终了,cancel]";
+_txt;
+}
+
+OnShutdownSet
+{
+	shutdownset[reference0] = reference1;
+	OnSetShutdownMenu;
+}
+
+
+OnSetShutdown
+{
+	"\0\s[2]要在什么时候自动关机呢？";
+	--
+	"\![open,timeinput,OnSetShutdownComplete,60000,%(hour),%(minute),%(second)]";
+}
+OnSetShutdownComplete
+{
+		shutdownset[0] = "ON";
+	shutdowntime = SPLIT(reference0,",");	
+	"\0\s[6]在%(shutdowntime[0])点%(shutdowntime[1])分的时候自动关机。\1\s[15]任务接受！\e";
+}
+
+OnCountShutdown
+{
+	  "\0要在多少秒后自动关机呢？";
+	  --
+	  "\![open,inputbox,OnCountShutdownComplete]";
+}
+
+OnCountShutdownComplete
+{
+	"收到，%(reference0)秒后自动关机"
+
+	-- 
+	_path = FUNCTIONEX("saori/advanced_sysinfo","get_special_folder_path",'Windows');
+			_file = REPLACE(_path,'\','\\') + '\\system32\\Shutdown.exe';
+			"\![open,file,%(_file),-s -t %(reference0)]";
+	 --
+	 "\_w[%(TOINT(reference0)*1000/3)]\n"+OnClose
+
+}
+
+OnShutdownPlan
+{
+	 "\0请先输入计划关机的日期";
+	 --
+	"\![open,dateinput,OnShutdownPlanTime,60000,%(year),%(month),%(day)]";
+
+
+}
+
+OnShutdownPlanTime
+{
+shutdowndata[0]=reference0[0];
+shutdowndata[1]=reference0[1];
+shutdowndata[2]=reference0[2];
+"\0要在%(shutdowndata[0])年%(shutdowndata[1])月%(shutdowndata[2])日的什么时候关机？"
+  --
+	 "\![open,timeinput,OnShutdownPlanComplete,60000,%(hour),%(minute),%(second)]";
+
+
+}
+
+OnShutdownPlanComplete
+{
+shutdowndata[3]=reference0[0];
+shutdowndata[4]=reference0[1];
+
+"\0\s[6]在%(shutdowndata[0])年%(shutdowndata[1])月%(shutdowndata[2])日%(shutdowndata[3])点%(shutdowndata[4])分的时候关机。\1\s[15]任务接受！\e";
+}
+
+
+ShutdownMonitor
+{
+	 if shutdownset[0] == "ON" && TOINT(shutdowntime[0]) == hour && TOINT(shutdowntime[1]) == minute 
+	 {
+		shutdownstart = 1;
+				infomode=0;
+		"\c\![sound,stop]"
+		if shutdownset[1] == "当天" {
+			shutdownset[0] = "OFF";
+		}
+
+	 }
+	 --
+	 if shutdowndata[0]==year && shutdowndata[1]==month && shutdowndata[2]==day && shutdowndata[3] == hour && shutdowndata[4] == minute 
+	 {
+		shutdownstart = 1;
+				infomode=0;
+		"\c\![sound,stop]"
+	 }
+
+	 --
+
+	 if shutdownstart > 0 
+	 {
+	 
+	 _txt="即将自动关机，请%(username)保存资料";
+	 _tmp="即将自动关机，请%(username)保存资料";
+	 _txt+="\![set,trayballoon,--icon=info,--timeout=10,--title=关机提醒,--text=现在是%(hour)点%(minute)分,--text=%(_tmp)！,--text=（点击气泡关闭提醒）]";
+	 --
+	 _path = FUNCTIONEX("saori/advanced_sysinfo","get_special_folder_path",'Windows');
+	 _file = REPLACE(_path,'\','\\') + '\\system32\\Shutdown.exe';
+	 _txt+="\![open,file,%(_file),-s]"
+	 _txt+="\w9\w9\w9\w9\w9"+OnClose
+	 _txt
+	 }
+
+}
+
+OnCancelSetShutdown
+{
+shutdownstart=0;
+_path = FUNCTIONEX("saori/advanced_sysinfo","get_special_folder_path",'Windows');
+			_file = REPLACE(_path,'\','\\') + '\\system32\\Shutdown.exe';
+			"\![open,file,%(_file),-a]";
+
+}
+
+AgendaMonitor
+{
+	if fjswitch
+		fjswitch="-1"
+	_eventtemp="";
+	_txt="";
+	_events=OnEventRead(,,,"all")
+	SETDELIM(_events,"|");
+	foreach _events;_event
+	{
+		_eventrepeat=TOINT(_event[19,'	']);
+		_eventbegindate=(_event[1,'	'],_event[2,'	'],_event[3,'	'],_event[4,'	'],_event[5,'	'])
+		_eventenddate=(_event[7,'	'],_event[8,'	'],_event[9,'	'],_event[10,'	'],_event[11,'	'])
+		if _eventrepeat
+		_eventtemp+=_event+'|'
+	}
+	
+	for _i=0;_i<30;_i++ 
+	{
+		_year=daystodate(year,month,day,_i)[0];
+		_m=daystodate(year,month,day,_i)[1];
+		_d=daystodate(year,month,day,_i)[2];
+		_eventtemp+=OnEventRead(_year,_m,_d);
+	}
+
+
+
+	SETDELIM(_eventtemp, "|");
+	_n=0;
+	foreach _eventtemp;_event
+	{
+		if _event==""
+			continue;
+		_s=EventRemindCheck(_event)
+		_start=_s[0];
+		_Ta=_s[1];
+		_Tb=_s[2];
+		if _start
+		{
+			_t=GetGMTDateTime(_Ta)
+			_T=GetGMTDateTime(_Tb)
+			eventtemp=_event;
+			eventtemp[1,'	']=_t[0];
+			eventtemp[2,'	']=_t[1];
+			eventtemp[3,'	']=_t[2];
+			eventtemp[4,'	']=_t[3];
+			eventtemp[5,'	']=_t[4];
+			eventtemp[7,'	']=_T[0];
+			eventtemp[8,'	']=_T[1];
+			eventtemp[9,'	']=_T[2];
+			eventtemp[10,'	']=_T[3];
+			eventtemp[11,'	']=_T[4];
+		}
+		_n++
+	}
+
+	if agendastart
+	{	
+		_txt+="\0\![quicksession,true]\![set,choicetimeout,0]";//加再这里，否则人物表情无法复原
+		_event=eventtemp;
+		_eventsort=_event[0,'	'];
+		_eventtitle=_event[12,'	'];
+		_eventbegindate=(_event[1,'	'],_event[2,'	'],_event[3,'	'],_event[4,'	'],_event[5,'	'])
+		_eventenddate=(_event[7,'	'],_event[8,'	'],_event[9,'	'],_event[10,'	'],_event[11,'	'])
+		_eventplace=_event[13,'	'];
+		_eventagenda=_event[14,'	'];
+		_eventasakura=_event[17,'	'];
+		_eventsound=_event[18,'	'];
+		_event[25,'	']=REPLACE(_event[25,'	'],'/','\\');
+		_eventapp=_event[25,'	'];tt=_eventapp
+		_w="";
+		_w+="日程提醒：\n"
+		_w+="事件种类："+_eventsort+"\n"
+		_w+="标题："+_eventtitle+"\n"
+		_w+="时间开始："+_eventbegindate[0]+"年"+_eventbegindate[1]+"月"+_eventbegindate[2]+"日"+_eventbegindate[3]+"时"+_eventbegindate[4]+"分"+"\n"
+		_w+="时间结束："+_eventenddate[0]+"年"+_eventenddate[1]+"月"+_eventenddate[2]+"日"+_eventenddate[3]+"时"+_eventenddate[4]+"分"+"\n"
+		_w+="地点："+_eventplace+"\n"
+		_w+="备忘："+_eventagenda+"\n"
+		_w+=_eventasakura+"\n"
+		_txt+=_w
+		_txt+="\q[查看日程,OnEventCheck,%(_eventbegindate[0]),%(_eventbegindate[1]),%(_eventbegindate[2])]\n";
+		_txt+="\q[知道了，不再提醒,OnEventOver]\n";
+		_txt+="\![set,trayballoon,--icon=info,--timeout=10,--title=日程提醒,--text=%(_eventasakura),--text=（点击气泡关闭提醒）]";
+		_txt=FUNCTIONEX("saori\ChConverter.dll", "traditional", _txt)
+		_txt+="\![open,file,%(_eventapp)]";
+		_txt+="\![sound,play,%(_eventsound)]";
+	}
+
+	_txt;
+
+}
+
+EventRemindCheck
+{
+	_start=0;
+	_event=_argv[0];
+	_eventsort=_event[0,'	'];
+	_eventbegindate=(TOINT(_event[1,'	']),TOINT(_event[2,'	']),TOINT(_event[3,'	']),TOINT(_event[4,'	']),TOINT(_event[5,'	']))
+	_eventenddate=(TOINT(_event[7,'	']),TOINT(_event[8,'	']),TOINT(_event[9,'	']),TOINT(_event[10,'	']),TOINT(_event[11,'	']))
+	_eventrange=TOINT(_event[6,'	']);
+	_eventtitle=_event[12,'	'];
+	_eventplace=_event[13,'	'];
+	_eventagenda=_event[14,'	'];
+	_eventremind=TOINT(_event[15,'	']);
+	_eventseremind=TOINT(_event[16,'	']);
+	_eventasakura=_event[17,'	'];
+	_eventsound=_event[18,'	'];
+	_eventrepeat=TOINT(_event[19,'	']);
+	_eventrepeatend=TOINT(_event[20,'	']);
+	_eventrepeatenddate=(_event[21,'	'],_event[22,'	'],_event[23,'	'])
+	_ta=GETSECCOUNT(_eventbegindate[0],_eventbegindate[1],_eventbegindate[2],0,hour,minute,0)
+	_tb=GETSECCOUNT(_eventenddate[0],_eventenddate[1],_eventenddate[2],0,hour,minute,0)
+	_tc=GETSECCOUNT(year,month,day,0,hour,minute,0);
+	_td=GETSECCOUNT(year,month,day,0,hour,minute,0);
+	if _eventrepeatend
+		_td=GETSECCOUNT(_eventrepeatenddate[0],_eventrepeatenddate[1],_eventrepeatenddate[2],0,hour,minute,0)
+	_TA=GETSECCOUNT(_eventbegindate[0],_eventbegindate[1],_eventbegindate[2],0,_eventbegindate[3],_eventbegindate[4],0);
+	_TB=GETSECCOUNT(_eventenddate[0],_eventenddate[1],_eventenddate[2],0,_eventenddate[3],_eventenddate[4],0);
+	_TC=GETSECCOUNT(year,month,day,0,hour,minute,0);
+	_T=(0,0,5*60,15*60,30*60,60*60,2*60*60,24*60*60,2*24*60*60,7*24*60*60,14*24*60*60,28*24*60*60);//提醒
+	_Th=0;
+	_Tflag=6;
+	if _eventrange
+	{
+		_T=(0,0,24*60*60,2*24*60*60,7*24*60*60)
+		_Th=GETSECCOUNT(year,month,day,0,_eventbegindate[3],_eventbegindate[4],0)-GETSECCOUNT(year,month,day,0,8,30,0);
+		_Tflag=1
+	}
+	_t=(0,1,7,14,GETSECCOUNT(year,month,_eventbegindate[2],0,hour,minute,0),GETSECCOUNT(year,_eventbegindate[1],_eventbegindate[2],0,hour,minute,0))[_eventrepeat]  //重复
+	_Tt=0;
+	_Ta=_TA;
+	_Tb=_TB;
+	if _argv[1]=="getrepeat"
+	{
+		if _eventrepeat<4
+		_Ta=_tc+_t*24*60*60-(_tc-_TA)%(_t*24*60*60)
+		else
+		{
+			_t=(GETSECCOUNT(_eventbegindate[0],_eventbegindate[1],_eventbegindate[2],0,hour,minute,0),GETSECCOUNT(_eventbegindate[0],_eventbegindate[1],_eventbegindate[2],0,hour,minute,0))[_eventrepeat-4]  
+			_x=GETSECCOUNT(year,month+1,_eventbegindate[2],0,hour,minute,0)
+			if month==12
+			_x=GETSECCOUNT(year+1,1,_eventbegindate[2],0,hour,minute,0)
+			_tt=(_x,GETSECCOUNT(_eventbegindate[0]+1,_eventbegindate[1],_eventbegindate[2],0,hour,minute,0))[_eventrepeat-4]
+			_Ta=_tc+_tt-_t-(_tc-_TA)%(_tt-_t)
+
+		}
+		(_start,_Ta,_Tb);t=(_start,_Ta,_Tb)
+		return;
+	}
+	if _eventremind<=_Tflag&&_eventrepeat<4&&(_tc-_ta)%(_t*24*60*60)==0&&_tc-_ta>=0&&_tc<=_td//提醒时间小于1天前重复模式在每月前
+	{
+		_Ta=_TA+_tc-_ta;
+		_Tb=_TB+_tc-_ta;t=(_Ta,_TC+_T[_eventremind],1);
+	}
+	elseif _eventrepeat<4&&(_tc-_ta+_T[_eventremind])%(_t*24*60*60)==0&&_tc-_ta>=0&&_tc<=_td//提醒时间大于等于1天前
+	{
+		_Ta=_TA+_tc-_ta+_T[_eventremind];
+		_Tb=_TB+_tc-_ta+_T[_eventremind];;t=(_Ta,_TC+_T[_eventremind],2,_Th);
+	}
+	else  //重复模式在每月后
+	{
+		if _eventremind<=_Tflag&&_tc>=_ta&&(_tc==_t)&&_tc<=_td  //提醒时间小于1天前
+		{
+			_Ta=_TA+_tc-_ta;
+			_Tb=_TB+_tc-_ta;t=5
+		}
+		elseif _tc>_ta&&(_tc+_T[_eventremind]==_t)&&_tc<=_td    //提醒时间大于1天前
+		{
+			_Ta=_TA+_tc-_ta+_T[_eventremind];
+			_Tb=_TB+_tc-_ta+_T[_eventremind];;
+			t=(_TC+_T[_eventremind],_TA)
+		}
+		
+	}
+
+	if _eventremind
+		_Tt=_TC+_T[_eventremind]+_Th;
+	if _Ta==_Tt
+	{	
+		agendastart=1;
+		_start=1;
+	}
+	if _eventseremind<=6&&_eventrepeat<4&&(_tc-_ta)%(_t*24*60*60)==0&&_tc-_ta>0&&_tc<=_td
+	{
+		_Ta=_TA+_tc-_ta;
+		_Tb=_TB+_tc-_ta;
+	}
+	elseif _eventrepeat<4&&(_tc-_ta+_T[_eventseremind])%(_t*24*60*60)==0&&_tc-_ta>0&&_tc<=_td
+	{
+		_Ta=_TA+_tc-_ta+_T[_eventseremind];
+		_Tb=_TB+_tc-_ta+_T[_eventseremind];
+	}
+
+	else
+	{
+		if _eventseremind<=6&&_tc>_ta&&(_tc==_t)&&_tc<=_td
+		{
+			_Ta=_TA+_tc-_ta;
+			_Tb=_TB+_tc-_ta;
+		}
+		elseif _tc>_ta&&(_tc+_T[_eventseremind]==_t)&&_tc<=_td
+		{
+			_Ta=_TA+_tc-_ta+_T[_eventseremind];
+			_Tb=_TB+_tc-_ta+_T[_eventseremind];;
+		}
+		
+	}
+
+	if _eventseremind
+		{_Tt=_TC+_T[_eventseremind]+_Th;tt=(_ta,_Tt)}
+	if _Ta==_Tt
+	{	
+		agendastart=1
+		_start=1;
+	}
+	(_start,_Ta,_Tb);
+}
+
+
+
+OnEventCheck
+{
+	agendastart=0;
+	OnAgenda(reference0,reference1,reference2,"inter")
+}
+
+OnEventOver
+{
+	agendastart=0;
+	"好的";
+
+}

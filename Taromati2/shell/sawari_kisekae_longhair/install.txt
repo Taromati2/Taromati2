@@ -1,0 +1,5 @@
+charset,Shift_JIS
+type,shell
+name,sawari’…‚¹‘Ö‚¦(ƒƒ“ƒOƒwƒA[)
+accept,‹k‰Ô
+directory,sawari_kisekae_longhair

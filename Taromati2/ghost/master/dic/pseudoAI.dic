@@ -1,0 +1,4399 @@
+﻿//---------------------------------伪AI处理辞书---------------------------------
+//----------------------------相关辞书函数---------------------------------
+//internet.dic->TextBetween,internet.dic->TextToEnd
+AIGet
+{
+	_str=reference0;
+	if _argc>0
+		_str=_argv[0];
+	_found=AILoad(_str);
+	_txt="";
+	_temp=_found;
+	//_temp;return;
+	SETDELIM(_temp,"#");
+	_n=ARRAYSIZE(_temp)-1;
+	for _i=0;_i<_n;_i++
+	{
+		_found=_temp[_i];
+		SETDELIM(_found,"|");
+		_count=ARRAYSIZE(_found)-1;
+		_id=RAND(_count);
+		_found=_found[_id];
+		if '<think>' _in_ _found
+		{
+			AILoad.Think(_found);
+			_found=RE_REPLACE(_found,'<think>.*</think>','')
+		}
+
+
+		if _found!=""&&"\w" !_in_ _found
+			_found=AITextReplace(_found);
+		if "EVAL" _in_ _found
+			_found=EVAL("%(EVAL('_found'))");
+		if _found!=""
+			_txt+=_found+"|";
+	}
+	SETDELIM(_txt,"|");
+	_count=ARRAYSIZE(_txt)-1;
+	_id=RAND(_count);
+	_txt=_txt[_id];
+	_txt;
+	
+}
+
+AITextReplace
+{
+	_str=reference0;
+	if _argc>0
+		_str=_argv[0];
+	_face="0|正常,1|害羞(侧面),2|惊讶,3|渴望,5|高兴,6|闭眼,7|生气,8|苦笑,9|尴尬,10|斗和(闭眼),11|斗和(睁眼),12|斗和(睁眼正视),13|斗和(扭头无视),19|消失,20|思考,21|恍惚,22|P90,23|刀,25|唱歌,26|正面,27|电锯,28|礼物,29|幸福,30|侧面,32|手枪,33|委屈,34|军刀,35|难过,40|前屈,41|前屈(闭眼),50|端茶,51|用餐,100|正常2,101|害羞,110|斗和(笑),111|正常(人形),117|斗和(惊讶)";
+	_str=REPLACE(_str,'<橘花>','\0');
+	_str=REPLACE(_str,'<斗和>','\1');
+	_str=REPLACE(_str,"<等待>","\w");
+	_str=REPLACE(_str,"<表情>","\s");
+	_str=REPLACE(_str,'　','\w9');
+	_str=REPLACE(_str,'、','、\w9\w5');
+	_str=REPLACE(_str,'，','，\w9\w5\w5');
+	_str=REPLACE(_str,'。','。\w9\w9\w9');
+	_str=REPLACE(_str,'！','！\w9\w9\w9');
+	_str=REPLACE(_str,'？','？\w9\w9\w9\w5');
+	_str=REPLACE(_str,'…','…\w9\w9\w5');
+	foreach _face;_i
+	{
+		_surface='\s['+_i[0,'|']+']';
+		_name='<'+_i[1,'|']+'>';
+		_str=REPLACE(_str,_name,_surface);
+		
+	}
+	_str=REPLACE(_str,"<","[");
+	_str=REPLACE(_str,">","]");
+	_str;
+}
+
+
+LoveTalk
+{
+	if intimacy>3600{
+		"\0\s[1]有一句话，%selfname说不出口，那就是：我爱你，%username";
+		"\0\s[29]嗯嗯，%selfname一直都爱着啊"
+			
+	}
+	elseif intimacy>800
+		"这，能算是爱吗？";
+	elseif intimacy>200
+		"非常喜欢啊";
+	elseif intimacy>50
+		"唔，%selfname喜欢%username";
+	elseif intimacy>0
+		"不喜欢";
+	else
+		"你说什么，我听不见";	
+}
+
+Teach
+{
+	aimode="teach";
+	temp01="提问";
+	_t="\0\s[5]\_q\![set,choicetimeout,0]进入教学模式，请输入要提问的内容。\n如果需要设置问题同义词(句),\n请在同义词(句)之间用“CHR(124)”符号分隔开来!\n如果需要设置多个关键词(句),\n请在各关键词(句)之间用“&”分隔开来!\n【注意:“&”优先度高于“|”】\![open,communicatebox]\n[150]\![*]\q[返回对话模式,OnBackToTalk]\e";
+	if chatroom==0
+		_t=REPLACE(_t,'CHR(124)','|');
+	_t
+}
+
+AITeach
+{
+	_t=CUTSPACE(_argv[0]);
+	_t=REPLACE(_t,"\0","<橘花>");
+	_t=REPLACE(_t,"\1","<斗和>");
+	_t=REPLACE(_t,"\w","<等待>");
+	_t=REPLACE(_t,"\s","<表情>");
+	_t=REPLACE(_t,"[","<");
+	_t=REPLACE(_t,"]",">");
+	_t=REPLACE(_t,",","<英文逗号>");
+    "\0\s[0]\_q";
+	--
+		if (_tmp=LogicError(_t))!=""{
+			_tmp+"\n\n\![set,balloontimeout,0]\![open,communicatebox]\e";
+			return;	
+		}
+		if ISVAR("temp01")==0;
+		temp01="提问";
+		if temp01=="提问" {
+			temp01="回答";
+			temp02=_t+"*";
+			"已记录提问内容“%(_t)”;请输入橘花这时要回答的。";
+			--
+				_tmp01='CHR(124)';
+			_tmp02='CHR(92)';
+			if chatroom==0{
+				_tmp01='|';
+				_tmp02='\\';
+			}
+			"提示:如果需要设置多种回答方案,\n请使用“%(_tmp01)”符号分隔开来！提问时会随机输出喔~\n表情和延时可以用代码如\_?\s[22]\w9\_?（表情请在右键-便利机能-开发专用介面-表情测试选取surface前的代号，\_?\s[22]\_?代表选surface22(橘花P90)，%(_tmp02)w9代表等待延时9毫秒，大于9无效，但可重复使用），也可以用“<表情><序号>”，“<等待>时间”\n，如需加声音可将声音文件如sound.wav放在\_?master\sounds\kikkavoice\内，然后增加%(_tmp02)![sound,play,sounds\kikkavoice\sound.wav]\_?";
+			--	
+				"\![set,choicetimeout,0]\![open,communicatebox]\n[150]\![*]\q[返回对话模式,OnBackToTalk]\e";
+		}
+		elseif temp01=="回答" {
+			temp03=_t+"§";
+			"当提问为“%(temp02[0,'*'])”时,橘花回答“%(_t)”,这样可以吗？\n[150]\![*]\q[是的,OnTeachAdd]\n\![*]\q[不了,OnTeachCancel]\e";
+			
+		}
+		
+}
+
+OnTeachAdd 
+{
+	_file="pseudoAI\userteach.ai";
+	_t=temp02+temp03;
+	_txt=REPLACE(_t,'CHR(124)','|');
+	AITalkAdd(_file,_txt);
+	kikkamood=TOINT(kikkamood)+20;
+	"已经记录,记录文件在pseudoAI\\userteach.ai中。\n[150]\![*]\q[继续添加,OnNewTeachAdd]\n\![*]\q[返回对话,OnBackToTalk]\e";
+}
+
+
+
+OnAISave
+{
+	if FATTRIB('pseudoAI\userteach.ai')!=-1
+		_temp=FCOPY('pseudoAI\userteach.ai','profile');
+	if FATTRIB('pseudoAI\logiclearn.ai')!=-1
+		_temp=FCOPY('pseudoAI\logiclearn.ai','profile');
+}
+
+
+
+OnAILoad
+{
+	if FATTRIB('profile\userteach.ai')!=-1
+		_temp=FCOPY('profile\userteach.ai','pseudoAI')
+	else{
+		_temp=FULLNAMEFCOPY('pseudoAI\userteach.ai.base','profile\userteach.ai')
+		OnSQLLoad
+	}
+	if FATTRIB('profile\logiclearn.ai')!=-1
+		_temp=FCOPY('profile\logiclearn.ai','pseudoAI')
+	else{
+		_temp=FULLNAMEFCOPY('pseudoAI\logiclearn.ai.base','profile\logiclearn.ai')
+		OnSQLLoad
+	}
+}
+
+
+
+OnTeachCancel
+{
+	
+	temp01="提问";
+	"取消记录。\n[150]\![*]\q[继续添加,OnNewTeachAdd]\n\![*]\q[返回对话,OnBackToTalk]\e";
+}
+
+OnNewTeachAdd
+{
+	temp01="提问";
+	if chatroom
+		OnChatRoom(j);
+	else
+		Teach;
+}
+
+OnBackToTalk
+{
+	aimode="";
+	if chatroom
+		OnChatRoom(j);
+}
+
+
+
+AILoad//AILoad("你好","aiml")  AILoad("你好，喜欢什么")
+{
+	_t=MKDIR(_path2);
+	_path="pseudoAI";
+	_path2="pseudoAI/annotated_alice";
+	_str=reference0;
+	if _argc>0
+		_str=_argv[0];
+	if aimode=="teach"
+		return;
+	_str=RE_SPLIT(_str,'[,.!?，。！？]');
+	string=_str;
+	_found="";
+	snum=0;
+	qnum=0;
+	anum=0;
+	_search="";
+	_length=0;
+	num=0;
+	talkflag="";
+	talkflagid=0;
+	talkmemo="";
+	talktemp="";
+	talkfound=0;
+	_txt="";	
+	_files = FENUM(_path);
+	strnum=ARRAYSIZE(string);
+	_tfiles=_files;
+	_tfiles=REPLACE(_tfiles,'logiclearn.ai','')
+	_tfiles=REPLACE(_tfiles,'logic.ai','')
+	for _a=0;_a<strnum;_a++
+	{
+		_str=string[_a]
+			_g=IARRAY;
+		e=0;
+		aimode="";
+		_txt="";
+		_lastm=0;
+	
+		foreach _tfiles; _file 
+		{
+			//_file2=_path2 +"/"+ TOLOWER(SPLITPATH(_file)[2])+TOLOWER(SPLITPATH(_file)[3]);
+			_filename=TOUPPER(SPLITPATH(_file)[2]);
+			_file = _path +"/"+ _file;
+			_fileext = TOLOWER(SPLITPATH(_file)[3]);
+			case _fileext 
+			{
+				when ".ai"
+				{
+					_t=AILoad.AIFile(_file,_str,e,_txt);
+					if aimode=="break"
+					{
+						_txt="";
+						break;
+					}
+					elseif aimode=="return"
+					{
+						_found="";
+						_txt=_t;
+						break;
+					}
+					elseif _t!=-1
+						_txt=_t;
+					
+				}
+				
+				when ".aiml",".aiml8"
+				{	
+					//AILoad.AImlFile("pseudoAI/aiml/c.aiml","can you speak",e)
+					_t=AILoad.AImlFile(_file,_str,e,_txt)
+					if aimode=="break"
+					{
+						_txt="";
+						break;
+					}
+					elseif aimode=="return"
+					{
+						_found="";
+						_txt=_t;
+						break;
+					}
+					elseif _t!=-1
+						_txt+=_t;
+				}
+			}
+			
+		}
+		if ("logiclearn" _in_ _files||"logic" _in_ _files)&&KikkaAILogic!=2
+		{
+			_file="pseudoAI/logic.ai"
+			_t=AILoad.AIFile(_file,_str,e,_txt);
+			if aimode=="break"
+			{
+				_txt="";
+			}
+			elseif aimode=="return"
+			{
+				_found="";
+				_txt=_t;
+			}
+			elseif _t!=-1
+				_txt=_t;		
+			_file="pseudoAI/logiclearn.ai"
+			_t=AILoad.AIFile(_file,_str,e,_txt);
+			if aimode=="break"
+			{
+				_txt="";
+			}
+			elseif aimode=="return"
+			{
+				_found="";
+				_txt=_t;
+			}
+			elseif _t!=-1
+				_txt=_t;		
+
+		}
+		if '<learn>' _in_ _txt
+		{
+			AILoad.Learn(_txt);
+			_txt=RE_REPLACE(_txt,'<learn>.*</learn>','')
+		}
+		_found+=_txt+"#";
+	}	 
+	if _argv[1]=="qnum"  //AILoad(,"qnum")
+	{
+		qnum;
+		return;
+	}
+	
+	if _argv[1]=="anum"  //AILoad("你好","anum")
+	{
+		anum;
+		return;
+	}
+	if _argv[1]=="num" 
+	{
+		snum;
+		return;
+	}
+	
+	if anum>0
+	{
+		_search=_str+"§"+_found;
+	}
+	
+	if _argv[1]=="search"
+	{
+		_search;
+		return;
+	}
+	
+/*	
+	if anum==0
+	{
+		_file="pseudoAI\user.ai";
+		_buff=_str;
+		AITalkAdd(_file,_buff);
+	}
+*/
+	ClearAILoadVar;
+	_found;
+}
+
+ClearAILoadVar
+{
+//	ERASEVAR("e");		
+}
+
+
+AILoad.QMatch
+{
+	_str=_argv[0];
+	_t=_argv[1];
+	_e=_argv[2];
+	_Q=""
+	if _t!='.*'
+	{
+		_t=RE_GREP(_str,_t);
+		if _t
+		{
+			_ori=RE_GETSTR;
+			_ori=RE_CHAREPLACE(_ori);
+			_Qs=_ori;
+			if STRLEN(_Qs)>_e
+				_Q=_Qs;
+		}    
+	}
+	else
+	{
+		_Qs=_str;
+		if STRLEN(_Qs)>=_e
+			_Q=_Qs;
+	}     
+	
+	
+	
+	_Q
+}
+
+AILoad.KeyMatch
+{
+	_e=0;
+	_str=_argv[0];
+	_Q=_argv[1];
+	_lastm=0;
+	if _argc>2
+		_e=_argv[2];
+	_match=0;
+	if '*' _in_ _Q||'%(' _in_ _Q
+	{
+		if '.*' !_in_ _Q
+			_Q=REPLACE(_Q,'*','.*');//将通配符换成正则匹配
+		_t=CHAREPLACE(_Q);
+		_t=RE_REPLACE(_t,'%\((.*?)\)','.*');
+		if (_tmp=AILoad.QMatch(_str,_t,_e))!=""
+			_Q=_tmp;                      
+	}
+	if "&" _in_ _Q
+	{
+		_Qs=_Q;
+		_k=0;
+		_n=0;
+		SETDELIM(_Qs,"&");
+		_n=ARRAYSIZE(_Qs);
+		_k+=_n-1;	
+		for _l=0,_m=1;_l<_n && _m==1;_l++ 
+		{
+			_m=(_Qs[_l] _in_ _str);
+			_k+=STRLEN(_Qs[_l]);
+		} 
+		if _m==1 && _k==_e && _lastm==1 
+		{
+			//_dexori,=_buff2[1,'|'];    
+			//_dexnum++;     
+			//anum+=_Anum-1;
+		}
+		elseif _m==1 && _k>=_e 
+		{
+			_lastm=1;
+			_e=_k;
+			_dexnum=1;
+		}
+	}
+			 
+	if _Q _in_ _str && STRLEN(_Q)==_e && _lastm==0 
+	{
+		_dexori,=_buff2[1,'|'];    
+		_dexnum++; 
+		_match=1;	
+	}
+	elseif  _Q _in_ _str && STRLEN(_Q)>=_e
+	{//当上次最大长度匹配＞这次,不管是何种保留都放弃
+		_lastm=0;
+		_e=STRLEN(_Q);
+		_match=1;
+		_dexnum=1;
+	}	
+	_match;
+	i=_e;
+	
+}
+
+AILoad.InfFile   //AILoad.InfFile("pseudoAI\common.ai","你好")
+{
+	_file=_argv[0];
+	_str=_argv[1];
+	_e=TOINT(_argv[2]);
+	_path=SPLITPATH(_file)[1];
+	_filename=TOUPPER(SPLITPATH(_file)[2]);
+	_inf=_path + TOLOWER(_filename)+'.inf';
+	_dexori=IARRAY;
+	_open=0;
+	_md5=FDIGEST(_file,"MD5")+'|'+FSIZE(_file);
+	subject="";
+	FCHARSET(1);
+	if FOPEN(_inf,'r')
+	{
+		_buff2=FREAD(_inf);
+		_newmd5=_buff2[1,'md5='];
+		_buff2=FREAD(_inf);
+		_strcha=_str;
+		_Ttemp="";
+		Tflag=0;
+		TflagTxt="";
+		_lastm=0;
+		_laststar=0;
+		_ql=0;
+		_E=0;
+			_Q=_buff2[0,'|'];
+		//	if _Q==""||_Q==-1
+		//	_newmd5="";
+		while _buff2!=-1
+		{
+			_Q=_buff2[0,'|'];
+			if _Q=="*"
+			{
+				_buff2=FREAD(_inf);
+				continue;
+			}
+			if _Q!=""
+			{
+				_open++
+				if TOINT(_buff2[1,'|'])==0
+				_newmd5="";
+			}
+			else
+				coutinue;
+			if _filename=="MEAL"
+			{
+				if _strcha _in_ _Q&&dexnum<TOINT(chatroom_num)||_Q _in_ _strcha
+				{
+					_dexori,=_buff2[1,'|'];
+					dexnum++;
+				}
+			}
+
+			elseif _filename!="FOOD"&&_filename!="USER"
+			{
+
+				if '|' _in_ _buff2&&ExFilename(_filename)==0
+					qnum=TOINT(qnum)+1;
+				if '<topic' _in_ _buff2
+				{ 
+					_t=_buff2
+					_temp=AILoad.TopicMatch(_t);
+					if _temp!=""&&anum==0
+					{
+						_Ttemp=_buff2[1,'|'];
+						Tflag=1;
+					}
+				}
+				if '<answer>' _in_ _buff2&&'记住' !_in_ _str
+				{
+					_answer=TextBetween(_buff2,'<answer>','</answer>');
+					E=0;	
+					if AILoad.AnswerMatch(_str,_answer,_e)
+					{
+						_Ttemp=_buff2[1,'|'];
+					
+						if _E==E&&_lastm==1
+						{
+							TflagTxt+='|'+_answer+'。|';
+							_dexori,=_Ttemp; 
+							dexnum++;  
+							Tflag=3;t8=E+','+_e+','+TflagTxt+'1'
+						}
+						elseif E>_E
+						{
+							_dexori=IARRAY;
+							TflagTxt=_answer+'。';
+							_dexori,=_Ttemp; 
+							dexnum++;  
+							Tflag=3;
+							_lastm=1;
+							_E=E;	t8=E+','+_E+','+TflagTxt
+						}
+							
+					}
+				
+				}
+				elseif '<subject' _in_ _buff2&&'记住' !_in_ _str
+				{ 
+					_subject=TextBetween(_buff2,'<subject name="','">');
+					if AILoad.KeyMatch(_str,_subject)
+					{
+						_Ttemp=_buff2[1,'|'];
+						Tflag=2;
+						TflagTxt=_subject;
+					}
+				}
+
+				if '%(' _in_ _Q
+				{
+					if '.*' !_in_ _Q
+						_Q=REPLACE(_Q,'*','.*');//将通配符换成正则匹配
+					_t=CHAREPLACE(_Q);
+					_t=RE_REPLACE(_t,'%\((.*?)\)','.*');
+					if (_tmp=AILoad.QMatch(_str,_t,_e))!=""
+						_Q=_tmp; 
+				}
+
+
+				if "&" _in_ _Q||'*' _in_ _Q
+				{
+					_Qs=_Q;
+					_k=0;
+					_n=0;
+					if "&" _in_ _Q
+					{
+						SETDELIM(_Qs,"&");
+						_n=ARRAYSIZE(_Qs);
+						_k+=_n-1;
+					}
+					elseif '*' _in_ _Q
+					{
+						SETDELIM(_Qs,"*");
+						_n=ARRAYSIZE(_Qs);
+						_a=STRLEN(_Q)-_n;
+						_b=STRLEN(_str)-_a;
+					}
+				
+					for _l=0,_m=1;_l<_n && _m==1;_l++ 
+					{
+						_m=(_Qs[_l] _in_ _str);
+						_k+=STRLEN(_Qs[_l]);
+					
+						if  '*' _in_ _Q&&!KikkaAILogic
+						{
+						_t=_Qs[_l]
+						_s=_str[_l+1,_t];
+						_k+=STRLEN(_s);
+						}
+					
+					} 
+					
+					if  '*' _in_ _Q&&KikkaAILogic
+					{
+						_t=GetStarCha(_str,_Q);
+						foreach _t;_i
+						{
+							_k+=STRLEN(_i);
+						}
+
+					}
+/*
+					if _m==1&& '*' _in_ _Q&&STRLEN(_Q)>_ql&&_laststar==1
+					{
+						_k+=STRLEN(_Q)-_ql;
+
+					}
+					elseif  _m==1&& '*' _in_ _Q&&STRLEN(_Q)>_ql
+					{
+						_laststar=1;
+						_ql=STRLEN(_Q);t4=_Q+','+_k+','+_e
+					}
+*/
+					if _m==1 && _k==_e && _lastm==1 
+					{
+						_dexori,=_buff2[1,'|'];    t4=_e+','+_k+','+_Q+'1'
+						dexnum++;     
+						//anum+=_Anum-1;
+					}
+					elseif _m==1 && _k>_e 
+					{
+						_lastm=1;
+						_e=_k;t7=_e+','+_k+','+_Q
+						dexnum=1;
+						_dexori=IARRAY;
+						_dexori=_buff2[1,'|']; 
+						//anum=_Anum-1;
+					}
+				}
+				
+				if _Q _in_ _str && STRLEN(_Q)==_e && _lastm==0 
+				{
+					_dexori,=_buff2[1,'|'];    t5=_e+','+_k+','+_Q+'2'
+					dexnum++; 
+					//anum+=_Anum-1;		
+				}
+				elseif  _Q _in_ _str && STRLEN(_Q)>=_e
+				{//当上次最大长度匹配＞这次,不管是何种保留都放弃
+					_lastm=0;t5=_e+','+_k+','+_Q+'3'
+					_e=STRLEN(_Q);
+					dexnum=1;
+					_dexori=IARRAY;
+					_dexori=_buff2[1,'|'];
+				}	
+				
+			}
+			_buff2=FREAD(_inf);
+		}
+
+		FCLOSE(_inf);
+		if _md5!=_newmd5&&_filename!="USER"
+		{ 
+			//if _filename=="ZLOGIC"
+			t2=1
+			dexnum=0;
+			infmode=1;
+			_t=FOPEN(_inf,'w');
+			_buff2='md5='+_md5;
+			_t=FWRITE(_inf,_buff2);
+			
+		}
+
+		elseif Tflag==2
+		{		//if _filename=="ZLOGIC"
+			t2=2
+			_dexori,=_Ttemp; 
+			dexnum++;     
+		}
+		
+		elseif dexnum==0
+		{
+t2=3
+			if Tflag==1
+			{	
+				_dexori,=_Ttemp;  t2= 3
+				dexnum++;     
+			}
+			elseif _filename!="FOOD"
+			{	_dexori=-1;}
+
+		}
+		elseif dexnum!=0&&TOINT(_dexori)==0
+		{	//if _filename=="ZLOGIC"
+			t2=4
+			dexnum=0;
+			infmode=1;
+			_t=FOPEN(_inf,'w');
+			_buff2='md5='+_md5;
+			_t=FWRITE(_inf,_buff2);
+		}
+		
+		
+	}
+	
+	elseif  _filename!="USER"
+	{	//if _filename=="ZLOGIC"
+			t2=5
+		infmode=1;
+		_t=FOPEN(_inf,'w');
+		_buff2='md5='+_md5;
+		_t=FWRITE(_inf,_buff2);
+	}
+	FCLOSE(_inf);
+	FCHARSET(1);
+	e=_e;		
+	_dexori;
+	if _filename=="COMMON"
+			t3=_dexori				
+}
+
+
+
+
+AILoad.AIFile
+{
+	_file=_argv[0];
+	_str=_argv[1];
+	_e=TOINT(_argv[2]);
+	_txt=_argv[3];
+	_path=SPLITPATH(_file)[1];
+	_filename=TOUPPER(SPLITPATH(_file)[2]);
+	_inf=_path + TOLOWER(_filename)+'.inf';
+	_found=0
+	infmode=0;
+	dexnum=0;
+	_dexori=AILoad.InfFile(_file,_str,_e);		;
+	if _filename=="LOGIC";t1=_dexori;
+	if _dexori==-1
+	{
+		_dexori;
+		return;
+	}
+	FCHARSET(1);							
+	if FOPEN(_file,"r")
+	{
+		_table=0;
+		_buff="";
+		dexid=0;
+		_dexre=11;
+		_dexmode=0;
+		_strtxt="";
+		FCHARSET(1);		
+		_t=FOPEN(_inf,'a');
+		_N=0;
+		_Lastm=0;
+		_laststar=0;
+		_ql=0;
+		_foodnum=0;
+		while _buff!=-1
+		{	
+			if aimode=="return"
+				break;
+			if dexnum>0&&dexid<dexnum
+			{
+				_t=FSEEK(_file,TOINT(_dexori[dexid]-_dexre),"start");
+				_buff=FREAD(_file);
+				dexid++;
+				_dexmode=1;
+			}
+			elseif dexnum>0&&dexid==dexnum
+				_buff=-1;
+			else
+				_buff=FREAD(_file);
+			_topicmode=0;	
+			_topicdex="";
+			_topic=""
+			if "<topic" _in_ _buff&&TextToEnd(_buff,'>',1)==">"
+			{
+				_topicdex=FTELL(_file);
+				_topicmode=1;
+				_topic=_buff
+			}
+			_session="";
+			_dex="";
+			if "<SESSION>" _in_ _buff
+			{
+				_table++;
+				_dex=FTELL(_file);
+				_topicmode=2
+			}
+			_answerdex="";
+			_answermode=0;
+			_answer="";
+			if "<answer>" _in_ _buff
+			{
+			_answerdex=FTELL(_file);
+			_answermode=1;
+			_answer=_buff;
+			}
+
+			_subjectdex="";
+			_subjectmode=0;
+			_subject="";
+			if "<subject" _in_ _buff&&TextToEnd(_buff,'>',1)==">"
+			{
+				_subjectdex=FTELL(_file);
+				_subjectmode=1;
+				_subject=_buff;
+			}
+			if _topicmode==1
+			{
+				if infmode
+				{
+					_buff2=_topic+'|'+_topicdex;
+					_t=FWRITE(_inf,_buff2);
+				}
+				_t=_buff;
+				_temp=AILoad.TopicMatch(_t);
+				if _temp!=""
+				{
+					while "<SESSION>" !_in_ _buff&&_buff!=-1
+					{
+						_buff=FREAD(_file);
+					}
+					
+					_session=_buff;
+					while "</SESSION>" !_in_ _buff&&_buff!=-1
+					{
+						_buff=FREAD(_file); 	
+						_session+=_buff+'\n';  
+					}
+
+				}	
+				else
+				{
+					while "</topic>" !_in_ _buff&&_buff!=-1
+					{
+						_buff=FREAD(_file); 
+					}
+				}
+
+			}
+			elseif _topicmode==2||Tflag==1
+			{
+				while "<SESSION>" !_in_ _buff&&_buff!=-1
+				{
+					_buff=FREAD(_file);
+				}
+				
+				_session=_buff;
+				while "</SESSION>" !_in_ _buff&&_buff!=-1
+				{
+					_buff=FREAD(_file); 	
+					_session+=_buff+'\n'; 
+					if infmode
+					{
+						_Q=TextBetween(_buff,'<Q>','</Q>');
+						if _Q!=""
+						{
+							_cha=_Q;
+							_buff2=_cha+'|'+_dex;
+							_t=FWRITE(_inf,_buff2);
+							
+						}
+					} 
+				}
+			}
+
+			if _subjectmode==1||Tflag==2 //暂时无用
+			{
+	
+				if infmode
+				{
+					_buff2=_subject+'|'+_subjectdex;
+					_t=FWRITE(_inf,_buff2);
+				}
+				_subject=TextBetween(_buff,'<subject name="','">');
+				if TflagTxt!="";
+					_subject=TflagTxt;
+				if (AILoad.KeyMatch(_str,_subject)||Tflag==2)&&'记住' !_in_ _str;
+				{
+				//_subject;	return//AILoad("小红");
+					while "</subject>" !_in_ _buff&&_buff!=-1
+					{
+						while "<state" !_in_ _buff&&_buff!=-1
+						{
+							_buff=FREAD(_file);
+						}
+						_state=TextBetween(_buff,'<state name="','">');
+						while "</state" !_in_ _buff&&_buff!=-1
+						{
+							
+							if _str==_subject;
+							{
+								while "<object>" !_in_ _buff&&_buff!=-1
+								{
+								_buff=FREAD(_file);
+								}
+								_object=TextBetween(_buff,'<object>','</object>');
+								_txt+=_subject+_state+_object+'|';
+						
+							//	aimode="continue";	
+							}	
+							elseif AILoad.KeyMatch(_str,_state);
+							{
+								while "<object>" !_in_ _buff&&_buff!=-1
+								{
+								_buff=FREAD(_file);
+								}
+								_object=TextBetween(_buff,'<object>','</object>');
+								if _subject+_state+_object==_str
+								_txt='是的|';
+								elseif _subject+_state _in_ _str
+								_txt=_subject+_state+_object+'|';
+								if talkflag!=""
+								{
+								_txt=REPLACE(talkflag,'*',_state+_object);
+								aimode="return";
+								//return;	
+								}
+							}
+							elseif AILoad.KeyMatch('是',_state);
+							{
+								while "<object>" !_in_ _buff&&_buff!=-1
+								{
+								_buff=FREAD(_file);
+								}
+								_object=TextBetween(_buff,'<object>','</object>');
+							string,=REPLACE(_buff,_subject,_object);
+	strnum=ARRAYSIZE(string);
+	aimode="break";
+	talkflag=_subject+'是'+_object+'，所以*';
+	//return;
+							}
+							_buff=FREAD(_file);
+						}
+						_buff=FREAD(_file);
+					}
+				}
+				else
+				{
+					while "</subject>" !_in_ _buff&&_buff!=-1
+					{
+						_buff=FREAD(_file);
+					}
+				}
+			}
+			if _answermode==1||Tflag==3
+			{
+				Tflag=0;
+				if infmode&&_answermode==1
+				{
+					_buff2=_answer+'|'+_answerdex;
+					_t=FWRITE(_inf,_buff2);
+				}
+				_answer=TextBetween(_buff,'<answer>','</answer>');
+				if TflagTxt!=""
+					_answer=TflagTxt;
+				_answer=REPLACE(_answer,'。','');t11=_answer
+				if aimode!="return"&&'记住' !_in_ _str;
+				_t=AILoad.AnswerTxt(_str,_answer);
+				if _t!=""
+					_txt=_t;
+			}
+			if aimode=="return"
+			_buff=-1;
+			_session=TextBetween(_session,'<SESSION>','</SESSION>',0);
+			_Qnum=1;
+			_Q="";
+			_A="";
+			_r=0;
+			_thinkmode=0;
+			if '<Q>' _in_ _session   
+			{
+				while _session[_Qnum,'<Q>']!=""
+				{
+					_Qnum++;
+				}
+			}
+			for _i=0;_i<_Qnum-1;_i++
+			{
+				_Q=TextBetween(_session,'<Q>','</Q>',_i);
+				
+				_A="";
+				_Anum=0;
+				_Atemp="";
+				if '<A>' _in_ _session
+				{
+					while _session[_Anum,'<A>']!=""
+					{
+						_Anum++;
+					}
+					for _j=0;_j<_Anum-1;_j++
+					{
+						_Aflag=0;
+						_t=TextBetween(_session,'<A>','</A>',_j);
+						_temp="";
+						if "<think>" _in_ _t
+							_thinkmode=1;
+						if '<topic' _in_ _t
+						{
+							_temp=AILoad.TopicMatch(_t);
+							if _temp!=""
+							{
+								_Atemp=_temp;
+
+							}
+							_t=TextToEnd(_t,'>',1);
+							_t=_t[0,'</topic>']
+								
+								_Aflag=1;
+						}
+						if '<that>' _in_ _t
+						{
+							if _temp==""&&_Aflag
+								continue;
+							_temp=AILoad.ThatMatch(_t);
+							if _temp!=""
+								_Atemp=_temp;	
+							elseif _Aflag==1
+								_Atemp="";
+							_t=_t[1,'</that>'];
+							
+							_Aflag=1;
+						}
+						if '<if' _in_ _t
+						{
+							_temp=AILoad.IfMatch(_t);
+							_t=_temp;
+							_Aflag=2;
+						}
+						if _temp==""&&_Aflag
+							continue;
+					/*	elseif _Aflag==1
+						{
+							if "<think>" _in_ _t
+								AILoad.Think(_t);
+						}*/
+						_A+=_t+"|";	
+						if (_filename=="FOOD"&&_foodnum<TOINT(chatroom_num)&&_str _in_ _t)||(_dexmode &&_filename=="MEAL"&&(_str _in_ _Q||_Q _in_ _str))
+						{
+							_strtxt+=_t+"\n\n";t0=_strtxt
+							_foodnum++;
+							_re="\f[color,255,0,0]"+_str+"\f[color,default]"
+								_strtxt=REPLACE(_strtxt,_str,_re);
+							_Lastm=1
+						}
+					}
+					
+					if _Atemp!=""
+						_A=_Atemp+"|";ttt=_Atemp
+						
+				}	
+
+				if '*' _in_ _Q||'%(' _in_ _Q
+				{
+					if '.*' !_in_ _Q
+						_Q=REPLACE(_Q,'*','.*');//将通配符换成正则匹配
+					if '%(' _in_ _A
+						_A=GETRETXT(_str,_Q,_A);
+					elseif '<star' _in_ _A
+						_A=ReplaceStarTxt(_str,_Q,_A);
+					if _Q=='.*'
+					{
+						_t=CHAREPLACE(_Q);
+						_t=RE_REPLACE(_t,'%\((.*?)\)','.*');
+						if (_tmp=AILoad.QMatch(_str,_t,_e))!=""
+							_Q=_tmp; 
+					}
+					
+				}
+				if _A=="|" 
+					continue;
+				_Q=REPLACE(_Q,'.*','*');
+				if _Q=="*"
+				continue;
+				if "&" _in_ _Q||"*" _in_ _Q
+				{
+					_Qs=_Q;
+					_k=0;
+					_n=0;
+					if "&" _in_ _Q
+					{
+						SETDELIM(_Qs,"&");
+						_n=ARRAYSIZE(_Qs);
+						_k+=_n-1;
+					}
+					elseif '*' _in_ _Q
+					{
+						SETDELIM(_Qs,"*");
+						_n=ARRAYSIZE(_Qs);
+					}
+
+					for _l=0,_m=1;_l<_n && _m==1;_l++ 
+					{
+						_m=(_Qs[_l] _in_ _str);
+						_k+=STRLEN(_Qs[_l]);
+					} 
+					if _m==1&& '*' _in_ _Q&&_e==STRLEN(_str)&&_laststar==1
+					{
+						_k=_e+STRLEN(_Q)-_ql;
+					}
+					elseif  _m==1&& '*' _in_ _Q
+					{
+						_k=STRLEN(_str);
+						_laststar=1;
+						_ql=STRLEN(_Q);
+					}
+					if _m==1 && _k==_e && _Lastm==1 
+					{
+						_txt+=_A;               
+						anum+=_Anum-1;
+						_r=1;
+					}
+					elseif _m==1 && _k>_e 
+					{
+						_Lastm=1;
+						_e=_k;
+						_txt=_A;               
+						anum=_Anum-1
+						_r=1;
+						
+					}
+				}
+				
+				if _Q _in_ _str && STRLEN(_Q)==_e && _Lastm==0 
+				{
+					_txt+=_A;               
+					anum+=_Anum-1;	
+					_r=1;	
+				}
+				elseif  _strtxt!=""
+				{	
+					
+					_txt+='#'+_strtxt+'#';
+					_strtxt=""
+				}
+				elseif  _Q _in_ _str && STRLEN(_Q)>=_e
+				{//当上次最大长度匹配＞这次,不管是何种保留都放弃
+					_Lastm=0;
+					_e=STRLEN(_Q);
+					_txt=_A;
+					_r=1;          
+					anum=_Anum-1			
+				}
+					
+			}
+			if _r
+			{
+				_found=_r;
+				if '<think>' _in_ _session&&!_thinkmode
+				{
+					AILoad.Think(_session);
+				}
+
+
+
+			}			
+		}   
+		snum+=_table;	
+		FCLOSE(_inf)  ; 
+	num=ARRAYSIZE(_dexori);
+	}
+	FCLOSE(_file);                       
+	FCHARSET(1);    
+	if _found
+	{
+		if "<srai>" _in_ _txt&&'记住' !_in_ _str
+		{
+			if "<think>" _in_ _txt
+				AILoad.Think(_txt);
+			string,=TextBetween(_txt,"<srai>","</srai>");
+			strnum=ARRAYSIZE(string);
+			aimode="break";
+		}  
+	}	
+e=_e					  
+	_txt;
+}
+
+
+ExFilename
+{
+	_filename=_argv[0];
+
+
+	if _argv[1]=="qnum"
+	_exfilename="数学,物理,生物,地理,化学,工业控制,综合词库人性化版,酷Q懒人词库"
+	else
+	_exfilename="数学,物理,生物,地理,化学,工业控制"
+	foreach _exfilename;_i
+	{
+		if _filename==_i
+		{
+		1;
+		return;
+		}
+	}
+	0;
+}
+
+AILoad.AnswerMatch
+{
+	_str=_argv[0];
+	_answer=_argv[1];
+	_e=TOINT(_argv[2]);
+	_match=0;
+/*
+	if _answer _in_ _str
+	{
+		1;return
+	}
+	elseif _str==_answer[0,'是']
+	{
+		1;return
+	}
+	elseif _str['0','什么'] _in_ _answer||_str _in_ _answer
+	{
+		1;return
+	}
+*/
+	_m=STRLEN(_str);
+	_n=STRLEN(_answer);
+	for _i=1;_i<6;_i++
+	{
+		for _j=0;_j<_m;_j++
+		{
+			for _k=0;_k<_n;_k++
+			{
+				if SUBSTR(_answer,_k,_i)!='是'&&SUBSTR(_answer,_k,_i)!='的'
+				{
+					_a=SUBSTR(_str,_j,_i);
+					_b=SUBSTR(_answer,_k,_i);
+					_c=STRLEN(_a)
+					if _a==_b&&_c>=_e
+					{
+						_match=1;
+						_e=_c;
+					}
+				}
+			}
+		}
+	}
+	E=_e;
+	_match;
+//AILoad.AnswerMatch('爸爸的爸爸','B是C的爸爸',_e)
+}
+
+AILoad.TopicMatch
+{
+	_t=_argv[0];
+	_Atemp="";
+	_value=TextBetween(_t,'name=','>');
+	_value=REPLACE(_value,'"','');
+	if topic==_value
+	{
+		_t=TextToEnd(_t,'>',1);
+		_t=_t[0,'</topic>'];
+		_Atemp=_t;
+	}
+	
+	
+	
+	_Atemp;	
+}
+//AILoad.ThatMatch("<that>劳逸结合</that>真乖啊，%selfname赏你颗糖吃，需要%selfname喂你吃吗？")
+
+AILoad.ThatMatch
+{
+	i=0
+	_t=_argv[0];
+	_Atemp="";
+	_that=TextBetween(_t,'<that>','</that>');
+	_startxt="";
+	foreach lastTalkHistory;_i
+	{
+		if AILoad.KeyMatch(_i,_that,i)  //AILoad.KeyMatch("%username要劳逸结合哦，不要累坏了身子","劳逸结合",i) 
+		{
+			_t=_t[1,'</that>'];
+			_Atemp=_t;
+			_startxt=_i;
+		}
+								;
+	}	if '<thatstar/>' _in_ _Atemp
+		_Atemp=ReplaceStarTxt(_startxt,_that,_Atemp,'thatstar');
+
+
+	_Atemp;
+	
+}
+
+AILoad.ThatLastMatch
+{
+	
+	_t=_argv[0];
+	_Atemp="";
+	_that=TextBetween(_t,'<that>','</that>');
+	_startxt="";
+	if AILoad.KeyMatch(lastTalkHistory[0],_that)
+	{
+		_t=_t[1,'</that>'];
+		_Atemp=_t;
+		_startxt=_i;
+	}
+	if '<thatstar/>' _in_ _Atemp
+								_Atemp=ReplaceStarTxt(_startxt,_that,_Atemp,'thatstar');
+	_Atemp;
+	
+}
+
+AILoad.IfMatch
+{
+	_t=_argv[0];
+	_r="";
+	_if=TextBetween(_t,'<if ','</if>');
+	_name=TextBetween(_t,'name="','"');
+	_valuename=TextBetween(_t,'"','"',1);
+	_valuename=REPLACE(_valuename,' ','');
+	_valuename=_valuename[0,'='];
+	_value=TextBetween(_t,'"','"',2)
+	//_value=TextBetween('<if name="intimacy" greater="1000"><','"','"',2)
+	_a=EVAL(_name);
+	_b=EVAL(_value);
+	case _valuename
+	{	
+		
+		when "greater"
+		{
+			if TOINT(_a)>TOINT(_value)
+				_r=_t;
+		}
+		when "less"
+		{
+			if TOINT(_a)<=TOINT(_value)
+				_r=_t;
+		}
+		when "value"
+		{
+			if TOINT(_a)==TOINT(_value)
+				_r=1;
+		}
+		when "greatername"
+		{
+			if TOINT(_a)>TOINT(_b)
+				_r=_t
+		}
+		when "lessname"
+		{
+			if TOINT(_a)<=TOINT(_b)
+				_r=_t
+		}
+		when "valuename"
+		{
+			if TOINT(_a)==TOINT(_b)
+				_r=_t
+		}
+	}
+	_r=RE_REPLACE(_r,'<if.*</if>','')
+	_r;
+}
+
+
+
+AILoad.Think
+{
+	_txt=_argv[0];
+	_think=TextBetween(_txt,'<think>','</think>');
+	_i=0;
+	while _think[_i,'</set>']!=""
+	{
+		_set=_think[_i,'</set>'];
+		_name=_set[0,'>'];
+		_name=_name[1,'name='];
+		_name=REPLACE(_name,'"','');
+		_value=_set[1,'>'];
+		EVAL("%(_name)=%(CHR(34))%(_value)%(CHR(34))");
+		_i++;
+	}
+
+
+/*
+	_name=_think[0,'>'];
+	_name=_name[1,'name='];
+	_name=REPLACE(_name,'"','');
+	_value=_think[0,'</set>'];
+	_value=_value[1,'>'];
+	EVAL("%(_name)=%(CHR(34))%(_value)%(CHR(34))");
+*/
+}
+
+AILoad.Learn
+{
+	_txt=_argv[0];
+	_learn=TextBetween(_txt,'<learn>','</learn>');
+	AILoad.AddLearn(_learn);
+}
+
+AILoad.IsRepeat
+{
+_temp=_argv[0];
+_buff=_argv[1];
+_mode=0;
+		SETDELIM(_temp,"#");
+		foreach _temp;_i
+		{
+			if _i==_buff&&_i!=""
+			{
+				1;
+				return;
+			}
+		}
+
+_mode;
+}
+
+
+
+AILoad.AImlInfFile
+{
+	_file=_argv[0];
+	_str=_argv[1];
+	_e=TOINT(_argv[2]);
+	_path=SPLITPATH(_file)[1];
+	_filename=TOUPPER(SPLITPATH(_file)[2]);
+	_dexori=IARRAY;
+	_md5=FDIGEST(_file,"MD5");
+	_inf=_path + TOLOWER(_filename)+'.infml';
+	if FOPEN(_inf,'r')
+	{
+		_buff2=FREAD(_inf);
+		_newmd5=_buff2[1,'md5='];
+		_buff2=FREAD(_inf);
+		if _buff2==NULL
+			_newmd5="";	
+		_strcha=_str;
+		while _buff2!=-1
+		{
+			_Q=_buff2[0,'|'];
+			if _Q!=""
+			{
+				_open++
+				if TOINT(_buff2[1,'|'])==0
+				_newmd5="";
+			}
+			else
+				coutinue;
+			if _filename!="TOPICS"
+			{
+				if '|' _in_ _buff2
+					qnum++;
+				_m=0;
+				_Q=REPLACE(_Q,'_','*')
+					if "*" _in_ _Q
+					{
+						_Qs=_Q;
+						
+						SETDELIM(_Qs,"*");
+						_n=ARRAYSIZE(_Qs);
+						_k=0;
+						for _l=0,_m=1;_l<_n && _m==1;_l++ 
+						{
+							_Qs[_l]=CUTSPACE(_Qs[_l]);
+							_m=(_Qs[_l] _in_ _str);
+							_k+=STRLEN(_Qs[_l]);
+						} 
+						if _m==1 && _k==_e && _lastm==1 
+						{
+							_dexori,=_buff2[1,'|'];    
+							dexnum++;     
+							anum+=_Anum-1;
+						}
+						elseif _m==1 && _k>_e 
+						{
+							_lastm=1;
+							_e=_k;
+							
+							dexnum=1;
+							_dexori=IARRAY;
+							_dexori=_buff2[1,'|'];             
+							anum=_Anum-1;
+						}
+					}
+					
+					if _Q _in_ _str && STRLEN(_Q)==_e && _Lastm==0 
+					{
+						_dexori,=_buff2[1,'|'];    
+						dexnum++; 
+						anum+=_Anum-1;		
+					}
+					elseif  _Q _in_ _str && STRLEN(_Q)>=_e
+					{//当上次最大长度匹配＞这次,不管是何种保留都放弃
+						_Lastm=0;
+						_e=STRLEN(_Q);
+						dexnum=1;
+						_dexori=IARRAY;
+						_dexori=_buff2[1,'|'];
+					}		
+			}
+			_buff2=FREAD(_inf);
+		}
+		FCLOSE(_inf);
+		if _md5!=_newmd5&&_filename!="TOPICS"&&_filename!="FOOD"
+		{ 
+			dexnum=0;
+			infmode=1;
+			_t=FOPEN(_inf,'w');
+			_buff2='md5='+_md5;
+			_t=FWRITE(_inf,_buff2);
+			
+		}
+		elseif dexnum==0
+			_dexori=-1;
+	}
+	
+	elseif  _filename!="TOPICS"&&_filename!="FOOD"
+	{
+		infmode=1;
+		_t=FOPEN(_inf,'w');
+		_buff2='md5='+_md5;
+		_t=FWRITE(_inf,_buff2);
+	}
+
+	else
+	{
+		infmode=1;
+		FCHARSET(1);
+		_t=FOPEN(_inf,"w");
+		_buff2='md5='+_md5;
+		_t=FWRITE(_inf,_buff2);
+	}
+	
+	FCLOSE(_inf);
+	FCHARSET(1);
+	e=_e;			
+	_dexori;
+	
+}
+
+
+AILoad.AImlFile
+{
+	_file=_argv[0];
+	_str=_argv[1];
+	_e=TOINT(_argv[2]);
+	_txt=_argv[3];
+	_path=SPLITPATH(_file)[1];
+	_filename=TOUPPER(SPLITPATH(_file)[2]);
+	_inf=_path + TOLOWER(_filename)+'.infml';	
+	_txt="";
+	_str=TOUPPER(_str);
+	_found=0
+/*
+	if SUBSTR(_filename,0,1)!=SUBSTR(CUTSPACE(_str),0,1)
+	{
+		-1;
+		return;
+	}
+*/
+
+	if RE_GREP(_str,'[A-Z/^(\d)*$/ ]')==0;
+	{
+		-1;
+		return;
+	}
+
+	_str="";
+	foreach RE_GETSTR;_i
+	{
+		_str+=_i;
+	}
+	while '  ' _in_ _str
+	{
+		_str=RE_REPLACE(_str,'  ',' ');
+	}
+	infmode=0;
+	dexnum=0;
+	_dexori=AILoad.AImlInfFile(_file,_str,_e);
+
+	if _dexori==-1
+	{
+		_dexori;
+		return;
+	}
+
+	if _fileext==".aiml8"
+		FCHARSET(1);
+	else
+		FCHARSET(127);
+	if FOPEN(_file,"r")
+	{
+		_table=0;
+		_buff="";
+		dexid=0;
+		_dexre=12;
+		_strtxt="";
+		FCHARSET(1);		
+		_t=FOPEN(_inf,'a');		
+		_E=0;
+		_N=0;
+		_Lastm=0;
+		while _buff!=-1
+		{
+			/*
+			if dexnum>0&&dexid<dexnum
+			{
+				_t=FSEEK(_file,TOINT(_dexori[dexid]-_dexre),"start");
+				_buff=FREAD(_file);
+				dexid++;
+				_dexmode=1;
+			}
+			elseif dexnum>0&&dexid==dexnum
+				_buff=-1;
+			else
+			*/
+				_buff=FREAD(_file);
+			while "<category>" !_in_ _buff&&_buff!=-1
+			{
+				_buff=FREAD(_file);
+			}
+			_dex="";
+			if "<category>" _in_ _buff
+			{
+				_table++;
+				_dex=FTELL(_file); 
+			}							
+			_session=_buff;
+		
+				//_session+=_buff+'\n'; ;    
+				if infmode
+				{
+					
+					_Q=TextBetween(_buff,'<pattern>','</pattern>');
+					if _Q!=""
+					{
+						_cha=_Q;
+						_buff2=_cha+'|'+_dex;
+						_t=FWRITE(_inf,_buff2);
+						
+					}
+					
+				}   
+	//	_buff;return
+			
+			_Q=TextBetween(_session,'<pattern>','</pattern>');	
+			_template=TextBetween(_session,'<template>','</template>');
+			_A=_template+"|";	
+			_Anum=1;
+			if '<li>' _in_ _template
+			{
+				_A="";	
+				while  _template[_Anum,'<li>']!=""
+				{
+					_Anum++;
+				}
+				for _k=0;_k<_Anum-1;_k++
+				{
+					_A+=TextBetween(_template,'<li>','</li>',_k)+"|";
+				}
+				
+			}			
+			_m=0;
+			_r=0
+			if _A=="|" 
+				continue;
+			_Q=REPLACE(_Q,'_','*');
+			if '*' _in_ _Q
+			{/*
+				_Q=REPLACE(_Q,'*','.*');
+				_A=REPLACE(_A,'<star/>','%(_star)');
+				if '%' _in_ _A
+					_A=GETRETXT(_str,_Q,_A);
+				_t=CHAREPLACE(_Q);
+				_t=RE_GREP(_str,_t);
+				if _t
+				{
+					_ori=RE_GETSTR;
+					_ori=RE_CHAREPLACE(_ori);
+					_Q=_ori;
+				}   
+				*/                                              
+			}
+			
+			if _Q _in_ _str && STRLEN(_Q)==_E && _Lastm==0 
+			{
+				_txt+=_A;               
+				anum+=_Anum-1	
+				_r=1;	
+			}
+			elseif _Q _in_ _str && STRLEN(_Q)>=_E
+			{//当上次最大长度匹配＞这次,不管是何种保留都放弃
+				_Lastm=0;
+				_E=STRLEN(_Q);
+				_txt="";
+				_txt+=_A; 
+				_r=1;          
+				anum=_Anum-1;	
+			}
+
+
+			if _r
+			{
+				_found=_r;
+				if '<think>' _in_ _session&&!_thinkmode
+				{
+					AILoad.Think(_session);
+				}
+
+
+
+			}
+		
+		}
+			//_A;return
+		snum+=_table;
+		FCLOSE(_inf); 
+	}
+	FCLOSE(_file);
+	FCHARSET(1);
+	if _found
+	{
+		if "<srai>" _in_ _txt
+		{
+			string,=TextBetween(_txt,"<srai>","</srai>");
+			strnum=ARRAYSIZE(string);
+			aimode="break";
+			//_txt="";
+		}   
+	} 
+	_txt;
+}
+
+
+
+AILoad.AddLearn
+{
+	_file="pseudoAI\logiclearn.ai";
+	_str=reference1;
+	if _argc>0
+	_str=_argv[0];
+	if _argc>1
+	{
+		_file=_argv[1];
+	}
+	_i=0;
+	_subject="";
+	_state="";
+	_object="";
+	_answer="";
+	_writemode=0;
+	while _str[_i,'</set>']!=""
+	{
+	_set=_str[_i,'</set>'];
+	_name=_set[0,'>'];
+	_name=_name[1,'name='];
+	_name=REPLACE(_name,'"','');
+	_value=_set[1,'>'];
+	case _name
+	{
+		when "subject"
+		{
+			_subject=_value;
+			_writemode=1;
+		}
+		when "state"
+		{
+			_state=_value;
+			_writemode=1
+		}
+		when "object"
+		{
+			_object=_value;
+			_writemode=1;
+		}
+		when "answer"
+		{
+			_answer=_value;
+			_writemode=3;
+		}
+	}
+	_i++;
+	}
+	_temp="";
+	_ttemp=""
+	FCHARSET(1);
+	if FOPEN(_file,'r') == 0
+	{
+		_t = FOPEN(_file,'w');
+	}
+	FCLOSE(_file);
+	FCHARSET(1);
+	_tbuff='<answer>'+_answer+'</answer>';
+	if FOPEN(_file,"r") //检查是否有重复对话
+	{
+		_buff=FREAD(_file);
+		while _buff!=-1
+		{
+			if _writemode==3&&_buff==_tbuff
+			{
+				_writemode=0;
+				FCLOSE(_file);
+				return;
+			}
+			_buff=FREAD(_file);
+		}
+	}
+	FCLOSE(_file);
+
+	if FOPEN(_file,"r")
+	{
+		_buff="";
+		while _buff!=-1
+		{			
+			if _writemode==3
+			{
+				_writemode=2;
+				_tbuff='<answer>'+_answer+'</answer>'
+				_temp+=_tbuff+"#";
+			}
+			while "<subject" !_in_ _buff&&_buff!=-1
+			{		
+				if _buff!=""
+				_temp+=_buff+"#"
+				_buff=FREAD(_file);
+			}
+			_orisubject=TextBetween(_buff,'<subject name="','">');
+			while "</subject" !_in_ _buff&&_buff!=-1
+			{
+				if _orisubject!=""&&_orisubject==_subject
+				{
+					while "<state" !_in_ _buff&&_buff!=-1
+					{
+						_temp+=_buff+"#"
+						_buff=FREAD(_file);
+					}
+					_oristate=TextBetween(_buff,'<state name="','">');
+					while "</state" !_in_ _buff&&_buff!=-1
+					{	
+						if _oristate!=""&&_oristate==_state
+						{
+							while "<object>" !_in_ _buff&&_buff!=-1
+							{
+							_temp+=_buff+"#"
+							_buff=FREAD(_file);
+							}
+							
+							_oriobject=TextBetween(_buff,'<object>','</object>');
+							if _oriobject==_object
+							{
+							_writemode=0;
+							return;
+							}
+							if _oriobject!=_object&&_writemode==1
+							{
+								_writemode=2;
+								_tbuff="		<object>"+_object+"</object>";
+								_temp+=_tbuff+"#";
+							}
+							_temp+=_buff+"#";
+							_buff=FREAD(_file);
+						}
+						else
+						{
+							_temp+=_buff+"#";
+							_buff=FREAD(_file);
+						}
+					}
+					if _buff!=-1
+					_temp+=_buff+"#";
+					_buff=FREAD(_file);
+					if _state!=""&&_writemode==1
+					{
+						_writemode=2;
+						_tbuff='	<state name="'+_state+'">';
+						_temp+=_tbuff+"#";
+						_tbuff='		<object>'+_object+'</object>';
+						_temp+=_tbuff+"#";
+						_tbuff='	</state>';
+						_temp+=_tbuff+"#";
+					}
+				}
+		   		else
+				{
+				_temp+=_buff+"#"
+				_buff=FREAD(_file);
+				}
+			}
+			if _buff!=-1
+			{
+			_temp+=_buff+"#";
+			_temp+="#";
+			}
+			_buff=FREAD(_file);
+		}
+	}
+
+	FCLOSE(_file);
+	FCHARSET(1);
+	_t = FOPEN(_file,'w');
+	if _writemode
+	{
+		SETDELIM(_temp,"#");
+		foreach _temp;_i
+		{
+			_t=FWRITE(_file,_i)
+		}
+		if  _writemode==1
+		{
+			_buff='<subject name="'+_subject+'">';
+			_t=FWRITE(_file,_buff);
+			_buff='	<state name="'+_state+'">';
+			_t=FWRITE(_file,_buff);
+			_buff="		<object>"+_object+"</object>";
+			_t=FWRITE(_file,_buff);
+			_buff='	</state>';
+			_t=FWRITE(_file,_buff);
+			_buff='</subject>'
+			_t=FWRITE(_file,_buff);
+		}
+		
+	}
+	FCLOSE(_file);
+	FCHARSET(1);
+}
+
+
+AILoad.AnswerTxt
+{
+	_str=_argv[0];
+	_answer=_argv[1];
+	_txt="";
+	_tanswer=_answer;
+	_tmode=0;
+	if '|' _in_ _answer
+	{		
+		_tanswer=_answer;
+		SETDELIM(_tanswer,'|');
+		_tmode=1;
+	}
+	foreach _tanswer;_answer
+	{
+		if aimode=="return"
+			break;
+		if AILoad.AnswerMatch(_str,_answer)&&'记住' !_in_ _str
+		{t11=_answer+','+_str
+			if _answer _in_ _str|| _answer _in_ talkmemo
+			{
+				_txt='是的';
+				if '吗' _in_ talkmemo
+				{
+					_subject=talkflag[0];
+					_object=talkflag[1];
+					_state=_answer[1,_object]
+					if _state!=""&&_object!="";
+					{
+						_txt='是的，%selfname觉得'+_subject+_state;
+					}
+				}
+				aimode="return";
+				talkfound=1;
+				anum++;
+			}
+			elseif _str==_answer[0,'是']||_str[0,'是']==_answer[0,'是']&&'是怎' !_in_ _str
+			{
+				_txt=_answer;
+			
+				if inference!=""
+				{
+					_subject=_str;
+					_object=_answer[1,_subject];
+					_object=_object[1,'是'];
+					_object=_object[0,'的'];
+					_object=_object+'是';
+		
+					_state=_subject+'是'+inference
+			         	if _state _in_ _answer
+					{
+						_txt=_answer;
+						aimode="return";
+						talkfound=1;
+						anum++;
+					}
+				
+					else
+					{
+						string,=_object;
+						strnum=ARRAYSIZE(string);
+						if talkflag==""
+						talkflag=_str+_answer[1,_str];
+						aimode="break";
+					}
+					talktemp=inference;
+					inference=""
+				}
+				elseif  talkflag!=""
+				{
+					_subject=talkflag[0];
+					_object=talkflag[1];
+					_state=_answer[1,_object];t10=_state!=""&&_object!="";
+					if _state!=""&&_object!=""&&talkflag[2] _in_ _state
+					{
+						_txt=_subject+'是'+_object+'，所以'+_state;
+						aimode="return";
+						talkfound=1;
+						anum++;
+					}
+					elseif _state!=""&&_object!=""&&talkflag[0] _in_ _state
+					{
+						_txt=_answer;
+						aimode="return";
+						talkfound=1;
+						//talkflag="";
+						anum++;
+					}
+					else
+					{
+						_subject=_answer[0,'是'];
+						_state=_answer[1,'是'];
+						_state=REPLACE(_state,'。','');
+						_object=_str;t12=_object
+						_object=_answer[1,_object];
+						_object=_object[1,'是'];
+						_object=_object[0,'的'];//t12=_object
+						if TextToEnd(_state,'的',1)!=""
+						{	talkflag=REPLACE(talkflag,_subject,_state);
+}
+						else
+						{
+							talkflag=REPLACE(talkflag,_subject,_state);
+							_txt=talkflag;
+							if _txt _in_ talkmemo
+								_txt="是的，"+_txt;
+							elseif '吗' _in_ talkmemo
+								_txt="不是，"+_txt;
+							
+							aimode="return";
+							talkfound=1;
+							talkflag="";
+							anum++;	//t12=_answer
+						}
+						_object=_str;
+						_object=_answer[1,_object];t12=_object
+						_object=_object[0,'的'];		
+						_tobject=TextToEnd(talkflag,'的',1);
+						if TextToEnd(talkflag,'的',2)!=""&&talkflagid<RE_GREP(talkflag,'的')
+						{
+						
+							_object=REPLACE(_object,'。','')
+							if talktemp==_object
+								string,=_tobject;
+							else
+								string,=_object;
+							strnum=ARRAYSIZE(string);
+							aimode="break";
+							talkflagid++;
+						}
+					
+
+					
+				
+					}
+				}
+			
+			}
+			elseif _str[0,'什么'] _in_ _answer||_str _in_ _answer
+			{
+				_txt=_answer+'|';t11=_answer+"OK"
+				if _tmode&&STRLEN(_str)==E
+				_txt=TflagTxt;
+				if talkflag!=""
+				{
+					_txt=_answer+'|';t11=_answer+"OK1"
+					_subject=talkflag[0];
+					_object=talkflag[1];
+					_state=_answer[1,_object];t10=_state+','+_state!=""&&_object!=""
+					if _state!=""&&_object!=""&&talkflag[2] _in_ _state
+					{
+						_txt=_subject+'是'+_object+'，所以'+_state;t10=_txt
+						aimode="return";
+						talkfound=1;
+						//talkflag="";
+						anum++;
+					}
+					elseif _subject!=""&&_object!=""&&_object _in_ _answer&&talkflag[2]=='是什么'
+					{
+						_txt=_answer+'，所以'+talkflag[1]+'的'+_subject+'是'+_answer[0,_object];t10=_txt
+						aimode="return";
+						talkfound=1;
+						//talkflag="";
+						anum++;
+					}
+
+					else
+					{
+						_subject=_answer[0,'是'];
+						_state=_answer[1,'是'];
+						_state=REPLACE(_state,'。','');t11= TextToEnd(_state,'的',1)+','+2
+						if TextToEnd(_state,'的',1)!=""
+							talkflag=REPLACE(talkflag,_subject,_state);
+						else
+						{
+							talkflag=REPLACE(talkflag,_subject,_state);
+							_txt=talkflag;
+							if _txt _in_ talkmemo
+								_txt="是的，"+_txt;
+							elseif '吗' _in_ talkmemo
+								_txt="不是，"+_txt;
+							aimode="return";
+							talkfound=1;
+							//talkflag="";
+							anum++;
+						}
+						_object=TextToEnd(talkflag,'的',1);
+						if TextToEnd(talkflag,'的',2)!=""&&talkflagid<RE_GREP(talkflag,'的')
+						{
+							
+							_object=REPLACE(_object,'。','')
+							string,=_object;
+							strnum=ARRAYSIZE(string);
+							aimode="break";
+							talkflagid++;
+						}
+					
+					}
+				
+				}
+				elseif talkmemo[1,'是']=='什么'
+				{
+					_subject=talkmemo[0,'是'];
+					_state=_answer[1,_subject];
+					if _state!=""
+					{
+						string,=_state;
+						talkflag=_subject+','+_state+',是什么';
+						strnum=ARRAYSIZE(string);
+						talkmemo="";
+					}
+				}
+
+				elseif inference==""
+				{
+					_txt=_answer;
+					if _tmode&&STRLEN(_str)==E
+						_txt=TflagTxt;
+					aimode="return";
+					talkfound=1;
+					anum++;
+				}
+
+			}
+			elseif '是' _in_ _answer
+			{ t12=_answer[0,'是']+','+talkmemo[0,'不是']
+				if inference!=""
+				{t13=1
+					_subject=_str[0,'是'];
+					string,=_subject;
+					strnum=ARRAYSIZE(string);
+					//talkflag=_str+_answer[1,_str];t6=_answer+','+_str
+					inference="";
+				}
+	
+				elseif _answer[0,'是']==_str[0,'是']&&'是怎' !_in_ _str
+				{t13=2
+					_txt=_answer;
+					aimode="return";
+					talkfound=1;
+					anum++;
+				}
+				elseif _answer[0,'是']==talkmemo[0,'不是']
+				{t12=3
+					if AILoad.AnswerMatch(talkmemo[1,'不是'],_answer[1,'是'])
+					_txt='不，'+_answer;
+					else
+					_txt='不是，'+_answer;
+					aimode="return";
+					talkfound=1;
+					anum++;
+				}
+				elseif talkflag!=""&&ARRAYSIZE(talkflag)<2
+				{t13=4
+					_txt=talkflag;
+					if _txt _in_ talkmemo
+						_txt="是的，"+_txt;
+					elseif '吗' _in_ talkmemo
+						_txt="不是，"+_txt;
+					aimode="return";
+					talkfound=1;
+					//talkflag="";
+					anum++;
+				}
+				elseif talkflag==""&&talkfound!=1
+				{t13=6
+					_subject=_answer[0,'是'];
+					_object=_answer[1,'是'];
+					_state="";
+					if '什么' _in_ _str
+					{
+					_state=_str[1,_subject];
+					_state=_state[0,'什么'];
+					}
+					if '什么' _in_ talkmemo
+					{
+					_state=talkmemo[1,_subject];
+					_state=_state[0,'什么'];
+					}
+					if '吗' _in_ talkmemo
+					{
+					_state=_str[1,_subject];t111=_state
+					_state=_state[0,'吗'];
+					}
+				
+
+
+					string,=_object+_state;
+					strnum=ARRAYSIZE(string);
+					talkflag=_subject+','+_object+','+_state;
+					_object+=_str[1,_subject];
+					aimode="break";
+				}
+				elseif '吗' _in_ talkmemo&&anum<=1
+				{t13=5
+					_txt='这个，%selfname不知道啊。'
+					if talkmemo[1,'是']!=""&&_answer[0,'是']!=talkmemo[0,'是']
+						_txt+=talkmemo[0,'是']+'是什么啊';
+				};
+				else
+				{t13=7
+					_subject=talkflag[0];
+					_object=talkflag[1];
+					_state=_answer[1,_object];
+					if _state!=""&&_object!=""&&talkflag[2] _in_ _state
+					{
+						_txt=_subject+'是'+_object+'，所以'+_state;t10=_txt
+						aimode="return";
+						talkfound=1;
+						anum++;
+						//talkflag="";
+					}
+					elseif _subject!=""&&_object!=""
+					{
+						_txt=_answer;
+						aimode="return";
+						talkfound=1;
+						//talkflag="";
+						anum++;
+
+					}
+					
+
+				}
+			}
+			else
+			{
+				if  '吗' _in_ talkmemo[1,'是']
+				{
+					_subject=talkmemo[0,'是'];
+					if '不是' _in_ talkmemo
+						_subject=talkmemo[0,'不是'];
+					_state=_answer[1,_subject];
+					if _state!=""
+					{
+						_object=talkmemo[0,'是'];
+						if '不是' _in_ talkmemo
+							_object=talkmemo[0,'不是'];
+						_object=_object[0,'吗'];
+						string,=_state;
+						talkflag=_subject+','+_state+','+_object+',吗'
+						strnum=ARRAYSIZE(string);
+						talkmemo="";
+						
+					}
+					else
+					{
+						_txt='这个，%selfname不知道啊。';
+						if talkmemo[1,'是']!=""&&_answer[0,'是']!=talkmemo[0,'是']
+							_txt+=talkmemo[0,'是']+'是什么啊';
+					}
+				}
+
+
+				elseif '吗' _in_ talkmemo&&anum<=1
+				{
+					_txt='这个，%selfname不知道啊。';
+					if talkmemo[1,'是']!=""&&_answer[0,'是']!=talkmemo[0,'是']
+						_txt+=talkmemo[0,'是']+'是什么啊';
+				}
+
+			}
+	
+		}
+	}
+	_txt;
+}
+
+
+
+
+
+
+AISearch //暂时无用
+{
+	_str=_argv[1];
+	_Q=_argv[2];
+	_Qnum=1;//_Q=TextBetween(_session,'<pattern>','</pattern>')	
+	_template=TextBetween(_session,'<template>','</template>');
+	_A=_template;				
+	
+	_Anum=1;
+	if '<li>' _in_ _template
+	{
+		_A="";
+		while  _template[_Anum,'<li>']!=""
+		{
+			_Anum++;
+		}
+	}
+	for _k=0;_k<_Anum-1;_k++
+	{
+		_A+=TextBetween(_template,'<li>','</li>',_k)+"|";
+	}
+	
+	_m=0;
+	if "*" _in_ _Q 
+	{
+		_Qs=_Q;
+		SETDELIM(_Qs,"*");
+		_n=ARRAYSIZE(_Qs);
+		_k=0;
+		for _l=0,_m=1;_l<_n && _m==1;_l++ 
+		{
+			_m=(_Qs[_l] _in_ _str);
+			_k+=STRLEN(_Qs[_l]);
+		} 
+		if _m==1 && _k==_e && _lastm==1 
+		{
+			_o=ARRAYSIZE(_g);
+			_g[_o]=_i;
+			_txt+=_A;               
+			anum+=_Anum-1;	
+		}
+		elseif _m==1 && _k>_e 
+		{
+			_lastm=1;
+			_e=_k;
+			_g=IARRAY;
+			_g[0]=_i;
+			_txt="";
+			_txt+=_A;               
+			anum=_Anum-1;	
+		}
+	}
+	
+	if _Q _in_ _str && STRLEN(_Q)==_e && _lastm==0 
+	{
+		_txt+=_A;               
+		anum+=_Anum-1;
+		
+	}
+	elseif _Q _in_ _str && STRLEN(_Q)>_e 
+	{//当上次最大长度匹配＞这次,不管是何种保留都放弃
+		_lastm=0;
+		_e=STRLEN(_Q);
+		_g=IARRAY;
+		_g[0]=_i;
+		_ex=SUBSTR(_str,STRLEN(_Q),STRLEN(_str));
+		if (_t=ExFunction(_Q,_ex))!=""
+		{
+			_txt=_t;
+			break;
+		}
+		_txt="";
+		_txt+=_A;               
+		anum=_Anum-1;							
+	}
+}
+
+
+
+//ReplaceStarTxt('什么是腹黑','什么是*','<thatstar/>是萌的一种','thatstar')
+//ReplaceStarTxt('a是b','.*是.*','<star/>是另一个<star index="2"/>')
+ReplaceStarTxt  
+{
+_ori=_argv[0];
+_temp=_argv[1];
+_txt=_argv[2];
+_cha='star'
+if _argc>3
+_cha=_argv[3];
+
+if '*' _in_ _temp && '.*' !_in_ _temp
+_temp=REPLACE(_temp,'*','.*');
+_star='<'+_cha+'/>'
+_stara='<'+_cha
+
+_d=GetStarCha(_ori,_temp);
+_n=ARRAYSIZE(_d);
+_a=IARRAY;
+_a[0]="0|%(_star)"
+_m=1
+_t=SPLIT(_txt,_stara);
+while _t[_m,_stara]!=""
+{
+_a[_m]=_m+'|'+_stara+' index="'+TOINT(_m+1)+'"/>'
+_m++
+} 
+_star=_txt
+for _i=0;_i<_n;_i++
+{
+
+for _j=0;_j<_m;_j++
+{
+_t=_a[_i][0,'|'];
+_b=_a[_i][1,'|'];
+if TOINT(_t)==TOINT(_j)
+	_txt=REPLACE(_txt,_b,_d[_i]);
+}
+
+
+}
+
+_txt
+}
+
+
+
+
+
+
+AImlSearch
+{
+	_str=_argv[1];
+	_Q=_argv[2];
+	_Qnum=1;//_Q=TextBetween(_session,'<pattern>','</pattern>')	
+	_template=TextBetween(_session,'<template>','</template>');
+	_A=_template;				
+	
+	_Anum=1;
+	if '<li>' _in_ _template
+	{
+		_A="";
+		while  _template[_Anum,'<li>']!=""
+		{
+			_Anum++;
+		}
+	}
+	for _k=0;_k<_Anum-1;_k++
+	{
+		_A+=TextBetween(_template,'<li>','</li>',_k)+"|";
+	}
+	
+	_m=0;
+	if "*" _in_ _Q 
+	{
+		_Qs=_Q;
+		SETDELIM(_Qs,"*");
+		_n=ARRAYSIZE(_Qs);
+		_k=0;
+		for _l=0,_m=1;_l<_n && _m==1;_l++ 
+		{
+			_m=(_Qs[_l] _in_ _str);
+			_k+=STRLEN(_Qs[_l]);
+		} 
+		if _m==1 && _k==_e && _lastm==1 
+		{
+			_o=ARRAYSIZE(_g);
+			_g[_o]=_i;
+			_txt+=_A;               
+			anum+=_Anum-1;	
+		}
+		elseif _m==1 && _k>_e 
+		{
+			_lastm=1;
+			_e=_k;
+			_g=IARRAY;
+			_g[0]=_i;
+			_txt="";
+			_txt+=_A;               
+			anum=_Anum-1;	
+		}
+	}
+	
+	if _Q _in_ _str && STRLEN(_Q)==_e && _lastm==0 
+	{
+		_txt+=_A;               
+		anum+=_Anum-1
+			
+	}
+	elseif _Q _in_ _str && STRLEN(_Q)>_e 
+	{//当上次最大长度匹配＞这次,不管是何种保留都放弃
+		_lastm=0;
+		_e=STRLEN(_Q);
+		_g=IARRAY;
+		_g[0]=_i;
+		_ex=SUBSTR(_str,STRLEN(_Q),STRLEN(_str));
+		if (_t=ExFunction(_Q,_ex))!=""
+		{
+			_txt=_t;
+			break;
+		}
+		_txt="";
+		_txt+=_A;               
+		anum=_Anum-1;							
+	}
+}
+
+
+ExcelTxtToAI
+{
+	_file="pseudoAI\\综合词库人性化版.txt";
+	_file2="pseudoAI\\综合词库人性化版.ai";
+	if _argc>0
+	{
+  		_file=_argv[0];
+		_file2=_argv[2];
+
+	}
+	
+	FCHARSET(1);
+	_txt="";	
+	if FOPEN(_file,"r")
+	{
+		_buff="";
+		FCHARSET(1);
+		_t=FOPEN(_file2,"w");
+		while _buff !=-1
+		{
+			_buff=FREAD(_file);
+			_buff=REPLACE(_buff,'[cqname]','selfname');	
+			_buff=REPLACE(_buff,'[name]','%username');	
+			_temp="<SESSION>";
+			FWRITE(_file2,_temp);
+			_temp="<Q>"+_buff[0,'	']+"</Q>";
+			FWRITE(_file2,_temp);
+			_temp="<A>"+_buff[1,'	']+"</A>";
+			FWRITE(_file2,_temp);
+			_temp="</SESSION>";	
+			FWRITE(_file2,_temp);	
+			_temp="";	
+			FWRITE(_file2,_temp);	
+		}
+		
+		_t=FCLOSE(_file2);
+		FCHARSET(1);
+
+	}
+	_t=FCLOSE(_file);
+	
+	FCHARSET(1);
+}
+
+
+
+AIToTxt
+{
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
+
+
+
+AITalkAdd //("pseudoAI\user.ai","你好*你也好","write")
+{
+	_file="pseudoAI\aitalk.ai";
+	_str=reference1;
+	_mode="";
+	if _argc>0
+	{
+		_file=_argv[0];
+		_str=_argv[1];
+		_mode=_argv[2];
+	}
+	a=_str;
+	
+	FCHARSET(1);
+	if FOPEN(_file,'r') == 0
+	{
+		_t = FOPEN(_file,'w');
+		
+	}
+	FCLOSE(_file);
+	if _mode=="write"
+	{
+		_t = FOPEN(_file,'w');
+		
+	}
+	FCLOSE(_file);
+	FCHARSET(1);
+	_temp="";
+	_table=0;
+	if FOPEN(_file,"r")
+	{
+		
+		for _buff = FREAD(_file); _buff != -1; _buff = FREAD(_file) 
+		{
+			
+			_Q=TextBetween(_buff,'<Q>','</Q>');
+			//if TOUPPER(_str)==TOUPPER(_Q)
+				//return;
+			if "</SESSION>" _in_ _buff
+			{
+				_table++;
+				_temp+=_buff+"*"+"§";
+			}
+			elseif ">" _in_ _buff
+				_temp+=_buff+"*";
+			
+		}
+		
+		SETDELIM(_str,"§");
+		foreach _str;_buff
+		{
+			
+			_temp+="<SESSION>"+"*"
+				_Q=_buff[0,"*"];
+			_A=_buff[1,"*"];
+			_i=0;
+			_Q=LogicEvaluate(_Q);
+			if _Q==_str[0,"*"]&&_A==_str[1,"*"]
+				continue;
+			elseif _Q==_str[0,"*"]&&_A!=_str[1,"*"]
+			{
+				_temp+="<Q>"+_Q+"</Q>"+"*";
+				_temp+="<A>"+_A+"</A>"+"*";
+				_temp+="</SESSION>"+"*"+"§";
+				continue;
+			}
+
+			elseif _Q!=""
+			{
+				foreach _Q;_q
+				{
+
+					_temp+="<Q>"+_q+"</Q>"+"*";
+					
+				}
+				_i=0;
+				_temp+="<A>"+_A[_i,'|']+"</A>"+"*";
+				_i++;
+				while _A[_i,'|']!=""
+				{
+					_temp+="<A>"+_A[_i,'|']+"</A>"+"*";
+					_i++;
+				}
+				_temp+="</SESSION>"+"*"+"§";
+			}
+		}
+	}
+	
+	FCLOSE(_file);
+	SETDELIM(_temp,"§");
+	if FOPEN(_file,"w")
+	{
+		if _mode=="order"
+		{
+			_length=ARRAYSIZE(_temp)-1;
+			for _i=0;_i<_length;_i++
+			{
+				for _j=_i+1;_j<_length;_j++
+				{
+					_Q=TextBetween(_temp[_i],'<Q>','</Q>',0);
+					_q=TextBetween(_temp[_j],'<Q>','</Q>',0);
+					if STRLEN(_Q)>STRLEN(_q)&&SUBSTR(_Q,0,1)>SUBSTR(_q,0,1)
+					{
+						_k= _temp[_i];
+						_temp[_i]= _temp[_j];
+						_temp[_j]=_k;
+						
+					}
+					
+					while _temp[_i]== _temp[_j];
+					{
+						_temp[_j]=IARRAY;
+						_length=ARRAYSIZE(_temp)-1;
+					}
+					
+					
+				}
+			}
+		}
+		SETDELIM(_temp,"§");
+		_length=ARRAYSIZE(_temp)-1;
+								
+		for _i=0;_i<_length;_i++
+		{
+			_session=_temp[_i];
+			_j=0;
+			while _session[_j,'*']!=""
+			{
+				_buff=_session[_j,'*'];
+				_t=FWRITE(_file,_buff);
+				_j++;
+			}
+			_t=FWRITE(_file,"");
+		}
+								
+								
+	}
+	
+	FCLOSE(_file);
+	FCHARSET(1);
+	
+	
+	
+}
+
+ARRTOSTR
+{
+	_arr=_argv[0];
+	_s="|";
+	if _argv[1]!=""
+		_s=_argv[1];
+	_str="";
+	SETDELIM(_arr,',');
+	foreach _arr;_i
+	{
+		_str+=_i+_s;
+	}
+	_str;
+	
+}
+
+ExFunction
+{
+	_str=reference0;
+	_ex=reference1;
+	_found="";
+	if _argc>0
+	{
+		_str=_argv[0];
+		_ex=_argv[1];
+	}
+	
+	if (_t=TOREAL(_ex))!=0
+	{
+		_ex=_t;
+		if "我的身高是" _in_ _str
+			_found=WeightRange(_ex);
+		
+		
+		
+		
+	}
+	_found;
+	
+}
+
+WeightRange  //体重指数(BMI)=体重(千克)/身高(米)^2
+
+{
+	_height=TOINT(reference0);
+	if _argc>0
+		_height=TOINT(_argv[0]);
+	_bmilow=18.5;
+	_bmihigh=24;
+	_weightlow=_bmilow*(_height/100.0)*(_height/100.0);
+	_weighthigh=_bmihigh*(_height/100.0)*(_height/100.0);
+	_pointidx=STRSTR(_weightlow,".",0);
+	_weightlow=SUBSTR(_weightlow,0,_pointidx)+SUBSTR(_weightlow,_pointidx,3);
+	_pointidx=STRSTR(_weighthigh,".",0);
+	_weighthigh=SUBSTR(_weighthigh,0,_pointidx)+SUBSTR(_weighthigh,_pointidx,3);
+	if _height<175
+		"%(username)，你的健康体重范围是:%(_weightlow)公斤～%(_weighthigh)公斤。你是哪里的？";
+	else
+		"%(username)，你的健康体重范围是:%(_weightlow)公斤～%(_weighthigh)公斤。你今天心情怎么样？";
+}
+
+LogicEvaluate   //逻辑表达式解析器
+{
+	
+	//LogicEvaluate("(喜欢|爱)&(美女|野兽)&(看|见)|((美女|野兽)&(看|见))")
+	//LogicEvaluate("爱|喜欢&的人|喜欢&谁|喜欢&我吗")
+	_exp=_argv[0];
+	_t="";_f="";
+	_optr=IARRAY;
+	_optr=(0.0);
+	_expression=IARRAY;_theta=0;_temp=0;_c=0;
+	_opnd=IARRAY;
+	//	_opnd=(0.0);
+	_theta="";
+	_i=0.0;_optr_i=0.0;_opnd_i=0.0;_j=0.0;_zpart=0.0;_k=0.0;
+	_operand=0.0;_weight=0.0;_a="";_b="";_xpart=0.0;        
+	_num=1.0;
+	_expression=_exp;
+	_expression+="\0";
+	while SUBSTR(_expression,_i,2)!="\0"||_optr_i!=0 
+	{  
+		_operand="";
+		_weight=carry;
+		if IsLogic(SUBSTR(_expression,_i,1))==0&&SUBSTR(_expression,_i,2)!="\0"
+		{
+			
+			while IsLogic(SUBSTR(_expression,_i,1))==0&&SUBSTR(_expression,_i,2)!="\0"
+			{     
+				_operand+=SUBSTR(_expression,_i,1);
+				_i++;        
+			}     
+			
+			_opnd[_opnd_i]=_operand;
+			_opnd_i++;   
+		}
+		
+		
+		elseif _optr_i==0 
+		{      
+			_optr[_optr_i]=SUBSTR(_expression,_i,1);
+			_optr_=_optr;
+			_optr_i++;
+			_i++;    
+		}
+		
+		elseif SUBSTR(_expression,_i,2)=="\0" 
+		{  
+			_optr_i--;
+			_theta=_optr[_optr_i];
+			if _theta=="&"
+			{                                              
+				_opnd_i--;
+				_b=_opnd[_opnd_i];
+				_opnd_i--;
+				_a=_opnd[_opnd_i];
+				_opnd[_opnd_i]="%(LogicOperate(_a,_b,_theta))";
+			}
+			else
+			{
+				_opnd_i--;
+				_b=_opnd[_opnd_i];
+				_opnd_i--;
+				_a=_opnd[_opnd_i];
+				_opnd[_opnd_i]="%(LogicOperate(_a,_b,_theta))"
+					
+					
+			}
+			_opnd_i++;
+			
+		}
+		
+		else
+		{
+			
+			_temp=SUBSTR(_expression,_i,1);_j=1;
+			case LogicPrecede(_optr[_optr_i-1],_temp)
+			{
+				when "<" 
+				{
+					_optr[_optr_i]=_temp;
+					_optr_i++;
+					_i+=_j;
+				}
+				when "=" 
+				{    
+					_optr_i--;
+					_i++;
+				}
+				when ">"
+				{    
+					_optr_i--;
+					_theta=_optr[_optr_i];
+					if _theta=="&"
+					{         	
+						_opnd_i--;
+						_b=_opnd[_opnd_i];
+						_opnd_i--;
+						_a=_opnd[_opnd_i];
+						_opnd[_opnd_i]="%(LogicOperate(_a,_b,_theta))"		
+					}
+					else
+					{
+						_opnd_i--;
+						_b=_opnd[_opnd_i];
+						_opnd_i--;
+						_a=_opnd[_opnd_i];
+						_opnd[_opnd_i]="%(LogicOperate(_a,_b,_theta))"		
+					}
+					_opnd_i++;
+					
+				}
+			}
+		}
+		
+	}
+	
+	_opnd[_opnd_i-1];
+	
+}
+
+
+IsLogic //逻辑判断
+{   
+	_c=_argv[0];
+	if _c=="("||_c==")"||_c=="|"||_c=="&"
+	{1;return;}
+	else
+	{0;return;}
+}
+
+
+
+LogicOperate //逻辑运算  LogicOperate("a,b","c,d","&")
+{ 
+	_a=_argv[0];
+	_b=_argv[1];
+	_theta=_argv[2];
+	_result="";
+	case _theta
+	{   
+		
+		when "&" 
+		{
+			_result=AND("%(_a)","%(_b)");
+		}
+		when "|" 
+		{
+			_result="%(_a),%(_b)"
+		}
+		
+	}
+		_result;return 
+}
+
+AND
+{
+	_a=_argv[0];
+	_b=_argv[1];
+	_result=IARRAY
+        foreach _a;_i
+	{
+		foreach _b;_j
+		{
+			_result,=_i+"&"+_j;
+			
+		}
+		
+		
+	}
+	
+	_result;
+	
+	
+	
+}
+
+LogicPrecede 
+{   
+    _x=_argv[0];
+    _y=_argv[1];
+    if  _x=="("&&_y==")";
+	{
+		"=";
+		return;
+	}
+    elseif _x=="("||_y=="("
+	{
+		"<";
+		return;
+	}
+	
+    elseif _x=="&"
+	{
+		">";
+		return;
+	}
+	
+    elseif _y=="|"||_y==")"
+	{
+		">";
+		return;
+	}
+    else 
+	{
+		"<";
+		return 
+	}
+}
+
+
+
+LogicError//以下为逻辑表达式出错处理函数//LogicError("(喜欢|爱)&(美女|野兽)&(看|见)|((美女|野兽)&(看|见))")
+{   
+	_exp=_argv[0];
+	_str="";
+	if STRLEN(_exp)==0
+	{
+		_str="表达式不能为空";
+		_str;return ;
+	}
+	_s=IARRAY
+		_s=(0);
+	_i=0;
+	_parenthesis=0;_ptag=0;
+	_s=_exp;
+	_s+="\0";
+	for _i=0;SUBSTR(_s,_i,1);_i++
+	{
+		if SUBSTR(_s,_i,1)=="(";_parenthesis++;
+		if SUBSTR(_s,_i,1)==")";_parenthesis--;
+		
+		
+		if SUBSTR(_s,_i,2)=="||"
+		{
+			_str="输入不能含有“||”，请用“|”";
+			_str;return;
+		}
+		
+		elseif SUBSTR(_s,_i,2)=="&&"
+		{
+			_str="输入不能含有“&&”，请用“&”";
+			_str;return;
+		}
+		
+	}
+	if _parenthesis!=0 
+	{
+		_str="左括号与右括号数目不符";
+		_str;return;
+	}
+	_str;return;
+}
+
+CopySQL
+{
+	_i=1;
+	_total=TOINT(SQLite.total("KikkaAIdb"))
+	_buff=""
+	while _i<_total{
+		_b=SQLite("-j","SELECT * FROM KikkaAIdb WHERE ID='%(_i)' AND scope!=-1");
+		_i++;
+		_x=_b[2];
+		_y=_b[3];
+		_z=_b[0];
+		_buff+=_x+"*"+_y+"§"
+			
+	}
+	_file="pseudoAI\sql.ai"
+	AITalkAdd(_file,_buff,"write")
+}
+
+
+OnChatRoom
+{
+    if fjswitch
+		fjswitch="-1";
+	_j=reference1
+	if _argc>0
+		_j=_argv[0];
+	_j=TOINT(_j);
+	chatroom=1;
+	running="chatroom";
+	if ISVAR("chatroomtxt")==0
+	{
+		lastTalk=RandAITalk;
+		LastTalkArr(lastTalk);
+		chatroomtxt="|%selfname %(hour):%(minute):%(second)\n%(lastTalk)\n#";
+	}
+	SETDELIM(chatroomtxt,'#');;
+	_n=ARRAYSIZE(chatroomtxt)-1;
+	_input=chatroomtxt[_n-1][0,'|'];
+	_txt="\C\![quicksession,true]\0\c\1\c\0\b[2]\![set,choicetimeout,0]\![open,communicatebox]";
+	if reference0=="top"||reference0=="home"
+		_txt+="\![set,autoscroll,false]";
+	elseif reference0=="end"||reference0=="end"
+		_txt+="\![set,autoscroll,enable]";
+	_txt+="■聊天室■\n";
+//	if voice
+		_txt+="\C\![*]\q[停止语音,OnStopSpVoice.vbs]   \![*]\q[语音识别,OnSpeechRecognition.Inter]          \n";
+	_txt+="\q[◇清空记录,OnChatRoomClear]  \q[◇打开记录文件,OnChatRoomTxt]  \q[◇返回,OnOpenMenu,1]   \q[◇结束,OnChatRoomOver]  \q[◇End,OnChatRoom,end]\n";
+	_talknum=5
+	_l=0;
+	if _j>_n
+	_j=_n
+	elseif _j<=0
+	_j=0
+    	if _j+_talknum<_n
+        	_l=_j+_talknum;
+     	 else
+		_l=_n;
+
+	for _i=_j;_i<_l;_i++
+	{
+		_temp=chatroomtxt[_i];
+		if txt!=""
+		{	
+			chatroomtxt[_i]=REPLACE(chatroomtxt[_i],temp05,txt);//替换图灵代码为下载好的内容，否则会不停的解析KEY。
+		}
+		_t=chatroomtxt[_i];
+	_t=REPLACE(_t,"%username","\f[color,%(ColorIdx(3))]%username\f[color,default]");
+	
+		_txt+=_t[0,'|'];
+		_t=chatroomtxt[_i];
+	_t=REPLACE(_t,"%selfname","\f[color,%(ColorIdx(6))]%selfname\f[color,default]");
+		_txt+=_t[1,'|']+"\n";
+		_a=2
+
+		while _t[_a,'|']!=""
+		{
+		_txt+=_t[_a,'|'];
+			_a++
+		}
+		if _i==_n-2
+		{
+			_txt=REPLACE(_txt,'\![sound','\\![sound');
+			_txt=RE_REPLACE(_txt,'\\_v\[(.*?)\]','');
+			_txt=RE_REPLACE(_txt,'\!\[raise(.*?)\]','');
+			_txt=RE_REPLACE(_txt,'\\s\[\d*\]','');   //删除最后一句以前的所有表情
+			_txt=RE_REPLACE(_txt,'\\j\[(.*?)\]','');//删除最后一句以前的打开网址
+			_txt=RE_REPLACE(_txt,'\\_a\[(.*?)\]','')
+		}
+		
+	}
+	//_txt=RE_REPLACE(_txt,'\!\[excute(.*?)\]','');
+	_txt+="\n"
+
+	_txt=REPLACE(_txt,'\x','');
+	_txt=RE_REPLACE(_txt,'\\w.','');  //删除等待延时;
+	_txt=REPLACE(_txt,'\teach','\\teach');
+	_txt=REPLACE(_txt,'\talk','\\talk');
+	_txt=REPLACE(_txt,'\e','');      //删除结束标记
+	_txt=REPLACE(_txt,'\_q','')     //删除速读标记
+	_txt=REPLACE(_txt,'\\n','\n')  
+	_txt=REPLACE(_txt,'\n\n[half]','\n[150]')  
+	_txt=REPLACE(_txt,'\n\n\n','\n\n')  
+	_txt=REPLACE(_txt,'CHR(124)','|');
+	_txt=REPLACE(_txt,"<英文逗号>",",");
+	_txt=REPLACE(_txt,'CHR(92)','\');
+	_txt=REPLACE(_txt,'CHR(92)','\');
+	_txt=REPLACE(_txt,'[cqname]','%selfname');
+	_txt=REPLACE(_txt,'[name]','username');
+//	_txt=RE_REPLACE(_txt,'\\_l\[(.*?)\]','');
+	if txt!=""
+	{	
+		txt=REPLACE(txt,"\b[2]\_q","");
+		AITalkAdd("profile\tuling.ai",temp04+"*"+txt+"§");
+		_t=FCOPY("profile\tuling.ai","pseudoAI");
+	}
+	_Page="";
+	_Page+="\_l[130]%(_j/_talknum+1)/%(_n/_talknum+1)";
+	j=_n-1
+	if _n<=_talknum
+		_Page="";
+
+	elseif _j==0 && _n>_talknum
+		_Page+="\_l[170]\q[一>>,OnChatRoom,,%(_j+_talknum)]";
+	elseif _j>0 &&_j+_talknum>=_n
+		_Page+="\_l[90]\q[一<<,OnChatRoom,,%(_j-_talknum)]";
+	else
+		 _Page+="\_l[90]\q[<<一,OnChatRoom,,%(_j-_talknum),%(_file)]  \_l[170]\q[一>>,OnChatRoom,,%(_j+_talknum)]";  
+
+	if _n<=_talknum
+		_Page="";
+	elseif _j==0 && _n>_talknum
+		_Page+="\_l[200]\q[五>>,OnChatRoom,,%(_j+_talknum*5)]";
+	elseif _j>0 &&_j+_talknum>=_n
+		_Page+="\_l[60]\q[五<<,OnChatRoom,,%(_j-_talknum*5)]";
+	else
+		 _Page+="\_l[60]\q[<<五,OnChatRoom,,%(_j-_talknum*5),%(_file)]  \_l[200]\q[五>>,OnChatRoom,,%(_j+_talknum*5)]";  
+
+
+
+	if _n<=_talknum
+		_Page="";
+	elseif _j==0 && _n>_talknum
+		_Page+="\_l[230]\q[十>>,OnChatRoom,,%(_j+_talknum*10)]";
+	elseif _j>0 &&_j+_talknum>=_n
+		_Page+="\_l[30]\q[十<<,OnChatRoom,,%(_j-_talknum*10)]";
+	else
+		 _Page+="\_l[30]\q[<<十,OnChatRoom,,%(_j-_talknum*10),%(_file)]  \_l[230]\q[十>>,OnChatRoom,,%(_j+_talknum*10)]";  
+
+        _txt+=_Page;
+
+
+
+	_txt+="\0\n\q[◇清空记录,OnChatRoomClear]  \q[◇打开记录文件,OnChatRoomTxt]  \q[◇返回,OnOpenMenu,1]  \q[◇结束,OnChatRoomOver]  \q[◇Top,OnChatRoom,top]\n";
+	_txt+="\![*]\q[停止语音,OnStopSpVoice.vbs]  \![*]\q[搜索数量：,OnClickOption,%(_submenu),chatroom_num,0] %(TOINT(chatroom_num))   ";
+	_txt+="\![set,choicetimeout,0]"
+	if option
+		_txt+=option;
+	_txt;
+				
+				
+}
+
+OnChatRoomTxt
+{
+	"\C\![open,file,profile\\chatroom.txt]";
+}
+
+OnChatRoomOver
+{
+	OnChatRoomClear;
+	chatroom=0;
+	--
+	OnOpenMenu(1);
+}
+
+OnChatRoomClear
+{
+	ClearAIVar;
+	"\1\c"+OnChatRoom(j)
+}
+
+ClearAIVar
+{
+	_t=FDEL("profile/tuling.ai");
+	_t=FDEL("pseudoAI/tuling.ai");
+	ERASEVAR("chatroom");
+	ERASEVAR("chatroomtxt");
+	ERASEVAR("topic");
+	ERASEVAR("lastTalkHistory");
+	ERASEVAR("string");
+	ERASEVAR("snum");
+	ERASEVAR("qnum");
+	ERASEVAR("anum");
+	ERASEVAR("num");
+	ERASEVAR("strnum");
+	ERASEVAR("e");
+	ERASEVAR("i");
+	ERASEVAR("j");
+	ERASEVAR("dexid");
+	ERASEVAR("dexnum");
+	ERASEVAR("aimode");
+	ERASEVAR("talkflag");
+	ERASEVAR("talkflagid");
+	ERASEVAR("talkmemo");
+}
+
+WriteChatroom
+{
+	_file="profile\\chatroom.txt";
+	FCHARSET(1);
+	_t = FOPEN(_file,'w');
+	_chatroomtxt=chatroomtxt;
+	_chatroomtxt=RE_REPLACE(_chatroomtxt,'\\w.','');  //删除等待延时
+	_chatroomtxt=REPLACE(_chatroomtxt,'\e','');      //删除结束标记
+	_chatroomtxt=REPLACE(_chatroomtxt,'\_q','');     //删除速读标记
+	_chatroomtxt=REPLACE(_chatroomtxt,'\0',''); 
+	_chatroomtxt=REPLACE(_chatroomtxt,'\1',''); 
+	_chatroomtxt=REPLACE(_chatroomtxt,'%username',"%username");
+	_chatroomtxt=REPLACE(_chatroomtxt,'%selfname','橘花'); 
+	_chatroomtxt=REPLACE(_chatroomtxt,'%keroname','斗和'); 
+	_chatroomtxt=REPLACE(_chatroomtxt,'\n\n\n\n','\n\n'); 
+	_chatroomtxt=REPLACE(_chatroomtxt,'\n\n\n','\n\n'); 
+	_chatroomtxt=REPLACE(_chatroomtxt,'CHR(124)','|');
+	_chatroomtxt=RE_REPLACE(_chatroomtxt,'\\s\[\d*\]','');  
+	_chatroomtxt=RE_REPLACE(_chatroomtxt,'\\f\[color,\d*,\d*,\d*]','')
+		_chatroomtxt=REPLACE(_chatroomtxt,'\f[color,default]','')
+		SETDELIM(_chatroomtxt,'#');
+	_j=0;
+	_n=ARRAYSIZE(_chatroomtxt)-1;
+	for _i=0;_i<_n;_i++
+	{
+		_txt=_chatroomtxt[_i][0,'|'];
+		SETDELIM(_txt,'\n');
+		_m=ARRAYSIZE(_txt)-1;
+		for _j=0;_j<_m;_j++
+		{
+			_buff=_txt[_j];
+			_t = FWRITE(_file,_buff);
+		}
+		_txt=_chatroomtxt[_i][1,'|'];
+		SETDELIM(_txt,'\n');
+		_m=ARRAYSIZE(_txt);
+		for _j=0;_j<_m;_j++
+		{
+			_buff=_txt[_j];
+			_t = FWRITE(_file,_buff);
+		}
+	}
+	
+	
+	FCLOSE(_file);
+	FCHARSET(1);
+}
+
+RandAITalk
+{
+
+	{
+		"你好啊， 我会背诗哦，如果你输入“春眠不觉晓”，我就会告诉你下一句 是什么。\e";
+	"%(username)你好，橘花会六千多种中国菜的做法及四百多种常用食物的性味及功效说明哦，请输入“麻婆豆腐”或“核桃”，橘花就会告诉您答案哦\e";
+	"%(username)最喜欢你了，要和%selfname聊什么呢？\e";
+	}
+	//"%(username)今天也要好好加油呢。\e";
+	"输入“\teach”指令可以进入教学模式、输入“\talk”指令返回对话模式\e";
+	"需要橘花为您报菜名吗，请输入“报菜名”、“说菜名”或“报菜名100道”。\e";
+	Greetings;
+}
+
+MealJudge
+{
+	
+	if hour >= 7 && hour < 11 
+		"breakfast";
+	elseif hour >= 11 && hour < 17 
+		"lunch";
+	elseif  hour >= 17 && hour < 22
+		"supper";
+	
+	
+}
+
+Meal
+{
+	talkmemo=MealJudge;
+	if talkmemo==""
+		{
+			"没有";
+			"你吃了啊"
+		}
+	else
+	{
+		"吃了";
+		"吃了,%username呢";
+	}
+	
+}
+
+EatWhat
+{
+	talkmemo=MealJudge;
+	if talkmemo=="breakfast"
+		"花式蛋糕";
+	elseif talkmemo=="lunch"
+		"龙虾大餐";
+	elseif talkmemo=="supper"
+		"鸡腿汉堡";
+	
+	
+}
+
+
+
+Breakfast
+{
+	talkmemo=MealJudge;
+	if  hour >= 7 
+		"早餐吃了";
+	else
+		"还没吃早餐呢";
+}
+
+Lunch
+{
+	talkmemo=MealJudge;
+	if  hour >= 11
+		"午餐已经吃过了";
+	else
+	{
+		"还没呢";
+		"早餐已经吃过了，午餐还没呢";
+	}
+}
+
+Supper
+{
+	talkmemo=MealJudge;
+	if  hour >= 17&&hour<22 
+		"吃完了";
+	else
+		"还没有啊，你吃了啊";
+}
+
+
+Greetings
+{
+	case hour 
+	{
+		when 4-6
+		{
+			"\0\s[36]今天%username好早呢。\e"
+				"\0\s[5]おはよう ございます。\e"
+		}
+		//---- 早上
+		when 7-8
+		{
+			"\0\s[0]早上好。\e"
+				"\0\s[5]おはよう ございます。\e"
+				"\0\s[35]早安、\w9%username\w9\w9\w9\w9\s[0]\n今天一天也好好加油吧。。\e"
+		}
+		//---- 上午
+		when 9-10
+		{
+			"\0\s[0]早上好。\e"
+				"\0\s[5]早上好啊，\w9\w9\%username，\w9\w9\现在是学习工作的黄金时间呢，\w9\w9\w9要好好努力哦。\e"
+				"\0\s[35]早安、\w9%username\w9\w9\w9\w9\s[0]\n今天一天也好好加油吧。。\e"
+		}
+		//---- 中午
+		when 11-13
+		{
+			"\0\s[26]午安。"
+		}
+		//---- 下午
+		when 14-18
+		{
+			"\0\s[26]下午好啊，%username，今天有好好努力吗？\e"
+				"\0\s[5]下午好。\e";
+		}
+		//---- 晚上
+		when 19-23
+		{
+			"\0\s[5]晚安。\e"
+				"\0\s[5]晚上好，%username\e"
+		}
+		//---- 深夜
+		others
+		{
+			if weekday == "0"
+			{
+				"\0\s[2]啊、已经这么晚了，%(username)还不休息吗\e"
+			}
+			else
+			{
+				"\0\s[116]这么晚了要注意休息喔。\e"
+			}
+		}
+	}
+}
+
+
+
+WeatherState
+{
+	_txt="\s[0]";
+	_weather=Weather;
+	if _weather!=-1
+	{
+			_txt+="天气：%(_weather[2])～%(_weather[4])，气温：%(_weather[3])℃～%(_weather[5])℃\n"
+
+				if "晴" _in_ _weather[2]
+					_txt+="今天天气还好啦，因为是晴天呢。\n";
+				elseif "雨" _in_ _weather[2]
+					_txt+="今天是雨天，天气不好啊\n";
+				elseif "雪" _in_ _weather[2]
+					_txt+="今天下雪了吗，好好玩\n";
+				
+				if TOINT(_weather[3])<16
+					_txt+="天气比较冷，要注意保重身体哦。\n";
+				elseif TOINT(_weather[3])>38
+					_txt+="天气太热了，还是少呆在外面比较好。\n";
+				elseif TOINT(_weather[3])>33
+					_txt+="今天天气比较热，要注意降温解暑哦。\n";
+
+
+				if "雨" _in_ _weather[4]
+					_txt+="晚上可能有雨，记得收衣服关好门窗哦。\n";
+				elseif "雪" _in_ _weather[4]
+					_txt+="外面应该很冷吧，还是呆在家里比较好。\n";
+				if TOINT(_weather[5])<10
+					_txt+="晚上睡觉要注意保暖哦，不要冻着身子。\n";
+				
+			
+	}
+	else
+	{
+	_txt+="这个，%selfname也不知道呢，因为不能获得天气信息。";
+
+	}
+	_txt
+}
+
+
+
+
+TellMealName
+{
+	_m=100;
+	if TOINT(_argv[0])>0
+		_m=_argv[0];
+	_num=TOINT(_m*1.1);
+	_meal=MealName(_num);
+	_n=ARRAYSIZE(_meal);
+	_mealname=IARRAY;
+	for _i=0;_i<TOINT(_m)&&_i<_n;_i++
+	{
+		if TOINT(_argv[1])==1
+		{
+			_mealname[_i]=_meal[_i];
+			if (_i+1)%10==0&&TOINT(voice)
+				_mealname[_i]=_mealname[_i]+'。';
+		}
+		else
+			_mealname[_i]="\__q[OnCommunicate<英文逗号>user<英文逗号>"+_meal[_i]+"]"+_meal[_i]+"\__q";
+		
+	}
+	
+	_txt=TOSTR(_mealname);
+	if TOINT(voice)&&TOINT(_argv[1])==1
+	{
+		_txt=REPLACE(_txt,',','、');
+		_txt=REPLACE(_txt,'。、','。');
+	}
+	else
+		_txt=REPLACE(_txt,',','，');
+	
+	if _txt==""
+		_txt="奇怪，好像料理的数据丢失了呢，请检查“pseudoAI\\meal.ai”是否存在";
+	_txt
+		
+		
+}
+
+MealName
+{
+	_num=100;
+	if TOINT(_argv[0])!=0
+		_num=TOINT(_argv[0]);
+	_file="pseudoAI/meal.inf";
+	FCHARSET(1);
+	_name=IARRAY;
+	_totel=6500;
+	_n=_totel/_num;
+	_i=0;
+	if FOPEN(_file,"r")
+	{
+		
+		for _buff=FREAD(_file);_buff!=-1;_buff=FREAD(_file)
+		{
+			if _i/_num==RAND(_n) && '|' _in_ _buff && '(' !_in_ _buff
+			{
+				_name,=_buff[0,'|'];
+			}
+			
+			_i++;					
+        }
+		
+	}
+	
+	FCLOSE(_file);
+	
+	_name;
+	
+}
+
+
+
+ArrArr
+{
+	_arr=_argv[0];
+	_a=_arr;
+	_b=_arr;
+	_b=IARRAY;
+	_n=ARRAYSIZE(_a);
+	_m=0;
+	for _i=0;_i<_n;_i++
+	{
+		_b,="%(_a[_i])";
+		
+		for _j=0;_j<_m;_j++
+		{
+			_b,="%(_b[_j])，%(_a[_i])";
+		}
+		_m=ARRAYSIZE(_b);
+	}
+	_b;
+}
+
+
+
+
+
+
+
+LoadSQL
+{
+	_file="pseudoAI\\food1.ai";
+	_file2="pseudoAI\\newfood.ai";
+	_file3="pseudoAI\\food.ai";
+	FCHARSET(1);
+	
+	_disposition="寒,凉,平,温,热";
+	_disposition=(,ArrArr(_disposition));
+	_flavour="酸,苦,甘,辛,咸";
+	_flavour=(,ArrArr(_flavour));
+	_meridian="肺,大肠,胃,脾,心,小肠,膀胱,肾,心包,三焦,胆,肝";
+	_meridian=(,ArrArr(_meridian));
+	
+	if FOPEN(_file,"r")
+	{
+		FCHARSET(1);
+		_t=FOPEN(_file2,"w");
+		_t=FOPEN(_file3,"w");
+		for _buff=FREAD(_file);_buff!=-1;_buff=FREAD(_file)
+		{
+			
+			_i=0;
+			_buff2="";
+			while _buff[_i,',']!=""
+			{
+				_txt=_buff[_i,','];
+				
+				if _i==2
+				{
+					_d=TOINT(_buff[_i,','][1,'"']);
+					_D=_disposition[_d];
+					_txt=REPLACE(_txt,_d,_D);
+				}
+				elseif _i==3
+				{
+					_f=TOINT(_buff[_i,','][1,'"']);
+					_F=_flavour[_f];
+					_txt=REPLACE(_txt,_f,_F);
+				}
+				elseif _i==4
+				{
+					_m=TOINT(_buff[_i,','][1,'"']);
+					_M=_meridian[_m];
+					_txt=REPLACE(_txt,_m,_M);
+				}
+				
+				_buff2+=_txt+',';
+				_i++;
+			}
+			_t=FWRITE(_file2,_buff2);
+			if '"name"' !_in_ _buff2
+			{
+				_buff3='<SESSION>'
+					_t=FWRITE(_file3,_buff3);
+				_Q=_buff2[1,','][1,'"'];
+				_buff3='<Q>'+_Q+'</Q>';
+				_t=FWRITE(_file3,_buff3);
+				_buff3='<A>名称：\n';
+				_t=FWRITE(_file3,_buff3);
+				_buff3=_Q+'\n';
+				_t=FWRITE(_file3,_buff3);
+				_buff3='性味\n';
+				_t=FWRITE(_file3,_buff3);
+				_buff3='性'+_buff2[2,','][1,'"']+'、味'+_buff2[3,','][1,'"']+'\n';
+				_t=FWRITE(_file3,_buff3);
+				_buff3='归经\n';
+				_t=FWRITE(_file3,_buff3);
+				_buff3=_buff2[4,','][1,'"']+'\n';
+				_t=FWRITE(_file3,_buff3);
+				_buff3='功效\n';
+				_t=FWRITE(_file3,_buff3);
+				_buff3=_buff2[5,','][1,'"']+'\n';
+				_t=FWRITE(_file3,_buff3);
+				_buff3='食疗\n';
+				_t=FWRITE(_file3,_buff3);
+				_buff3=_buff2[6,','][1,'"']+'\n';
+				_t=FWRITE(_file3,_buff3);
+				_buff3='</A>';
+				_t=FWRITE(_file3,_buff3);
+				_buff3='</SESSION>';
+				_t=FWRITE(_file3,_buff3);
+				_buff3='';
+				_t=FWRITE(_file3,_buff3);
+			}
+			
+			
+			
+		}
+		
+		_t=FCLOSE(_file2);
+		_t=FCLOSE(_file3);
+		FCHARSET(1);
+		
+	}
+	_t=FCLOSE(_file);
+	
+	FCHARSET(1);
+	
+}
+
+HtmlToAI  //HtmlToAI("D:\CHM","meal")
+{
+	_path=_argv[0];
+	_filename2=_argv[1];
+	_files = FENUM(_path);
+	_file2=_path +"/"+_filename2+".ai";
+	FCHARSET(1);
+	_t=FOPEN(_file2,'w');
+	foreach _files; _file 
+	{
+		
+		_filename=TOUPPER(SPLITPATH(_file)[2]);
+		_file = _path +"/"+ _file;
+		_fileext = TOLOWER(SPLITPATH(_file)[3]);
+		case _fileext 
+		{
+			when ".htm"
+			{
+				FCHARSET(127);
+				if FOPEN(_file,"r")
+				{
+					_buff="";
+					while _buff!=-1
+					{
+						_buff=FREAD(_file);
+						while "<p>" !_in_ TOLOWER(_buff)&&_buff!=-1
+						{
+							_buff=FREAD(_file);
+						}
+						if "<p>" _in_ TOLOWER(_buff)
+						{
+							_buff2='<SESSION>';
+							_t=FWRITE(_file2,_buff2);
+							_Q=_filename;
+							_buff2='<Q>'+_Q+'</Q>';
+							_t=FWRITE(_file2,_buff2);
+							_buff2='<A>名称：'+_Q+'\n';
+							_t=FWRITE(_file2,_buff2);
+							_A="";
+							while "</p>" !_in_ TOLOWER(_buff)&&_buff!=-1
+							{ 
+								_buff2=REPLACE(_buff,'<p>','');
+								_buff2=REPLACE(_buff2,'<BR>','\n'); 
+								_buff2=REPLACE(_buff2,'<br>','\n');  
+								_t=FWRITE(_file2,_buff2);
+								_buff=FREAD(_file);
+							}
+							_buff2='</A>';
+							_t=FWRITE(_file2,_buff2);
+							_buff2='</SESSION>';
+							_t=FWRITE(_file2,_buff2);
+							_buff2='';
+							_t=FWRITE(_file2,_buff2);
+						}
+						
+					}
+				}
+				FCLOSE(_file);                          
+				FCHARSET(1);
+				
+			}
+			
+		}
+			
+	}
+				FCLOSE(_file2);                          
+				FCHARSET(1);
+				
+}
+
+ChaToLetter
+{
+	_character=_argv[0];
+	_file="pseudoAI\\character.ai";
+	_letter="";
+	FCHARSET(1);
+	if FOPEN(_file,'r')
+	{
+		_buff="";
+		while _buff!=-1
+		{
+			_buff=FREAD(_file);
+			if '=>' _in_ _buff&&_character _in_ _buff
+			{
+				_letter=_buff[0,'=>'];
+				_letter;
+				return;
+			}
+			
+		}
+	}
+	
+	FCHARSET(1);
+	FCLOSE(_file);
+	
+}
+TxtToVoice
+{
+	WriteSpVoice.vbs(_argv[0],_argv[1]);
+	--
+		LoadSpVoice.vbs;
+}
+
+WriteSpVoiceName.vbs
+{
+	_file="profile\\VoiceName.vbs";
+	FCHARSET(127);
+	_t=FOPEN(_file,'w');
+	_buff='on error resume next';
+	_t=FWRITE(_file,_buff);
+	_buff='Sub getvoice(s)';
+	_t=FWRITE(_file,_buff);
+	_buff='     Set sv = CreateObject("sapi.spvoice")';
+	_t=FWRITE(_file,_buff);
+	_buff='     For Each token In sv.GetVoices';
+	_t=FWRITE(_file,_buff);
+	_buff='        s=s & token.GetDescription & vbcrlf';
+	_t=FWRITE(_file,_buff);
+	_buff='     Next';
+	_t=FWRITE(_file,_buff);
+	_buff='End Sub';
+	_t=FWRITE(_file,_buff);
+	_buff='getvoice s';
+	_t=FWRITE(_file,_buff);
+	_buff='set fso=createobject("scripting.filesystemobject")';
+	_t=FWRITE(_file,_buff);
+	_buff='set txt=fso.CreateTextFile("voice.txt",Ture)';
+	_t=FWRITE(_file,_buff);
+	_buff='txt.close';
+	_t=FWRITE(_file,_buff);
+	_buff='set txt=fso.opentextfile("voice.txt",2)';
+	_t=FWRITE(_file,_buff);
+	_buff='txt.write s';
+	_t=FWRITE(_file,_buff);
+	FCLOSE(_file);
+	FCHARSET(1);
+}
+
+OnSpeechRecognition.Inter
+{
+//	"\![open,file,saori/Speech_Recognition/Speech_Recognition.vbs]"
+_txt=OnSpeechRecognition.BeginVoiceToTxt.vbs
+Speech_Recognition=1
+_txt
+}
+
+
+OnSpeechRecognition.BeginVoiceToTxt.vbs
+{
+	_file="saori\Speech_Recognition\COMMAND.XML"	;
+	_tfile="saori\Speech_Recognition\config.ini";
+	FCHARSET(1);
+	if FOPEN(_file,'r')
+	{
+		_MD5=FDIGEST(_file,"MD5")+'|'+FSIZE(_file);
+		_md5=0;
+		if FOPEN(_tfile,'r')
+			_md5=FREAD(_tfile);
+		else
+			OnSpeechRecognition.WriteTxtToXML;
+		_md5=_md5[1,'md5='];
+		FCLOSE(_tfile);
+		if _md5==_MD5&&_md5!=""&&_MD5!=""
+		{
+			OnSpeechRecognition.LoadSpeech_Recognition.vbs
+		}
+		else
+			OnSpeechRecognition.WriteTxtToXML;
+	}
+	else
+		OnSpeechRecognition.WriteTxtToXML
+	_t=FCLOSE(_file);
+}
+
+
+OnSpeechRecognition.LoadSpeech_Recognition.vbs
+{
+	if FATTRIB("saori/WScript.exe")[0]==-1
+	{
+		_path = FUNCTIONEX("saori/advanced_sysinfo","get_special_folder_path",'Windows');
+		_file = REPLACE(_path,'\','\\') + '\\system32\\WScript.exe';
+		_t=FCOPY(_file,"saori")
+	}
+	FUNCTIONEX("saori\Speech_Recognition\exec.dll","norm","Speech_Recognition.vbs");
+
+}
+
+
+
+
+OnSpeechRecognition.WriteTxtToXML
+{
+	_file="saori\Speech_Recognition\COMMAND.XML";
+	_txt=OnSpeechRecognition.AIInfFileLoad;
+	SETDELIM(_txt,'|');
+	_N=ARRAYSIZE(_txt)-1;
+	if _N>0
+	{
+		FCHARSET(127);
+		_t=FOPEN(_file,'w');
+		_temp='<?xml version="1.0" encoding="gb2312" ?><GRAMMAR LANGID="804"><RULE NAME="命令" TOPLEVEL="ACTIVE"><L>';
+		_t=FWRITE(_file,_temp);
+		foreach _txt;_temp
+		{
+			if _temp[0,'|']!="";
+			_temp='<P>'+_temp+'</P>';
+			FWRITE(_file,_temp);
+		}
+		
+		_temp=' ';
+		_t=FWRITE(_file,_temp);
+		_temp='</L></RULE></GRAMMAR>';
+		_t=FWRITE(_file,_temp);
+		_t=FCLOSE(_file);
+		FCHARSET(1);
+		_file="saori\Speech_Recognition\COMMAND.XML";
+		_md5='md5='+FDIGEST(_file,"MD5")+'|'+FSIZE(_file);
+		_tfile="saori\Speech_Recognition\config.ini";
+		_t=FOPEN(_tfile,'w');
+		_t=FWRITE(_tfile,_md5)
+		_t=FCLOSE(_tfile);
+		FCHARSET(1);
+	}
+	else
+		0;
+}
+
+
+
+OnSpeechRecognition.AIInfFileLoad
+{
+	_path="pseudoAI";
+	_files = FENUM(_path);
+	_tfiles=_files;
+	_tfiles=REPLACE(_tfiles,'logiclearn.ai','')
+	_tfiles=REPLACE(_tfiles,'logic.ai','');
+	_txt="";
+	foreach _tfiles; _file
+	{	
+		_filename=TOUPPER(SPLITPATH(_file)[2]);
+		_file = _path +"/"+ _file;
+		_fileext = TOLOWER(SPLITPATH(_file)[3]);
+		case _fileext 
+		{
+			when ".inf"
+			{
+				if _filename!="FOOD"&&_filename!="MEAL"
+				_txt+=OnSpeechRecognition.LoadInfFileQ(_file)	
+			}
+		}
+	}
+	_txt
+}
+
+
+OnSpeechRecognition.LoadInfFileQ  //OnSpeechRecognition.LoadInfFileQ("pseudoAI/common.inf")
+{
+	_file=_argv[0];	
+	_txt="";
+	FCHARSET(1);
+	if FOPEN(_file,'r')
+	{
+		_buff="";
+		while _buff!=-1
+		{
+			_buff=FREAD(_file);
+			if '&' !_in_ _buff&&'*'!_in_ _buff &&'md5' !_in_ _buff&&'[' !_in_ _buff&&'<' !_in_ _buff&&_buff!=-1&&'%' !_in_ _buff
+			_txt+=_buff[0,'|']+'|';
+
+		}
+	}
+	FCLOSE(_file);
+	FCHARSET(1);
+	_txt;
+}
+
+
+
+
+
+
+
+
+
+LoadSpVoiceName.vbs
+{
+	_file="profile\\VoiceName.vbs";
+	if FATTRIB(_file)[0]==-1
+		WriteSpVoiceName.vbs;
+	"\![open,file,%(_file)]";
+}
+
+GetSpVoiceName
+{
+	_file="..\\..\\..\\..\\voice.txt";
+	_name=IARRAY;
+	FCHARSET(127);
+	if FOPEN(_file,'r')
+	{
+		_buff=FREAD(_file);
+		while _buff!=-1
+		{
+			_name,=_buff;
+			_buff=FREAD(_file);
+			
+		}
+		
+	}
+	FCLOSE(_file);
+	FCHARSET(1);
+	_t=FDEL(_file);
+	_name;
+}
+
+
+
+
+LoadSpVoice.vbs
+{
+	_file="profile\\voice.vbs";
+	"\![open,file,%(_file)]";
+}
+
+OnStopSpVoice.vbs
+{
+/*
+_path = FUNCTIONEX("saori/advanced_sysinfo","get_special_folder_path",'Windows');
+_file = REPLACE(_path,'\','\\') + '\\system32\\Taskkill.exe';
+"\C\![open,file,%(_file),/f /im wscript.exe]"
+	*/
+	_file="profile\\stop.vbs";
+	WriteStopProcess.vbs("wscript.exe");
+	Speech_Recognition=0;
+	--
+		"\C\![open,file,%(_file)]";
+}
+
+
+WriteStopProcess.vbs
+{
+	_file="profile\\stop.vbs";
+	_process=_argv[0];
+	FCHARSET(127);
+	_t=FOPEN(_file,'w');
+	_buff='on error resume next';
+	_t=FWRITE(_file,_buff);
+	_buff='sub Close_Process(ProcessName)';
+	_t=FWRITE(_file,_buff);
+	_buff='On Error Resume Next';
+	_t=FWRITE(_file,_buff);
+	_buff='     for each ps in getobject("winmgmts:\\.\root\cimv2:win32_process").instances_'
+		_t=FWRITE(_file,_buff);
+	_buff='           if Ucase(ps.name)=Ucase(ProcessName)  then';
+	_t=FWRITE(_file,_buff);
+	_buff='                 ps.terminate';
+	_t=FWRITE(_file,_buff);
+	_buff='           end if';
+	_t=FWRITE(_file,_buff);
+	_buff='     next';
+	_t=FWRITE(_file,_buff);
+	_buff='end sub';
+	_t=FWRITE(_file,_buff);
+	_buff='Close_Process("'+_process+'")';
+	_t=FWRITE(_file,_buff);
+	FCLOSE(_file);
+	FCHARSET(1);
+}
+
+
+
+WriteSpVoice.vbs
+{
+	_file="profile\\voice.vbs";
+	_voice="ScanSoft Mei-Ling_Full_22kHz";
+	_txt=_argv[0];
+	if _argv[1]!="";
+	_voice=_argv[1];
+	_txt=SakuraToTxt(_txt);
+	_txt=REPLACE(_txt,'　','');
+	FCHARSET(127);
+	_t=FOPEN(_file,'w');
+	_buff='on error resume next';
+	_t=FWRITE(_file,_buff);
+	_buff='Set objVoice = CreateObject("SAPI.SpVoice")';
+	_t=FWRITE(_file,_buff);
+	_buff='Set objVoice.Voice = objVoice.GetVoices("Name='+_voice+'").Item(0)';
+	_t=FWRITE(_file,_buff);
+	_buff='objVoice.Rate='+voice.rate
+;	_t=FWRITE(_file,_buff);
+	_buff='objVoice.Speak("'+_txt+'")';
+	_t=FWRITE(_file,_buff);
+	FCLOSE(_file);
+	FCHARSET(1);
+}
+
+CheckProcess//CheckProcess("wscript.exe")
+{
+_processname=TOLOWER(_argv[0])
+_t=FUNCTIONEX('saori\Process.dll');
+	_ProcessData=TOLOWER(valueex0);
+_found=0
+if _processname _in_ _ProcessData
+_found=TOINT(valueex1)
+
+_found
+
+
+}
+
+
+
+VoiceToTxt
+{
+
+
+LoadVoiceToTxt.vbs
+
+
+
+
+
+
+
+}
+
+
+
+LoadVoiceToTxt.vbs
+{
+	_file="saori/Speech_Recognition/text.txt";
+	FCHARSET(127)
+	if FOPEN(_file,"r")
+	{
+		
+		if (_buff=FREAD(_file))!=-1
+		_buff
+	}
+	FCLOSE(_file)
+	FCHARSET(127);
+}		
+
+
+
+
+
+
+
+
+
+
+
+
+SakuraToTxt
+{
+	_txt=_argv[0];
+	_txt=RE_REPLACE(_txt,'\\w.','');  //删除等待延时
+	_txt=REPLACE(_txt,'\e','');      //删除结束标记
+	_txt=REPLACE(_txt,'\_q','');     //删除速读标记
+	_txt=REPLACE(_txt,'\0',''); 
+	_txt=REPLACE(_txt,'\1',''); 
+	_txt=REPLACE(_txt,'%username',"%username");
+	_txt=REPLACE(_txt,'%selfname','橘花'); 
+	_txt=REPLACE(_txt,'%keroname','斗和'); 
+	_txt=REPLACE(_txt,'\n',''); 
+	_txt=REPLACE(_txt,'\f[color,default]',''); 
+	_txt=RE_REPLACE(_txt,'\\s\[\d*\]','');  
+	_txt=RE_REPLACE(_txt,'\\b\[\d*\]',''); 
+	_txt=RE_REPLACE(_txt,'\\f\[.*?\]','') 
+		_txt=RE_REPLACE(_txt,'\\__q.*\\__q','');
+	_txt=REPLACE(_txt,'\!',''); 
+	_txt=REPLACE(_txt,'"',"'"); 
+	_txt=REPLACE(_txt,'\_b',''); 
+	_txt=REPLACE(_txt,'\x',''); 
+	_txt=REPLACE(_txt,'\b','');
+	_txt=REPLACE(_txt,'\_l',''); 
+	_txt=REPLACE(_txt,'\__q',''); 
+	_txt=REPLACE(_txt,'\_f','');
+	_txt=REPLACE(_txt,'\C','');
+	_txt=REPLACE(_txt,'\c','');
+	_txt=RE_REPLACE(_txt,'<.*?>','')
+		_txt=RE_REPLACE(_txt,'\\q\[.*?\]','');
+	_txt=RE_REPLACE(_txt,'\[.*?\]','');
+	_txt=RE_REPLACE(_txt,'--------------.*','');
+	_txt=RE_REPLACE(_txt,'　　　　　  .*\\','');
+	_txt=RE_REPLACE(_txt,'■.*','');
+	_txt=RE_REPLACE(_txt,'\\_n软件.*','');
+	_txt;
+}
+
+
+CHAREPLACE
+{
+_text=_argv[0]
+_text=REPLACE(_text,'\','\\')
+_text=REPLACE(_text,'[','\[')
+_text=REPLACE(_text,']','\]')
+_text
+}
+
+RE_CHAREPLACE
+{
+_text=_argv[0]
+_text=REPLACE(_text,'\\','\')
+_text=REPLACE(_text,'\[','[')
+_text=REPLACE(_text,'\]',']')
+_text
+}
+
+
+TranslateWithDictionary//TranslateWithDictionary("%username被欺负了")
+{
+	_file="pseudoAI\language.ai";
+	_str=TOSTR(reference0);
+	if _argc>0
+		_str=TOSTR(_argv);
+	_found=_str;
+	_cha='%';
+	_found=REPLACE(_found,username,'%USERNAME');
+	if FOPEN(_file,"r")
+	{
+		for _buff = FREAD(_file); _buff != -1; _buff = FREAD(_file) 
+        {
+			_temp="%(_buff[0,'|'])";
+			_text=_buff[TOINT(language),'|'];
+			_found=GETRETXT(_found,_temp,_text);
+		}
+	}
+	FCLOSE(_file);
+	_found=REPLACE(_found,'%USERNAME',username);
+	_found;
+}
+
+
+GETRETXT   //GETRETXT('我像你','.*像你','%(_i)是')
+{
+	_cha='%';
+	_found=_argv[0];
+	_temp=_argv[1];
+	_text=_argv[2];
+	_ori=_found;
+	if _argv[3]!=""
+		_cha=_argv[3];
+	if '.*' _in_ _temp||_cha _in_ _temp
+	{
+		_d=GetStarCha(_found,_temp);
+		_var=IARRAY;
+		_t=CHAREPLACE(_temp);
+		_t=RE_GREP(_ori,_t);
+		_ori=RE_GETSTR;
+		_ori=RE_CHAREPLACE(_ori);
+		if _cha _in_ _temp
+		{
+			_i=0;
+			_var=IARRAY;
+			_txt=_temp;
+			
+			while !(_temp[_i,_cha]==""&&_i!=0)
+			{
+				_t=_temp[_i,_cha];
+				_t=_t[1,'('];
+				_t=_t[0,')'];
+				_t='%('+_t+')';
+				_var[_i-1]=_t+"|"+TOINT(_i-1);
+				
+				_txt=REPLACE(_txt,_t,'.*');
+				_i++;
+			}
+			
+			if '[^ ]' !_in_ _txt
+				_t=CHAREPLACE(_txt);
+			
+			_t=RE_GREP(_found,_t);
+			
+			_ori=RE_GETSTR;
+			_ori=RE_CHAREPLACE(_ori);
+			_a=SPLIT(_txt,'.*');
+			
+			_b="";
+			_n=ARRAYSIZE(_a);
+			
+			for _i=0;_i<_n;_i++
+			{
+				if _a[_i]!=""&&_a[_i+1]!=""
+					_b+=_a[_i]+"|";
+				else
+					_b+=_a[_i];
+			}
+			_b=CHAREPLACE(_b);
+			
+			_c=RE_SPLIT(_ori,_b);
+			
+			_d=IARRAY;
+			_n=ARRAYSIZE(_a);
+			
+			_mode=1;
+			
+			for _i=0;_i<_n;_i++
+			{
+				if _temp[_i,_cha]==""&&_i==0||_temp[_i,_cha]!=""&&_i!=0
+					_d,=_c[_i];
+			}
+		}
+		_newvar=IARRAY;
+		_j=0;
+		
+		if _cha _in_ _text
+		{
+			_i=0;
+			_txt=_text;
+			while !(_text[_i,_cha]==""&&_i!=0)
+			{
+				
+				_t=_text[_i,_cha];
+				_t=_t[1,'('];
+				_t=_t[0,')'];
+				_t='%('+_t+')';
+				_newvar[_i-1]=_t+"|"+TOINT(_i-1);
+				
+				_i++;
+			}
+			
+			if _var==IARRAY
+			{
+				_var=_newvar;
+			}
+			
+			foreach _var;_i
+			{
+				foreach _newvar;_j
+				{
+					_a=_i[0,'|'];
+					_id=TOINT(_i[1,'|']);
+					_d[_id]=REPLACE(_d[_id],'我','%username');
+					_b=_j[0,'|'];
+					if TOSTR(_a)==TOSTR(_b)
+					{
+						_txt=REPLACE(_txt,_a,_d[_id]);
+					}
+					
+				}
+				
+				
+			}
+			
+			_text=_txt;
+			_temp=_ori;
+		}
+		
+		
+   }
+   _temp=TOSTR(_temp);
+   if _temp _in_ _found
+   {
+	   
+	   _found=REPLACE(_found,_temp,_text);
+   }
+			
+			
+   _found;
+}
+
+GetStarCha//GetStarCha('a是b的','*是*')
+{
+_ori=_argv[0]
+_temp=_argv[1];
+	if '.*' !_in_ _temp
+	_temp=REPLACE(_temp,'*','.*');//将通配符换成正则匹配
+	_t=CHAREPLACE(_temp);
+		_t=RE_GREP(_ori,_t);
+		_ori=RE_GETSTR;
+		_ori=RE_CHAREPLACE(_ori);
+
+		_a=SPLIT(_temp,'.*');
+		_b="";
+		_n=ARRAYSIZE(_a);
+		
+		for _i=0;_i<_n;_i++
+		{
+			if _a[_i]!=""&&_a[_i+1]!=""
+				_b+=_a[_i]+"|";
+			else
+				_b+=_a[_i];
+		}
+		_b=CHAREPLACE(_b);
+		_c=RE_SPLIT(_ori,_b);
+		_d=IARRAY;
+		_n=ARRAYSIZE(_a);
+		for _i=0;_i<_n;_i++
+		{
+			if !(_c[_i]==""&&_i==0)
+				_d,=_c[_i];
+		}
+_d;
+}
+
+
+
+ClearFile
+{
+	_file="profile\\VoiceName.vbs";
+	_t=FDEL(_file);
+	_file="profile\\voice.vbs";
+	_t=FDEL(_file);
+	_file="profile\\stop.vbs";
+	_t=FDEL(_file);
+}

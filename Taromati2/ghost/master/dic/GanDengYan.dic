@@ -1,0 +1,63 @@
+﻿OnGanDengYan
+{
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+GDYCard
+{
+	for _i=0;_i<52;_i++
+	 {	
+                      gdycard[_i]=_i;
+             }
+}
+
+
+GDYCardShuffle
+{
+	_card=IARRAY
+	_j=0
+	for _i=0;_i<54;_i++ //用for循环实现模拟人类洗牌
+	{   
+		  
+		if _i%2==0
+			_card[_i]=gdycard[_j]
+		else  
+		{  
+			_card[_i]=gdycard[27+_j]
+			_j++
+		}
+                 
+	}
+
+	gdycard=IARRAY
+	gdycard=_card
+
+	_replace=RAND(54)    //产生一个随机端牌数
+	_j=0
+	for _i=0;_i<54;_i++    //用for循环模拟人类端牌
+	{
+		if _replace+_i<54
+			_card[_i]=gdycard[_replace+_i]
+		else
+		{
+			_card[_i]=gdycard[_j]
+			_j++
+		}
+	}
+	gdycard=IARRAY
+	gdycard=_card
+}

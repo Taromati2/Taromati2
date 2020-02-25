@@ -1,0 +1,193 @@
+﻿///////// 
+///////// 沟通
+///////// KikkaAIdb
+
+//**** 人格主动对话 *************************************************************
+
+StartCommunicate
+{
+	//---- 決定对话的对象人格
+	if ghostexcount > 0
+	{
+		// res_reference0 从人格列表中取得对话人格名字
+		res_reference0 = ghostexlist[RAND(ghostexcount)]
+	}
+
+	//---- 对话开始
+	if res_reference0 == "凉璃"
+	{
+		//---- 与凉璃的对话
+		"\0\s[0]凉璃、好吗?\e"
+	}
+	elseif res_reference0 == "さくら"
+	{
+		//---- 与さくら（樱花）的对话
+		"\0\s[0]どもー。\e"
+	}
+	elseif res_reference0 != ""
+	{
+		//---- 与其他人格的对话
+		"\0\s[0]こんにちは、%(res_reference0)。\e";
+		"\0\s[0]你好、%(res_reference0)。\e";
+		_txt=REPLACE(OnOtherGreetings,"%(username)","%(res_reference0)");
+		_txt;
+	}
+	else
+	{
+		//---- 没有其他人格存在情况进行random对话
+		RandomTalk
+	}
+}
+
+
+
+//**** 人格被動對話 *******************************************************************************
+OnOtherGhostTalk
+{
+	ReplyToGhost
+}
+
+
+
+//---- 与其他人格对话 -----------------------------------------------------------------------
+ReplyToGhost
+{
+
+	res_reference0 = reference0
+	if n==0
+	{
+		n=5
+		res_reference0=""
+	}
+  
+  //回覆凉璃的对话
+	if res_reference0 == "凉璃"
+	{
+		res_reference0 = ""
+		if "好" _in_ reference1
+		{
+      "\0\s[0]好啊，凉璃呢？\e"
+		}
+		elseif "明天见" _in_ reference1
+		{
+      "\0\s[0]\w8嗯嗯，%username和橘花晚安喔~\w8\w8\-\e"
+		}
+		else
+		{
+      "\0\s[0]嗯、是啊。\e"
+		}
+  	}
+	elseif res_reference0 == "橘花"
+	{
+	//	res_reference0 = ""
+		if "好" _in_ reference1
+		{
+    		      	  "\0\s[0]你是哪位？\w9\w9\e"
+			"\0\s[0]你也好啊。。\w9\w9\e"
+			"\0\s[22]发现可疑物体接近中\w9\w9\e"
+		}
+		elseif "你是哪位" _in_ reference1
+		{
+  		    "\0\s[0]我是橘花啊。\w9\w9"
+		}
+		elseif "我是橘花" _in_ reference1
+		{
+  		    "\0\s[0]你是橘花，\w9\w9那么我又是谁？\w9\w9"
+		}
+		elseif "我又是谁" _in_ reference1
+		{
+  		    "\0\s[0]你是冒牌的吧？\w9\w9"
+		}
+		elseif "才是冒牌的" _in_ reference1
+		{
+  		    "\0\s[22]你想吃枪子儿吗？\w9\w9"
+		}
+		elseif "冒牌的" _in_ reference1
+		{
+  		    "\0\s[0]你才是冒牌的吧？\w9\w9"
+		}
+		else
+		{
+     			// "\0\s[0]嗯、是啊。\e"
+			_txt=OnAIReply
+			_txt=REPLACE(_txt,"%(username)","你");
+			n--;
+			_txt;
+		}
+  	}
+	
+		//回覆其他人格的对话
+	  else
+	  {
+	  //  res_reference0 = ""
+	  // "\0\s[0]嗯、是啊～。\e"
+		_txt=OnAIReply
+		_txt=REPLACE(_txt,"%(username)","你");
+		n--;
+		_txt;
+	  }
+}
+
+OnOtherGreetings
+{
+	RandAITalk
+	case hour 
+	{
+		when 4-6
+		{
+			"\0\s[36]今天%username好早呢。\e"
+				"\0\s[5]おはよう ございます。\e"
+		}
+		//---- 早上
+		when 7-8
+		{
+			"\0\s[0]早上好。\e"
+				"\0\s[5]おはよう ございます。\e"
+				"\0\s[35]早安、\w9%username\w9\w9\w9\w9\s[0]\n今天一天也好好加油吧。。\e"
+		}
+		//---- 上午
+		when 9-10
+		{
+			"\0\s[0]早上好。\e"
+				"\0\s[5]早上好啊，\w9\w9\%username，\w9\w9\现在是学习工作的黄金时间呢，\w9\w9\w9要好好努力哦。\e"
+				"\0\s[35]早安、\w9%username\w9\w9\w9\w9\s[0]\n今天一天也好好加油吧。。\e"
+		}
+		//---- 中午
+		when 11-13
+		{
+			"\0\s[26]午安。"
+		}
+		//---- 下午
+		when 14-18
+		{
+			"\0\s[26]下午好啊，%username，今天有好好努力吗？\e"
+			"\0\s[5]下午好。\e";
+		}
+		//---- 晚上
+		when 19-23
+		{
+			"\0\s[5]晚安。\e"
+				"\0\s[5]晚上好，%username\e"
+		}
+		//---- 深夜
+		others
+		{
+			if weekday == "0"
+			{
+				"\0\s[2]啊、已经这么晚了，%(username)还不休息吗\e"
+			}
+			else
+			{
+				"\0\s[116]这么晚了要注意休息喔。\e"
+			}
+		}
+	}
+}
+
+
+
+
+OnAIReply
+{
+	""+ONE+TWO+""
+}

@@ -1,0 +1,12 @@
+﻿//by steve02081504
+RUNCMD{
+	EXECUTE_WAIT('cmd','/D /C chcp 65001 && cd .\ghost\Taromati2\ghost\master && '+_argv[0])
+}
+GETENV{
+	_temp=RUNCMD('echo %'+_argv[0]+'% > var\ENV.tmp')
+	_temp=FOPEN('var\ENV.tmp','r')
+	_t=FREAD('var\ENV.tmp')
+	_temp=FCLOSE('var\ENV.tmp')
+	_t=RE_REPLACE(_t,'\s+$','')
+	_t
+}

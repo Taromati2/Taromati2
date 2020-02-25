@@ -1,0 +1,276 @@
+﻿///////////////////////////////////////////
+////////// 推箱子v2.0游戏辞书
+////////// written by forjane 2009.10.14
+///////////////////////////////////////////
+
+#define		MAPFILE		data/box.txt
+#define		PICFILE		data/boxpng.png
+
+
+
+
+
+//入口函数
+//----------------------------------------------
+OnBoxGame
+{
+	if QuickStartVersion{
+		NeedUpdate
+		return
+	}
+	InitBox
+}
+
+
+// 初始化推箱子
+//----------------------------------------------
+InitBox
+{
+	_txt = "\0\s[26]\b[2]";
+	mapstate = IARRAY;
+	mapmanpos = IARRAY;
+	mapstatenum = 0;
+	playingbox = 0;
+	boxnum = 1;
+	if _argc > 0 {
+		boxnum = _argv[0];
+	}
+	mapstate[0] = LoadMap(boxnum);
+	if mapstate[0] == "error" {
+		_txt += "\0\s[8]\b[2]\n[150]抱歉，没找到您要玩的关卡……" + BoxMenu;
+	}
+	else {
+		playingbox = 1;
+                running="playingbox";
+		_txt +=DrawMap(0) + BoxMenu +"\_l[0,0] \n\_l[0,0] \n\_l[0,0] \n";
+	}
+	_txt;
+}
+
+// 开始玩
+//----------------------------------------------
+PlayBox
+{
+_key=reference0
+if _argc
+_key=_argv[0]
+	case _key {
+		when "up","down","left","right" ,"back"{
+                        _txt = "\C\![quicksession,true]\c[line,2]"
+			_temp = mapstate[mapstatenum];
+			_now = 0;
+			_buff = IARRAY;
+			_sum = xx * yy;
+			for _i = 0; _i< _sum; _i++ {
+				_buff[_i] = EVAL(_temp[_i]);
+				if (_buff[_i] == 4 || _buff[_i] == 5) {
+					_now = _i;
+				}
+			}
+			_offset = 0;
+			if reference0 == "up" {
+				_offset = 0 - xx; 
+			}
+			elseif reference0 == "down" {
+				_offset = xx;
+			}
+			elseif reference0 == "left" {
+				_offset = -1;
+			}
+			elseif reference0 == "right" {
+				_offset = 1;
+			}
+			_next1 = _now + _offset;
+			_next2 = _now + _offset * 2;
+			if '2' _in_ mapstate[mapstatenum] && _buff[_next1] < 2 {
+				_buff[_next1] += 4;
+				_buff[_now] -= 4;
+				_txt += DrawBox(_buff[_next1],(_next1 % xx),(_next1 / xx));
+				_txt += DrawBox(_buff[_now],(_now % xx),(_now / xx));
+				mapstatenum ++;
+				mapstate[mapstatenum] = TOSTR(_buff);
+			}
+			elseif '2' _in_ mapstate[mapstatenum] && _buff[_next1] < 4 && _buff[_next2] < 2 {
+				_buff[_next2] += 2;
+				_buff[_next1] += 2;
+				_buff[_now] -= 4;
+				_txt += DrawBox(_buff[_next2],(_next2 % xx),(_next2 / xx));
+				_txt += DrawBox(_buff[_next1],(_next1 % xx),(_next1 / xx));
+				_txt += DrawBox(_buff[_now],(_now % xx),(_now / xx));
+				mapstatenum ++;
+				mapstate[mapstatenum] = TOSTR(_buff);
+			}
+			_txt += BoxStatus;
+			_txt;
+		}
+		others {
+			playingbox = 0;
+		}
+	}
+}
+
+// 画出推箱子地图
+//----------------------------------------------
+DrawMap
+{
+	_txt = "\C\b[2]\![quicksession,true]\![set,choicetimeout,0]\c";
+	_idx = _argv[0]
+	_buff = mapstate[_idx];
+	for _j = 0; _j < yy; _j++ {
+		for _i = 0; _i < xx; _i++ {
+			_type = _buff[_j * xx + _i];
+			_txt += DrawBox(_type,_i,_j);
+		}
+	}
+	_txt;
+}
+
+
+// 在x，y处画类型为type的方块
+//----------------------------------------------
+
+DrawBox
+{
+	_txt = "\C\![quicksession,true]\c\0\b[2]";
+	_type = _argv[0];
+	case _type {
+		when 0,1,2,3,4,5,8 {
+			_offsetx = 128 - 7 * xx;
+			_offsety = 128 - 7 * yy;
+			_x = _argv[1] * 16 + _offsetx;
+			_y = _argv[2] * 16 + _offsety;
+			case _type {
+				when 0 {
+					"\_l[%(_x),%(_y)]\_b[PICFILE,inline,--option=opaque,--clipping=0 0 16 16]"
+				}
+				when 1 {
+					"\_l[%(_x),%(_y)]\_b[PICFILE,inline,--option=opaque,--clipping=16 16 32 32]"
+				}
+				when 2 {
+					"\_l[%(_x),%(_y)]\_b[PICFILE,inline,--option=opaque,--clipping=32 0 48 16]"
+				}
+				when 3 {
+					"\_l[%(_x),%(_y)]\_b[PICFILE,inline,--option=opaque,--clipping=32 16 48 32]"
+				}
+				when 4,5 {
+					"\_l[%(_x),%(_y)]\_b[PICFILE,inline,--option=opaque,--clipping=0 16 16 32]"
+				}
+				when 8 {
+					"\_l[%(_x),%(_y)]\_b[PICFILE,inline,--option=opaque,--clipping=16 0 32 16]"
+				}
+			}
+		}
+	}
+}		
+
+BoxMenu
+{
+        _txt=""
+	_txt+= "\_l[0,0]第%(boxnum)关";
+	_txt += "\_l[0,252]\n\q[◇选关,OnBoxNewGame]\n\q[◇上一关,OnBoxLastGame]\n\q[◇重玩本关,OnBoxTheNewGame]\n\q[◇下一关,OnBoxNextGame]\n\n[half]\q[◇返回游戏列表,OnBoxGameList]\n\q[◇终了,OnBoxGameOver]";
+	_txt;
+}
+
+BoxStatus
+{
+	_txt = "";
+	if mapstatenum > 0 {
+		_txt += "\_l[40,0]第%(mapstatenum)步\_l[0,252]";
+		if '2' !_in_ mapstate[mapstatenum] {
+			_txt += "\0\s[5]哇！%(username)好厉害……";
+		}
+		else {
+			_txt += "\q[◇后退一步,OnBoxGoBack]";
+		}
+	}
+	_txt;
+}
+
+OnBoxGoBack
+{
+	"\C\_q\c[line,2]";
+	--
+	if mapstatenum > 0 {
+		mapstatenum --;
+		DrawMap(mapstatenum);
+		--
+		BoxStatus;
+	}
+}
+
+OnBoxNewGame
+{
+	"\0\s[40]请问你要玩第几关呢？\![open,inputbox,OnBoxNewGameSuccess]\e"
+}
+
+OnBoxLastGame
+{
+	InitBox(boxnum - 1);
+}
+
+OnBoxTheNewGame
+{
+	InitBox(boxnum);
+}
+
+
+
+OnBoxNextGame
+{
+	InitBox(boxnum + 1);
+}
+
+OnBoxNewGameSuccess
+{
+	InitBox(reference0);
+}
+
+ClearBoxVar
+{
+	ERASEVAR("playingbox");
+	ERASEVAR("mapstate");
+	ERASEVAR("mapstatenum");
+	ERASEVAR("xx");
+	ERASEVAR("yy");
+	ERASEVAR("boxnum");
+}
+
+OnBoxGameOver
+{
+	ClearBoxVar;
+	"\0\s[2]不玩了吗？好可惜喔……\e";
+}
+
+OnBoxGameList
+{
+	ClearBoxVar;
+	OpenMenu(2);
+}
+
+LoadMap
+{
+	_num = "#" + _argv[0];
+	_mapfile = "MAPFILE";
+	_txt = "";
+	if FOPEN(_mapfile,"r") {
+		_buff = FREAD(_mapfile);
+		while _buff != -1 && _buff[0] != _num {
+			_buff = FREAD(_mapfile);
+		}
+		if _buff == -1 {
+			"error";
+		}
+		else {
+			xx = TOINT(_buff[1]);
+			yy = TOINT(_buff[2]);
+			for _buff = FREAD(_mapfile);_buff != -1 && _buff !="";_buff = FREAD(_mapfile) {
+				_txt += _buff;
+			}
+			_txt;
+		}
+		FCLOSE(_mapfile);
+	}
+
+}
+
+

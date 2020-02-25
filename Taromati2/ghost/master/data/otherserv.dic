@@ -1,0 +1,1299 @@
+﻿//******************************季节判断对话*************************
+
+Select.Seasontest
+{
+        Seasonzone
+}
+
+Seasonzone
+{
+        "\0\s[0]现在是%(month)月\n[half]"
+        --
+        if month >= 1 && month <= 2
+        {
+                "\n是冬天(Winter)喔。\w9\w9%(username)出门要多穿几件衣服喔！\e"
+        }
+        elseif month >= 3 && month <= 5
+        {
+                "\n是春天(Spring)喔。\n\w9\w9百花的盛开，\w9告知了我们春天的到来。\w9\w9\n\0\s[20]说到这个，\w9\w9\0\s[0]%(username)喜欢樱花吗？\n\q[◇喜欢,sakurasuki]\n\q[◇不喜欢,sakurakirai]\x\e"
+        }
+        elseif month >= 6 && month <= 8
+        {
+                "\n是夏天(Summer)喔。\n\w9\w9炎热的天气会让人受不了吧。\w9\w9%(username)喜欢游泳吗？\n\q[◇喜欢,swimmingsuki]\n\q[◇不会游泳,notswimming]\x\e"
+        }
+        elseif month >= 9 && month <= 11
+        {
+                "\n是秋天(Autumn)喔。\n\w9\w9\0\s[20]%(username)喜欢秋天吗？\w9\w9\n\q[◇很喜欢,daisuki]\n\q[◇不喜欢,kirai]\x\e"
+        }
+        elseif month == 12
+        {
+                "\n冬天(Winter)到了呢。\n\w9\w9相信，\w9\w9天气会慢慢的变冷吧。\w9\w9\n\0\s[20]%(username)喜欢雪吗？\n\q[◇喜欢,yukisuki]\n\q[◇我怕冷…,kankirai]\e"
+        }
+        --
+}
+Select.sakurasuki
+{
+intimacy += 2
+"\1\s[10]\0\s[5]果然是这样呢！\w9\w9\1\s[11]那么，\w9\w9赏樱的事就拜托了。\0\s[8]啊\w9\w9…\w9\w9\w9哈哈…\e"
+}
+Select.sakurakirai
+{
+"\1\s[10]\0\s[3]真可惜…\w9\w9想说可以和%(username)一起去赏花的…\w9\w9\1\s[10]各有所好是吧？\e"
+}
+Select.swimmingsuki
+{
+intimacy += 2
+"\1\s[10]\0\s[5]真的吗！\w9\w9\0\s[40]那么我们一起去吧！\n\w9\w9\1\s[11]其实%(username)的目的在于你的泳装…\w9\w9\0\s[2]咦！\w9\w9\0\s[9]%(username)是真的吗？\w9\w9%(username)…\e"
+}
+Select.notswimming
+{
+intimacy += 3
+"\1\s[10]\0\s[2]咦！\w9\w9%(username)原来不会游泳啊。\w9\w9\1\s[11]总而言之，\w9就是旱鸭子吧。\n\w9\w9\0\s[8]说的也太直接了吧…\w9\w9\0\s[20]如果这样，\w9\0\s[0]那么我来教%(username)游泳吧！\w9\w9\1\s[13]请%(username)保重…\w9\w9\0\s[0]…\w9\w9\0\s[32]你说什么？\e"
+}
+Select.daisuki
+{
+"\1\s[10]\0\s[5]果然是这样呢！\w9\1\s[11]那么，\w9你喜欢钓鱼吗？\w9\w9\0\s[0]%(username)喜欢枫叶吗？\n\w9\w9\q[◇喜欢钓鱼,fishingsuki]\n\q[◇喜欢枫叶,kaedesuki]\n\q[◇都喜欢,bothlike]\x\e"
+}
+Select.kirai
+{
+intimacy += 5
+"\1\s[10]\0\s[3]是这样吗…\w9\w9\1\s[11]这个%(username)还真难伺候。\n\w9\w9\0\s[30]那个，\w9我相信是有什么原因的，\w9\w9\0\s[40]对吧！\n\w9\w9\1\s[10]一直帮%(username)说话，\w9\w9果然你对%(username)有意思喔。\n\w9\w9\0\s[2]…\w9\w9…\w9\w9\0\s[29]…\w9\w9…\w9\w9\1\s[13]没想到竟然是真的…\e"
+}
+Select.yukisuki
+{
+intimacy += 1
+"\1\s[10]\0\s[6]虽然寒冷，\w9\w9\0\s[0]但是那洁白的雪花，\w9感觉可以让心灵沉静呢。\w9\w9\1\s[12]总之，\w9请做好防寒的准备，\w9可不要冻死了。\w9\w9\n\0\s[8]那…\w9\w9那个……\e"
+}
+Select.kankirai
+{
+intimacy += 2
+"\0\s[0]\1\s[10]真是没用。\w9\w9\0\s[8]斗和…\w9有点言重了喔…\n\w9\w9\1\s[11]我这是在替他着想。\n\w9\1\s[12]总之！\w9每天跑个几百公里就行了。\n\w9\w9\n\0\s[8]这个，\w9一般人绝对办不到喔…\n\w9\w9一定。\e"
+}
+Select.fishingsuki
+{
+intimacy += 1
+"\0\s[0]是这样啊…\w9\w9我不喜欢沉闷呢。\w9\w9\1\s[10]总之，\w9饲料就交给你了！\n\w9\w9\0\s[8]这…\w9这个…\w9\w9\n\1\s[10]这是身为饲主所该做的吧！\n\w9\w9\0饲主是我喔…\e"
+}
+Select.kaedesuki
+{
+intimacy += 5
+"\1\s[10]\0\s[5]果然是这样呢！\n\w9\w9\0\s[0]在这植物慢慢枯黄的季节里，\w9\w9枫叶显得最为美丽。\w9\w9\n\1\s[10]而这也表态的象征着人类的生命，\n\w9\w9越是到尽头，\w9\w9越是显得美丽。\n\w9\w9\0\s[21]让我来帮他们一把吧。\w9\w9\n\1\s[11]别做危险的幻想…\e"
+}
+Select.bothlike
+{
+"\0\s[0]\1\s[10]那么，\w9到底你比较喜欢哪个呢？\n\q[◇钓鱼,fishing]\n\q[◇枫叶,kaede]\n\q[◇无法抉择,noask]\x\e"
+}
+Select.fishing
+{
+intimacy += 1
+"\1\s[10]喜欢沉浸在沉闷中啊。\n\w9\w9\0\s[3]我不喜欢沉闷的说…\n\w9\w9\1\s[11]学习沉闷是很重要的。\n\0\s[32]那么，\w9把你解决掉就不需要沉闷了。\n\w9\w9\1\s[10]…\w9…\w9\e"
+}
+Select.kaede
+{
+intimacy += 5
+"\0\s[5]果然是这样呢！\w9\w9\1\s[10]%(username)只是顺应你的喜好罢了\n\w9\w9\0\s[30]才没这回事，\w9\w9相信%(username)是真的喜欢的。\n\w9\w9\1\s[13]顺应自己喜欢的人，\w9\w9这是人类最会做的事。\0\s[2]咦！\n\w9\w9\s[1]…\w9…\w9\s[29]…\w9…\w9\1\s[11]当真啦？\e"
+}
+Select.noask
+{
+"\1\s[10]优柔寡断。\n\w9\w9\0\s[8]…\w9…\w9…\n\1\s[10]まぁ，\w9这就是人嘛。\w9\w9\0这样很没有礼貌喔。\e"
+
+}
+
+
+
+
+
+
+
+
+//-----告诉我一些事吧-----------------------------------------
+Select.something
+{
+
+                "\0\s[26]%(username),你想知道什么吗？\w9\w9给个建议吧!\n\n\q[◇橘花...我想听听一些武器的介绍,Arm]\n\q[◇你没有自主意识...,Badmind]\n\q[◇我想杀人,Killer]\n\n\q[◇返回上一层,otherserv]\x\e"
+
+}
+
+Select.Arm
+{
+"\0\s[26],说说看需要哪种呢？\n\n/
+        \q[◇近身武器,Arm01]\n/
+        \q[◇热兵器,Arm02]\n/
+        \q[◇随便找都找得到的,Arm03]\n/
+        \q[◇返回上一层,something]\x\e"
+
+}
+
+Select.Arm01
+{
+"\0\s[26]近身武器呀....\w9\w9虽然说随着枪械的发展而有些没落了\w9但在短距离的战斗上还是有着不可或缺的地位呢!\n\n\q[◇返回上一层,Arm]\x\e"
+
+"\0\s[26]其实近身武器只要把他想成自己躯体的延伸就好了\w9也就是强化身体的肉搏性能而已\n\n\q[◇返回上一层,Arm]\x\e"
+
+
+}
+
+Select.Arm02
+{
+"\0\s[22]热兵器是现在广泛使用的主流\w9\w9其特性是,射击至击中目标速度快且威力强大\w9\w9但大多具有消耗性质\n\n\q[◇返回,Arm]\x\e"
+
+}
+Select.Arm03
+{
+"\0\s[27]其实生活中随处可见可以成为凶器的物品唷\w9\w9只要有心石头也可以杀人\n\n\q[◇返回上一层,Arm]\x\e"
+
+}
+
+
+Select.Badmind
+{
+"\0\s[29]也许我存在的目的真的是你们发明来取悦自己的\0\s[00]\w9\w9但是不让人感到孤单也是件有意义的事呢\n\n\q[◇返回上一层,something]\x\e"
+}
+
+
+Select.Killer
+{
+"\0\s[20]或说回来人体真的是很脆弱的东西呢\w9\w9有时候甚至只要一些小出血就可以破坏整个循环系统了\n\n\q[◇返回上一层,something]\x\e"
+
+}
+
+//****************************************用餐时间**********************************
+Onmeal
+{
+if mealmode == 1
+{
+"\q[◇用餐时间,用餐时间]"
+}
+
+}
+
+Select.用餐时间
+{
+
+mealmode = 1
+if hour >= 7 && hour < 9 {Onbreakfast}
+ elseif hour >= 11 && hour < 13 {Onlunch}
+ elseif hour >= 17 && hour < 19 {Onsupper}
+ elseif hour >= 21 && hour < 24 {Onlatesupper}
+ else {Oncake}
+
+}
+
+Onbreakfast
+{
+"\0![set,choicetimeout,0]\s[9]现在是早餐时间，\w9\w9\这是今天早餐的菜单，%(username)看看满意吗？\w9\w9\n\n[half]/
+%(breakfastmenu)\n/
+     \q[◇嗯，就这样吧,meal]\n/
+     \q[◇有其它的吗？,otherbreakfast]\x\e"
+        
+
+}
+
+Select.otherbreakfast
+{
+"\0\![set,choicetimeout,0]\s[1]%(username)不满意呢，那下面的呢？\w9\w9\n\n[half]/
+%(breakfastmenu)\n/
+     \q[◇嗯，就这样吧,meal]\n/
+     \q[◇有其它的吗？,otherbreakfast]\x\e"
+}
+
+
+breakfastmenu
+{
+"%(meal1)\n/
+%(meal2)\n"
+
+"%(meal1)\n/
+%(meal8)\n"
+
+
+}
+
+Onlunch
+{
+"\0\![set,choicetimeout,0]\s[9]现在是午餐时间，\w9\w9\这是今天午餐的菜单，%(username)看看满意吗？\w9\w9\n\n[half]/
+%(lunchmenu)\n/
+     \q[◇嗯，就这样吧,meal]\n/
+     \q[◇有其它的吗？,otherlunch]\x\e"
+ }  
+
+     
+lunchmenu
+{
+
+"%(meal3)\n/
+%(meal4)\n/
+%(meal5)\n"
+}
+
+
+Select.otherlunch
+{
+"\0\![set,choicetimeout,0]\s[1]%(username)不满意呢，那下面的呢？\w9\w9\n\n[half]/
+%(lunchmenu)\n/
+     \q[◇嗯，就这样吧,meal]\n/
+     \q[◇有其它的吗？,otherlunch]\x\e"
+}
+
+
+
+
+
+Onsupper
+    {
+"\0\![set,choicetimeout,0]\s[9]现在是晚餐时间，\w9\w9\这是今天晚餐的菜单，%(username)看看满意吗？\w9\w9\n\n[half]/
+%(suppermenu)\n/
+     \q[◇嗯，就这样吧,meal]\n/
+     \q[◇有其它的吗？,othersupper]\x\e"
+        
+
+}
+
+
+suppermenu
+{
+"%(meal1)\n/
+%(meal3)\n/
+%(meal5)\n"
+
+
+"%(meal1)\n/
+%(meal3)\n/
+%(meal4)\n"
+
+
+
+"%(meal1)\n/
+%(meal2)\n/
+%(meal4)\n"
+
+
+
+
+
+}
+
+Select.othersupper
+{
+"\0\![set,choicetimeout,0]\s[1]%(username)不满意呢，那下面的呢？\w9\w9\n\n[half]/
+%(suppermenu)\n/
+     \q[◇嗯，就这样吧,meal]\n/
+     \q[◇有其它的吗？,othersupper]\x\e"
+}
+
+
+Onlatesupper
+  {
+"\0\![set,choicetimeout,0]\s[9]现在是宵夜时间，\w9\w9\这是今天宵夜的菜单，%(username)看看满意吗？\w9\w9\n\n[half]/
+%(latesuppermenu)\n/
+     \q[◇嗯，就这样吧,meal]\n/
+     \q[◇有其它的吗？,otherlatesupper]\x\e"
+        
+
+}
+
+latesuppermenu
+{
+"%(meal7)\n/
+%(meal2)\n"
+
+"%(meal7)\n/
+%(meal8)\n"
+}
+
+Select.otherlatesupper
+{
+"\0\![set,choicetimeout,0]\s[1]%(username)不满意呢，那下面的呢？\w9\w9\n\n[half]/
+%(latesuppermenu)\n/
+     \q[◇嗯，就这样吧,meal]\n/
+     \q[◇有其它的吗？,otherlatesupper]\x\e"
+
+}
+
+Oncake
+{
+"\0\![set,choicetimeout,0]\s[40]用餐时间已经过了，%(username)要按时用餐啊。如果饿的话，%(username)要不要来些点心呢？\w9\w9\n\n[half]/
+%(cakemenu)\n/
+    \q[◇嗯，就这样吧,meal]\n/
+     \q[◇有其它的吗？,othercake]\x\e"
+
+
+}
+
+
+Select.othercake
+{
+"\0\![set,choicetimeout,0]\s[1]%(username)不满意呢，那下面的呢？\w9\w9\n\n[half]/
+%(cakemenu)\n/
+     \q[◇嗯，就这样吧,meal]\n/
+     \q[◇有其它的吗？,othercake]\x\e"
+
+}
+
+
+cakemenu
+{
+"%(meal6)\n/
+%(meal7)\n"
+
+"%(meal7)\n/
+%(meal8)\n"
+
+"%(meal6)\n/
+%(meal7)\n/
+%(meal8)\n"
+
+
+
+}
+
+
+meal1 : nonoverlap
+{     "煮鸡蛋"
+      "荷包蛋"
+      "煎鸡蛋"
+      "南瓜饼"
+      "葱油煎饼"
+      "苹果煎蛋饼"
+      "火腿鸡蛋饼"
+      "葱香鸡蛋饼"
+      "橘式好味烧"
+      "香菇鸡肉饭团"
+      "玉米饭团"
+      "时蔬寿司卷"
+      "寿司"
+      "鸡肉煎蛋三明治"
+      "蔬菜沙拉三明治"
+      "香菇鲜肉包"
+      "豆沙包"
+      "小笼汤包"
+      "小笼蒸包"
+      "水晶汤包"
+      "双色花卷"
+      "牛奶馒头"
+      "鲜虾烧卖"
+      "四喜烧卖"
+      "翡翠烧卖"
+      
+      
+}          
+meal2 : nonoverlap
+{     
+       "香蕉百合银耳羹"
+       "冰糖莲子羹"
+       "抹茶羊羹"
+       "蒸羊羹"
+       "花生牛奶红枣粥"
+       "桂圆莲子八宝粥"
+       "银耳莲子糯米粥"
+       "皮蛋瘦肉粥"
+       "黑芝麻粥"
+       "松仁鱼丸粥"
+       "南瓜小米粥"
+       "核桃果肉紫米粥"
+       "核桃芝麻粥"
+       "红著米粥"
+       "香菜米粥"
+
+}
+
+
+
+meal3 : nonoverlap
+{     
+      "鸡肉蛋包饭"
+      "香菇鸡丝饭"
+      "鳗鱼饭"
+      "红椒牛肉饭"
+      "咖哩牛肉饭"
+      "什锦鸡肉饭"
+      "沙丁鱼五彩饭"
+      "虾仁蛋炒饭"
+      "火腿蛋炒饭"
+      "扬州炒饭"
+      "黑椒鸡丝炒饭"
+      "山椒肉末炒饭"
+      "青椒肉丝炒饭"
+      "泡椒牛肉盖饭"
+      "鱼香茹子盖饭"
+      "麻婆豆腐盖饭"
+      "红烧牛肉盖饭"
+      "天麸罗盖饭"
+      "天麸罗汤面"
+      "咖哩牛肉炒面"
+      "咖喱意面"
+      "意大利面"
+      "红油杂酱面"
+      "红烧牛肉面"
+      "红油水饺"
+      "虾仁蒸饺"
+      "水晶蒸饺"
+     
+
+}
+
+
+meal4 : nonoverlap
+{
+      "黑胡椒牛排"
+      "黑椒牛排批萨"
+      "橘花风味五彩披萨"
+      "培根芝士匹萨"
+      "培根火腿时蔬匹萨"
+      "煎肉饼"
+      "烤鸡腿"
+      "炸猪排"
+      "羊肉串"
+      "章鱼烧"
+      "天麸罗"
+      "油炸肉馅土豆团"
+      "炸虾"
+      "奶汁烤菜"
+      "金枪鱼蔬菜沙拉" 
+      "三文鱼沙拉"
+      "鸡蛋什锦沙拉"
+      "土豆什锦沙拉"
+      "火腿时蔬三明治"
+      "黑椒牛排汉堡"
+      "炸鸡腿汉堡"
+      "虾仁汉堡"
+}
+
+
+meal5 : nonoverlap
+{       "味增汤"
+        "海带冬瓜汤"
+        "海带排骨汤"
+        "番茄蛋汤"
+        "萍菇圆子汤"
+        "酸菜粉丝汤"
+        "酸萝卜老鸭汤"
+        "香菇鸡肉汤"
+        "酸菜鲫鱼汤"
+        "黄瓜皮蛋汤"
+
+} 
+
+
+meal6 : nonoverlap
+{      "芒果布丁"
+       "草莓布丁"
+       "水密桃布丁"
+       "奇异果布丁"
+       "橘花奇异水果拼盘"
+       
+  if Seasonjud == "夏天" || "Summer"   
+    {   "奶油冰激凌水果杯"
+       "菠罗刨冰"
+       "草莓刨冰"
+       "芒果刨冰"
+    }
+
+}
+
+meal7 : nonoverlap
+{      "橘花自制丹麦牛奶曲奇"
+       "葱香油酥饼干"
+       "奶油夹心饼干"
+       "巧克力夹心饼干"
+       "樱饼"
+       "鲜奶草莓蛋糕"
+       "巧克力果冻蛋糕"
+       "牛奶夹心巧克力"
+       "黑巧克力"
+       "绿豆糕"
+       "桂花糕"
+       "红枣糕"
+       "芝麻年糕"
+       "核桃酥"
+
+
+
+}
+
+meal8 : nonoverlap
+{       "鲜牛奶"
+        "核桃花生奶"
+        "红枣枸杞牛奶"
+        "柳丁汁"
+        "柠檬汁"
+        "金桔柠檬汁"
+        "苹果汁"
+        "鲜榨橙汁"
+        "火龙果汁"
+        "哈密瓜汁"
+        "葡萄汁"
+        "木瓜牛奶"
+        "丁香柳橙汁"
+        "酸奶"
+        "大红枣酸奶"
+        "波萝奶茶"
+        "草莓奶茶"
+        "芒果奶茶"
+}
+
+
+Select.meal
+{
+"\0\w9\w9\s[26]那么，请稍等一下，或许需要准备很长时间呢\w9\w9\w9\s[99]\w9\w9…\w9\w9…\w9\w9…\w9\w9…\w9\w9…\w9\w9\s[51]准备好了，%(username)，这是橘花精心制作的菜式哦，不知是否合口味\w9\w9\n\q[◇做得很好哦，橘花谢谢你,goodjob]\n\q[◇一点也不好吃,notgoodjob]\x\e"
+}
+
+Select.goodjob
+{
+intimacy += 20
+"\0\s[41]橘花很高兴呢，得到%(username)的称赞，橘花一定会做出更可口的菜式\x\e"
+"\0\s[41]只要%(username)喜欢，橘花会更加努力的\x\e"
+}
+
+Select.notjob
+{
+
+"\0\s[1]唔，%(username)不喜欢吗，下次橘花一定会做好的。\x\e"
+"\0\s[1]呃……，橘花会努力做好的……\x\e"
+
+}
+
+
+
+//**************************亲密动作**********************************************************************
+
+Onclosetouch
+{
+_phase = GetPhase_bedroom
+
+if _phase >= 4
+{
+closetouchmode = 1
+"\q[◇亲密接触,closetouch]"
+}
+
+
+}
+Select.closetouch
+{
+"\q[摸摸头,headtouch]\n/
+\q[摸摸脸,facetouch]\n/
+\q[拉拉手,leadhand]\n/
+\q[亲亲,kiss]\n/
+\q[抱抱,hug]\n/
+\n\n\n\q[◇返回上一层,OnOpenMenu,1]"
+}
+
+Select.headtouch
+{
+headtouchnum += 1
+intimacy += 1
+"\0\s[1]那个…\w9\w9谢谢%(username)\n%(Select.closetouch)\e"
+"\0\s[9]我的头发…\w9\w9还好吧\n%(Select.closetouch)\e"
+"\0\s[0]这个…\w9\w9橘花没关系的\n%(Select.closetouch)\e"
+"\0\s[1]%(username)好温柔…\w9\w9橘花…\w9很喜欢这样\n%(Select.closetouch)\e"
+"\0\s[1]稍为有一点…\w9\w9心情很好呢\n%(Select.closetouch)\e"
+
+
+
+}
+
+Select.facetouch
+{
+facetouchnum += 1
+intimacy += 1
+"\0\s[20]橘花脸上有什么东西吗？\n%(Select.closetouch)\e"
+"\0\s[1]这个…\w9橘花…\w9\w9会害羞的\n%(Select.closetouch)\e"
+"\0\s[21]橘花…\w9\w9很可爱吗\n%(Select.closetouch)\e"
+"\0\s[2]%(username)…\w9\w9已经可以了\n%(Select.closetouch)\e"
+"\0\s[1]嗯…\w9如果%(username)喜欢这样的话…\w9\w9橘花也…\w9没有办法啦\n%(Select.closetouch)\e"
+
+}
+
+Select.leadhand
+{leadhandnum += 1
+intimacy += 1
+
+"\0\s[26]如果可以的话…\w9\w9橘花希望…\w9一直跟%(username)这样拉着手\n%(Select.closetouch)\e"
+"\0\s[1]橘花…\w9\w9很高兴…\w9\w9所以…\w9暂时请不要放手\n%(Select.closetouch)\e"
+"\0\s[29]橘花会一直陪伴在%(username)身边\n%(Select.closetouch)\e"
+"\0\s[29]%(username)的手…\w9\w9好温暖\n%(Select.closetouch)\e"
+"\0\s[1]被%(username)牵着，\w9\w9橘花感觉很幸福\n%(Select.closetouch)\e"
+
+}
+
+Select.kiss
+{
+kissnum += 1
+intimacy += 1
+"\0\s[21]%(username)…\w9\w9请不要这样…\n%(Select.closetouch)\e"
+"\0\s[1]不可以啦…\w9被别人看见多不好\n%(Select.closetouch)\e"
+"\0\s[9]%(username)…\w9\w9\这样…\w9没关系吗？\n%(Select.closetouch)\e"
+"\0\s[1]其实…\w9也不是不可以…\w9\w9但是…\w9请%(username)认真对待橘花\n%(Select.closetouch)\e"
+"\0\s[29]橘花的心…\w9扑通扑通跳得好快哦\n%(Select.closetouch)\e"
+
+}
+
+Select.hug
+{hugnum += 1
+intimacy += 1
+"\0\s[29]%(username)…\w9最喜欢您了\n%(Select.closetouch)\e"
+"\0\s[20]咦！？\w9%(username)的心跳得这么快呢\n%(Select.closetouch)\e"
+"\0\s[29]橘花会…\w9永远爱着%(username)\n%(Select.closetouch)\e"
+"\0\s[29]%(username)会一直陪伴在橘花的身边吗\n%(Select.closetouch)\e"
+"\0\s[9]如果可以的话…\w9再多抱会儿行吗？\n%(Select.closetouch)\e"
+
+
+}
+
+
+Onaccounting
+{if closetouchmode ==1
+{
+"\q[◇统计,accounting]\n"
+}
+}
+
+
+Select.accounting
+{
+"萌度：%(headtouchnum/10)\n/     
+可爱度：%(facetouchnum/10)\n/     
+幸福度：%(leadhandnum/10)\n/       
+H度：%(kissnum/10) \n/           
+依赖度：%(hugnum/10)\n/            
+\n\n\n\q[◇返回上一层,help]\x\e"
+}
+
+
+
+//*********************生病**********************************
+Select.notsogood
+{
+	if howbady0 == ""
+	{
+	"\0\s[02]这是第一次听%(username)说身体不舒服呢!\w9\n是哪里不舒服呢?\n\n[half]/
+	\q[◇头疼,notsogood1]\n/
+	\q[◇感冒,notsogood2]\n/
+	\q[◇肚子疼,notsogood3]\n\n[half]/
+	\q[◇查看生病次数,notsogood4]\n/
+	\q[◇没事,MenuCancel]\x\e"
+	}
+	else
+	{
+	"\0\s[03]%(username)已经不是第一次不舒服了呢...\w9\n这次是哪里呢?\n\n[half]/
+	\q[◇头疼,notsogood1]\n/
+	\q[◇感冒,notsogood2]\n/
+	\q[◇肚子疼,notsogood3]\n\n[half]/
+	\q[◇查看生病次数,notsogood4]\n/
+	\q[◇没事,MenuCancel]\x\e"
+	}
+}
+Select.notsogood1
+{
+	if howbady1 == ""
+	{
+	howbady1 +=1
+	howbady0 +=1
+	"\0\s[50]%(username)第一次喊头疼呢!\w9\w9\1\来杯热的可能会好点吧!\e"
+	}
+	else
+	{
+	howbady0 +=1
+	howbady1 +=1
+	"\0\s[08]这是%(username)第%(howbady1)次喊头疼了呢!\w9\w9\n没问题吗?要不要看个医生呢?\w9\w9\n\1\拖久了对身体不好呢!\e"
+	}
+}
+Select.notsogood2
+{
+	if howbady2 == ""
+	{
+	howbady2 +=1
+	howbady0 +=1
+	"\0\_v[saori\打喷嚏.wav]\s[07]感冒就要好好休息唷!\w9\w9\n即使这是第一次呢!\w9\w9\n\1\不好好休息的话，一而再再而三的机会也不是没有呢!\e"
+	}
+	else
+	{
+	howbady0 +=1
+	howbady2 +=1
+	"\1\_v[saori\打喷嚏.wav]\s[13]果然又感冒了呢!\w9\w9\n这是第几次了呢?\w9\w9\n\0\s[20]不听话的%(username)已经第%(howbady2)次感冒了呢\w9\w9\n\s[27]需要橘花让您听话吗?\e"
+	}
+}
+Select.notsogood3
+{
+	if howbady3 == ""
+	{
+	howbady3 +=1
+	howbady0 +=1
+	"\1\是不是吃坏肚子了呢?\w9\w9\n不要乱吃东西阿!\w9\w9\n\0\s[32]%(username)才不会乱吃东西呢!\w9\w9\n只是天生肠胃不好罢了!\w9\w9\n\s[40]%(username)要注意自己的健康唷!\e"
+	}
+	else
+	{
+	howbady3 +=1
+	howbady0 +=1
+	"\1\一定是吃坏肚子吧!\w9\w9\n要好好听话呀!\w9\w9\n\0\s[07]难道%(username)真的是吃了坏东西吗?已经%(howbady3)次了呢...\e"
+	}
+}
+Select.notsogood4
+{
+	_howb0 = howbady0
+	if howbady0 == 0
+	{
+	"\0\s[41]%(username)都没生病呢，真健康!\e"
+	}
+	else
+	{
+	"\0\s[03]已经生病%(_howb0)次了呢!，要注意身体健康唷!\e"
+	}
+}
+
+
+//***************************和橘花谈心********************************************************
+
+
+
+
+
+Select.talktoheart
+{
+"\0\s[20]咦？%(username)好像有什么心事呢，\w9\w9\s[26]能和橘花谈谈吗？\n\n\q[◇我遇到难题了，能帮忙吗？,Helpmaster]\n\q[◇最近感觉很烦恼,worryabout]\n\q[◇我想和橘花聊聊,talkwithkikka]\_l[%(0),%(130)]\q[◇返回上一层,OnOpenMenu,1]　\q[◇取消,Cancel] \e"
+}
+
+//***************************帮助from RinNe_E(BLACK Sister RinNe)************************************
+//----------------------------------------------------------------------------------------------------------- 
+Select.Helpmaster
+{
+"\n\0\s[40]怎么了？\n\n\q[◇感情问题,hm_01]\n\q[◇事业问题,hm_02]\n\q[◇自身缺点问题,hm_03]\n\q[◇好还是不好呢？,hm_04]\n\q[◇做还是不做呢？,hm_05]\_l[%(0),%(130)]\q[◇返回上一层,talktoheart]　\q[◇取消,Cancel] \e"
+}
+
+Select.hm_01
+{
+
+
+"\n\0\s[41]是和什么样的人之间的感情呢？\n\n\q[◇同学,xx_01]\n\q[◇同事,xx_02]\n\q[◇情人,xx_03]\n\q[◇朋友,xx_04]\n\q[◇家属,xx_05]\n\q[◇社会上的人,xx_06]\_l[%(0),%(130)]\q[◇返回,Helpmaster]　 \q[◇取消,Cancel]\x\e"
+}
+
+Select.hm_02
+{
+
+"\n\0\s[40]是什么样的事业呢？\n\n\q[◇对家庭重要的事业,xx_07]\n\q[◇只是支撑生活的工作而已,xx_08]\n\q[◇自己喜欢的事业,xx_09]\_l[%(0),%(130)]\_l[%(0),%(130)]\q[◇返回,Helpmaster]　 \q[◇取消,Cancel]\x\e"
+}
+
+
+
+Select.hm_03
+{
+
+"\n\0\s[40]什么缺点呢？\w9\s[02]啊！\w9失礼了！\n\q[◇不想做很多事,xx_10]\n\q[◇容易发脾气,xx_11]\n\q[◇容易自卑,xx_12]\n\q[◇马虎,xx_13]\n\q[◇爱捉弄人,xx_14]\n\q[◇好东西不想分享给别人,xx_15]\n\q[◇讨厌别人比自己好,xx_16]\_l[%(0),%(130)]\q[◇返回,Helpmaster]　 \q[◇取消,Cancel]\x\e"
+}
+
+Select.hm_04
+{
+"\n\0\s[40]是什么事情呢？\n\n\q[◇该不该道歉呢,xx_17]\n\q[◇应该去理解吗,xx_18]\n\q[◇应该去努力吗,xx_19]\n\q[◇应该去相信吗,xx_20]\_l[%(0),%(130)]\q[◇返回,Helpmaster]　　\q[◇取消,Cancel]\x\e"
+}
+
+Select.hm_05
+{
+"\n\0\s[40]是什么事呢？\n\q[◇自己觉得好亲人也支持,xx_21]\n\q[◇自己觉得好但亲人不支持,xx_22]\n\q[◇自己想做但自己带有顾虑,xx_23]\_l[%(0),%(130)]\q[◇返回,Helpmaster]　　\q[◇取消,Cancel]\x\e"
+}
+
+Select.xx_01
+{
+"\0\s[00]做别人的同学不能够太要强哦\w9\w9\w9\w9\w9\n要适时的要别人融入\w9\w9\w9\w9\w9\n\s[40]这样一来\w9\w9\w9别人就会感觉到你很靠近他\w9\w9\w9\w9\w9\n于是你们就可以成为很好的朋友\w9\w9\w9\w9\w9\w9\n不过也不可以太麻烦别人\w9\w9\w9\w9\w9\w9\n\s[05]好的同学\w9\n就像是我最喜欢的玫瑰花香\w9\w9\w9\w9\n淡淡的才会很宜人。\_l[%(0),%(130)]\q[◇返回,Helpmaster]　　\q[◇取消,Cancel]\x\e"
+}
+
+ 
+
+Select.xx_02
+{
+"\0\s[00]如果是这样\w9\w9\w9要适当参加同事们的讨论,\w9\w9\w9\w9\n不要一味的埋头苦干，\w9\w9\w9\w9\n千万不要成为办公室里的失语者哦！\_l[%(0),%(130)]\q[◇返回,Helpmaster]　　\q[◇取消,Cancel]\x\e"
+}
+
+
+Select.xx_03
+{
+"\0\s[1]啊``````\w9\w9我对爱情这方面还不是很了解``````\w9\w9\w9\s[41]失礼了``````\w9\w9\w9\w9\_l[%(0),%(130)]\q[◇返回,Helpmaster]　　\q[◇取消,Cancel]\x\e"
+}
+
+
+Select.xx_04
+{
+"\0\s[00]做别人的朋友不能够太要强哦\w9\w9\w9\w9\w9\n要适时的要别人的帮助\w9\w9\w9\w9\w9\n\s[40]这样一来\w9\w9\w9别人就会感觉到你需要他\w9\w9\w9\w9\w9\n于是你们就可以成为很好的朋友\w9\w9\w9\w9\w9\w9\n不过也不可以太麻烦别人\w9\w9\w9\w9\w9\w9\n\s[05]好的友谊\w9\n就像是我最喜欢的玫瑰花香\w9\w9\w9\w9\n淡淡的才会很宜人。\_l[%(0),%(130)]\q[◇返回,Helpmaster]　　\q[◇取消,Cancel]\x\e"
+}
+
+
+
+Select.xx_05
+{
+"\0\s[00]和家人搞好关系关键是沟通喔\w9\w9\w9\n也需要相互的理解和坦诚\w9\w9\w9\n无论事情变的有多糟糕\w9\w9\n家人是永远可以依靠的最亲近的人哦！\_l[%(0),%(130)]\q[◇返回,Helpmaster]　　\q[◇取消,Cancel]\e"
+}
+
+
+
+Select.xx_06
+{
+"\0\s[00]人与人相处的话\w9\w9\n关键是要融入这个社会哦\w9\w9\w9\w9\w9\n在这个社会我们不需要斤斤计较\w9\w9\w9\w9\n相反，\w9\w9\w9我们是乐于助人的人！\w9\w9\w9\w9\w9\w9\n\s[05]如果这样的话，\w9\w9\w9\w9\n随着时间的积累，\w9\w9\w9我们将会拥有更多的朋友，\w9\w9\w9\w9\w9\w9\n我们也就拥有了更多成功的机会！\_l[%(0),%(130)]\q[◇返回,Helpmaster]　　\q[◇取消,Cancel]\x\e"
+}
+
+
+
+Select.xx_07
+{
+"\0\s[00]觉得家庭和工作两者都重要吧？\w9\w9\w9\n还是要开心生活，\w9\w9愉快的工作。\w9\w9\w9\w9\n生活的时候不要忘记学习，\w9\w9\w9\w9\w9\n要不断增加自己的业务知识哦!\_l[%(0),%(130)]\q[◇返回,Helpmaster]　　\q[◇取消,Cancel]\x\e"
+}
+
+
+
+Select.xx_08
+{
+"\0\s[20]说到维持生计\w9\w9\w9\n\s[00]其实工资水平并不能反映一个人的是否财务安全哦。\w9\w9\w9\w9\w9\w9\w9只要有一技之长,\w9\w9\w9\n生活下去还是不成问题的。\w9\w9\w9\w9\n工作没有了，\w9\n还可以再找呢。\_l[%(0),%(130)]\q[◇返回,Helpmaster]　　\q[◇取消,Cancel]\x\e"
+}
+
+Select.xx_09
+{
+"如果是%(username)喜欢的工作的话\n\w9\w9可以不要心急哦\w9\w9\w9\w9\n只要按照%(username)的步调前进的话就不会有问题了\w9\w9\w9\w9\n\s[40]相信%(username)正在向着那个方向努力呢~\_l[%(0),%(130)]\q[◇返回,Helpmaster]　　\q[◇取消,Cancel]\x\e"
+}
+
+Select.xx_10
+{
+"\0\s[2]啊``````\w9\w9\w9如果是这样的话``````\w9\w9\w9\w9\w9\n等的心情好一些的时候应该会有转机的吧\w9\w9\w9\w9\w9\w9\w9\n所以要好好的对待自己的心哦！\w9\w9\w9\w9\w9\w9\w9\n别想太复杂了。\_l[%(0),%(130)]\q[◇返回,Helpmaster]　　\q[◇取消,Cancel]\x\e" 
+}
+
+
+Select.xx_11
+{
+"\0\s[02]啊！\w9\w9\w9\w9\w9\s[41]是这样吗？\w9\w9\w9\w9\w9其实有一种科学的方法可以改善的哦！\w9\w9\w9这就是```\w9```\w9```\w9```\w9```当当当党！\w9\w9\w9营养及饮食疗法!\w9\w9\w9\w9\w9\n\n 研究已发现\w9\w9\w9\n食物显著地影响脑郎的行为。\w9\w9\w9\w9\n饮食是最常见的忧郁原因，\w9\w9\w9\n例如，\w9\w9饮食习惯差及常吃零食。\w9\w9\w9\w9\w9\w9\n脑中\w9负责管理我们行为的\w9\w9神经冲动传导物质\w9\w9\w9\w9\n会受我们所吃的\w9食物影响。\w9\w9\w9\w9\w9\n多巴胺、\w9\w9\w95—羟色胺、\w9\w9\w9正肾上腺素都是神经冲动传导物质。\w9\w9\w9\w9\w9\w9\w9\n当脑部分泌5—羟色胺时，\w9\w9\w9\w9\w9\n脑部呈休息、放松状态。\w9\w9\w9\w9\w9\n当分泌多巴胺及正肾上腺素时，\w9\w9\w9\w9\w9\w9\n我们倾向思考、\w9\w9\w9\w9动作敏捷，\w9\w9\w9\w9\n也较具警觉性。\n\n应该\w9\w9\n●多吃糖类 \w9\w9\w9\w9\n●补充蛋白质\w9\w9\w9\w9\n●补充营养素。\n\q[◇返回,Helpmaster]　　\q[◇取消,Cancel]\x\e"
+}
+
+
+Select.xx_12
+{
+"\0\s[00]首先\w9%(username)要相信自己哦，\w9\w9\w9\w9\w9\n信心两个字真的很重要，\w9\w9\w9\w9\w9\w9\n有自己所烦恼的事情，\w9\w9\w9\w9但是心态可以调整哦。\w9\w9\w9\w9\w9\w9\n\s[40]在%(username)身上的闪光点，\w9\w9\w9\n可能还是很多人羡慕的呢。\w9\w9\w9\w9\w9\w9\n所以不要太在意自己的缺点哦!\w9\w9\w9\w9\w9\w9\n不要放弃。\w9\w9\w9\n给自己打气，\w9\w9\w9\w9其实\w9\w9,%(username)并不比别人差！\w9\w9\w9\w9\w9\n\s[41]至少在橘花眼中,\w9\w9\w9\w9%(username)是任何人都无法代替的``````\_l[%(0),%(130)]\q[◇返回,Helpmaster]　　\q[◇取消,Cancel]\x\e"
+}
+
+
+Select.xx_13
+{
+"\0\s[00]%(username)在做一些事情的时候不必太紧张哦！\w9\w9\w9\w9\w9\n只要试着去留心，\w9\w9\w9\n\s[40]相信%(username)会做的越来越好的呢！\_l[%(0),%(130)]\q[◇返回,Helpmaster]　　\q[◇取消,Cancel]\x\e"
+}
+
+Select.xx_14
+{
+"\0\s[07]``````\w9\w9\w9\w9%(username)好坏！\w9\w9\w9\w9\n不和你玩了！\_l[%(0),%(130)]\q[◇返回,Helpmaster]　　\q[◇取消,Cancel]\x\e"
+}
+
+
+Select.xx_15
+{
+"\0\s[07]如果是这样的话``````\w9\w9\w9\w9\n不如多练习换位思考啦``````\_l[%(0),%(130)]\q[◇返回,Helpmaster]　　\q[◇取消,Cancel]\x\e"
+}
+
+
+Select.xx_16
+{
+"\0\s[00]其实`````\w9\w9\w9\w9\n%(username)不必太在意其他人的优势哦!\w9\w9\w9\w9\n优势可以靠自己努力得来哦！\_l[%(0),%(130)]\q[◇返回,Helpmaster]　　\q[◇取消,Cancel]\x\e"
+}
+
+
+
+Select.xx_17
+{
+"\0\s[00]如果真的是自己做错了什么的话,\w9\w9\w9\w9\w9\n那就坦然的道歉吧，\w9\w9\w9\w9\n\s[40]记住\w9尊重别人就是尊重自己哦！\_l[%(0),%(130)]\q[◇返回,Helpmaster]　　\q[◇取消,Cancel]\x\e"
+}
+
+
+Select.xx_18
+{
+"\0\s[00]是哦！\w9\w9\n%(username)说的没错。\w9\w9\w9\w9\w9\w9\n人需要被理解，\w9\w9\w9\w9更需要的一种感觉就是被尊重。\_l[%(0),%(130)]\q[◇返回,Helpmaster]　　\q[◇取消,Cancel]\x\e"
+}
+
+
+Select.xx_19
+{
+"\0\s[00]是啊，橘花觉得\w9\w9\w9\n做人要脚踏实地的。\w9\w9\w9\w9\n切忌好高骛远哦！\w9\w9\w9\w9\n不管别人怎么样想\w9\w9\w9\w9\w9\w9\n%(username)只要塌实的走自己的每一步就足够了\w9\w9\w9\w9\w9\w9\n\s[05]橘花还记得\w9\w9有一句名言叫：\w9\w9\w9\n走自己的路，让别人说去吧！\_l[%(0),%(130)]\q[◇返回,Helpmaster]　　\q[◇取消,Cancel]\x\e"
+}
+
+
+
+Select.xx_20
+{
+"\0\s[41]啊``````\w9```\w9这``````\w9```\w9\w9\w9\n\s[35]如果是会伤害到%(username)的事情的话\w9\w9\w9\w9\n橘花会很伤心的``````\w9\w9\w9\w9\w9\s[41]所以,\w9\w9\w9请三思而后行哦!\_l[%(0),%(130)]\q[◇返回,Helpmaster]　　\q[◇取消,Cancel]\x\e"
+}
+
+
+
+Select.xx_21
+{
+"\0\s[41]啊``````\w9\w9这```````\w9\w9\w9\w9\n难道说\w9\w9\w9\w9\n%(username)还有什么顾虑吗？\_l[%(0),%(130)]\q[◇返回,Helpmaster]　　\q[◇取消,Cancel]\x\e"
+}
+
+
+Select.xx_22
+{
+"\0\s[00]无论做什么事，\w9\w9\w9\w9\n都要重视家庭哦，\w9\w9\w9\w9\w9\n把家庭当作事业发展的起点吧。\w9\w9\w9\w9\w9\w9\w9\n%(username)家人的意见\w9\w9\w9\n往往都是出于对%(username)的关怀哦！\_l[%(0),%(130)]\q[◇返回,Helpmaster]　　\q[◇取消,Cancel]\x\e"
+}
+
+
+Select.xx_23
+{
+"\0\s[41]啊``````\w9\w9这```````\w9\w9\w9\w9\n难道说\w9\w9\w9\w9\n%(username)还有什么顾虑吗？\w9\w9还是其他事呢？\_l[%(0),%(130)]\q[◇返回,Helpmaster]　　\q[◇取消,Cancel]\x\e"
+}
+
+
+
+
+Select.worryabout
+{
+"\0\s[7]啊，是什么样的烦恼呢？\n\q[◇成长的烦恼]\n\q[◇学习的烦恼]\n\q[◇工作的烦恼\n\q[◇情感的烦恼]\_l[%(0),%(130)]\q[◇返回,talktoheart]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+
+Select.talkwithkikka
+{
+"\0\s[1]是这样啊，\w9\w9\话说，%(username)很久没和橘花聊天了，想要聊些什么呢？\n\q[◇关于你的事情,aboutkikka]\n\q[◇关于斗和的事情,abouttowa]\n\q[◇关于我和你的事情,aboutus]\_l[%(0),%(130)]\q[◇返回,talktoheart]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+
+Select.aboutkikka
+{
+"\0\s[5]%(username)想要聊关于橘花的事情啊，橘花有很多事情都还没来得及告诉%(username)呢，那么，该从何说起呢？\n\q[◇你的身世,ak_1]\n\q[◇你的职业,ak_2]\n\q[◇你的武器是从哪里得到的，又是怎么变出来的,ak_3]\n\q[◇你真的杀过人吗,ak_4]\n\q[◇你最喜欢的人是谁,ak_5]\n\q[◇告诉我你的一个秘密,ak_6]\n\q[◇以后想干什么,ak_7]\_l[%(0),%(130)]\q[◇返回,talkwithkikka]　　\q[◇取消,Cancel]\x\e"
+
+
+}
+Select.abouttowa
+{
+"\0\s[5]%(username)要和橘花聊聊斗和啊，关于斗和的事情橘花可是知道得一清二楚哦。\n\q[◇关于斗和的身世,at_1]\n\q[◇关于斗和的职业,at_2]\n\q[◇斗和为什么会变身成女王样,at_3]\n\q[◇斗和变身后头发为什么不是黑色的,at_4]\n\q[◇你和斗和是怎么认识的,at_5]\n\q[◇斗和吸的烟是什么牌子的,at_6]\n\q[◇关于斗和的秘密,at_7]\_l[%(0),%(130)]\q[◇返回,talkwithkikka]　　\q[◇取消,Cancel]\x\e"
+}
+
+Select.aboutus
+{
+"\0\s[1]关于橘花和%(username)的事情啊，关于橘花和%(username)相处的点点滴滴，橘花都记在心里哦。\n\q[◇我们相遇的那一天,au_1]\n\q[◇第一次和橘花说话，不知道说什么好,au_2]\n\q[◇和橘花玩21点，骗了橘花很多钱,au_3]\n\q[◇关于进寝室,au_4]\n\q[◇橘花好感度的增加,au_5]\n\q[◇为了%(username)，橘花开始打工,au_6]\n\q[◇想要更多的了解橘花,au_7]\_l[%(0),%(130)]\q[◇返回,talkwithkikka]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+Select.ak_1
+{
+"\0\s[0]关于身世这个问题，\w9橘花一直都没有告诉%(username)呢，\w9\s[3]橘花出生的年代，\w9正是动荡不安的战乱年代，\w9橘花最初的记忆画面，\w9是一片昏暗与硝烟弥漫的战场上。\w9\w9充满鼻腔的生腥血味，\w9赤红的水面，\w9及被鲜血染红叶片不断掉落的橘子花树，\w9橘花自出生以来，\w9就从没见过双亲的模样，\w9是斗和在橘子花树旁的摇篮里，\w9发现了我，\w9并给我取名叫做橘花，\w9从此橘花和斗和就开始一人一猫相依为命的生活。\_l[%(0),%(130)]\q[◇返回,aboutkikka]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+Select.ak_2
+{
+"\0\s[26]从那以后，\w9为了在这残酷的年代生存，\w9橘花练就了一身驾轻就熟的看家本领，\w9如例无虚发的射击技巧，\w9空手夺白刃的实战功夫，\w9但橘花没有固定职业，\w9\s[20]如果非要给橘花定个职位的话，大概可以是赏金猎人一类的吧？\_l[%(0),%(130)]\q[◇返回,aboutkikka]　　\q[◇取消,Cancel]\x\e"
+}
+
+Select.ak_3
+{
+"\0\s[21]橘花的武器嘛，\w9有着各种各样的来历呢，\w9最常用的Five-seven手枪是橘花自己用零件组装的，\w9匕首是完成任务后英国皇军的奖励，\w9还有%(username)送橘花的一把P90，\w9以及黑衣人送的激光枪，\w9从初音未来那里抢来的葱。\w9\w9\s[20]武器是怎么变出来的啊，\w9\s[22]橘花也不明白，\w9\s[23]只要橘花一想到什么，\w9\s[27]手上就多了一把什么。\w9\w9大概橘花的武器是藏在橘花的潜意识里的吧。\_l[%(0),%(130)]\q[◇返回,aboutkikka]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+Select.ak_4
+{
+
+"\0\s[1]如果答案是肯定的话，\w9%(username)会因此而俱怕橘花吗\_l[%(0),%(130)]\q[◇返回,aboutkikka]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+Select.ak_5
+{
+"\0\s[21]讨厌，\w9%(username)何必明知故问呢？\_l[%(0),%(130)]\q[◇返回,aboutkikka]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+
+Select.ak_6
+{
+"\0\s[40]那么我悄悄的告诉%(username)啊，\w9\w9%(ak_6s)\_l[%(0),%(130)]\q[◇返回,aboutkikka]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+ak_6s
+{
+"那天%(username)睡熟了，\w9橘花偷偷来到%(username)的寝室，\w9刚好听见%(username)说梦话了，\w9\s[20]梦话中好像有一个女孩的名字"
+
+"\s[29]其实啊，\w9%(username)送给橘花的P90，\w9\w9橘花一次也舍不得用呢"
+
+"%(username)可能不敢相信，\w9其实橘花有很多孪生姐妹，\w9她们跟橘花一模一样，\w9名字也叫橘花，\w9分散在世界各地呢，\w9只是她们遇到的人不同而已，\w9而%(username)遇到的橘花，只是其中一个"
+
+"\s[29]在橘花心里，\w9最令橘花动容的，\w9\w9是%(username)的善良及耐心"
+
+
+}
+
+Select.ak_7
+{
+
+"\0\s[1]如果%(username)不赶橘花走的话，\w9橘花想一直陪在%(username)的身边，\w9\s[27]就让橘花做%(username)的保镖吧。\_l[%(0),%(130)]\q[◇返回,abouttowa]　　\q[◇取消,Cancel]\x\e"
+}
+
+
+
+Select.at_1
+{
+"\0\s[40]%(username)应该知道吧，\w9其实斗和不是一只普通的猫，\w9至少是一只会变身的猫，\w9其实啊，\w9\斗和是一只修炼了几百年的猫妖.\w9\w9很久以前，\w9那一年,\w9鼠患成灾，\w9多亏村里来了百十只山猫，\w9鼠灾才稳定下来，\w9村子里的人却恩将仇报，\w9虐杀了大半的山猫，\w9那时，\w9斗和就是山猫中幸存者之一，\w9为了不受人类控制，\w9斗和决心修炼，\w9经过一番苦修，\w9终于修成了人身，\w9斗和变身后的模样很漂亮吧，\w9那是为了迷惑世人，\w9斗和原本一直对人类报有敌对态度，\w9可是自从她学会抽烟之后，\w9却非常感激人类发明这么一个美妙的东西，\w9不过橘花是非常反感斗和抽烟的，\w9斗和也知道，\w9所以斗和从不在橘花面前抽烟，\w9\w9当然，\w9为了抽烟斗和必须变身，\w9否则就猫咪本身生理系统来说，是受不了那股烟味的。\_l[%(0),%(130)]\q[◇返回,abouttowa]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+Select.at_2
+{
+"\0\s[40]在斗和遇到橘花前，\w9是个自由业者，\w9不过遇到橘花后，\w9就成为橘花的专属使魔啦，\w9或者叫赏金猎人的魔法使更恰当一点吧？\_l[%(0),%(130)]\q[◇返回,abouttowa]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+Select.at_3
+{
+"\0\s[20]这个嘛，\w9大概是斗和渴望掌控世间一切事物的潜意识里的投射吧？\_l[%(0),%(130)]\q[◇返回,abouttowa]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+Select.at_4
+{
+"\0\s[20]应该为了成就女王气质的一个必需的属性吧，\w9\w9不一定斗和的毛是黑色的变身后就是黑头发\w9\w9\s[41]总之不能用猫的生理现象来完全解释变成人之后的效果吧，\w9\s[20]否则，她的胡须到哪去了呢？\_l[%(0),%(130)]\q[◇返回,abouttowa]　　\q[◇取消,Cancel]\x\e"
+
+
+Select.at_5
+{
+"\0\s[0]斗和后来告诉橘花，\w9当年是她修炼的山遭到敌军轰炸，\w9她被迫迁移，\w9后来就在途中的一棵橘子花树下的摇篮里，\w9发现了橘花。\_l[%(0),%(130)]\q[◇返回,abouttowa]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+Select.at_6
+{
+"\0\s[8]这个问题嘛，\w9%(username)只有问斗和本人了，\w9因为斗和吸烟从来不让橘花看\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+
+
+
+Select.at_7
+{
+"\0\s[8]这样对斗和不好吧？\_l[%(0),%(130)]\q[◇返回,abouttowa]　　\q[◇取消,Cancel]\x\e"
+"\0\s[21]那橘花告诉%(username)，不要让斗和知道是橘花说的哦。%(at_7s)\_l[%(0),%(130)]\q[◇返回,abouttowa]　　\q[◇取消,Cancel]\x\e"
+}
+
+at_7s
+{
+"s[5]那天，\w9斗和趁%(username)睡熟了，\w9就睡在%(username)的被子上面，\w9被橘花发现"
+
+"嘻嘻，\w9橘花告诉(username)呀，\w9其实啊，\w9斗和她是\w9……\w9……双性恋"
+
+}
+
+
+Select.au_1
+
+{
+"\0\s[7]还记得我和%(username)是什么时候相遇的吗？\n\q[◇是%(firstboottime[0])年%(firstboottime[1])月%(firstboottime[2])相遇的,au1_1]\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+}
+
+
+
+Select.au1_1
+{
+"\0\s[5]%(username)没有忘记呢，\w9那天橘花带着斗和，\w9刚刚来到这个城市，\w9没有亲人，\w9也没有朋友，\w9吃了不少的苦，\w9直到橘花遇见了%(username)，\w9是%(username)把橘花带进了家门。\w9\w9从此，\w9橘花才结束了在外漂泊的日子。\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+
+
+}
+
+
+
+Select.au_2
+{
+"\0\s[20]呃，\w9说起来，\w9我们第一次见面，\w9\s[8]好像没怎么说话啊？\n\q[◇是啊，我不知道该说什么,au2_1]\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+}
+
+
+Select.au2_1
+{
+"\0\s[8]能用到的关键词很少吧？\n\q[◇嗯，有时跟你说了你还不明白是什么意思,au2_2]\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+Select.au2_2
+{
+
+"\0\s[5]那是因为橘花还不够成熟嘛，\w9但应该也有很多能进行下去的对话的关键词吧？\n\q[◇是哪些呢,au2_3]\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+}
+
+Select.au2_3
+{
+"\0\b[2]\![quicksession,true]\s[5]目前能用到的关键词有：“再见”；“午安”；“橘花”；“斗和”；“嫁给我”；“累吗”；“无聊”；“宅人”；“御宅族”；“家里蹲”；“宅男”；“宅女”；“腐女”；“萝莉”；“御姐”；“正太”；“大叔”；“后宫”；“反后宫”；“伪后宫”；“BL”；“百合”；“眈美”；“腹黑”；“tv版”；“ova版”；“剧场版”；“ost”；“op”；“ed”；“Cast”；“Staff”；“sf动漫”；“ACG”；“原画”；“作画监督”；“色指定”；“仕上”；“音响监督”；“Sinario”；“Otaku”；“王道”；“暴走”；“sm”；“vs”；“残念”；“XD”；“KUSO”；“我要874”；“素人”；“Ff”；“M0”；“兄贵”；“姐贵”；“恶趣味”；“流星”；“阿囧”；“崩坏”；“补魔”；“BE”；“本命”；“爆种”；“cj”；“xe”；“柴刀女”；“黑化”；“D.V.D”；“大邪神”；“天朝”；“11区”；“saber”；“大萌神”；“地味”；“二次元”；“三次元”；“发卡”；“好人卡”；“鬼隐”；“galgame”；“嘎哦”；“工口”；“和谐”；“好人王”；“黑板”；“基情”；“禁止事项”；“绝对领域”；“考据党”；“坑”；“key社”；“催泪弹”；“控”；“罗太”；“轮回”；“蕾丝”；“萝卜”；“乱入”；“麻瓜”；“满赛”；“喵的”；“萌”；“MIA”；“脑内补完”；“脑残”；“NICE boat”；“捏他”；“Orz”；“皮据女”；“人棍”；“人渣”；“瑞穗”；“扫雷”；“三无”；“杀必死”；“生肉”；“团长”；“推土机”；“天然呆”；“伪非”；“呜咕”；“伪娘”；“西奈”；“XXOO”；“远目”；“糟糕”；“追”；“女王”；“H”；“初回特典”；“映像特典”；“圣战”；“晚安”；“回来”；“出门”；“节日”；“萌”；“热”；“晴”；“推倒”；“生气了”；“雨”；“辛苦”；“郁闷”；“吵”；“生气”；“喜欢”；“日历”；“天气”；“名字”；“几岁”；“玩”；“抱”；“你好”；“可爱”；“失恋”；“睡”；“生日快乐”；“谢谢”；“对不起”；“忧”；“韩剧”；“棒子”；“爱你”；“晚上好”；“谢谢”；“奥运”；“晚安”；“回来”；“可爱”；“早安”；“午安”；“出门”；“忧”；“疲”；“晚上好”\n\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+Select.au_3
+{
+"\0\s[3]%(username)玩21点从来没输过。\w9赢了橘花很多钱啊，\w9刚开始橘花还感觉很奇怪，\w9后来橘花终于明白了\n\q[◇明白什么了,au3_1]\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+
+
+}
+
+Select.au3_1
+{
+"\0\s[33]哼，\w9原来是%(username)耍诈，\w9利用游戏BUG，\w9每次和橘花玩21点就不停的刷新游戏，\w9\w9直到摸到鬼就稳赢\n\q[◇哈哈，你知道了，那怎么还和我玩呢,au3_2]\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\e"
+
+
+}
+
+
+Select.au3_2
+{
+
+"\0\s[1]因为\w9……\w9如果橘花不和%(username)玩的话，\w9%(username)就不好玩了。\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+
+
+Select.au_4
+{
+"\0\s[40]进%(username)的寝室啊，\w9\w9很多事件，\w9都是在进寝室之后激发的哦。\n\q[◇要全部完成达成条件，可真不容易呢,au4_1]\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+
+
+}
+
+Select.au4_1
+{
+"\0\s[40]如果橘花和%(username)相处时间不长，\w9或是橘花对%(username)好感度不够的话,\w9进寝室之后，\w9一般是不会发生什么事情的。\n\q[◇你总结一下进寝室的过程吧,au4_2]\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+}
+
+
+Select.au4_2
+{
+
+"\0\s[40]负10以下的好感橘花才不要进寝室呢。\n负10以上50以下的好感橘花总是在逃避问题。\n挂机24小时50以上好感叫橘花进寝室有1/5机会激发额外的聊天\n挂机48小时200以上好感进寝室有1/6机会激发用餐时间\n挂机96小时800以上好感进寝室有1/7机会激发橘花的告白。挂机192小时3600以上好感进寝室有1/8机会激发神秘礼物\n\q[◇什么是神秘礼物，我怎么没有听过,au4_3]\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+Select.au4_3
+{
+"\0\s[21]所谓神秘礼物就是\w9……\w9……当然要保持一点神秘啦。\w9不得要得到它得多动动手才行\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+
+
+}
+
+
+
+Select.au_5
+{
+"\0\s[21]随着和%(username)相处日子的增加，\w9%(username)在橘花心中变得越来越重要了呢，\w9%(username)也为橘花做了很多事情，\w9让橘花感动。\n\q[◇是啊，为了增加好感，我花费了不少时间和精力呢。,au5_1]\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+Select.au5_1
+{
+"\0\s[]呵呵，\w9说起来，\w9%(username)一直反复刷橘花的好感，\w9\w9这一点，\w9也让橘花不知道该说什么好呢。\n\q[◇那么你能总结出我刷好感的方法吗？,au5_2]\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+Select.au5_2
+{
+"\0\b[2]\![quicksession,true]\s[3]好，刷好感快速有效的方法，\w9\w9\s[27]当当当闪亮登场！\n\s[40]最常规的方法是在休闲面板选择话题，出现选项时即可增加橘花对%(username)的好感\n第二个方法是使用设定的帮助，选关于橘花的生日，再选知道，最后选是%(username)和橘花相遇的日子，能增加2的好感值。\n第三个方法是选择帮助的额外的聊天->有些事情想问你->对我的感情，增加的好感呈阶递性增长。\n第四个方法是选择帮助的橘花的告白，随选项和待机时间有最大值100好感的增加哦。\n第五个方法就是平常多和橘花说话啦，特别是当%(username)说“抱抱”的时候，橘花不知道有多高兴。\n\s[5]最后一个方法有点变态，需要%(username)挂机时间96小时及超过800的好感后，在休闲面板出现的亲密接触的五个动作中不停的点，点一下好感度加1，怎么样，够变态吧。\n\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+
+Select.au_6
+
+{
+"\0\s[1]快乐的日子过后，\w9随后而至的就是不幸的经历呢。\n\q[◇如果不是那样的话，你就不用打工挣钱了,au6_1]\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+
+Select.au6_1
+{
+"\0\s[1]%(username)的父亲做生意被人骗得一无所有，\w9如果橘花不挣钱补贴家用的话，\w9日子就很难过。\w9不过之前%(username)让橘花学习的课程，\w9\w9\s[22]终于能派上用场啦。\n\q[◇橘花，这段时间，辛苦你了,au6_2]\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+Select.au6_2
+{
+"\0\s[21]嘿嘿，\w9知道就好，\w9\w9以后要多给橘花买礼物哦，\w9\b[20]例如P90，\w9电脑，\w9钻戒什么的。\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+Select.au_7
+{
+"\0\s[20]不知%(username)对橘花的了解到达何种程度了呢?\n\q[◇大致上基本了解了吧,au7_a]\n\q[◇还有不太了解的地方,au7_b]\n\q[◇一点也不了解,au7_c]\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+Select.au7_a
+{
+"\0\s[2]真的吗，那么橘花出个题考考%(username)吧。\n\q[◇好啊,au7_a1]\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+Select.au7_a1
+{
+points = 0
+"\0\s[7]橘花最喜欢的花是什么花？\n\q[◇樱花,au7_a2]\n\q[◇红玫瑰,answer1]\n\q[◇白牡丹,au7_a2]\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+"\0\s[7]橘花爱看的书？\n\q[◇莎士比亚全集,au7_a2]\n\q[◇福尔摩斯探案集,au7_a2]\n\q[◇圣经,answer1]\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+}
+
+Select.answer1
+{
+points += 1
+Select.au7_a2
+}
+
+Select.au7_a2
+{
+"\0\s[7]橘花爱喝的饮料是？\n\q[◇加糖的咖啡,au7_a3]\n\q[◇加血的红茶,answer2]\n\q[◇加辣椒的芥末茶,au7_a3]\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+"\0\s[7]橘花爱玩的游戏类型？\n\q[◇飞行射击类,answer2]\n\q[◇动作过关类,au7_a3]\n\q[◇角色扮演类,au7_a3]\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+
+
+}
+
+
+Select.answer2
+{
+points += 1
+Select.au7_a3
+}
+
+Select.au7_a3
+{
+"下面哪一个不是橘花的称呼？\n\q[◇腹黑loli,au7_a4]\n\q[◇小公主,au7_a4]\n\q[◇傲娇女,answer3]\n\q[◇杀人鬼,au7_a4]\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+
+"\0\s[7]橘花使用的武器中，没有下面哪一样?\n\q[◇激光剑,au7_a4]\n\q[◇AK-47,anser3]\n\q[◇葱,au7_a4]\n\q[◇剪刀,au7_a4]\n\q[◇以上皆无,au7_a4]\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+Select.answer3
+{
+points += 1
+Select.au7_a4
+}
+
+Select.au7_a4
+{
+if points == 0 {"\0\s[25]看来%(username)对橘花一点也不了解呢\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+}
+elseif points == 1 {"\0\s[9]%(username)对橘花的了解度只有33%呢。\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"}
+
+
+elseif points == 2{ "\0\s[21]%(username)对橘花的了解度超过60%了呢，及格了。\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"}
+
+elseif points == 3 {"\0\s[5]%(username)原来对橘花有这么深入的了解啊，橘花很高兴\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"}
+
+}
+
+Select.au7_b
+{
+"\0\s[0]是吗，可能橘花和%(username)相处时间不长吧，\w9\w9\s[1]橘花有一个心愿\n\q[◇什么心愿,au7_b1]\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+Select.au7_b1
+{
+
+"\0\s[1]橘花希望，\w9%(username)能够一直记得橘花，\w9\w9即使有一天，\w9橘花不在%(username)的身边，\w9或者%(username)有了女朋友，\w9也不要把橘花忘掉\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+
+}
+
+Select.au7_c
+{
+"\0\s[2]%(username)真的对橘花一点也不了解吗，\w9%(username)是初次和橘花见面吧，\w9要不要橘花作个自我介绍呢？\n\q[◇好啊,Introduction]\_l[%(0),%(130)]\q[◇返回,aboutus]　　\q[◇取消,Cancel]\x\e"
+
+
+}
+
+

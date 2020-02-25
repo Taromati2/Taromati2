@@ -1,0 +1,652 @@
+﻿///////// 文　ゴーストテンプレート
+///////// マウス入力関连辞书
+///////// written by umeici.
+
+
+
+
+//**** 抚で反応 *************************************************************************
+
+//---- OnMouseMoveイベント --------------------------------------------------------------
+OnMouseMove
+{
+
+	if mode == "1"
+	{
+		OnMouseMove1
+	}
+	else
+	{
+		OnMouseMove0
+	}
+}
+
+OnMouseMove0
+{
+	//---- reference3を见て、本体侧かkero侧かを判断する
+	if reference3 == 0
+	{
+		if reference4 != ""
+		{
+			stroke++
+			if stroke >= 32
+			{
+				if reference4 == "Head"
+				{
+					headpatflag = 1
+					headpattime = 0
+					_talk = "TalkSakuraHeadPat.%(GetPhase).%(headpatcount)"
+					if ISFUNC(_talk) == 1
+					{
+						EVAL(_talk)
+						headpatcount++
+					}
+					else
+					{
+						EVAL("TalkSakuraHeadPat.%(GetPhase)")
+					}
+				}
+				elseif reference4 == "Face"
+				{
+					_talk = "TalkSakuraFacePat.%(GetPhase)"
+					if ISFUNC(_talk) == 1
+					{
+						EVAL(_talk)
+					}
+					else
+					{
+						TalkSakuraFacePat
+					}
+				}
+				elseif reference4 == "Bust"
+				{
+					bustpatflag = 1
+					bustpattime = 0
+					_talk = "TalkSakuraBustPat.%(GetPhase).%(bustpatcount)"
+					if ISFUNC(_talk) == 1
+					{
+						EVAL(_talk)
+						bustpatcount++
+					}
+					else
+					{
+						EVAL("TalkSakuraBustPat.%(GetPhase)")
+					}
+				}
+				elseif reference4 == "Hand"
+				{
+					_talk = "TalkSakuraHandPat.%(GetPhase)"
+					if ISFUNC(_talk) == 1
+					{
+						EVAL(_talk)
+					}
+					else
+					{
+						TalkSakuraHandPat
+					}
+				}
+				stroke = 0
+			}
+		}
+		else
+		{
+			stroke = 0
+		}
+	}
+	else
+	{
+		stroke++
+		if stroke >= 64
+		{
+			if reference4 == "Head"
+			{
+				TalkKeroHeadPat
+			}
+			elseif reference4 == "Tail"
+			{
+				TalkKeroTailPat
+			}
+			else
+			{
+//				TalkKeroPat
+			}
+			stroke = 0
+		}
+	}
+}
+
+
+//---- 头抚で ---------------------------------------------------------------------------------------------------------
+
+TalkSakuraHeadPat.0.0
+{
+	"\0\s[9]…\w9\w5怎么了吗？\e"
+	"\0\s[0]…\w9\w5做什么呢？\e"
+	"\0\s[9]…\w5不要这样……\e"
+
+}
+TalkSakuraHeadPat.0
+{
+	"\0\s[9]…\w9…\w9…\e"
+        "\0\s[33]…哎呀…\e"
+}
+
+TalkSakuraHeadPat.1.0
+{
+	"\0\s[1]怎、\w9\w5怎么了吗？\e"
+	"\0\s[2]呀…\e"
+	"\0\![raise,OnPlay,se_01.wav]\s[2]啊…\w9\w9\s[1]这个…\e"
+}
+TalkSakuraHeadPat.1.1
+{
+	"\0\s[1]…\w9嗯？\e"
+	"\0\s[1]那个…\w9\s[1]这个…\e"
+}
+TalkSakuraHeadPat.1.2
+{
+	"\0\s[1]%(username)…\e"
+	"\0\s[1]…\w9…\w9…\e"
+}
+TalkSakuraHeadPat.1.3
+{
+	"\0\s[29]…\w9谢谢。\e"
+}
+TalkSakuraHeadPat.1
+{
+	"\0\s[1]那个…\w9已经可以了…\e"
+	"\0\s[1]那个…\w9我没关系的…\e"
+	"\0\s[1]…\w9…\w9…\e"
+	"\0\s[1]唔…\e"
+}
+
+TalkSakuraHeadPat.2.0
+{
+	"\0\![raise,OnPlay,se_01.wav]\s[1]啊…\e"
+	"\0\s[26]…\w9…\w9…\e"
+	"\0\![raise,OnPlay,se_01.wav]\s[2]啊…\w9\w9\s[1]那个…\e"
+}
+TalkSakuraHeadPat.2.1
+{
+	"\0\s[1]谢…\w9谢谢…\e"
+	"\0\s[1]%(username)…\e"
+}
+TalkSakuraHeadPat.2.2
+{
+	"\0\s[29]…\w9…\w9…\e"
+	"\0\s[1]这个…\w9\w9我的头发、\w9怎么了吗？\e"
+}
+TalkSakuraHeadPat.2.3
+{
+	"\0\s[29]…\w9那个。\w9\w9\s[1]\n啊…\w9没事…\e"
+	"\0\s[1]那、\w9那个…\w9\w9\n我会害羞的。\e"
+}
+TalkSakuraHeadPat.2
+{
+	"\0\s[29]嗯…\e"
+	"\0\s[1]…\w9…\w9…\e"
+	"\0\s[1]那个…\e"
+	"\0\![raise,OnPlay,se_01.wav]\s[1]啊…\w9\w9唔…\e"
+}
+
+//---- 顔抚で ---------------------------------------------------------------------------------------------------------
+
+TalkSakuraFacePat.0
+{
+	"\0\s[6]嗯。\w9\w9\s[0]\n怎么了？\e"
+}
+
+TalkSakuraFacePat
+{
+	"\0\s[6]唔嗯…\w9\w9\s[2]那个、\w9怎么了？\e"
+	"\0\s[6]嗯？\w9\w9\s[20]\n那个、\w9我脸上有什么东西吗？\e"
+	"\0\s[21]好痒喔。\e"
+	"\0\s[6]唔…\w9\w9\s[2]\n…\w9…\w9…\e"
+}
+
+//---- 胸抚で ---------------------------------------------------------------------------------------------------------
+
+TalkSakuraBustPat.0
+{
+_phase = GetPhase_bedroom
+if _phase < 4
+{intimacy -= 1}
+else{intimacy += 2
+}
+	"\0\s[35]唔…\e"
+	"\0\s[35]…\w9…\w9…\1\s[12]你就这么喜欢摸女生胸部吗……\0\e"
+	"\0\![raise,OnPlay,se_01.wav]\s[35]啊…\e"
+	"\0\s[35]…\w9…\w9…\e"
+}
+
+
+TalkSakuraBustPat.1.0
+{
+	"\0\s[1]呃…\w9\w9那、那个？\e"
+}
+TalkSakuraBustPat.1
+{
+_phase = GetPhase_bedroom
+if _phase < 4
+{intimacy -= 1}
+else{intimacy += 2
+}
+	"\0\s[1]嗯…\w9\w9啊…\e"
+	"\0\s[1]那、\w9那个…\e"
+	"\0\s[1]那个…\w9那个…\e"
+	"\0\s[1]…\w9…\w9…\e"
+}
+
+TalkSakuraBustPat.2.0
+{
+	"\0\s[1]耶…\w9\w9那、那个？\e"
+}
+TalkSakuraBustPat.2
+{
+_phase = GetPhase_bedroom
+if _phase < 4
+{intimacy -= 1}
+else{intimacy += 2
+}
+	"\0\s[1]嗯…\w9\w9啊…\e"
+	"\0\s[1]那、\w9那个…\e"
+	"\0\s[1]那个…\w9那个…\e"
+	"\0\s[1]…\w9…\w9…\e"
+}
+
+//---- 手抚で ---------------------------------------------------------------------------------------------------------
+
+TalkSakuraHandPat.0
+{
+	"\0\s[0]…\w9…\w9…\e"
+}
+
+TalkSakuraHandPat
+{
+	"\0\s[29]…\w9…\w9…\e"
+	"\0\![raise,OnPlay,se_01.wav]\s[29]啊…\e"
+}
+
+//---- 猫抚で ---------------------------------------------------------------------------------------------------------
+
+TalkKeroHeadPat
+{
+	"\1\s[12]…\w9…\w9…\w9\s[10]\e"
+	"\1\s[10]呣…\e"
+	"\1\s[10]嗯～。\w9\w9\n算了、\w9随你高兴吧。\e"
+        "\1\s[10]呼噜呼噜…………"
+}
+
+TalkKeroTailPat
+{
+	"\1\s[10]啊啊啊…\w9\s[12]\n给我停下来！\e"
+	"\1\s[10]呜～。\e"
+	"\1\s[12]咕嘎啊啊～！\w9\w9\n不准碰！\e"
+        "\1\s[12]喵了个咪的，你不知道猫很不喜欢被人摸尾巴吗？"
+}
+
+TalkKeroPat
+{
+	"\1\s[12]…\w9…\w9…\w9\s[10]\e"
+}
+
+
+//**** つつかれ反応 *********************************************************************
+
+//---- OnMouseDoubleClickイベント -------------------------------------------------------
+
+OnMouseDoubleClick
+{
+	if mode == "1"
+	{
+		OnMouseDoubleClick1
+	}
+	else
+	{
+		OnMouseDoubleClick0
+	}
+}
+
+
+
+OnMouseDoubleClick0
+{
+	if reference3 == 0
+	{
+		if reference4 == "Head"
+		{
+			_talk = "TalkSakuraHeadClick.%(GetPhase)"
+			if ISFUNC(_talk) == 1
+			{
+				EVAL(_talk)
+			}
+			else
+			{
+				TalkSakuraHeadClick
+			}
+		}
+		elseif reference4 == "Face"
+		{
+			_talk = "TalkSakuraFaceClick.%(GetPhase)"
+			if ISFUNC(_talk) == 1
+			{
+				EVAL(_talk)
+			}
+			else
+			{
+				TalkSakuraFaceClick
+			}
+		}
+			if reference4 == "Bust"
+			{
+				bustclickflag = 1
+				bustclicktime = 0
+				_talk = "TalkSakuraBustClick.%(GetPhase).%(bustclickcount)"
+				if ISFUNC(_talk) == 1
+				{
+					EVAL(_talk)
+					bustclickcount++
+				}
+				else
+				{
+					EVAL("TalkSakuraBustClick.%(GetPhase)")
+				}
+			}
+		elseif reference4 == "Hand"
+		{
+			_talk = "TalkSakuraHandClick.%(GetPhase)"
+			if ISFUNC(_talk) == 1
+			{
+				EVAL(_talk)
+			}
+			else
+			{
+				TalkSakuraHandClick
+			}
+		}
+		else
+		{
+            OpenMenu
+		}
+	}
+	else
+	{
+		if reference4 == "Head"
+		{
+			TalkKeroHeadClick
+		}
+		elseif reference4 == "Tail"
+		{
+			TalkKeroTailClick
+		}
+		else
+		{
+			OnMusicPlayer;
+		}
+	}
+}
+
+//**** 突き反応 *******************************************************************************************************
+
+//---- 头突き ---------------------------------------------------------------------------------------------------------
+
+OnPlay
+{
+
+        _sound = reference0;
+        _i = FUNCTIONEX("saori\mciaudior.dll", "stop")
+	_j = FUNCTIONEX("saori\mciaudior.dll", "load", "%(_sound)")
+	_k = FUNCTIONEX("saori\mciaudior.dll", "play")
+
+}
+
+
+
+TalkSakuraHeadClick.0
+{       
+	"\0\![raise,OnPlay,se_03.wav]\s[3]呜…\e"
+	"\0\![raise,OnPlay,se_03.wav]\s[3]…\w9…\w9…\e"
+}
+
+TalkSakuraHeadClick.1
+{
+	"\0\![raise,OnPlay,se_01.wav]\s[33]啊…\w9\w9\w9\s[3]\n真过分…\e"
+	"\0\![raise,OnPlay,se_01.wav]\s[33]啊…\w9\w9\w9\s[7]\n为什么…\e"
+}
+
+TalkSakuraHeadClick.2
+{
+	"\0\![raise,OnPlay,se_01.wav]\s[33]啊…\w9\w9\w9\s[9]\n呜呜…\e"
+	"\0\![raise,OnPlay,se_01.wav]\s[33]啊…\w9\w9\w9\n呜嗯、\w9\w5\s[9]请不要故意欺负我…\e"
+}
+
+//---- 顔突き ---------------------------------------------------------------------------------------------------------
+
+TalkSakuraFaceClick.0
+{
+	"\0\![raise,OnPlay,se_03.wav]\s[3]呜…\e"
+	"\0\![raise,OnPlay,se_03.wav]\s[3]…\w9…\w9…\e"
+}
+
+TalkSakuraFaceClick.1
+{
+	"\0\![raise,OnPlay,se_02.wav]\s[1]呀啊…\e"
+	"\0\![raise,OnPlay,se_02.wav]\s[3]好痛…\e"
+}
+
+TalkSakuraFaceClick.2
+{
+	"\0\![raise,OnPlay,se_02.wav]\s[33]咿呀…\w9\w9\s[1]\n这…\e"
+	"\0\![raise,OnPlay,se_02.wav]\s[33]呜嗯…\e"
+}
+
+
+//---- 胸突き ---------------------------------------------------------------------------------------------------------
+
+TalkSakuraBustClick.0
+{
+	intimacy -= 1
+        "\0\s[23]…\w9\w9你到底要干什么…\e"
+        "\0\s[23]\w9\w9找死！！！\w9\w9\e"
+	"\0\![raise,OnPlay,se_03.wav]\s[35]呜…\e"
+	"\0\![raise,OnPlay,se_03.wav]\s[35]…\w9…\w9…\e"
+}
+
+TalkSakuraBustClick.1.0
+{
+	"\0\![raise,OnPlay,se_04.wav]\s[4]那…\w9\w9\w9那个…\e"
+	"\0\![raise,OnPlay,se_04.wav]\s[2]咿呀…\w9\w9\s[1]\n…\w9…\w9…\e"
+}
+TalkSakuraBustClick.1.1
+{
+	"\0\![raise,OnPlay,se_01.wav]\s[1]啊…\w9\w9\w9\s[9]不、\w9不行啦…\e"
+}
+TalkSakuraBustClick.1
+{
+	intimacy -= 1
+	"\0\![raise,OnPlay,se_03.wav]\s[3]呜！\e"
+	"\0\![raise,OnPlay,se_03.wav]\s[3]呜…\w9好痛…\e"
+	"\0\![raise,OnPlay,se_01.wav]\s[1]啊…\w9\w9讨厌…\e"
+	"\0\s[6]哼…\e"
+        "\0\s[23]…\w9\w9你到底要干什么…\e"
+}
+
+TalkSakuraBustClick.2.0
+{
+	"\0\![raise,OnPlay,se_01.wav]\s[1]啊…\w9\w9\w9那个…\e"
+	"\0\![raise,OnPlay,se_02.wav]\s[2]咿呀…\w9\w9\s[1]\n…\w9…\w9…\e"
+}
+TalkSakuraBustClick.2.1
+{
+	"\0\![raise,OnPlay,se_01.wav]\s[1]啊…\w9\w9\w9\s[9]不、\w9不可以…\e"
+}
+TalkSakuraBustClick.2
+{
+	intimacy -= 1
+	"\0\![raise,OnPlay,se_03.wav]\0\s[3]呜！\e"
+	"\0\![raise,OnPlay,se_03.wav]\0\s[3]呜…\w9好痛…\e"
+	"\0\![raise,OnPlay,se_01.wav]\0\s[1]啊…\w9\w9讨厌…\e"
+       "\0\s[22]%(username)想吃枪子儿吗？\e"
+}
+
+//---- 手突き ---------------------------------------------------------------------------------------------------------
+
+TalkSakuraHandClick.0
+{
+	OpenMenu(0)
+}
+
+TalkSakuraHandClick.1
+{
+	"\0\s[26]？\e"
+}
+
+
+TalkSakuraHandClick.2
+{
+	"\0\![raise,OnPlay,se_04.wav]\s[2]哇…\w9\w9\s[1]\n这…\e"
+	"\0\![raise,OnPlay,se_04.wav]\s[2]哇…\w9\w9\s[29]\n…\w9…\w9…\e"
+}
+
+
+
+//---- 猫突き ---------------------------------------------------------------------------------------------------------
+
+TalkKeroHeadClick
+{
+	"\1\s[12]动物保护团体的那些家伙会生气喔。\e"
+	"\1\s[10]非常不愉快。\w9\w9\0\s[8]咦？\w9\w9\1\s[13]\n\n[half]抱歉、\w9当我什么都没说。\e"
+	"\1\s[12]…\w9干麻啦？\e"
+	"\1\s[12]…\w9…\w9…\w9\s[10]\e"
+	{
+		"\1\s[10]…\w9很有胆量嘛。\w9\w9\n等一下\w5作好被围殴的觉悟吧。\w9\w9\w9\s[12]\n\n[half]给我准备好"
+		--
+		"かるかん"
+		"もんぷち"
+		"ふりすきー"
+		"しーば"
+		--
+		"(一种猫食)等着！！\e"
+	}
+      
+}
+
+TalkKeroTailClick
+{
+	"\1\s[12]…\w9…\w9…\w9\s[10]\e"
+	"\1\s[12]动物保护团体的那些家伙会生气喔。\e"
+        "\1\s[12]\![move,-100,,500,me]\e"
+}
+
+TalkKeroClick
+{
+	"\1\s[12]…\w9…\w9…\w9\s[10]\e"
+}
+
+
+//****拉扯反应*******************************************************************************************************
+
+OnMouseWheel
+{
+
+	if mode == "1"
+	{
+		OnMouseWheel1
+	}
+	else
+	{
+		OnMouseWheel0
+	}
+}
+
+
+
+OnMouseWheel0
+{
+	//---- reference3を见て、本体侧かkero侧かを判断する
+	if reference3 == 0
+	{
+		if reference4 != ""
+		{
+			stroke++
+			if stroke >= 12
+			{
+				
+				if reference4 == "Hand"
+				{
+					_talk = "TalkSakuraHandLead.%(GetPhase)"
+					if ISFUNC(_talk) == 1
+					{
+						EVAL(_talk)
+					}
+					else
+					{
+						TalkSakuraHandLead
+					}
+				}
+				stroke = 0
+			}
+		}
+		else
+		{
+			stroke = 0
+		}
+	}
+	else
+	{
+		stroke++
+		if stroke >= 16
+		{
+			if reference4 == "Head"
+			{
+				TalkKeroHeadPat
+			}
+			elseif reference4 == "Tail"
+			{
+				TalkKeroTailPat
+			}
+			else
+			{
+//				TalkKeroPat
+			}
+			stroke = 0
+		}
+	}
+}
+
+
+
+TalkSakuraHandLead.0
+{
+	"\0\s[3]…\w9…\w9…\e"
+}
+
+TalkSakuraHandLead
+{
+	"\0\s[29]…\w9…\w9…\e"
+        "\0\s[29]\![raise,OnPlay,se_05.wav]行きます\w9…"
+	"\0\s[26]要带橘花去哪呢？\e"
+}
+
+
+OnMouseClick
+{
+}
+OnMouseDragStart
+{
+}
+OnMouseDragEnd
+{
+}
+
+
+OnMouseGesture
+{
+}
+
+
+OnTrayIconClick
+{
+}
+OnTrayiconClick
+{
+}

@@ -1,0 +1,726 @@
+﻿///////// 
+///////// 换装
+///////// amend by KikkaAIdb.[2009-11-13]★
+
+//**************************************
+//要显示图片必须shell的名字和shell的文件夹名字一样,或者先切换一次该shell就可以了
+//其实可以使用\![get,property,事件,currentghost.shelllist(外表名称).path],路径会在事件的reference0传回,不过如果外表名称中带有括号的话会无法实现...
+//**************************************
+
+//**** 平常shell的切换 *****************************************************************************************
+//---- SHELL更替开始 -----------------------------------------------------------------
+OnShellChanging
+{
+       if fjswitch
+              fjswitch="-1"
+          _temp=shellID;
+          temp=reference2;
+        shellID = reference0;	
+      if judgeshell(shellID)!=judgehaveshell(shellID)&&judgehaveshell(shellID)!="-1"
+      {
+              SETDELIM(reference2,"/");
+              _p=reference2[ARRAYSIZE(reference2)-2];
+              Haveshellinfo+="%(reference0)|%(_p)*";
+       }
+      
+      if judgeshell(shellID)=="0|"&& Userspitem[0][2]!=1&& Userspitem[1][2]!=1 
+      {
+             "\s[-1]\b[-1]  \![change,shell,%(_temp)]\e";
+             haveshell=0;
+      }
+      else
+      {
+       haveshell=1;
+       "\0\s[0]换装为%(reference0)。\e"
+       }	
+}
+
+
+OnAutoChangeShell
+{
+	if TOINT(autoshell[1])==0&&month==autoshellflag[1]&&day==autoshellflag[2]
+		return;
+	elseif TOINT(autoshell[1])==1&&month==autoshellflag[1]&&day==autoshellflag[2]&&hour<12
+		return;
+	elseif TOINT(autoshell[1])==1&&month==autoshellflag[1]&&day==autoshellflag[2]&&hour>=12
+	{
+		autoshellflag=(1,month,day,hour);
+		"\![change,shell,%(shellori)]"
+			return;
+	}
+	elseif TOINT(autoshell[1])==2&&month==autoshellflag[1]&&day==autoshellflag[2]&&hour<autoshellflag[3]+4
+		return;
+	elseif TOINT(autoshell[1])==2&&month==autoshellflag[1]&&day==autoshellflag[2]&&hour>=autoshellflag[3]+4
+	{
+		autoshellflag=(1,month,day,hour);
+		"\![change,shell,%(shellori)]"
+			return;
+	}
+	elseif TOINT(autoshell[1])==4&&month==autoshellflag[1]&&day==autoshellflag[2]&&autoshellflag[4]==0
+	{
+		return;
+	}
+	elseif TOINT(autoshell[1])==4&&month==autoshellflag[1]&&day==autoshellflag[2]&&autoshellflag[4]==1
+	{
+		autoshellflag[4]=0;
+		"\![change,shell,%(shellori)]"
+			return;
+	}
+	elseif TOINT(autoshell[1])==5&&autoshellflag[5]!=1
+	{
+		return;
+	}
+	elseif TOINT(autoshell[1])==6&&autoshellflag[5]!=1
+	{
+		return;
+	}
+	elseif TOINT(autoshell[1])==7&&autoshellflag[5]!=1
+	{
+		return;
+	}
+	
+	
+	
+	
+	
+	shellori=shellID;
+	Lunartime;
+	SETDELIM(Haveshellinfo,'*');
+	_shellid="";
+	foreach Haveshellinfo;_i
+	{
+		_t=_i[0,'|'];		
+		
+		
+		if autoshell[1]==8
+		{
+			_shellid+=_t+"|";
+			contiune;	
+			
+		}
+		
+		if lunartime[10] != null
+		{
+			case lunartime[10]
+			{
+				when "元旦"
+				{
+					if _t=="和服"
+					{
+						_shellid+=_t+"|";
+						break;
+					}
+				}
+				when "万圣节"  //10.31
+				{
+					if _t=="万圣节"
+					{
+						_shellid+=_t+"|";
+						break;
+					}
+					
+				}
+				when "圣诞节"
+				{
+					if _t=="圣诞服装"||_t=="聖誕服裝"
+					{
+						_shellid+=_t+"|";
+						break;
+					}
+				}
+			}
+		}
+		if month==2&&day==22   //猫咪日
+		{
+			if _t=="猫耳"||_t=="猫耳装"
+			{
+				_shellid+=_t+"|";
+				break;
+			}
+		}	
+		elseif month==3&&day==5 //巫女日
+		{
+			if _t=="銀狐巫女"
+			{
+				_shellid+=_t+"|";
+				break;
+			}
+		}
+		elseif month==3&&day==9 //初音日
+		{
+			if _t=="miku(初音)"
+			{
+				_shellid+=_t+"|";
+				break;
+			}
+		}
+		elseif month==3&&day==28||month==4&&day==29//《胧村正》发行日
+		{
+			if _t=="momohime(百姫)"
+			{
+				_shellid+=_t+"|";
+				break;
+			}
+		}
+		elseif month==4&&day==8 //魂魄 妖梦生日
+		{
+			if _t=="Youmu Konpaku"  //魂魄 妖梦
+			{
+				_shellid+=_t+"|";
+				break;
+			}
+		}
+		elseif month==5&&day==2  //女仆日
+		{
+			if _t=="女仆"||_t=="女仆装"
+			{
+				_shellid+=_t+"|";
+				break;
+			}
+		}
+		
+		
+		elseif month==6&&day==10||month==8&&day==11||month==9&&day==27 //东方红魔乡发售
+		{
+			if _t=="Sakuya Izayoi" //十六夜 咲夜
+			{
+				_shellid+=_t+"|";
+				break;
+			}
+		}
+		elseif month==8&&day==17 //东方风神录发售
+		{
+			if _t=="Momizi Inubashiri" //犬走椛
+			{
+				_shellid+=_t+"|";
+				break;
+			}
+		}
+		
+		
+		elseif month==9&&day==3 //小原节子生日
+		{
+			if _t=="SETSUKO OHARA" //小原节子 - 超级机器人大战Z
+			{
+				_shellid+=_t+"|";
+				break;
+			}
+		}
+		elseif month==10&&day==13 //世界保键日
+		{
+			if _t=="白衣护士"||_t=="護士服裝"
+			{
+				_shellid+=_t+"|";
+				break;
+			}
+		}
+		elseif month==10&&day==22 //win7发行日
+		{
+			if _t=="WIN7"
+			{
+				_shellid+=_t+"|";
+				break;
+			}
+		}
+		elseif month==10&&day==25 //湾娘生日
+		{
+			if _t=="taiwan(湾娘)"
+			{
+				_shellid+=_t+"|";
+				break;
+			}
+		}
+		else
+		{
+			if month==3||month==4||month==5
+			{
+				if _t=="传统衣着"
+				{
+					_shellid+=_t+"|";
+				}	
+				elseif  _t=="体操服"
+				{
+					_shellid+=_t+"|";
+				}
+				elseif  _t=="女背心"
+				{
+					_shellid+=_t+"|";
+				}
+				elseif  _t=="兔女郎"
+				{
+					_shellid+=_t+"|";
+				}
+				elseif _t=="预设"
+				{
+					_shellid+=_t+"|";
+				}
+				elseif _t=="_橘花1预设"
+				{
+					_shellid+=_t+"|";
+				}
+				elseif _t=="_橘花2预设"
+				{
+					_shellid+=_t+"|";
+				}
+			}
+			elseif month==6||month==7||month==8
+			{
+				if _t=="传统衣着"
+				{
+					_shellid+=_t+"|";
+				}
+				elseif "夏服" _in_ _t
+				{
+					_shellid+=_t+"|";
+				}
+				elseif _t=="吊带裙(粉红)"
+				{
+					_shellid+=_t+"|";
+				}
+				elseif _t=="旗袍"
+				{
+					_shellid+=_t+"|";
+				}
+				elseif _t=="装甲削って高機動化"
+				{
+					_shellid+=_t+"|";
+				}
+				elseif _t=="膝隠して太腿隠さず"
+				{
+					_shellid+=_t+"|";
+				}
+			}
+			elseif month==9||month==10||month==11
+			{
+				if _t=="传统衣着"
+				{
+					_shellid+=_t+"|";
+				}
+				elseif _t=="孩童装"
+				{
+					_shellid+=_t+"|";
+				}
+				elseif _t=="拘束衣"
+				{
+					_shellid+=_t+"|";
+				}
+				elseif _t=="白衬衫"
+				{
+					_shellid+=_t+"|";
+				}
+				elseif _t=="预设"
+				{
+					_shellid+=_t+"|";
+				}
+				elseif _t=="_橘花1预设"
+				{
+					_shellid+=_t+"|";
+				}
+				elseif _t=="_橘花2预设"
+				{
+					_shellid+=_t+"|";
+				}
+			}
+			elseif month==12||month==1||month==2
+			{
+				if _t=="传统衣着"
+				{
+					_shellid+=_t+"|";
+				}
+				elseif _t=="毛衣"
+				{
+					_shellid+=_t+"|";
+				}
+				elseif _t=="犬耳装"
+				{
+					_shellid+=_t+"|";
+				}
+				elseif _t=="猫耳装"
+				{
+					_shellid+=_t+"|";
+				}
+				elseif _t=="长裙"
+				{
+					_shellid+=_t+"|";
+				}
+				elseif _t=="连身裙（紅）"
+				{
+					_shellid+=_t+"|";
+				}
+				elseif _t=="预设"
+				{
+					_shellid+=_t+"|";
+				}
+				elseif _t=="_橘花1预设"
+				{
+					_shellid+=_t+"|";
+				}
+				elseif _t=="_橘花2预设"
+				{
+					_shellid+=_t+"|";
+				}		
+			}
+		}
+	}
+	if _shellid!=""
+	{
+		SETDELIM(_shellid,'|');
+		_n=ARRAYSIZE(_shellid)-1;
+		shellid=_shellid[RAND(_n)]
+			if _n>1
+			{
+				while shellid==shellID
+				{
+					shellid=_shellid[RAND(_n)]
+				}
+			}
+			OnChangeShell(shellid);
+			autoshellflag=(1,month,day,hour,1);
+	}
+}
+
+
+HaveShellCount
+{
+	SETDELIM(Haveshellinfo,'*');
+	_n=ARRAYSIZE(Haveshellinfo)-1
+	if _n>0
+		_n;
+	else
+		0;
+}
+
+
+OnChangeShell
+{
+       if fjswitch
+              fjswitch="-1"
+_shellid=_argv[0];
+"\![change,shell,%(_shellid)]"
+}
+
+OnBuyShell
+{
+        if reference0=="yes"&&money>=30000
+        {
+           haveshell=1;
+           money-=30000;
+           crystalnum=TOINT(crystalnum)+1;
+           "\1\s[10]\0\s[0]花费￥30000金钱购买能量水晶#%(crystalnum)以激活%(reference1)。   \w9\w9\x\![raise,Onchangeshelled,%(reference1),%(reference2)]"
+
+}
+        else
+        {
+        "\1\s[10]\0\s[9]很遗憾，钱不够啊。\e"
+         }
+}
+
+
+//---- SHELL更替完毕 -----------------------------------------------------------------
+OnShellChanged
+{
+       if fjswitch
+              fjswitch="-1"
+       _temp=shellID;
+       shellID = reference0;
+       if crystalnum>=36&&TOINT(Userspitem[1][2])==0
+       {
+        "\1\s[10]\0\s[5]到目前为止，\w9\w9%(username)为橘花激活衣服所购买的能量水晶已有36个了，\w9\w9每一次激活完的水晶，\w9\w5橘花并没有扔掉，\w9\w5而是放在一起在日光下继续吸收能量,\w9\w9现在，\w9橘花用这些能量水晶给%(username)做了一件礼物，\w9\w5这是用能量水晶融合而成的,\w9\w5佩戴在%(username)身上，\w9有意想不到的作用哦。\x"
+--
+gift;
+UserspitemNum[1]=1;
+Userspitemtime[1]="%(year)年%(month)月%(day)日橘花送的特殊礼物";
+Useriteminfo=("%(year)年%(month)月%(day)日%(hour)时%(minute)分收到特殊礼物%(Userspitem[1][1])。" , Useriteminfo);
+--
+"红色水晶项链“绯红之眼”获得。"
+gift;
+--
+       }
+
+       if Userspitem[0][2]==1||Userspitem[1][2]==1||judgehaveshell(_temp)!="-1"||judgeshell(_temp)!="0|"
+             haveshell=1
+       if haveshell==1
+        {
+              if judgeshell(shellID)=="0|" 
+             {  
+                 SETDELIM(reference2,"/");
+                  _p=reference2[ARRAYSIZE(reference2)-2];
+                  Haveshellinfo+="%(reference0)|%(_p)*";
+                  "\1\s[10]\0\s[0]…嗯、\w9\w9\s[5]这样子如何呢？\e"
+              }
+         	 elseif summer == "1"
+                {
+        "\1\s[-1]\0\s[0]…嗯、\w9\w9\s[5]这样子如何呢？\n%(uername)好看吗？\n\q[好看,goodlook]\n\q[换一件吧,notgoodlook]\e"
+               }
+
+               elseif bedroom == "1"
+                {
+        "\1\s[10]\0\s[0]…嗯、\w9\w9\s[5]洗好了吗？\n\n\q[◇洗好了,Choice9]\n\q[◇没事了,Choice2]\x\e"
+                }
+		elseif autoshellflag[0]==1
+		{
+			autoshellflag[0]=0;
+			if ghostuptime/60%60<1
+			"\![raise,OnBoot,return]";
+		}
+               else
+              {
+       "\1\s[10]\0\s[0]…嗯、\w9\w9\s[5]这样子如何呢？\e"
+
+               }
+        }
+
+        elseif haveshell==0
+        {
+         "\1\s[10]\0\s[0]…嗯、\w9\w9橘花还没有激活这套衣服呢,要给橘花购买能量水晶激活吗?花费￥30000金钱.\n\n\q[是的,OnBuyShell,yes,%(_temp),%(temp)]\n\q[不了,]\e";
+         }
+}
+//**************************************************************************************************************
+
+Onchangeshell
+{
+  if fjswitch
+   fjswitch="-1"
+  shelllistcount = ARRAYSIZE(shelllist);
+  _j=1;
+  _q="";
+  _shellID=shellID;
+  _shellpath="..\..\shell\%(_shellID)\";
+  SETDELIM(shelllist,"*")
+  if reference0!=null {
+    _j=TOINT(reference0);
+  }
+  if reference1!=null && reference1!=shellID &&reference1==reference2{
+    _q="\f[color,242,35,250]\![*]\q[确定 换装为%(reference1),Onchangeshelled,%(reference1)]\f[default]";
+    _shellID=reference1;
+  }
+  elseif reference1!=reference2
+   {
+      _q="没有激活这件衣服?\n\&[hearts]\q[购买激活%(reference1)（￥30000）,OnBuyShell,yes,%(reference1),%(_shellpath)]\n"
+    _shellID=reference1;
+    }
+  if judgeshell(_shellID)!="0|"
+    _shellpath ="..\..\shell\%(judgeshell(_shellID))\"; 
+  elseif reference1!=null && reference1!=shellID
+    _shellpath ="..\..\shell\%(reference1)\"; 
+  _Shellrand=ANY("00","01","02","03","05","07","20","21","22","23","26","30","32");
+_haveshellnum=0;
+foreach shelllist; _i
+{
+if judgeshell(_i)=="0|" &&judgehaveshell(_i)=="-1"&&Userspitem[0][2]!=1&&Userspitem[1][2]!=1
+_haveshellnum=_haveshellnum
+else
+_haveshellnum++
+}
+  _w="\C\![quicksession,true]\c\![set,choicetimeout,0]\0\s[26]\b[2]橘花共有%(shelllistcount)件衣服哦，其中%(_haveshellnum)件已激活，%username想让橘花穿那件衣服呢？\n[140]\_b[%(_shellpath)surface00%(_Shellrand).png,40,30]";
+  _n=1;
+_judge=""
+_haveshell=""
+	foreach shelllist; _i {
+    if _n>=_j && _n<_j+15 {
+     if judgeshell(_i)=="0|" &&judgehaveshell(_i)=="-1"&&Userspitem[0][2]!=1&&Userspitem[1][2]!=1
+      _judge='\f[color,192,192,192]'+_i+'\f[color,default]'
+     else
+       {
+        _judge=_i
+        _haveshell=_i
+        }
+        if shellID==_i
+          _w += "\f[color,240,45,100]\&[hearts]\f[default]\__q[Onchangeshell,%(_j),%(_i),%(_haveshell)]%(_judge)\__q\n[120]";
+        elseif _shellID==_i
+          _w += "\f[color,24,98,250]\&[hearts]\f[default]\__q[Onchangeshell,%(_j),%(_i),%(_haveshell)]%(_judge)\__q\n[120]";
+        else
+          _w += "\f[color,168,168,168]\&[hearts]\f[default]\__q[Onchangeshell,%(_j),%(_i),%(_haveshell)]%(_judge)\__q\n[120]";
+      }
+    _n ++;
+	}
+	_Page="";
+	if shelllistcount<=15
+    _Page="";
+	elseif _j==1 && shelllistcount>15
+    _Page="\n[30] \q[下一页>>,Onchangeshell,%(_j+15)]\n[140]";
+  elseif _j>1 && _j+15>shelllistcount
+    _Page="\n[30] \q[上一页<<,Onchangeshell,%(_j-15)]\n[140]";
+  else
+    _Page="\n[30] \q[<<上一页,Onchangeshell,%(_j-15)]   \q[下一页>>,Onchangeshell,%(_j+15)]\n[140]";  
+	_w+_Page+_q+"\_l[0,-]\n[150]\![*]\q[◇返回上一层,OnOpenMenu,1]\n\![*]\q[◇取消,overchangeshell]\e"
+}
+
+
+judgehaveshell
+{
+_a="-1";
+  if fjswitch
+   fjswitch="-1"
+_HaveshellList="预设,預設,聖誕服裝,圣诞服装,万圣节,旗袍,浴衣,夏服,競泳水着,白スク水,スク水,裸Yシャツ,拘束衣,水玉水着,夏服2,长裙,護士服裝,tail,猫耳,バニーガール,銀狐巫女,女仆装,女仆,キャミソール,背心,セーター,体操服"
+  foreach _HaveshellList; _i {
+    if _argv[0] ==  _i
+      _a=_i
+  }
+  _a;
+}
+
+judgeshell
+{
+  _a="0|";
+  SETDELIM(Haveshellinfo,"*")
+  foreach Haveshellinfo; _i {
+    if _argv[0] ==  _i[0,"|"]
+      _a=_i[1,"|"];
+  }
+  _a;
+}
+
+Onchangeshelled
+{
+case reference0 {
+		when "预设","預設" {
+			"还是穿平时的比较好吗？\w9"
+		}
+
+		//此處可以添加不同衣著的特殊對話喔
+		//------------------------------------------------------------------------
+
+		when "聖誕服裝", "圣诞服装"{
+			if month == 12 && day == 24 {
+				"\0\s[5]今天是圣诞前夜啊.\w9\w9是应该换上这套衣服的.\w9\w9\n"
+
+
+			}
+			elseif month == 12 && day == 25 {
+				"\0\s[5]今天圣诞节啊……\w9\w9嗯,\w9橘花马上去换.\w9\w9\n"
+
+
+			}
+			else {
+				"\0\s[20]%(username)为什么要橘花现在换上这件衣服呢?\w9\n\1\s[10]也许是穿上这件衣服的橘花显得比较可爱吧.\w9\w9\n\0\s[29]唔……\w9\w9\n"
+
+
+			}
+		}
+		when "万圣节","ハロウィン" {
+			if month == 10 && day == 31 {
+				"\0\s[8]呃…\w9万圣节…\w9\w9换上相应的衣服…\w9\w9也是应该的啊…\w9\w9\n\1\s[11]告诉你,\w9其实橘花很怕那东西的\w9\0\s[9]哪有…\w9\w9把你装进南瓜灯里面.\w9\1\s[12]呜哇……\w9\w9\n\0"
+
+
+			}
+			else {
+				"\0\s[20]%(username)为什么要橘花现在换上这件衣服呢?\w9\n\1\s[10]也许是穿上这件衣服的橘花显得比较可爱吧.\w9\w9\n\0\s[29]唔……\w9\w9\n"
+
+
+			}
+		}
+		when "旗袍","チャイナ" {
+			"\0\s[5]中国传统服饰哦,\w9%(username)应该很熟悉了吧\w9\w9"
+
+
+		}
+		when "浴衣" {
+			"\0\s[23]这套是橘花洗完澡以后才穿的,\w9%(username)喜欢橘花这样穿的样子吗?\w9\w9"
+
+
+		}
+		when "夏服" {
+			"\0\s[0]这套,\w9是白色的夏装哦\w9\w9\n因为容易弄脏,\w9\s[21]所以橘花很少穿啦\w9\w9\1\s[10]我对容易被什么弄脏很感兴趣\w9\w9\0"
+
+
+		}
+		when "競泳水着" {
+			"\0\s[26]难道…\w9%(username)喜欢橘花在学校时穿的泳装?\w9\n\1\s[11]总是会有那种人的嘛,\w9可以理解\w9\w9\0"
+
+
+		}
+		when "白スク水","スク水","裸Yシャツ","拘束衣" {
+			"\0\s[33]呜……\w9\w9好难为情的衣服啊\w9\n"
+
+
+		}
+		when "水玉水着" {
+			"\0\s[9]明明在屋子里,\w9%(username)为什么要橘花穿这种衣服\w9\w9\n"
+
+
+		}
+		when "夏服2" {
+			"\0\s[0]橘花夏天穿的衣服,\w9\w9\s[3]又轻又结实,\w9\w9\s[5]还不容易被血弄脏\w9\w9\n\1\s[13]说到什么地方去了啊\w9\w9\0"
+
+
+		}
+		when "长裙" {
+			"\0\s[1]这套,\w9是橘花根据经常穿的正装自己改的说.\w9\w9\n/
+			\s[26]不知道%(username)喜不喜欢\w9\w9\n\1\s[10]换上让他看看不就知道了吗\w9\w9\0"
+
+
+		}
+		when "護士服裝" {
+			"\0\s[2]说起来,\w9\w9橘花\w9\s[5]也是学习过战场救护的哦\w9\n\1\s[10]没问你这个…\w9\w9\0"
+
+
+		}
+		when "tail" {
+			"\0\s[8]呃…\w9…\w9\w9斗和没问题吧.\w9\n\1\s[13]扯上我干什么\w9\w9\0"
+
+
+		}
+		when "猫耳","バニーガール","銀狐巫女" {
+			"\0\s[8]这套…\w9\w9有点\w9\w9\s[21]难为情啊…\n\1\s[11]明明很期待的样子.\w9\w9\w9\0"
+
+
+		}
+		when "女仆装","女仆" {
+			"\0\s[9]咦……\w9\w9原來%(username)是萌女仆的呀～\w9\w9\n可是…\w9\s[5]Ｈ是不行的唷～\w9\w9\n\n/
+			\1\s[12]妳想到哪里去了啊……\w9\w9\n\n\0那橘花去换衣服咯～\w9\1\s[11]好好听听別人说话啦！\w9\0"
+
+
+		}
+		when "キャミソール","背心" {
+			"\0\s[5]橘花很喜欢这件背心，夏天穿很舒服呢～\w9\w9"
+
+
+		}
+		when "セーター" {
+			"\0\s[5]很暖和的样子\w9\w9"
+		
+
+}
+		when "体操服" {
+			"\0\s[26]难道…\w9%(username)喜欢橘花在学校时穿的体操服?\w9\n\1\s[11]总是会有那种人的嘛,\w9可以理解\w9\w9\0"
+	
+	}
+		others {
+
+  "\0%(reference0)吗?\n知道了,\w5那橘花去换衣服了哦~\w9\s[-1]\b[-1]\w9\![change,shell,%(reference0)]\e"
+  "\0%(reference0)吗?\n好的，知道了，\w5橘花换衣服了哦，%username不许偷看哈♪\w9"
+
+
+                       }
+
+                
+          }
+	--
+	"\s[-1]\b[-1]\w9\![change,shell,%(reference0)]\e"
+
+}
+
+Select.overchangeshell
+{
+  "\0不用换也行吗?\w6\n果然是%(shellID)好吗～\e"
+}
+
+On_installedshellname
+{
+	shelllist = "";
+	_i = 0;
+	while _i >= 0 {
+		_shellname = NAMETOVALUE("reference%(_i)");
+		if _shellname != "" {
+			if _i > 0
+         shelllist += "*";
+        shelllist += _shellname[0];
+        _i++;
+		}
+		else
+      _i = -1;
+	}
+	shelllistcount = ARRAYSIZE(shelllist);
+}
+

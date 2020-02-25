@@ -1,0 +1,5 @@
+charset,Shift_JIS
+type,shell
+name,¬ˆ«–‚
+accept,‹k‰Ô
+directory,little_devil

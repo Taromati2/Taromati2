@@ -1,0 +1,5 @@
+charset,Shift_JIS
+type,shell
+name,バニーガール
+accept,橘花
+directory,bunny_girl

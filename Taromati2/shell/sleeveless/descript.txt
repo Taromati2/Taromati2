@@ -1,0 +1,38 @@
+craftman,8　シェル改変zutsu
+name,ノースリーブ （无袖眼镜）
+type,shell
+sakura.balloon.alignment,none
+kero.balloon.alignment,none
+shiori.logo.x,0
+shiori.logo.y,0
+sakura.balloon.offsetx,20
+sakura.balloon.offsety,18
+kero.balloon.offsetx,0
+kero.balloon.offsety,10
+menu.background.bitmap.filename,background.png
+menu.foreground.bitmap.filename,foreground.png
+menu.sidebar.bitmap.filename,sidebar.png
+menu.background.font.color.r,230
+menu.background.font.color.g,130
+menu.background.font.color.b,130
+menu.foreground.font.color.r,30
+menu.foreground.font.color.g,10
+menu.foreground.font.color.b,10
+menu.disable.font.color.r,100
+menu.disable.font.color.g,40
+menu.disable.font.color.b,40
+menu.separator.color.r,180
+menu.separator.color.g,50
+menu.separator.color.b,50
+menu.background.alignment,leftbottom
+menu.foreground.alignment,leftbottom
+menu.sidebar.alignment,bottom
+
+
+//-----着せ替え定義----------------------------------
+sakura.bindgroup50.name,眼鏡, 黒縁眼鏡,
+sakura.bindgroup50.default,0
+
+sakura.menuitem50,50
+
+//---------------------------------------------------

@@ -1,0 +1,5 @@
+charset,Shift_JIS
+type,shell
+name,ARN-5041W•—
+accept,‹k‰Ô
+directory,ARN-5041W_fuu

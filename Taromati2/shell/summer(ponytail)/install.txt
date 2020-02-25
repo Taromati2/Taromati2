@@ -1,0 +1,5 @@
+charset,Shift_JIS
+type,shell
+name,夏服（ポニーテール）
+accept,橘花
+directory,summer(ponytail)

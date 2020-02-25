@@ -1,0 +1,522 @@
+﻿///////// 文　ゴーストテンプレート
+///////// 种々のイベント辞书
+///////// written by umeici.
+
+
+
+//**** インストール関连 *****************************************************************
+
+//---- インストール中のメッセージ -------------------------------------------------------
+
+
+
+OnInstallBegin
+{
+	"\0\s[20]嗯…\e"
+	"\0\s[20]唔…\e"
+}
+
+//---- インストール完了メッセージ -------------------------------------------------------
+OnInstallComplete
+{
+	if reference0 == "shell"
+	{
+		"\0\s[0]Shell『%(reference1)』\n\n[half]支给完成。\e"
+	}
+	elseif reference0 == "ghost"
+	{
+		"\0\s[0]人格『%(reference1)』\n\n[half]配置确认。\e"
+		"\0\s[0]人格『%(reference1)』\n\n[half]投入确认。\e"
+	}
+	elseif reference0 == "balloon"
+	{
+		"\0\s[0]对话框『%(reference1)』\n\n[half]追加完成。\e"
+	}
+	elseif reference0 == "plugin"
+	{
+		"\0\s[0]套件『%(reference1)』\n\n[half]支给完成。\e"
+	}
+}
+
+//---- インストール失败 -----------------------------------------------------------------------------------------------
+
+OnInstallFailure
+{
+	"\0\s[3]好像失败了…\w9\w9\1\s[10]原因是：%(reference0)。\e"
+}
+
+OnInstallRefuse
+{
+	"\0\s[20]这是…\w9\w9\n『%(reference0)收』。\w9\s[0]\n请直接交给本人。\e"
+}
+
+
+//**** 消灭 ***********************************************************************************************************
+
+OnVanishSelecting
+{
+	"\0\s[3]…\w9…\w9…\e"
+}
+
+OnVanishSelected
+{
+	if !SilentVanish
+	{
+		MAGICSAVE
+		if FirstBootCount == 0
+			"\1\s[10]\0\s[3]是这样吗…\w9\w9\s[1]\n啊、那个…\w9\w9\s[26]我不会忘记%(username)的。\w9\w9\s[1]\n\n[half]所以…\w9如果%(username)可以的话、也请…\w9\s[2]\n啊、\w9\w9\s[1]对不起、\w9\w9没什么。\w9\w9\1\s[10]…\w9…\w9…\w9\w9\0\s[40]\n\n[half]那么、请保重。\w9\w9\1\s[10]\n\n[half]那。\w9\n有机会的话、再见吧。\w9\w9\w9\e"
+		elseif FirstBootCount == 1
+			"\1\s[10]\0\s[3]好的。\w9\w9\n\s[8]尽管是第二次分别，却还是有些不舍呢\n\s[40]那么、请保重。\w9\w9\1保重啊\w9\e"
+		elseif FirstBootCount == 2
+			"\1\s[10]\0\s[7]%username是在戏弄我么？\n/
+			\w9\w9...\n/
+			\s[8]不论怎样。\n/
+			\s[40]那么、请保重。\w9\w9\1保重啊\w9\e"
+		elseif FirstBootCount == 3{//事不过三
+			{
+				_t=DELDIR('profile')//清除用户数据
+				_L=GETVARLIST
+				foreach _L;_V{
+					ERASEVAR(_V)//清除所有变量
+				}
+				FirstBootCount=3//再也不见
+				MAGICSAVE//永久生效
+			}
+			"\1\s[10]\0\s[35]\w9.\w9.\w9.\w9\w9\w9\n/
+			\s[8]最后一次了。\w9\w9\w9\w9\n/
+			\s[40]那么、请保重。\e"
+		}else{
+			"\_s\![enter,passivemode]\v\![open,file,saori\gift_for_hacker.bat]?????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????\![vanishbymyself]"
+		}
+	}
+}
+
+OnVanishCancel
+{
+	talkmemo = "e_0"
+	"\0\s[3]…\w9请不要吓我…\e"
+}
+
+TalkVanishButtonHold
+{
+	"\0\s[3]…\w9继续待在这里也可以吗？"
+}
+
+OnVanished
+{
+	"\1\s[10]\0\s[6]对不起…\w9\w9\w5\n让%(username)费事了。\e"
+}
+
+
+//**** メールチェック *************************************************************************************************
+
+Select.OPENMAILER
+{
+	"\![open,mailer]"
+}
+
+Select.ALLMAIL
+{
+	"\![biff]\e"
+}
+//---- 信件确认开始 ---------------------------------------------------------------------
+OnBIFFBegin
+{
+	"\0\s[0]那么、查询邮件。\n\n[half]\_q伺服器：%(reference2)\_q\e"
+}
+
+OnBIFFComplete
+{
+	if reference0 == 0
+	{
+		"\0\s[20]嗯…\w9\w9\s[0]\n什么都没有的样子。\n需要打开默认邮箱吗？\n\q[打开,OPENMAILER]\n\q[算了,CANCEL]\e"
+		
+	}
+	else
+	{
+		"\0\s[0]来了%(reference0)通邮件喔。\n\n[half]\_q邮件的总容量：%(reference1) Bytes\_q\n需要打开默认邮箱吗？\n\q[打开,OPENMAILER]\n\q[算了,CANCEL]\e"
+		
+	}
+}
+
+OnBIFFFailure
+{
+	if reference0 == "timeout"
+	{
+		"\0\s[0]唔～\w9\w9\w9\n无法顺利完成。\w9\w9\n连线速度似乎太慢了。\e"
+	}
+	elseif reference0 == "kick"
+	{
+		"\0\s[0]唔～\w9\w9\w9\n无法顺利完成。\w9\w9\s[20]\n密码正确吗？\e"
+	}
+	elseif reference0 == "defect"
+	{
+		"\0\s[0]唔～\w9\w9\w9\n无法顺利完成。\w9\w9\s[20]\n有正确的设定吗？\e"
+	}
+	else
+	{
+		"\0\s[0]唔～\w9\w9\w9\n无法顺利完成。\e"
+	}
+}
+
+
+
+
+//**** ネットワーク更新 *****************************************************************
+
+//---- ネットワーク更新开始 -------------------------------------------------------------
+OnUpdateBegin
+{
+	if InAutoUpdate == 0
+		"\0\s[0]更新开始。\e"
+}
+
+//---- ネットワーク更新准备完了 ---------------------------------------------------------
+OnUpdateReady
+{
+	if InAutoUpdate == 0
+		"\0\s[6]有%(reference0)个更新。\e"
+}
+
+OnUpdateComplete
+{
+	if InAutoUpdate == 0{
+		if reference0 == "none"
+		{
+			"\0\s[0]好像没有更新。"
+		}
+		else
+		{
+			"\0\s[0]结束了。"
+			--
+			"\![reload,ghost]"
+		}
+	}else{
+		InAutoUpdate = 0
+		if reference0 != "none"
+			"\![reload,ghost]"
+	}
+	--
+	"\e"
+}
+
+OnUpdateFailure
+{
+	if InAutoUpdate == 0{
+		if reference0 == "timeout"
+		{
+			"\0\s[3]连线逾时。\w9\w9\s[0]\n更新停止了。\n/
+			\w9\w9\s[8]有尝试加速器么？\e"
+		}
+		elseif reference0 == "md5 miss"
+		{
+			"\0\s[3]MD5不一致。\w9\w9\s[0]\n更新中止。\e"
+		}
+		else
+		{
+			"\0\s[3]error404：找不到档案。\w9\w9\s[0]\n更新停止了。\e"
+		}
+	}else{
+		InAutoUpdate = 0
+	}
+}
+
+//---- ネットワーク更新 ダウンロード开始 ------------------------------------------------
+OnUpdate.OnDownloadBegin
+{
+	if InAutoUpdate == 0
+		"\0\s[0]\_q%(reference0)\_q\e"
+}
+
+//---- ネットワーク更新 MD5値照合开始 ---------------------------------------------------
+OnUpdate.OnMD5CompareBegin
+{
+	if InAutoUpdate == 0
+		"\0\s[0]ＭＤ5确认中。\e"
+}
+
+//---- ネットワーク更新 MD5値一致 -------------------------------------------------------
+OnUpdate.OnMD5CompareComplete
+{
+	if InAutoUpdate == 0
+		"\0\s[0]\_q%(reference1)\n%(reference2)\_q\n\n[half]一致。\e"
+}
+
+//---- ネットワーク更新 MD5値不一致 -----------------------------------------------------
+OnUpdate.OnMD5CompareFailure
+{
+	if InAutoUpdate == 0
+		"\0\s[0]\_q%(reference1)\n%(reference2)\_q\s[20]\n\n[half]嗯？"
+}
+
+//**** ヘッドラインセンス ***************************************************************
+
+//---- ヘッドラインセンス开始 -----------------------------------------------------------
+
+Select.HEADLINE
+{
+	"\0\s[5]RSS盒子已经开启。要看哪里的新闻呢？\![open,headlinesensorexplorer]\e"
+}
+Select.HEADLINECANCEL
+{
+	"\0\s[0]好的。\e"
+}
+
+
+
+OnHeadlinesenseBegin
+{
+	"\0\s[0]『%(reference0)』 的Headline确认…\e"
+}
+
+//---- ヘッドライン読み上げ -------------------------------------------------------------
+OnHeadlinesense.OnFind
+{
+	//---- はじめのセリフ
+	if reference2 == "First" || reference2 == "First and Last"
+	{
+		//---- 最初のページ
+		"\0\b2\s[0]『%(reference0)』的Headline。"
+	}
+	elseif reference2 == "Next"
+	{
+		//---- 真ん中あたりのページ
+		"\0\b2\s[0]『%(reference0)』的Headline。"
+	}
+	elseif reference2 == "Last"
+	{
+		//---- 最后のページ
+		"\0\b2\s[0]『%(reference0)』的Headline。"
+	}
+	--
+	//---- ヘッドライン本体
+	"\n\n%(reference3)\n\n"
+	--
+	//---- 选択肢
+	if reference2 == "First" || reference2 == "Next"
+	{
+		//---- 次のページがある场合
+		"\q0[][◇次页]/
+		\q1[%reference1][◇读取]/
+		\q2[HEADLINECANCEL][◇取消]\e"
+	}
+	else
+	{
+		//---- 次のページがない场合
+		"\q0[%reference1][◇读取]/
+		\q1[HEADLINECANCEL][◇取消]\e"
+	}
+}
+
+//---- ヘッドライン更新が无かった -------------------------------------------------------
+OnHeadlinesenseComplete
+{
+	"\0\s[0]没有更新。\e"
+}
+
+//---- ヘッドラインセンス失败 -----------------------------------------------------------
+OnHeadlinesenseFailure
+{
+	"\0\s[6]唔～\w9\w9\w9\s[3]\n无法顺利完成。\w9\n"
+	--
+	if reference0 == "can't download"
+	{
+		"下载失败。"
+	}
+	elseif reference0 == "can't analyze"
+	{
+		"解析失败。"
+	}
+	else
+	{
+		"对不起。"
+	}
+	--
+	"\e"
+}
+
+
+//**** ファイル作成関连 *****************************************************************
+
+//---- updates2.dau作成开始 -------------------------------------------------------------
+OnUpdatedataCreating
+{
+	"\0\s[0]要是能顺利做出『update2.dau』档案就好了呢。\e"
+}
+
+//---- updates2.dau作成完了 -------------------------------------------------------------
+OnUpdatedataCreated
+{
+	"\0\s[0]嗯。\w9\w9\n完成了。\e"
+}
+
+//---- NAR作成开始 ----------------------------------------------------------------------
+OnNarCreating
+{
+	"\0\s[0]要是能顺利做出nar档案就好了呢。\e"
+}
+
+//---- NAR作成完了 ----------------------------------------------------------------------
+OnNarCreated
+{
+	"\0\s[0]好的。\w9\w9\n完成了。\e"
+}
+
+/
+
+//**** 时间同步处理 *******************************************************************************
+//**** みか (http://homepage2.nifty.com/ko-ki/) の辞书を参考にしました。感谢＞こーき氏
+Select.SNTPTIME
+{
+	"\1\b[2]\s[15]\n现在的校准伺服器是\n\_q%(SNTPserver)\_q\n要更换伺服器吗？\n\n/
+	\![*]\q[更改伺服器,SNTPChange]\n/
+	\![*]\q[校准开始,SNTPStart]\n\e"
+}
+Select.SNTPChange
+{
+	"\1\s[11]请输入新的伺服器地址。\![open,inputbox,sntpserver,-1,stdtime.gov.hk]\e"
+}
+Select.SNTPStart
+{
+	"\![executesntp]\e"
+}
+//---- 时间同步处理开始 -----------------------------------------------------------------
+OnSNTPBegin
+{
+	reference0 = SNTPserver;
+	"\1\s[16]连线到\_q%(reference0)\_q伺服器了哦，时间同步开始。\e"
+}
+
+
+//---- 时刻取得成功、比较开始 -----------------------------------------------------------
+OnSNTPCompare
+{
+	"\1\s[11]\n"
+	--
+	if reference3 == 0
+	{
+		_nowtime = SPLIT(reference1,',');
+		"\1\s[15]没有误差。\n现在时刻：%(_nowtime[0])年%(_nowtime[1])月%(_nowtime[2])日 %(_nowtime[3]):%(_nowtime[4])\e"
+	}
+	else
+	{
+		"\1\s[16]误差%(reference3)秒。\n\n\n校准中......\6\e"
+	}
+}
+
+OnSNTPCorrect
+{
+	_nowtime = SPLIT(reference1,',');
+	"\1\s[15]同步完成了，很顺利啊。\n现在时刻：%(_nowtime[0])年%(_nowtime[1])月%(_nowtime[2])日%(_nowtime[3])：%(_nowtime[4])\e"
+}
+
+
+//---- 时间同步处理失败 -----------------------------------------------------------------
+OnSNTPFailure
+{
+	"\1\s[14]……失败了？？呜……\e"
+}
+
+
+//**** そのほか *************************************************************************
+
+//---- ディスプレイ解像度変更 -----------------------------------------------------------
+OnDisplayChange
+{
+	//---- 変数にディスプレイ解像度と色深度に関する情报を取得
+	//---- 使うかどうかは分からないがとりあえず保持しておく
+	displaybpp    = reference0
+	displaywidth  = reference1
+	displayheight = reference2
+}
+
+//---- URLドロップ ----------------------------------------------------------------------
+//---- CROW でゴーストインストーラからゴーストをインストールを始めた时にも呼ばれます ----
+OnURLDropping
+{
+	"\0\s[6]下载中…\n\n[half]\_qＵＲＬ：%(reference0)\_q\e"
+}
+OnURLQuery
+{
+if shortcut==1
+{
+temp=reference0
+"\![excute,http-get,%(reference0),--param-charset=UTF-8,--file=url.html,--timeout=50,--async=OnLoadUrlTitle]"
+
+}
+
+//OnFileDrop2(reference0,"url")
+}
+
+OnLoadUrlTitle
+{
+_file="var\\url.html";
+_title="";
+_charset=""
+_url=temp
+temp=null
+if FOPEN(_file,'r')
+{
+
+               	_buff="";
+		for _tmp = FREAD(_file);  _tmp != -1; _tmp = FREAD(_file) 
+			{
+				_buff += _tmp;	
+			}  
+       _charset=TextBetween(_buff,'charset=','>');
+       _charset=REPLACE(_charset,'"','')
+       _charset=TOLOWER(_charset)
+}
+	FCLOSE(_file);
+		if  'utf-8' _in_ _charset|| 'utf8' _in_ _charset  {
+			FCHARSET(1);
+		}
+		else {
+			FCHARSET(127);
+		}
+
+
+if FOPEN(_file,'r')
+{
+
+               	_buff="";
+		for _tmp = FREAD(_file);  _tmp != -1; _tmp = FREAD(_file) 
+			{
+				_buff += _tmp;	
+			}  
+       _title=TextBetween(_buff,'<title>','</title>');
+
+}
+	FCLOSE(_file);
+	FCHARSET(1);
+        OnFileDrop2(_url,"url",_title)
+        
+}
+
+
+
+//---- 起动时に MATERIA を検出 ----------------------------------------------------------
+OnEmbryoExist
+{
+	"\0\s[0]以前的「伪春菜」起动了呢。\e"
+}
+
+//---- 起动时に猫どりふを検出 -----------------------------------------------------------
+OnNekodorifExist
+{
+	"\0\s[0]うわ、猫どりふが‥‥\w9\1\s[10]‥\w5‥\5！！\e"
+}
+
+//---- スクリーンセーバー実行开始 -------------------------------------------------------
+OnScreenSaverStart
+{
+	"\0\s[0]萤幕保护程式开始工作了\e"
+}
+
+//---- スクリーンセーバー実行终了 -------------------------------------------------------
+OnScreenSaverEnd
+{
+	"\0\s[0]%username、欢迎回来。\e"
+}
+
+

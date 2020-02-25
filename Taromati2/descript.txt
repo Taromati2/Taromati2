@@ -1,0 +1,5 @@
+﻿charset,UTF-8
+type,plugin
+sakura,橘花
+directory,ghost
+homeurl,https://raw.githubusercontent.com/steve02081504/Kikka/master/Taromati2/

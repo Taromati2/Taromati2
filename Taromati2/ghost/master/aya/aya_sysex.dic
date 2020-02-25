@@ -1,0 +1,41 @@
+﻿
+OnChoiceSelect
+{
+	EVAL("Select.%(reference0)")
+}
+
+OnAiTalk
+{
+	if mode == "1"
+	{
+		AiTalk1
+	}
+	else
+	{
+		_talk = AiTalk
+		SETDELIM(_talk, ":talkmemo=")
+		_lastindex = ARRAYSIZE(_talk) - 1
+		if _lastindex > 0
+		{
+			talkmemo = _talk[_lastindex]
+			_lastlen = STRLEN(_talk[_lastindex])
+			_eraseindex = STRLEN(_talk) - _lastlen - 1
+			_erasesize = _lastlen + 1
+			_talk = ERASE(_talk, _eraseindex, _erasesize)
+		}
+		_talk
+	}
+}
+
+Select.ForcedTalk
+{
+	if ISVAR("talkmemo") == 1
+	{
+		ForcedTalk0
+		ERASEVAR("talkmemo")
+	}
+	else
+	{
+		ForcedTalk1
+	}
+}

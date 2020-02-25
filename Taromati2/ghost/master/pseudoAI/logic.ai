@@ -1,0 +1,92 @@
+﻿
+<SESSION>
+<Q>*是*的什么</Q>
+<A><srai><star/>是<star index="2"/>的</srai><think><set name="inference"><star index="2"/></set></think></A>
+</SESSION>
+
+
+<SESSION>
+<Q>*是*的*</Q>
+<A><srai><star/></srai><think><set name="inference"><star index="2"/></set><set name="talkmemo"><star/>是<star index="2"/>的<star index="3"/></set></think></A>
+</SESSION>
+
+<SESSION>
+<Q>*吗</Q>
+<A><srai><star/></srai><think><set name="talkmemo"><star/>吗</set></think></A>
+</SESSION>
+
+<SESSION>
+<Q>*是*吗</Q>
+<A><srai><star/>是<star index="2"/></srai><think><set name="talkmemo"><star/>是<star index="2"/>吗</set></think></A>
+</SESSION>
+
+
+<SESSION>
+<Q>*不是*吗</Q>
+<A><srai><star/>不是<star index="2"/></srai><think><set name="talkmemo"><star/>不是<star index="2"/>吗</set></think></A>
+</SESSION>
+
+
+<SESSION>
+<Q>*做什么*</Q>
+<Q>*干什么*</Q>
+<Q>*做些什么*</Q>
+<Q>*干些什么*</Q>
+<A><srai><star/>做</srai></A>
+</SESSION>
+
+<SESSION>
+<Q>*是做什么*</Q>
+<Q>*是干什么*</Q>
+<A><srai><star/>是做</srai></A>
+</SESSION>
+
+<SESSION>
+<Q>*是什么样的*</Q>
+<Q>*是怎样的*</Q>
+<Q>*是怎么样的*</Q>
+<A><srai><star/>是怎</srai></A>
+</SESSION>
+
+<SESSION>
+<Q>*是什么</Q>
+<A><srai><star/></srai><think><set name="talkmemo"><star/>是什么</set></think></A>
+</SESSION>
+
+<SESSION>
+<Q>什么*</Q>
+<A><srai><star/></srai></A>
+</SESSION>
+
+<SESSION>
+<Q>*什么</Q>
+<A><srai><star/></srai></A>
+</SESSION>
+
+<SESSION>
+<Q>*喜欢什么</Q>
+<A><srai><star/>喜欢</srai></A>
+</SESSION>
+
+
+<SESSION>
+<Q>*爱什么</Q>
+<A><srai><star/>爱</srai></A>
+</SESSION>
+
+
+<SESSION>
+<Q>*吃什么</Q>
+<A><srai><star/>吃</srai><think><set name="talkmemo"><star/>吃什么</set></think></A>
+</SESSION>
+
+<SESSION>
+<Q>记住*</Q>
+<A><高兴>%selfname记住了！<learn><set name="answer"><star/></set></learn></A>
+</SESSION>
+
+<SESSION>
+<Q>记住*是*</Q>
+<A><高兴>%selfname记住了！<learn><set name="answer"><star/>是<star index="2"/></set></learn></A>
+</SESSION>
+

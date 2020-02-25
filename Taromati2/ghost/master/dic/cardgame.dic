@@ -1,0 +1,549 @@
+﻿//----------------------战斗主目录---------------------------------------------------------------
+//鐵幣*5可兌換記憶碎片
+//銅幣*5可兌換時間碎片
+//銀幣*5可兌換靈魂碎片
+//白金*2可兌換死亡碎片
+//如果要交錯兌換（鐵幣兌換時間碎片的話）都以10:1的方式計算
+//白金交錯兌換則是15:1
+//rang0是近距rang1是中距rang2是遠距
+//0只能用近距卡片攻擊，1、2遠距卡片攻擊
+//實際的攻擊力是基礎攻擊力+攻擊卡片總和+技能效果修正-怪物防禦力卡片
+//不出攻擊卡片的話ATK=0
+//防禦卡片不出只算基礎防禦力
+//然後實際的傷害是……
+
+//實際的攻擊力作為RAND出來的數目-怪物防禦力RAND出來的數目
+
+//也就是【傷害 = RAND(基礎攻擊力+攻擊卡片總和+技能效果修正)-RAND(怪物基礎防禦力+防禦卡片總和+技能效果修正）】
+//負數則為零傷害。
+
+//Move回合會根據所打出的移動卡片來決定距離。
+//卡片點數大的一方可以獲得移動主動權以及先手攻擊的權力。
+//然後實際移動距離是【卡片點數大的一方-卡片點數小的一方=最終移動距離】
+//比如：rand是0我方出了2點移動卡片，對方出了1點移動卡片，我方選擇往rand2移動，對方往前（實際上還是停留只是選擇了向rang0的前面走），//則移動公式（2-1）只能移動一個距離，如果都選擇往後走就退到rand2。點數相同移動方向相同的話移動距離則是雙方點數相加。
+//也可以選擇原地不動，回血一點，距離只能讓對方選擇
+
+//回合模式為：
+
+//move
+//（根據move出的點數決定先攻方。）
+//攻擊/防禦回合
+//防禦/攻擊回合
+//計算allcard的剩餘卡片以及handcard
+
+//allcard小於57則補充到57-雙方的手牌數。
+//handcard超過5張則不會抽普通卡只能抽取evencard
+//evencard雙方各自只有15張，抽完就沒了
+
+//戰鬥結束后無論輸贏都有Gem（金錢）可以拿，輸的是LV*10-7，獲勝則是lv*10。
+//戰鬥流程備份：http://www38.atwiki.jp/unlight-fbtw/pages/135.html
+//人物資料備份：http://www38.atwiki.jp/unlight-fbtw/pages/53.html
+
+
+
+Select.Foster
+{
+
+if Start == 0
+{
+Lv = 1
+Start = 1
+"\0\s[0]\b[2]%(username)第一次開啟這個功能吧？\w9稍微解說一下好了。\w9\n/
+如你所見，\w9是以Unlight線上版為藍本所修改的一個戰鬥功能遊戲。\w9\n/
+不過並非全部和線上版本完全一樣而是有地方做了修改，\w9所以就算是線上版的老玩家也稍微看一下這裡。\w9\n/
+那麼首先就是……\x\b[2]\_q1）這個遊戲為RPG的戰鬥方式，而非線上版的卡片戰鬥方式，只有預備回合、攻擊回合、防禦回合。\n/
+2）取消了距離限制，移動回合發動的技能改為在預備回合使用，傷害計算依舊使用線上版的計算方式。\n/
+（也就是說依然是隨機傷害唷）\n/
+3）每回合開始會隨機抽取一張卡片，集齊需要的卡片的時候可以在相應的回合發動相應的技能。\n/
+4）戰鬥結束后隨機掉落物品，分別是：\n/
+硬幣：銅、鐵、銀、金、白金\n/
+鐵幣*5可兌換記憶碎片\n/
+銅幣*5可兌換時間碎片\n/
+銀幣*5可兌換靈魂碎片\n/
+金幣*3可兌換生命碎片\n/
+白金*2可兌換死亡碎片\n/
+升級R卡的時候必備。\n/
+5）每場戰鬥結束后會獲得經驗值，經驗值達標即可獲得新的一張LV1卡片，卡片的升級方式與線上版一樣\n/
+6）每次使用技能之後，技能相關卡片將會被清空，比如使用了異質者，你有兩張特殊LV3的卡片，會一起使用掉，請注意。\_q\x%(username)瞭解了的話，\w9就可以準備開始遊戲了？\w9如果不記得的話可以選擇系統說明來瞭解。\w9那麼可以開始遊戲了\x%(OnCardGame)"
+}
+--
+OnCardGame
+}
+
+OnCardGame
+{
+"\0\s[0]\b[2]\![set,choicetimeout,0]\![quicksession,true]\b[2]——当前擁有卡片——\n\n[half]\![*] \q[雪莉Lv1：%(lv1card),changelv1]\n\![*] \q[雪莉Lv2：%(lv2card),changelv2]\n\![*] \q[雪莉Lv3：%(lv3card),changelv3]\n\![*] \q[雪莉Lv4：%(lv4card),changelv4]\n\![*] \q[雪莉Lv5：%(lv5card),changelv5]\n\![*] \q[雪莉R-Lv1：%(R1card),changeR1]\n\![*] \q[雪莉R-Lv2：%(R2card),changeR2]\n\![*] \q[雪莉R-Lv3：%(R3card),changeR3]\0\n\n[half]"
+--
+"\![*] \q[任務,Quest]    \![*] \q[等级提升,Lvup]\n/
+\![*] \q[任務系統說明,Shuoming]\n/
+\![*] \q[返回,ReturnMenu]\n/
+\![*] \q[关闭,close]\e"
+}
+
+Select.Shuoming
+{
+"\0\s[0]\b[2]\_q1）這個遊戲為RPG的戰鬥方式，而非線上版的卡片戰鬥方式，只有預備回合、攻擊回合、防禦回合。\n/
+2）取消了距離限制，移動回合發動的技能改為在預備回合使用，傷害計算依舊使用線上版的計算方式。\n/
+（也就是說依然是隨機傷害唷）\n/
+3）每回合開始會隨機抽取一張卡片，集齊需要的卡片的時候可以在相應的回合發動相應的技能。\n/
+4）戰鬥結束后隨機掉落物品，分別是：\n/
+硬幣：銅、鐵、銀、金、白金\n/
+鐵幣*5可兌換記憶碎片\n/
+銅幣*5可兌換時間碎片\n/
+銀幣*5可兌換靈魂碎片\n/
+金幣*3可兌換生命碎片\n/
+白金*2可兌換死亡碎片\n/
+升級R卡的時候必備。\n/
+5）每場戰鬥結束后會獲得經驗值，經驗值達標即可獲得新的一張LV1卡片，卡片的升級方式與線上版一樣\n/
+6）每次使用技能之後，技能相關卡片將會被清空，比如使用了異質者，你有兩張特殊LV3的卡片，會一起使用掉，請注意。\_q\e"
+}
+
+
+Select.Quest
+{
+"任務搜索…\w7…\w8搜索完畢，\w9戰鬥準備。\nLV%(lv)任務開始！\n\n[half]"
+--
+OnFight
+}
+
+//----------------战斗界面---------------------------------------------------------------------
+fight
+{
+handcard
+handcardn = handcard
+}
+
+OnFight
+{
+MHPN = MHP
+HPN = HP
+Yzz=""
+LDOG=""
+Monster
+Sheri
+trun = "Movetrun"
+--
+"%(Mname)搜索到了，\w9戰鬥開始。"
+--
+Onfightstart
+}
+
+Onfightstart
+{
+"請選擇……\n\n[half]\q[錘子,caiquan,1]\n\q[剪刀,caiquan,2]\n\q[布,caiquan,3]\e"
+}
+
+Select.caiquan
+{
+
+_i=RAND(3)+1
+--
+
+                  if (3 + _i - reference0)%3==0
+                
+                  {
+                   atk=0
+                    "\0平手\x"
+                      --         
+                     
+                         
+                  }  
+                  elseif (3 + _i - reference0)%3==1
+                  {
+                   frista = 1
+                   "雪莉贏了，雪莉先攻。\x"
+                                
+                  }
+                  elseif (3 + _i - reference0)%3==2
+                  {
+                     frista = 2
+                   "雪莉輸了，%(Mname)先攻\x"
+                                    
+                  }
+                
+--
+OnTrun
+    
+}
+
+
+
+OnTrun
+{
+if trun == "Movetrun"
+{
+atktrun = 0
+deftrun = 0
+movetrun = 0
+--
+	if frista == 1
+	{
+	trun = Atktrun
+	Onfightmune
+	}
+	esle
+	{
+	trun = Deftrun
+	Onfightmune
+	}
+}
+elseif trun == "Atktrun"
+{
+	if deftrun == 1
+	{
+	deftrun = 0
+	trun = Movetrun
+	}
+	else
+	{
+	trun = Deftrun
+	}
+}
+elseif trun == "Deftrun"
+{
+	if atktrun == 1
+	{
+	atktrun = 0
+	trun = Movetrun
+	}
+	else
+	{
+	trun = Atktrun
+	}
+}
+}
+
+Onfightmune
+{
+"\1\s[-1]%(Mname)的HP：%(MHPN)/%(MHP)\n\n[half]雪莉的HP：%(HPN)/%(HP)\0\s[0]目前是：%(trun)\n擁有卡片：\n請選擇動作："
+--
+if undie >=1
+{
+undie -= 1
+atkn = TOINT(atk+6)
+"異質者還剩下%(undie)個回合"
+--
+if trun == "Atktrun"
+{
+atktrun = 1
+"\![*] \q[攻擊,OnTruneend]"
+}
+elseif trun == "Deftrun"
+{
+deftrun = 1
+"\![*] \q[防禦,OnTruneend]"
+}
+elseif trun == "Movetrun"
+{
+movetrun = 1
+"\![*] \q[預備,OnTruneend]"
+}
+--
+"  \![*] \q[技能使用,OnSkill]"
+}
+elseif undie <= 0
+{
+"自壞發動，雪莉已經死亡。\x%(OnCardGame)"
+}
+}
+
+OnSkill
+{
+Skill
+--
+fight
+--
+Truneend
+}
+
+
+Skill
+{
+
+"雪莉使用了技能：\n"
+--
+        if teshu >= 1 && atktrun == 1 && move == 1 && atktrun == 1 && Kills == 1 && feiren == 1 
+         {
+	//自殺
+	//飛刃
+	SAtk = TOINT(atk+(teshu*4)+(card*2))
+	teshu = 0
+	move = 0
+	HPN = TOINT(HPN-teshu)
+         "自殺傾向\n飛刃雨\n"
+         }
+      elseif teshu >= 1 && atktrun == 1 && Kills == 1
+         {
+	SAtk = TOINT(atk+(teshu*4))
+	teshu = 0
+	HPN = TOINT(HPN-teshu)
+            "自殺傾向\n"
+         }
+      elseif teshu == k3 && deftrun == 1 && Yiz == 1
+         {
+         undie = 6
+	 killself = 6
+	 SAtk = TOINT(atk+6)//（六回合）
+	 teshuk3 = 0
+            "異質者\n"
+         }
+      elseif rand1atk >= 3 && movetrun == 1 && Bdog == 1
+         {
+          Ldog = 3
+          "巨大黑犬\n"
+         }
+      elseif move == 1 && atktrun == 1 && feiren == 1
+         {
+         sheriatk = TOINT(atk+(card*2))
+         "飛刃雨\n"
+         }
+	else
+	{
+	"無\x"
+	}
+	Truneend
+}
+
+Truneend
+{
+MDefSZ = RAND(MDef)
+SDefSZ = RAND(SDef)
+MAtkSZ = RAND(MAtk)
+SAtkSZ = RAND(SAtk)
+--
+if deftrun = 1
+{
+MShanghai = TOINT(MAtkSZ-SDefSZ)
+HPN = TOINT(HPN-MShanghai)
+"雪莉受到了%(MShanghai)點傷害。"
+}
+elseif atktrun = 1
+{
+Shanghai = TOINT(SAtkSZ-MDefSZ)
+MHPN = TOINT(MHP-Shanghai)
+"%(Mname)受到了%(Shanghai)點傷害。"
+}
+--
+Onfightmune
+}
+
+MonsterTrun
+{
+Truneend
+}
+
+
+
+Win
+{
+m = RAND(100)
+if m >= 99
+{
+timesp += 1
+"獲得時間的碎片*1！\n"
+}
+elseif m >= 98
+{
+soulsp += 1
+"獲得靈魂的碎片*1！\n"
+}
+elseif m >= 97
+{
+diesp += 1
+"獲得死亡的碎片*1！\n"
+}
+elseif m >= 96
+{
+jysp += 1
+"獲得記憶的碎片*1！\n"
+}
+elseif m >= 86
+{
+tb += 1
+"獲得鐵幣*1\n"
+}
+elseif m >= 79
+{
+tongb += 1
+"獲得銅幣*1\n"
+}
+elseif m >= 72
+{
+yb += 1
+"獲得銀幣*1\n"
+}
+elseif m >= 65
+{
+bjb += 1
+"獲得白金幣*1\n"
+}
+else
+{
+"沒有掉落物品。\n"
+}
+--
+"接著搜尋任務嗎？\n/
+\![*] \q[是,战斗训练]\n/
+\![*] \q[否,Foster]\n/
+"
+}
+
+//---------------------------------------信息-------------------------------------------------------
+Sheri
+{
+	if Lv == 1
+	{
+	HP = 10
+	atk = 3
+	def = 4
+	Kills = 1
+	feiren = 0
+	Bdog = 0
+	Yiz = 0
+	}
+	if Lv == 2
+	{
+	HP = 11
+	atk = 3
+	def = 4
+	Kills = 1
+	feiren = 0
+	Bdog = 0
+	Yiz = 1
+	}
+	if Lv == 3
+	{
+	HP = 12
+	atk = 3
+	def = 5
+	Kills = 1
+	feiren = 0
+	Bdog = 1
+	Yiz = 1
+	}
+	if Lv == 4
+	{
+	HP = 13
+	atk = 4
+	def = 5
+	Kills = 1
+	feiren = 0
+	Bdog = 1
+	Yiz = 1
+	}
+	if Lv == 5
+	{
+	HP = 14
+	atk = 4
+	def = 5
+	Kills = 1
+	feiren = 1
+	Bdog = 1
+	Yiz = 1
+	}
+	if Lv == "R1"
+	{
+	HP = 13
+	atk = 4
+	def = 5
+	Kills = 1
+	feiren = 1
+	Bdog = 1
+	Yiz = 1
+	}
+	if Lv == "R2"
+	{
+	HP = 14
+	atk = 4
+	def = 5
+	Kills = 1
+	feiren = 1
+	Bdog = 1
+	Yiz = 1
+	}
+	if Lv == "R3"
+	{
+	HP = 14
+	atk = 5
+	def = 6
+	Kills = 1
+	feiren = 1
+	Bdog = 1
+	Yiz = 1
+	}
+}
+
+
+//卡片
+
+Minecard
+{
+	n = RAND(50)
+	if n >= 40
+	{
+	"遠程攻擊卡片-5"
+	"遠程攻擊卡片-4"
+	"遠程攻擊卡片-3"
+	"遠程攻擊卡片-2"
+	"遠程攻擊卡片-1"
+	}
+	elseif n >= 30
+	{
+	"近程攻擊卡片-5"
+	"近程攻擊卡片-4"
+	"近程攻擊卡片-3"
+	"近程攻擊卡片-2"
+	"近程攻擊卡片-1"
+	}
+	elseif n >= 20
+	{
+	"特殊卡片-3"
+	"特殊卡片-2"
+	"特殊卡片-1"
+	}
+	elseif n >= 10
+	{
+	"防禦卡片-5"
+	"防禦卡片-4"
+	"防禦卡片-3"
+	"防禦卡片-2"
+	"防禦卡片-1"
+	}
+	else
+	{
+	"移動卡片-2"
+	"移動卡片-1"
+	}
+}
+
+Monster
+{
+	n = RAND(100)
+	if n >= 55
+	{
+	Mname = "蝙蝠"
+	Mleave = 1
+	MHP = 1
+	MAtk = 3
+	MDef = 1
+	MHPN = MHP
+	}
+	elseif n >= 10
+	{
+	Mname = "吸血蝙蝠"
+	Mleave = 2
+	MHP = 2
+	MAtk = 4
+	MDef = 2
+	MHPN = MHP
+	}
+	else
+	{
+	Mname = "白銀蝙蝠"
+	Mleave = 3
+	MHP = 3
+	MAtk = 7
+	MDef = 3
+	MHPN = MHP
+	}
+}

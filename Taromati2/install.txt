@@ -1,0 +1,4 @@
+﻿charset,UTF-8
+type,ghost
+name,Taromati2
+directory,Taromati2

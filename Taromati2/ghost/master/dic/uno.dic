@@ -1,0 +1,1124 @@
+﻿//UNO介紹、規則相關
+//真是遺憾我好像做不出來呢，具體的2人遊戲
+//
+//UNO图片存放路径
+#define     UNOPATH        data\uno    
+
+
+OnUNORules
+{
+	"\c\0\s[18]\b[2]好的，那麼要聽哪一部份呢？\n[150]\_q/
+		\![*]\q[牌面講解,OnUNOR1]\n/
+		\![*]\q[基本規則,OnUNOR2]\n/
+		\![*]\q[計分方法,OnUNOR6]\n/
+		\![*]\q[追加規則,OnUNOR3]\n/
+		\![*]\q[二人遊戲,OnUNOR4]\n/
+		\![*]\q[多人遊戲,OnUNOR5]\n[150]"
+		--
+	//	if scaledoki>= 400 && stamp0 != 1
+		{"\![*]\q[一起玩好嗎,OnWannaPlay]\n[150]"}
+		--
+			"\![*]\q[不用了,]\_q\n"
+			--
+			"\![*]\q[返回,OnUnoUserInit,back]"
+			
+}
+
+OnWannaPlay
+{
+	//"\0\s[16]那真是太好了……\s[28]啊，現在似乎沒有湊齊一副牌的樣子，對不起！\s[15]不過，我會記得這件事的，謝謝%username。\![raiseplugin,スタンプ帳,OnStampAdd,ghost\master\wdf.png,Wild Draw Four,%(username)能對UNO感興趣真是太好了。<br>有機會的話和朋友們一起玩吧。]"
+	stamp1 = 0
+		stamp0 = 1
+		UnoUserInit()
+}
+
+OnUNOR1
+{
+	"\_q\0\s[8]\b[2]UNO牌共有 108 張牌，UNO的牌面……花色分紅黃藍綠四種，其中基本牌分別從0到9。每種顏色的0祗有一張，而其他的數字有兩張。共计76张。\n[150]然後呢，是功能牌，有著可以強制讓下家從牌堆拿出兩張新牌的draw two，每種顏色各有兩張。\n[150]还有skip和reverse。skip可以讓下家失去一次出牌的機會，而reverse是讓出牌的順序發生改變，從順時針方向變成逆時針，反之亦然。\n這兩種牌每個顏色有兩張。功能牌共计24张。\n[150]強制牌wild，能接任何牌并能夠改變接下來出牌顏色的牌。\n而wild draw four，不僅可以改變顏色，還可以強制下家抓四張牌，並且失去本回合的出牌權。一副當中的wild和wild draw 4各有四張。共计8张\x[noclear]\n[150]\s[30]總之wild draw 4是最強的呢。\x\_q"
+		--
+		OnUNORules
+		
+}
+
+OnUNOR2
+{
+	"\_q\0\s[8]\b[2]UNO是一個先把牌全部出完就是贏家的遊戲。\n[150]一開始每人發到七張牌，然後牌堆的第一張作為參照，第一個出牌者必須出和它的顏色或者數字相同的牌，否則必須出特殊牌。下家則按照前一張牌的顏色和數字出牌。\n[150]如果打出了不合遊戲規則的牌，除收回原來的牌外，還必須從牌堆中再多抽一張牌做為懲罰，並且失去出牌權，直接輪下一玩家出牌。如果對其他玩家提出出牌建議的話，要抽取四張牌做為懲罰。\n[150]當上家出了強制牌，你就會失去出牌的機會。但是wild draw four是可以『挑戰』（challenge）的。如果你能夠確定上家並不是沒有別的牌可以出，就挑戰吧！如果挑戰成功，你不會失去出牌機會，而上家必須抓四張牌。\n不過注意，失敗的話，作為懲罰你要抓六張牌。\n[150]如果手上沒有可以出的牌，就必須再抓一張牌。如果還是不能出牌，這一輪就失去了出牌的機會。\n[150]當出掉倒數第二張、剩下一張牌的時候，要喊出『UNO！』，這也是對所有玩家的警告。一般來說，必須在出牌的時候喊出，但出牌後五秒內都是可以喊的。如果不喊且被別的玩家抓住，也是一種challenge，需要抓兩張牌。追訴時效是下家出牌之前。\x[noclear]\n[150]因為有那個call，UNO才是UNO呢。順便說一句，在意大利語當中UNO是『一』的意思。\x\_q"
+		--
+		OnUNORules
+}
+
+OnUNOR6
+{
+	"\_q\0\s[8]\b[2]UNO採用加分制，分數最高的是輸家。一般來說，有人達到五百分的時候，一局遊戲就分出勝負了。\n[150]每一盤在有人勝出後，其他人將自己剩餘的手牌分值合計，數字牌按照牌面計分，draw two、reverse、skip都是20分，wild和wild draw four是50分。\x[noclear]\n[150]\s[15]說起來有注意到嗎？0是不計分的。\x\_q"
+		--
+		OnUNORules
+}
+
+OnUNOR3
+{
+	"\_q\0\s[8]\b[2]UNO當中有很多可以附加的規則，也可以在一局遊戲中同時使用多個附加規則。\n[150]目前多見的規則，有penalty，7-0和jump-in。\n[150]Jump-in是說當別人打出和你的手牌相同的牌時，你可以立刻將相同的牌出手。當然，自己有兩張相同的牌時也必須一起出手。和penalty規則疊加的時候，強制牌的效果也是重複計算的。\nJump-in進行之後，仍然按照原來的次序出牌，也就是能夠使夾在中間的玩家失去出牌機會。\n[150]Penalty就是加強處罰的規則，如果在challenge當中失敗，就必須多抓兩張牌。另外，如果是因為jump-in，上家和上上家都出了draw類型的牌，則必須全部合計給受罰的一家。\n[150]7-0是當數字為0和7的牌打出時，可以交換手牌的規則。7是任選一名玩家換牌，0則是按照出牌的次序，全部換到自己的下家。如果同時附加了jump-in，祗有後一個出7的人有權換牌。\x[noclear]\n[150]舉例來說，在penalty加jump-in規則下，連續三個人出了draw two，第四個人沒有draw two，他就必須抓六張牌。\x\_q"
+		--
+		OnUNORules
+}
+
+OnUNOR4
+{
+	"\_q\0\s[8]\b[2]兩個人玩UNO的話，reverse和skip就會變成讓一方連續出牌的強手牌了，而且7和0也祗能和對方交換手牌。所以二人遊戲沒有看起來的那麼容易哦。\x\_q"
+		--
+		OnUNORules
+}
+
+OnUNOR5
+{
+	"\_q\0\s[8]\b[2]多於兩個人的話，也能稍微減少一些壓力呢，特別是penalty和7-0會變得更加刺激。\n[150]如果有四個人，也可以考慮組隊計分，隊友坐在你對面的位置。\x\_q"
+		--
+		OnUNORules
+}
+
+UnoCard //初始化牌型
+{
+	unocard="r0,r1,r1,r2,r2,r3,r3,r4,r4,r5,r5,r6,r6,r7,r7,r8,r8,r9,r9,rDraw2,rDraw2,rReverse,rReverse,rSkip,rSkip,/
+		y0,y1,y1,y2,y2,y3,y3,y4,y4,y5,y5,y6,y6,y7,y7,y8,y8,y9,y9,yDraw2,yDraw2,yReverse,yReverse,ySkip,ySkip,/
+		b0,b1,b1,b2,b2,b3,b3,b4,b4,b5,b5,b6,b6,b7,b7,b8,b8,b9,b9,bDraw2,bDraw2,bReverse,bReverse,bSkip,bSkip,/
+		g0,g1,g1,g2,g2,g3,g3,g4,g4,g5,g5,g6,g6,g7,g7,g8,g8,g9,g9,gDraw2,gDraw2,gReverse,gReverse,gSkip,gSkip,/
+		Wild,Wild,Wild,Wild,WildDraw4,WildDraw4,WildDraw4,WildDraw4";
+		unocard;
+	r=-50;
+	y=-25;
+	b=0;
+	g=25;
+	Draw2=20;
+	Reverse=20;
+	Skip=20;
+	Wild=50;
+	WildDraw4=50;
+	
+	
+}
+
+
+UnoCardShuffle  //洗牌
+{
+	_unocard=IARRAY;
+	_unocard=UnoCard;
+	for _i=0;_i<108;_i++
+	{
+		_tmp=RAND(108);
+		while _unocard[_tmp]==-1
+		{
+			_tmp=RAND(108);
+		}
+		unocard[_i]=_unocard[_tmp];
+		_unocard[_tmp]=-1;
+	}
+}
+
+OnUnoUser
+{
+	if reference0=="begin"
+		unomode=0;
+	unoopenmode=0
+        if reference1=="unoopenmode"
+			unoopenmode=1
+			"\![raise,OnUnoUserInit,%(reference0),%(reference1)]";
+		
+		
+}
+
+OnUnoUserInit   //二人游戏入口函数
+{
+	UnFinished
+	UnoUserInit(reference0,reference1)
+}
+
+
+
+
+UnoUserInit   //用户界面
+{
+	_txt="\C\![quicksession,true]\c\p[2]\s[-1]\b[-1]\c\0\s[26]\b[2]\![set,choicetimeout,0]";
+	//if unomode==0
+	_txt+="\n\n\q[开始游戏,OnUnoUser,begin]\_l[80,-]\q[帮助,OnUNORules]\_l[160,-]\q[查看战绩,OnUnoResult]\_l[240,-]\q[结束,OnUnoOver]\n";
+	
+	_txt+="\_l[0,-]%(username)积分：%(cardpoint.user[0])\_l[160,-]%selfname积分：%(cardpoint.com[0])\n"
+		if _argv[0]=="begin"
+		{
+			mess="";
+			messpre="";
+			messuse="";
+			unomode=1;
+			unocarduse=0;
+			unocard.turn=TOINT(unocard.banker);		
+			uno.currentid=-1;
+			impeachwild=0;
+			usewildsort=0;
+			unocall=-1;
+			usergetunocard=0;
+			unocard.user=IARRAY;
+			unocard.com=IARRAY;
+			unocard.open=0;
+			if unoopenmode==1
+                unocard.open=1;
+			unocard.current="";
+			unocard.currentcolor="";
+			_txt+=UnoCardShuffle;
+			_txt+=UnoCardSend;
+			if unocard.turn==0;	
+			_txt+=OnUnoCardfollow;
+		}
+		_txt+=ShowUnoCard;
+		unocarduse=0;
+		if unomode==1
+		{	
+			_txt+=UserMenu;
+			_whowin=UnoWhoWinCheck;
+			if _whowin==0
+			{
+				mess="%(username)赢得一局。\n";
+				unomode=0;
+				unocard.banker=0;
+				cardpoint.user[0]=TOINT(cardpoint.user[0])+GetUnoCardPoints("%(unocard.com)");
+				cardpoint.user[1]=TOINT(cardpoint.user[1])+GetUnoCardPoints("%(unocard.com)");
+				unocard.playnum[0]=TOINT(unocard.playnum[0])+1;
+				unocard.win[0]=TOINT(unocard.win[0])+1;
+				_txt+=UnoUserInit();
+				_txt+="\_l[0,0]" + messpre + mess;
+				if cardpoint.user[0]>=500
+				{
+					unocard.playnum[1]=TOINT(unocard.playnum[1])+1;
+					unocard.win[1]=TOINT(unocard.win[1])+1;
+					cardpoint.user[0]=0;
+					cardpoint.com[0]=0;
+					_txt+="\0%(username)达到500分，赢得一场比赛\x";
+					_txt+=UnoUserInit();
+				}
+			}
+			
+			elseif _whowin==1
+			{
+				mess="%selfname赢得一局。\n";
+				unomode=0;
+				unocard.banker=1;
+				cardpoint.com[0]=TOINT(cardpoint.com[0])+GetUnoCardPoints("%(unocard.user)");
+				cardpoint.com[1]=TOINT(cardpoint.com[1])+GetUnoCardPoints("%(unocard.user)");
+				unocard.playnum[0]=TOINT(unocard.playnum[0])+1;
+				unocard.lose[0]=TOINT(unocard.lose[0])+1;
+				_txt+=UnoUserInit()
+					_txt+="\_l[0,0]" + messpre + mess;
+				if cardpoint.com[0]>=500
+				{
+					unocard.playnum[1]=TOINT(unocard.playnum[1])+1;
+					unocard.lose[1]=TOINT(unocard.lose[1])+1;
+					cardpoint.user[0]=0;
+					cardpoint.com[0]=0;
+					_txt+="\0%selfname达到500分，赢得一场比赛\x";
+					_txt+=UnoUserInit()
+				}
+			}
+			elseif _whowin==2
+			{
+				mess="游戏结束，不分胜负。\n";
+				unomode=0;
+				unocard.banker=RAND(2);
+				unocard.playnum[0]=TOINT(unocard.playnum[0])+1;
+				_txt+=UnoUserInit()
+					_txt+="\_l[0,0]" + messpre + mess;
+				
+			}
+			
+			elseif _whowin==-1
+			{
+				if unocard.turn==1
+				{
+					mess="unoturn:%selfname\n";
+					_txt+="\_l[0,0]" + messpre +messuse+ mess;
+					_txt+=UnoCardComFollow;
+				}
+				elseif unocard.turn==0
+				{
+					mess="unoturn:%(username)\n";
+					_txt+="\_l[0,0]" + messpre + messuse + mess;//在主界面上方显示，messpre是用户出牌信息，messuse是功能牌使用信息，mess是轮次信息
+				}
+			}
+		}
+		_txt;
+}
+
+
+
+UserMenu    //用户菜单
+{
+	_txt="";
+
+	if unocard.turn==0
+	{
+		if IsUnoCardok("%(unocard.user)")==1 && ARRAYSIZE(unocard.user)==2&&(unocall==-1||unocall==2) &&impeachwild!=1
+		{
+			unocall=2;
+			_txt+="\n\_l[0,-]\q[UNO,OnUnoCall]";
+		}
+		else
+			_txt+="\n\_l[0,-]\f[color,192,192,192]UNO\f[color,default]";
+
+		if CheckUnoCard("%(unocard.user)")==0 && usergetunocard==1
+		{
+			unocard.turn=TOINT(unocard.turn+1)%2;
+			usergetunocard=0;
+		}
+	_txt+="\_l[0,-]剩余牌数：%(ARRAYSIZE(unocard))\n";
+		if CheckUnoCard("%(unocard.user)")==0&&usergetunocard!=1&&impeachwild!=1
+			_txt+="\_l[60,-]\q[摸牌,OnUserGetUnoCard]";
+		else 
+			_txt+="\_l[60,-]\f[color,192,192,192]摸牌\f[color,default]";
+        if impeachwild==1
+			_txt+="\_l[120,-]\q[检举王牌,OnImpeachWild,0,yes]     \_l[200,-]\q[不检举王牌,OnImpeachWild,0,no]";
+		else
+			_txt+="\_l[60,-]\f[color,192,192,192]\_l[120,-]检举王牌\_l[200,-]不检举王牌\f[color,default]";
+		
+		if usewildsort==1
+			_txt+="\n指定牌色：\_l[80,-]\q[红,OnWildSortColor,r]   \_l[120,-]\q[黄,OnWildSortColor,y]  \_l[160,-]\q[蓝,OnWildSortColor,b]   \_l[200,-]\q[绿,OnWildSortColor,g]"
+	}
+	
+	
+	_txt;
+	
+}
+
+OnUnoResult
+{
+	_txt=""
+		_txt+="\_q\0%(username)战绩如下：\n/
+		%(username)总积分：%(cardpoint.user[1])   \_l[160,-]%selfname总积分：%(cardpoint.com[1])\n/
+		总比赛局数：%(unocard.playnum[0])\n/
+		赢得比赛局数：%(unocard.win[0])（胜率：%(100*unocard.win[0]/unocard.playnum[0])%）\n/
+		输掉比赛局数：%(unocard.lose[0])（负率：%(100*unocard.lose[0]/unocard.playnum[0])%）\n/
+		平局数：%(TOINT(unocard.playnum[0]-unocard.win[0]-unocard.lose[0]))\n/
+		总比赛场数：%(unocard.playnum[1])\n/
+		赢得比赛场数：%(unocard.win[1])（胜率：%(100*unocard.win[1]/unocard.playnum[1])%）\n/
+		输掉比赛场数：%(unocard.lose[1])（负率：%(100*unocard.lose[1]/unocard.playnum[1])%）\n/
+		获胜速率：%(100*unocard.win[1]/unocard.playnum[0])%\_q\x\n/
+		"
+		_txt+=UnoUserInit();
+	_txt
+}
+
+OnWildSortColor    //指定王牌颜色
+{
+	_txt="";
+	usewildsort=0;
+	_unocard.id=unocard.id;
+	unocard.id=NULL;
+	unocard.currentcolor=reference0;	
+	uno.currentid=unocard.turn;
+	unocard.user[_unocard.id]=IARRAY;
+	unocard.turn=TOINT(unocard.turn+1)%2;
+	_color=GetUnoColorName(unocard.currentcolor);
+	messpre="\0%(unocard.current)，Color:%(_color)。";
+	if unocall==2
+		unocall=1;
+	_txt+=UnoCardUseAge;
+	_txt+=UnoUserInit();
+	_txt;
+	
+}
+
+
+OnUnoCall   //UNO
+{
+	messpre="UNO!!!";
+	unocall=0;
+	UnoUserInit();
+}
+
+CheckUnoCard    //检查UNO牌型
+{
+	_unocard=_argv[0];
+	_canfollow=0;
+	foreach _unocard;_i
+	{
+		
+		if GetUnoCardColor(_i)==unocard.currentcolor||GetUnoCardSort(_i)==GetUnoCardSort(unocard.current)||_i=="Wild"
+			_canfollow=1;
+		
+	}
+	
+	_canfollow;
+}
+
+IsUnoCardok   //判断能否出牌
+{
+	_unocard=_argv[0];
+	_canfollow=0;
+	foreach _unocard;_i
+	{
+		
+		if GetUnoCardColor(_i)==unocard.currentcolor||GetUnoCardSort(_i)==GetUnoCardSort(unocard.current)||_i=="Wild"||_i=="WildDraw4"
+			_canfollow=1;
+		
+	}
+	
+	_canfollow;
+	
+}
+
+
+
+
+OnUnoCardfollow    //用户跟牌
+{
+	_txt="";
+	_unocard=reference0;
+	_unocard.id=reference1;
+	_exwild=IARRAY;
+	if _argc>0
+	{
+		_unocard=_argv[0];
+		_unocard.id=_argv[1];
+	}
+	if unocard.turn==0
+	{
+		if unocard.current==""
+		{
+			
+			_txt+=GetIndexUno("%(unocard.user)")
+				_color=GetUnoColorName(unocard.currentcolor);
+			unocard.currentemp=unocard.current;
+			messpre="引牌%(unocard.current)，Color:%(_color)。";
+			_txt+=UnoCardUseAge;
+			_txt+=UnoUserInit();
+			_txt;
+			return;
+		}
+		elseif GetUnoCardColor(_unocard)==unocard.currentcolor||GetUnoCardSort(_unocard)==GetUnoCardSort(unocard.current)||GetUnoCardSort(_unocard)=="Wild"||GetUnoCardSort(_unocard)=="WildDraw4"
+		{
+                     /*
+			_j=0;	
+			foreach unocard.user;_i
+			{
+				if GetUnoCardColor(_i)!="W"
+					_exwild,=_j;
+				
+				_j++;
+			}
+                      */
+			if _unocard=="WildDraw4"
+				unocard.currentemp=unocard.current;
+			
+			unocard.current=_unocard;
+			
+			if GetUnoCardColor(unocard.current)=="W"
+			{
+				usewildsort=1;
+				unocard.id=_unocard.id;
+				_txt+=UnoUserInit();
+				_txt;
+				return;
+			}
+			
+			unocard.currentcolor=GetUnoCardColor(unocard.current);
+			/*
+			if GetUnoCardColor(unocard.current)=="W"
+			{
+			while ARRAYSIZE(_exwild)>0&&(unocard.currentcolor=="W"||unocard.currentcolor=="")
+			{
+			_k=ARRAYSIZE(_exwild);
+			_m=_exwild[RAND(_k)];
+			unocard.currentcolor=GetUnoCardColor(unocard.user[_m]);
+			}
+			
+			  }
+			  
+			*/
+			uno.currentid=unocard.turn;
+			unocard.user[_unocard.id]=IARRAY;
+			unocard.turn=TOINT(unocard.turn+1)%2;
+			_color=GetUnoColorName(unocard.currentcolor);
+			messpre="\0%(unocard.current)，Color:%(_color)。";//用户出牌信息，在主界面上方显示
+			if unocall==2
+				unocall=1;
+		        usergetunocard=0;
+			_txt+=UnoCardUseAge;
+			_txt+=UnoUserInit();
+			_txt;
+			return;
+		}
+	}	
+	_txt+=UnoUserInit();
+	_txt;
+}
+
+GetUnoColorName    //得到牌色名
+{
+	_color=_argv[0];
+    _color=GetUnoCardColor(_color);
+	case _color
+	{
+		when "r"{_color="红"}
+		when "y"{_color="黄"} 
+		when "b"{_color="蓝"}
+		when "g"{_color="绿"}
+	}
+		_color;
+}
+
+GetIndexUno    //得到引牌
+{
+	_unocard=_argv[0];
+	_exwild=IARRAY;
+	_j=0;
+	foreach _unocard;_i
+	{
+		if GetUnoCardColor(_i)!="W"
+			_exwild,=_j;
+		
+		_j++;
+	}
+	
+	unocard.current=unocard[0];
+	unocard[0]=IARRAY;
+	while unocard.current=="WildDraw4"
+	{
+		unocard.current=unocard[0];
+		unocard[0]=IARRAY;
+	}
+	
+	unocard.currentcolor=GetUnoCardColor(unocard.current);
+	if unocard.currentcolor=="W"
+	{
+		while ARRAYSIZE(_exwild)>0&&(unocard.currentcolor=="W"||unocard.currentcolor=="")
+		{
+			_k=ARRAYSIZE(_exwild);
+			_m=_exwild[RAND(_k)];
+			unocard.currentcolor=GetUnoCardColor(_unocard[_m]);
+		}
+		
+	}
+	
+}
+
+
+
+UnoCardComFollow    //电脑跟牌
+{
+        "\_w[100]";//设置等待时间避免点击过快的问题
+--
+	_txt="";
+	_comfollow=0；
+		if unocard.current==""
+		{
+			
+			_txt+=GetIndexUno("%(unocard.com)")
+				
+				_color=GetUnoColorName(unocard.currentcolor);
+			unocard.currentemp=unocard.currentcolor;
+			_txt+="\p[2]\b[2]\c引牌%(unocard.current)，Color:%(_color)。\x";
+		}
+		
+		else
+		{
+			if unocall==1
+			{
+				_m=RAND(2);
+				if _m==1
+				{
+					_txt+="\p[2]\b[2]\c检举UNO！\x";
+					_txt+=OnUnoCardGet(0)+OnUnoCardGet(0);
+				}
+				
+			}
+			
+			if impeachwild==1
+			{
+				_m=RAND(2);
+				if _m==0
+					_txt+=ImpeachWild(1,"no");
+				else
+					_txt+=ImpeachWild(1,"yes");
+				_txt+=UnoUserInit();
+				_txt;
+				retrun;
+			}
+			
+			
+			else
+			{
+				
+				_unocard.current=UnoCardComPare;
+				if _unocard.current!=0
+				{
+					if _unocard.current=="WildDraw4"
+						unocard.currentemp=unocard.current;
+					unocard.current=_unocard.current;
+					_color=GetUnoColorName(unocard.currentcolor);	
+					if ARRAYSIZE(unocard.com)==1
+						_txt+="\p[2]\b[2]\cUNO!!!\x";
+					_txt+="\p[2]\b[2]\c%(unocard.current)，Color:%(_color)\x";//电脑出牌时说的话，牌面是当前出的牌或引牌，同时可以加入人格出牌时要说的话。用\x接下。
+				}
+				else
+				{
+					OnUnoCardGet(unocard.turn);
+					_unocard.current=UnoCardComPare;
+					if _unocard.current!=0
+					{
+						unocard.current=_unocard.current;
+						_color=GetUnoColorName(unocard.currentcolor);	
+						if ARRAYSIZE(unocard.com)==1
+							_txt+="\p[2]\b[2]\cUNO!!!\x";
+						_txt+="\p[2]\b[2]\c%(unocard.current)，Color:%(_color)\x";//这里同上
+					}
+					else
+						_txt+="\p[2]\b[2]\cPASS\n\x";
+					
+				}
+				
+				if _unocard.current!=0
+					uno.currentid=unocard.turn;
+				unocard.turn=TOINT(unocard.turn+1)%2;	
+				if _unocard.current==0
+					uno.currentid=unocard.turn;	
+			}
+			
+		}
+		unocall=-1;
+		// unocarduse=0;
+		_txt+=UnoCardUseAge;
+		_txt+=UnoUserInit();
+                _txt+="\e"
+		_txt;
+}
+
+
+
+UnoCardComPare    //电脑思考
+{
+	_j=0;
+	_temp=IARRAY;
+	_unocard.current=0;
+	_comfollow=0;
+	_canusewild=0;
+	_wildid=0;
+	_wild4id=0;
+	_exwild=IARRAY;
+	foreach unocard.com;_i
+	{
+		
+		if GetUnoCardColor(_i)==unocard.currentcolor||GetUnoCardSort(_i)==GetUnoCardSort(unocard.current)||_i=="Wild"
+		{
+			_temp,=_j;
+			_comfollow=1;
+		}
+		if GetUnoCardColor(_i)!="W"
+			_exwild,=_j;
+		
+		elseif _i=="WildDraw4"
+		{
+			_canusewild++;
+			_wild4id=_j;
+	        }
+		_j++;
+	}
+	
+	if _canusewild==0&&_comfollow==1
+	{
+		_k=ARRAYSIZE(_temp);
+		_k=_temp[RAND(_k)];
+		_unocard.current=unocard.com[_k];
+		unocard.com[_k]=IARRAY;
+		unocard.currentcolor=GetUnoCardColor(_unocard.current);
+	}
+	
+	elseif _canusewild>1&&_comfollow==1
+	{
+		_m=RAND(100);
+		if _m>=2&&ARRAYSIZE(unocard.user)>3
+		{
+			_k=ARRAYSIZE(_temp);
+			_k=_temp[RAND(_k)];
+			_unocard.current=unocard.com[_k];
+			unocard.com[_k]=IARRAY;
+			unocard.currentcolor=GetUnoCardColor(_unocard.current);
+		} 
+		else
+		{
+			_unocard.current=unocard.com[_wild4id];
+			unocard.com[_wild4id]=IARRAY;
+			unocard.currentcolor=GetUnoCardColor(_unocard.current);	
+		}
+	}
+	elseif _canusewild>1&&_comfollow==0
+	{
+		_m=RAND(10);
+		if _m>=3&&ARRAYSIZE(unocard.user)<=3
+		{
+			_unocard.current=unocard.com[_wild4id];
+			unocard.com[_wild4id]=IARRAY;
+			unocard.currentcolor=GetUnoCardColor(_unocard.current);	
+		}
+		
+	}
+	
+        elseif _canusewild==1
+        {
+               _m=RAND(100);
+               if ARRAYSIZE(unocard.com)==2
+	       {
+			_unocard.current=unocard.com[_wild4id];
+			unocard.com[_wild4id]=IARRAY;
+			unocard.currentcolor=GetUnoCardColor(_unocard.current);	
+		}
+
+               elseif ARRAYSIZE(unocard.user)<=3&&_comfollow==0&&_m<=30
+		{
+			_unocard.current=unocard.com[_wild4id];ii="_m==1";
+			unocard.com[_wild4id]=IARRAY;
+			unocard.currentcolor=GetUnoCardColor(_unocard.current);	
+		}
+                elseif _comfollow==1
+                {
+                        _k=ARRAYSIZE(_temp);
+			_k=_temp[RAND(_k)];
+			_unocard.current=unocard.com[_k];
+			unocard.com[_k]=IARRAY;
+			unocard.currentcolor=GetUnoCardColor(_unocard.current);
+                 }
+      
+        }
+
+    if GetUnoCardColor(_unocard.current)=="W"
+	{
+		unocard.currentcolor=GetUnoCardColor(_unocard.current);
+		while ARRAYSIZE(_exwild)>0&&(unocard.currentcolor=="W"||unocard.currentcolor=="")
+		{
+			_k=ARRAYSIZE(_exwild);
+			_m=_exwild[RAND(_k)];
+			unocard.currentcolor=GetUnoCardColor(unocard.com[_m]);
+		}
+		
+	}
+   if unocard.currentcolor=="W"
+   {
+    _color="r,y,b,g";
+    _k=RAND(4);
+    unocard.currentcolor=_color[_k];
+   }
+
+	_unocard.current;
+	
+}
+
+OnImpeachWild
+{
+	ImpeachWild(reference0,reference1)+UnoUserInit
+}
+
+ImpeachWild  //检举王牌
+{	
+	unocard.turn=reference0;
+	_impeachwild=reference1;
+	_name="%(username),%selfname";
+	_unocard=IARRAY;
+	if _argc>0;
+	{
+		unocard.turn=_argv[0];
+		_impeachwild=_argv[1];
+	}
+	if unocard.turn==0	
+		_unocard=unocard.com;
+	
+	else
+        _unocard=unocard.user;
+	
+	if _impeachwild=="yes"
+	{
+		if CheckWild("%(_unocard)")==1
+		{       
+			messpre="%(_name[unocard.turn])检举失败，%(_name[unocard.turn])+6。";             
+			OnUnoCardGet(unocard.turn)+OnUnoCardGet(unocard.turn)+OnUnoCardGet(unocard.turn)+OnUnoCardGet(unocard.turn)+OnUnoCardGet(unocard.turn)+OnUnoCardGet(unocard.turn);
+			unocard.turn=TOINT(unocard.turn+1)%2;
+		}
+		elseif CheckWild("%(_unocard)")==0
+		{
+			unocard.turn=TOINT(unocard.turn+1)%2;
+			messpre="%(_name[1-unocard.turn])检举成功，%(_name[unocard.turn])+4。";     
+			OnUnoCardGet(unocard.turn)+OnUnoCardGet(unocard.turn)+OnUnoCardGet(unocard.turn)+OnUnoCardGet(unocard.turn);
+			unocard.turn=TOINT(unocard.turn+1)%2;
+		}
+	}
+	
+	elseif _impeachwild=="no"
+	{
+		messpre="%(_name[unocard.turn])+4，禁手。";  
+		OnUnoCardGet(unocard.turn)+OnUnoCardGet(unocard.turn)+OnUnoCardGet(unocard.turn)+OnUnoCardGet(unocard.turn);
+		unocard.turn=TOINT(unocard.turn+1)%2;
+		
+	}
+	unocard.currentemp="WildDraw4";
+	impeachwild=0;
+	
+}
+
+CheckWild    //王牌检查。使用如CheckWild("%(unocard.user)")
+{
+	_unocard=_argv[0];
+	_j=0;
+	_canusewild=-1;
+	foreach _unocard;_i
+	{
+		
+		if GetUnoCardColor(_i)==GetUnoCardColor(unocard.currentemp)
+			_canusewild=_canusewild*0;
+		else
+			_canusewild=_canusewild*_canusewild;
+		_j++;
+	}
+	_canusewild;
+	
+	
+}
+
+
+
+UnoCardUseAge   //功能牌及王牌
+{
+	_unocardsort=GetUnoCardSort(unocard.current);
+	_name="%(username),%selfname";
+	_txt="";
+	messuse="";
+	/*
+	if unocarduse==1
+	{
+	unocarduse=0;
+	messuse="";
+	_unocardsort="";
+	}
+	*/
+	if uno.currentid==TOINT(unocard.turn+1)%2||uno.currentid==-1
+	{
+		if _unocardsort=="Draw2"
+		{
+			unocarduse=1;
+			messuse="%(_name[unocard.turn])+2，禁手。";
+			_txt+=OnUnoCardGet(unocard.turn)+OnUnoCardGet(unocard.turn);
+			unocard.turn=TOINT(unocard.turn+1)%2;
+		}
+		elseif _unocardsort=="Reverse"
+		{
+			unocarduse=1;
+			messuse="%(_name[unocard.turn])禁手。";
+			unocard.turn=TOINT(unocard.turn+1)%2;
+		}
+		elseif _unocardsort=="Skip"
+		{
+			unocarduse=1;
+			messuse="%(_name[unocard.turn])禁手。";
+			unocard.turn=TOINT(unocard.turn+1)%2;
+		}
+		elseif _unocardsort=="Wild"
+		{
+			unocarduse=1;
+		}
+		elseif _unocardsort=="WildDraw4"
+		{     
+			unocarduse=1;  
+			impeachwild=1;
+			_unocard=unocard.user;
+			if unocard.turn==0
+				_unocard=unocard.com;
+			if ARRAYSIZE(_unocard)==0
+			{
+				messuse="%(_name[unocard.turn])+4。" ;            
+				_txt+=OnUnoCardGet(unocard.turn)+OnUnoCardGet(unocard.turn)+OnUnoCardGet(unocard.turn)+OnUnoCardGet(unocard.turn);
+			}
+			
+			
+		}
+		else
+        {
+			unocarduse=0;
+			impeachwild=0;
+        }
+		_txt;
+	}	
+	
+	
+	else
+	{
+		//unocarduse=0;
+		messuse="";
+		//impeachwild=0;
+		//_unocardsort="";
+	}	
+	
+	
+	
+	
+}
+
+
+UnoWhoWinCheck    //赢家判断
+{
+	if ARRAYSIZE(unocard.user)==0
+	{
+		0;return;
+	}
+	elseif ARRAYSIZE(unocard.com)==0
+	{
+		1;return;
+	}
+	elseif ARRAYSIZE(unocard)==0
+	{
+		2;return;
+	}
+	-1;return;
+}
+
+
+GetUnoCardColor   //得到牌色
+{
+	_unocard=_argv[0];
+	_a0=ARRAYSIZE(_unocard);
+	_str=STRLEN(_unocard);
+	_color=SUBSTR(_unocard,0,1);
+	_color;
+}
+
+GetUnoCardSort    //得到牌型
+{
+	_unocard=_argv[0];
+	_a0=ARRAYSIZE(_unocard);
+	_str=STRLEN(_unocard);
+	_color=SUBSTR(_unocard,0,1);
+	_sort="";
+	if _color=="r"|| _color=="y"|| _color=="b"|| _color=="g"
+		_sort=SUBSTR(_unocard,1,_str-1);
+	else
+		_sort=_unocard;
+	_sort;
+}
+
+
+
+GetUnoCardPoint   //得到牌分
+{
+	_unocard=_argv[0];
+	_a0=ARRAYSIZE(_unocard);
+	_str=STRLEN(_unocard);
+	_color=SUBSTR(_unocard,0,1);
+	_sort=SUBSTR(_unocard,1,_str-1);
+	_cardpoint=0
+		if _color=="r"|| _color=="y"|| _color=="b"|| _color=="g"
+			_cardpoint=EVAL(_sort);
+		else
+			_cardpoint=EVAL(_unocard);
+		_cardpoint;
+}
+
+GetUnoCardPoints     //得到总牌分
+{
+	_unocard=_argv[0];
+	_cardpoint=IARRAY;
+	_cardpoints=0;
+	_a=ARRAYSIZE(_unocard);
+	
+	for _i=0;_i<_a;_i++
+	{
+		_cardpoint[_i]=GetUnoCardPoint(_unocard[_i]);
+		_cardpoints=TOINT(_cardpoints)+_cardpoint[_i];
+	}
+	
+	_cardpoints	
+}
+
+
+UnoCardSend   //发牌
+{
+	for _i=0;_i<14;_i++
+	{
+		OnUnoCardGet(unocard.turn);
+		unocard.turn=TOINT(unocard.turn+1)%2
+			
+	}
+	
+}
+OnUserGetUnoCard  //用户摸牌
+{
+	usergetunocard=1;
+	unocall=-1;
+	OnUnoCardGet(0)+UnoUserInit()
+}
+
+
+
+
+OnUnoCardGet    //摸牌并整理牌序
+{
+	_unocard.turn=reference0;
+	if _argc>0
+		_unocard.turn=_argv[0];
+	if _unocard.turn==0
+		unocard.user,=unocard[0];
+	elseif _unocard.turn==1
+		unocard.com,=unocard[0];
+	unocard[0]=IARRAY;
+	
+	_a0=ARRAYSIZE(unocard.user);
+	_a1=ARRAYSIZE(unocard.com);
+	
+	for _i=0;_i<_a0;_i++
+	{
+		//SUBSTR(unocard.user[_i],0,1)!=SUBSTR(unocard.user[_j],0,1)
+		//GetUnoCardPoint(unocard.user[_i])>GetUnoCardPoint(unocard.user[_j])
+		
+		for _j=_i+1;_j<_a0;_j++
+			
+		{
+			if GetUnoCardPoint(unocard.user[_i])+EVAL(SUBSTR(unocard.user[_i],0,1))>GetUnoCardPoint(unocard.user[_j])+EVAL(SUBSTR(unocard.user[_j],0,1))
+			{
+				_k= unocard.user[_i];
+				unocard.user[_i]= unocard.user[_j];
+				unocard.user[_j]=_k;
+			}
+			
+		}
+		
+	}
+	
+	for _i=0;_i<_a1;_i++
+	{
+		
+		for _j=_i+1;_j<_a1;_j++
+			
+		{
+			if GetUnoCardPoint(unocard.com[_i])+EVAL(SUBSTR(unocard.com[_i],0,1))>GetUnoCardPoint(unocard.com[_j])+EVAL(SUBSTR(unocard.com[_j],0,1))
+			{
+				_k= unocard.com[_i];
+				unocard.com[_i]= unocard.com[_j];
+				unocard.com[_j]=_k;
+			}
+			
+			
+		}
+		
+	}
+	
+	
+	
+}
+
+
+ShowUnoCard   //显示牌
+{
+	_txt="\0";
+	cardX=0;
+	cardY=15;
+	if unocard.current!=""
+	{
+		_txt+="\p[2]\s[-1]\c\b[2]"+DrawUnoCardCurrent(unocard.current) 
+			_color=GetUnoColorName(unocard.currentcolor);
+		_txt+="Color:%(_color)";
+	}
+	cardX=0;
+	cardY=60;
+	_txt+="\0"
+		if unocard.open==1
+			_txt+=DrawUnoCard("%(unocard.com)",1);
+		else
+			_txt+=DrawUnoCardBk("%(unocard.com)",1);
+		
+		cardX=0;
+		cardY=190;
+		_txt+=DrawUnoCard("%(unocard.user)",0);
+		
+		_txt
+			
+}
+
+
+
+DrawUnoCard    //绘牌
+{
+    _txt="";
+    _unocard=_argv[0];
+    _id=_argv[1];
+    _a=ARRAYSIZE(_unocard);
+	_txt+="\_l[%(cardX),%(cardY)]"
+		for _j=0;_j<_a;_j++
+		{
+			if unocard.turn==0&&_id==0&&unomode==1&&impeachwild==0
+				_txt+="\__q[OnUnoCardfollow,%(_unocard[_j]),%(_j)]\_b[UNOPATH\%(_unocard[_j]).png,inline,--option=opaque]\__q"
+				else
+				_txt+="\_b[data\uno\%(_unocard[_j]).png,inline,--option=opaque]"
+				
+		}
+		_txt
+			
+			
+}
+
+DrawUnoCardBk    //绘牌背面
+{
+	_txt="";
+    _unocard=_argv[0];
+    _a=ARRAYSIZE(_unocard);
+	_txt+="\_l[%(cardX),%(cardY)]"
+		for _j=0;_j<_a;_j++
+		{
+			_txt+="\_b[UNOPATH\uno.png,inline,--option=opaque]"
+		}
+		_txt
+			
+}
+
+DrawUnoCardCurrent   //绘出当前着牌
+{
+	_txt=""
+		_unocard=_argv[0];
+	_txt+="\_l[%(cardX),%(cardY)]\_b[UNOPATH\%(_unocard).png,inline,--option=opaque]"
+		
+		_txt
+		
+}
+
+
+OnUnoOver
+{
+	"\0不玩了吗，好可惜哦"
+		--
+		ClearUnoVar;
+}
+
+ClearUnoVar   //清理变量
+{
+	ERASEVAR("unomode");
+	ERASEVAR("unoopenmode");
+	ERASEVAR("unocard");
+	ERASEVAR("unocard.turn");
+	ERASEVAR("unocard.user");
+	ERASEVAR("unocard.com");
+	ERASEVAR("unocard.current");
+	ERASEVAR("unocard.max");
+	ERASEVAR("unocard.currentemp");
+	ERASEVAR("unocard.currentcolor");
+	ERASEVAR("unocard.num");
+	ERASEVAR("unocarduse");
+	ERASEVAR("unocard.banker");
+	ERASEVAR("uno.currentid");
+	ERASEVAR("unocard.open");
+	ERASEVAR("unocall");
+	ERASEVAR("usergetunocard");
+	ERASEVAR("usewildsort");
+	ERASEVAR("unocard.id");		
+	ERASEVAR("mess");
+	ERASEVAR("messpre");		
+	ERASEVAR("impeachwild");
+	ERASEVAR("r");
+	ERASEVAR("y");
+	ERASEVAR("b");
+	ERASEVAR("g");
+	ERASEVAR("Draw2");
+	ERASEVAR("Reverse");
+	ERASEVAR("Skip");
+	ERASEVAR("Wild");
+	ERASEVAR("WildDraw4");
+	
+}

@@ -1,0 +1,5 @@
+charset,Shift_JIS
+type,shell
+name,Maetel
+accept,‹k‰Ô
+directory,Maetel

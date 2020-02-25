@@ -1,0 +1,5 @@
+﻿charset,UTF-8
+type,shell
+name,銀狐巫女
+accept,橘花
+directory,silver_fox

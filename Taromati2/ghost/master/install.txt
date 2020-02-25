@@ -1,0 +1,5 @@
+﻿charset,UTF-8
+type,supplement
+name,主体
+accept,橘花
+directory,ghost\master

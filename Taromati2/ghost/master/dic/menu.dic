@@ -1,0 +1,2629 @@
+﻿///////////////////////////////////////////
+////////// 菜单相关辞书
+////////// written by forjane 2009.08.12
+///////////////////////////////////////////
+
+//******* 主菜单 ************************************************
+OnOpenMenu
+{
+		click=null
+	if reference0 != "" {
+		OpenMenu(reference0,reference1);
+	}
+	else {
+		OpenMenu;
+	}
+}
+
+
+
+OpenMenu
+{
+		ResetVar;
+	_submenu = 0;
+		_submenuex=0;  
+		_message="";
+	if _argc > 0 {
+		_submenu = _argv[0];
+				_submenuex=_argv[1];
+				menu=_submenu
+				menuex=_submenuex
+	}
+	else {
+		_message=OpenMenuTalk;
+	}
+	;
+		fjswitch=language
+	_sub = "◆,◇,◇,◇,◇,◆,◇,◇,◇,◇,◆,◇,◇,◇,◇,◆,◇,◇,◇,◇,◆";
+
+	"\C\![quicksession,true]\1\b[-1]\c\0\c"+_message+"\b[2]\_l[0,28]\q[%(_sub[_submenu])常用功能,OnSubMenu,0,%(_submenuex)]/
+	\_l[68]\q[%(_sub[_submenu + 4])休闲,OnSubMenu,1,%(_submenuex)]/
+	\_l[112]\q[%(_sub[_submenu + 8])游戏,OnSubMenu,2,%(_submenuex)]/
+	\_l[156]\q[%(_sub[_submenu + 12])便利功能,OnSubMenu,3,%(_submenuex)]/
+		\_l[224]\q[%(_sub[_submenu + 16])设定,OnSubMenu,4,%(_submenuex)]/
+	\_l[0,189]\q[◇没什么事,MenuCancel]\_l[200,189]\q[◇任务管理,Multitask]"
+	--
+	SubMenu(_submenu,_submenuex);
+	--
+	
+	KikkaMenu;
+	--
+	if _submenu == 0&&showkikka!=2{
+		NotePadShow(178,56,4);  //坐标x，坐标y，显示条数
+	}
+		
+}
+
+OnSubMenu
+{
+		click=null
+	OpenMenu(reference0,reference1);
+}
+
+SubMenu
+{
+	_submenu = _argv[0];
+		_submenuex=_argv[1];
+		_sub = "◆,◇,◇,◇,◇,◆,◇,◇,◇,◇,◆,◇,◇,◇,◇,◆,◇,◇,◇,◇,◆";
+	"\C\![set,choicetimeout,30000]\_l[0,42]--------------------------------------------\n"
+	--
+	case _submenu {
+		when 0 { 
+			"\q[◇播放音乐,OnMusicPlayer]   \_l[100,-]\q[◇魔法时钟,OnAnalogClock]\n/              
+						\q[◇闹钟,OnAlarmMenu]      \_l[100,-]\q[◇课程表,OnClassTable] \n/    
+			\q[◇记事本,Onnotebook]         \_l[100,-]\q[◇QQ截图,Sceencut]\n/ 
+						\q[◇更换壁纸,OnWallPaper]      \_l[100,-]\q[◇截屏,OnScreenShot]\n/
+			\q[◇英汉互查字典,dictionary]    \_l[100,-]\q[◇清空垃圾箱,TrashClean]\n/
+			\q[◇天气预报,OnCheckWeather]    \_l[100,-]\q[◇日历,OnCalendar]\n/ 
+			\q[◇IP查询,OnCheckIp]            \_l[100,-]\q[◇日程提醒,OnAgenda]\n/
+			\q[◇放大镜,OnMagnify]     \_l[100,-]\q[◇计算器,jsq]\n/
+						\q[◇星座运势,OnAstrofate] 	\_l[100,-]\q[◇录音机,OnRecorder]/
+			//	\_l[100,-]\q[◇橘花行情,OnKikkaStockMenu]/	
+			 \n"
+		}
+		when 1 {
+						 
+				
+				  case _submenuex
+					 {
+
+					   when 0 
+						 {
+				"\q[◇话题,ForcedTalk]         \_l[100,-]\q[◇自我介绍,Introduction]    \_l[200,-]\q[◇说笑话,Story]\n/
+				\q[◇与橘花说话,Communicate]   \_l[100,-]\q[◇教学,Teaching]     \_l[200,-]\q[◇刚才说了什么,OnLastTalk]\n/                     
+				\q[◇五十音,Onjap_v]       \_l[100,-]\q[◇秘密服务,SecretService]\f[color,238,50,95]\&[hearts]\f[default]   \_l[200,-]\q[◇外语学习,japanesestudy]\n/
+				\q[◇花语,OnFlowers]         \_l[100,-]\q[◇诞生花,OnBirthdayFlowerList]  \_l[200,-]\q[◇塔罗占卜,OnFUT]\n/ 
+				\q[◇趣味测试,Onjumptest]       \_l[100,-]\q[◇和橘花谈心,talktoheart]    \_l[200,-]\q[◇生肖星座全解析,Onzodiac]\n/        
+				\q[◇查找诗歌,OnResearchPoesy]     \_l[100,-]\q[◇唐诗默写♪,OnPoesywrite]   \_l[200,-]\q[◇剧情故事,Opera]\n/
+				\q[◇动漫列表,OnDHs]     \_l[100,-]\q[◇咖啡厅,melancholy_tea]      \_l[200,-]%(Onmeal)\n/
+				\q[◇吸烟室,SmokingPlace]       \_l[100,-]\q[◇试衣间,Onchangeshell]      \_l[200,-]\q[◇进寝室,Bedroom]\n/
+				\q[◇其它服务,otherserv]     \_l[100,-]%(Onclosetouch) \n"
+						 }
+					 
+					  when 1
+						{
+						"\q[◇大头贴5连拍,OnSnap]   \_l[168,-]\q[◇橘花表情秀,Onkikkaface]\n/
+						 \q[◇斗和与橘花爱的选择,Kikkaortowa] \_l[168,-]\q[◇橘花的忧郁,melancholy]\n/
+						 \q[◇%(username)被期负了,bully]       \_l[168,-]\q[◇准备晚餐,Cookingtonight]\n/       
+						  \q[◇橘花题库,OnExamTest] 	\_l[168,-]\q[◇橘花知识库,OnKikkaKnowl]\n/ 
+		 
+				"
+						}
+					}
+						   --
+						"\_l[90,189]\q[%(_sub[_submenuex])1,OnSubMenu,%(_submenu),0]    \q[%(_sub[_submenuex + 4])2,OnSubMenu,%(_submenu),1]"
+					   
+					   
+
+		}
+		when 2 {
+			"\q[◇猜拳,OnHandGame]   扑克游戏： \_l[168,-]\q[◇外出冒险,OnRpgGame] \n/
+			\q[◇猜数字,OnGuessNumber]       \_l[80,-]\q[◇21点,OnBlackjack0]     \_l[168,-]\q[◇伪春菜人格大乱斗,On战斗开始]\n/
+			\q[◇开心辞典,OnQuestBegin]      \_l[80,-]\q[◇扎金花,OnBombGoldFlower] \_l[168,-]\q[◇华容道,OnHuanRongDao]\n/
+			\q[◇井字棋,OnPlayOX]         \_l[168,-]\q[◇五子棋,OnGobangInIt]\n/
+			\q[◇拼图游戏,OnPuzzleList]     \_l[168,-]\q[◇连连看,OnLinkWnd] \n/
+			\q[◇俄罗斯方块,OnNewGame]     \_l[168,-]\q[◇数字汉诺塔,OnHanoi]\n/
+			\q[◇贪食蛇,OnSnake]            \_l[168,-]\q[◇橘花大乱斗,OnKikkaBattle] \n/  
+			\q[◇双色球,OnDoubleColorBall]      \_l[168,-]\q[◇推箱子,OnBoxGame]\n[150]"
+		}
+				when 3 {
+
+	                  case _submenuex
+	                     {
+			when 0{
+				"\q[◇软件快捷,OnShortcutMenu]   \_l[138,-]\q[◇计算器,OnCalculator] \n/
+		                        \q[◇倒数计时,count]         \_l[138,-]\q[◇秒表,OnSecondWatch,inter]\n/
+					\q[◇C盘垃圾文件清理,ClearC]  \_l[138,-]\q[◇股票,OnKikkaStockMenu]\n/
+		                        \q[◇输入法调整工具,inputtool]    \_l[138,-]\q[◇校准时间,SNTPTIME]\n/
+		                        \q[◇收取邮件,ALLMAIL]         \_l[138,-]\q[◇开启邮箱,OPENMAILER]\n/
+		                        \q[◇RSS盒子,HEADLINE]         \_l[138,-]\q[◇数据备份,OnGhostBackup]\n/
+		                        \q[◇自动关机,OnSetShutdownMenu] \_l[138,-]\q[◇吃货,OnReadyToEat]\n/
+		                        \q[◇批量文件重命名,OnInterFileRename]   \_l[138,-]\q[◇橘花阅读器,OnReadBook]\n/
+		                        \q[◇注销,OnLogOff]   \_l[70,-]\q[◇重启,OnResetComputer]    \_l[125,-]\q[◇关机,OnShutdown]    \_l[220,-]\q[◇待机,OnStandby]\n/
+		                  \n"
+
+				}
+	 		when 1{
+				"\q[◇简繁转换,OnChangeCode]\n/
+				"
+		·	}
+		}
+		 --
+						"\_l[90,189]\q[%(_sub[_submenuex])1,OnSubMenu,%(_submenu),0]    \q[%(_sub[_submenuex + 4])2,OnSubMenu,%(_submenu),1]"	
+	}
+
+
+		when 4 {
+			"\q[◇系统环境,System]              \_l[138,-]\q[◇我的电脑,OnMenuExplorer,mycomputer]\n/
+			\q[◇橘花设定,Option]               \_l[138,-]\q[◇控制面板,OnMenuExplorer,control]\n[150]/
+			\q[◇对话频率,TalkInterval]         \_l[138,-]\q[◇与%(username)的对话设置,talkuser]\n/
+			\q[◇使用者称呼,ChangeUserName]     \_l[138,-]\q[◇使用者生日,birthday]\n/      
+			\q[◇选择语言,OnLanguage]           \_l[138,-]\q[◇帮肋,help]\n/            
+			\q[◇总在最前,AlwaysOnTop]｜\q[◇恢复默认,NotOnTop] | \q[◇最小化,Trayicon]\n/
+			\q[◇GhostExplorer,GhostExplorer]   \_l[138,-]\q[◇ShellExplorer,ShellExplorer]\n/
+			\q[◇BalloonExplorer,BalloonExplorer]\n/
+			"
+			
+		}
+	}
+}
+
+
+//---------- 打开菜单时的对话 ------------------------------------------
+OpenMenuTalk
+{
+	_phase = GetPhase;
+		if intimacy>1000 && _phase == 2 {
+			click=TOINT(click)+1
+			"\0\s[5]\b[2]%(username)%(Timejud)好，什么事呢"
+		   if 亲密度>=200 
+			"\0\s[5]\b[2]最喜欢%(username)了，什么事呢"
+			"\0\s[26]\b[2]什么事呢、%(username)？"
+			"\0\s[41]\b[2]啊…好的。"
+	    "\0\s[5]\b[2]要做什么呢？\s[40]"
+	    "\0\s[26]\b[2]啊…是的。"
+		   if 腹黑度>=200
+			"\0\s[27]\b[2]需要帮忙吗。"
+		   if 萌度>=200
+			"\0\s[22]\b[2]橘花待命。"
+		   if 腹黑度>依赖度
+			 "\0\s[32]碍事的东西通通见鬼去吧……"
+		   elseif 腹黑度>=250
+			 "\0\s[27]%(username)要让橘花消灭谁呢"
+		   if click>10
+			 {
+			   "\0\s[21]讨厌，%(username)点这么快，当橘花是傻瓜吗\e:click=null"
+				if 腹黑度>依赖度
+			   "\0\s[27]讨厌，%(username)想被锯上一锯吗？\e:click=null"
+		
+			 }
+		}
+	elseif _phase == 0 {
+		"\0\s[0]\b[2]好的。"
+			"\0\s[6]\b[2]干嘛"
+				"\0\s[7]\b[2]什么事。"
+				"\0\s[25]\b[2]有何贵干。"
+	}
+	elseif _phase == 2 {
+		"\0\s[40]\b[2]什么事呢、%(username)？"
+		"\0\s[41]\b[2]啊…好的。"
+		"\0\s[5]\b[2]要做什么呢？\s[40]"
+	}
+	else {
+		"\0\s[26]\b[2]好的、什么事呢？"
+		"\0\s[26]\b[2]什么事呢、%(username)？"
+		"\0\s[26]\b[2]要做什么呢？"
+	}
+	OnKikkaOnline;
+}
+
+Select.otherserv
+{
+  "\0\s0啊、\w9有需要帮忙吗?\s[40]\n[150]/
+  \q[◇季节判断与对话,Seasontest]\n/
+  \q[◇告诉我一些事吧,something]\n/
+  \q[◇我身体不舒服,notsogood]\n/
+  \q[◇返回上一层,OnOpenMenu,1]\n/
+	\q[◇退出,OptionEnd]\e"
+}
+
+
+Select.Opera
+{
+  "■橘花的情景剧■(欢迎提供剧本)\n[150]/
+	\q[◇来到此城市,city]\n/
+   \q[◇去海边,OnSummer]\n/
+   \q[◇去野餐,OnPicnic]\n/
+   \q[◇去看电影,OnTextSelect,OnMovie]\n/
+   \q[◇去水族馆,OnTextSelect,OnAquarium]\n/
+   \q[◇去游乐园,OnDoor]\n/
+   \q[◇游乐园剧情开发,开发确认]\n/
+   \n[half]\q[◇返回上一层,OnOpenMenu,1]       \q[◇退出,OptionEnd]\e"
+}
+
+
+Select.help
+{
+  "\0\s0啊、\w9有需要帮忙吗?\s[40]\n[150]/
+  \q[◇关于好感度,lovech]\n/
+  \q[◇关于橘花的生日,birthdaykikka]\n/
+  %(OnIntimacy)/
+  %(OnLoveGo)/
+  \q[◇关于快捷键,shortcutkey]\n/
+  \q[◇伪春菜贴吧,IEwccTieBa]  \_l[120,-]\q[◇master目录,mastermenu]\n/
+  \q[◇伪春菜后援会,IEwccFanClub]  \_l[120,-]\q[◇伪春菜wiki,IEwccFanClub]\n/
+  %(Onaccounting)/
+  \q[◇返回上一层,OnOpenMenu,4]\_l[120,-]\q[◇退出,OptionEnd]\e"
+}
+
+Select.NotOnTop
+{
+	topmode=0
+	"\0\s[4]……知道了。\n"
+	--
+	TopModeChanged
+	--
+	"\e"
+}
+
+Select.AlwaysOnTop
+{
+	topmode=1
+	"\0\s[5]收到。\w6最前排确认。\n"
+	--
+	TopModeChanged
+	--
+	"\e"
+}
+
+Select.Trayicon
+{
+	topmode=2
+	"\1又要被隐藏了么？\n"
+	--
+	TopModeChanged
+	--
+	"\e"
+}
+TopModeChanged{
+	case topmode{
+		when 0
+			'\![set,windowstate,!stayontop]'
+		when 1
+			'\![set,windowstate,stayontop]'
+		when 2
+			'\![set,windowstate,minimize]'
+	}
+}
+
+//---- 无用 -----------------------------------------------------------------------------------------------------------
+
+Select.MenuCancel
+{
+	"\C\0\c\b[0]"
+	--
+	infomode=0
+	_phase = GetPhase
+	if _phase == 0
+	{
+		"\0\s[0]好的。"
+	}
+	elseif _phase == 2
+	{
+		talkmemo = "e_0"
+		"\0\s[3]啊、好的。"
+		"\0\s[3]…是这样啊。"
+		"\0\s[9]………"
+		"\0\s[3]嗯，没事了？"
+		"\0\s[3]啊，原来是这样啊...没有帮上你吗？"
+		"\0\s[3]%(username)..？"
+		"\0\s[3]唔，是么？"
+		"\0\s[9]找到想找的东西了吗？"
+		if 依赖度>=200
+			"\0\s[26]帮上忙了吗？橘花一直陪着你哦"
+		"\0\s[6]好吧，有事再找我哦~"
+		if 萌度>腹黑度
+			"\0\s[110]看我变身斗和！！~"  
+		if 腹黑度>萌度
+			"\0\s[3]%(username)是不是只是拿橘花寻开心呢……？" 
+
+	}
+	else
+	{
+		talkmemo = "e_0"
+		"\0\s[0]好的。\e"
+		"\0\s[0]…\s[7]怎么了？"
+		"\0\s[7]………"
+		if 依赖度>=200
+			"\0\s[0]…\s[7]咦？有什么事吗？"
+	}
+		--
+	   "\w9\w9\b[-1]\e"
+
+}
+
+
+ResetVar
+{
+	eatfile=NULL;
+	//secondwatch=NULL;
+	shortcut=NULL;
+	mode="0";
+	running="";
+	option=null;
+	read=-1;
+	temp=null;
+	musicplayer=null;
+//	Speech_Recognition=NULL;
+}
+
+OnChoiceTimeout
+{
+
+		//talkmemo = "e_0"
+
+	   if playingtetris&&running=="playingtetris"
+		OnTimer1Timer
+	   elseif playingGobang&&running=="playingGobang"
+		{
+		  if aiturn==1
+		  ComputerThink
+		  else
+		  OnGobangShow
+		}
+	   elseif playsnake&&running=="playsnake"
+		  OnSnakeTimer
+	   elseif readbook&&running=="readbook"
+		 OnReadBook
+	 elseif kikkastock&&running=="kikkastock"
+		 {
+		if kikkastock==1
+			OnKikkaStockMenu
+		elseif kikkastock==2
+			OnKikkaStockSelect;
+		elseif kikkastock==3
+			OnKikkaStockFound;
+	}
+	   elseif playingplane
+		  OnShowBackground
+	   elseif infomode
+		  OpenMenu(menu,menuex) 
+	   else
+	   {
+	"\0\s[7]…无视吗？\e"
+	"\0\s[0]…好的\e"
+		 if 萌度>依赖度
+		  {
+	"\0\s[7]%(username)，你很忙吗，都没有听我说什么\e"
+		"\0\s[7]有在听我说吗？心不在焉的哦\e"
+		"\0\s[7]最讨厌%(username)这一点了，都不听人家说话\e"
+		"\0\s[7]%(username)..？在干什么呢\e"
+		  }
+	   }
+}
+
+
+
+//	记事日历
+//==============================================================================
+Select.op
+{
+"\![open,calendar]\e"
+}
+
+
+//---------------------------计算器----------------------------
+Select.jsq
+{
+
+_path = FUNCTIONEX("saori/advanced_sysinfo","get_special_folder_path",'Windows');
+			_file = REPLACE(_path,'\','\\') + '\\system32\\calc.exe';
+			"\![open,file,%(_file)]"
+}
+
+//---------------------------录音机----------------------------
+OnRecorder
+{
+_path = FUNCTIONEX("saori/advanced_sysinfo","get_special_folder_path",'Windows');
+			_file = REPLACE(_path,'\','\\') + '\\system32\\sndrec32.exe';
+			"\![open,file,%(_file)]"
+			--
+			_file = REPLACE(_path,'\','\\') + '\\system32\\SoundRecorder.exe';
+			"\![open,file,%(_file)]"
+
+
+
+}
+OnMagnify
+{
+_path = FUNCTIONEX("saori/advanced_sysinfo","get_special_folder_path",'Windows');
+			_file = REPLACE(_path,'\','\\') + '\\system32\\Magnify.exe';
+			"\![open,file,%(_file)]"
+
+}
+
+// 我的电脑，控制面板
+//-------------------------------------------------------------------
+
+OnMenuExplorer
+{
+	"\C";
+	--
+	case reference0 {
+		when "mycomputer" {
+			_path = FUNCTIONEX("saori/advanced_sysinfo","get_special_folder_path",'Windows');
+			_file = REPLACE(_path,'\','\\') + '\\explorer.exe';
+			_ref = "::{20D04FE0-3AEA-1069-A2D8-08002B30309D}";
+			"\![open,file,%(_file),%(_ref)]"
+		}
+		when "control" {
+			_path = FUNCTIONEX("saori/advanced_sysinfo","get_special_folder_path",'Windows');
+			_file = REPLACE(_path,'\','\\') + '\\system32\\control.exe';
+			"\![open,file,%(_file)]"
+		}
+	}
+}	
+
+
+
+
+// 便条纸
+//-------------------------------------------------------------------
+
+NotePadShow
+{
+//	ERASEVAR("notepad");
+	_offsety = 4;
+	if ISVAR("notepad") == 0 {
+		notepad = (0,0,0,4,"84,85","128,128,128");
+	}
+	if _argc > 0 {
+		notepad[4] = TOSTR(_argv[0]) + ',' + TOSTR(_argv[1]);
+		notepad[3] = _argv[2];
+	}
+	_pos = notepad[4];
+	_x = TOINT(_pos[0]);
+	_y = TOINT(_pos[1]);
+	if notepad[0] == 1 {
+		"\_l[%(_x),%(_y)]\q[◇便条纸,OnNotePadShow,0] \q[[添加\],OnNotePad,%(notepad[2])]\q[[颜色\],OnNotePadColor]"
+		--
+		_num = notepad[2];
+		_txt = "\f[color,%(notepad[5])]";
+		_multiline = 0;
+		_no = "①,②,③,④,⑤,⑥,⑦,⑧,⑨,⑩";
+		for _i = 0; _i < _num && _i < notepad[3]; _i ++ {
+			_tag = "├,│";
+			if _i == _num - 1 {
+				_tag = "└,　";
+			}
+			_tmp = notepad[_i + 6];
+			_tmp1 = SUBSTR(_tmp[1],0,8);
+			_tmp2 = SUBSTR(_tmp[1],8,5);
+			_tmp3 = "";
+			if SUBSTR(_tmp[1],13,1) != '' {
+				_tmp3 = "…";
+			}
+			if SUBSTR(_tmp[1],5,1) == '' {
+				_txt += "\_l[%(_x),%(_y + (_i + _multiline + 1) * 14 + _i * _offsety)]%(_tag[0]) %(_no[_i])\__q[OnNotePadDetail,%(_i)]%(_tmp1)\__q (\f[italic,1]%(_tmp[0])\f[italic,0]) \n \n ";
+			}
+			else {
+				_txt += "\_l[%(_x),%(_y + (_i + _multiline + 2) * 14 + _i * _offsety)]%(_tag[1]) \_l[%(_x),%(_y + (_i + _multiline + 1) * 14 + _i * _offsety)]%(_tag[0]) %(_no[_i])\__q[OnNotePadDetail,%(_i)]%(_tmp1)/
+						\_l[%(_x + 16),%(_y + (_i + _multiline + 2) * 14 + _i * _offsety)]%(_tmp2)%(_tmp3)\__q (\f[italic,1]%(_tmp[0])\f[italic,0])";
+				_multiline ++;
+			}					
+		}
+		_txt += "\f[color,default]";
+		_txt;
+	}
+	else {
+		"\_l[%(_x),%(_y)]\q[◇便条纸,OnNotePadShow,1] \q[[添加\],OnNotePad,%(notepad[2])]\q[[颜色\],OnNotePadColor]"
+		--
+		_txt = "";
+		for _i = 0; _i < notepad[2] && _i < notepad[3]; _i ++ {
+			_txt += "\_l[%(_x),%(_y + 14)] \n \_l[%(_x),%(_y + 14)] \n ";
+		}
+		_txt;
+	}
+}	
+
+
+OnNotePadDetail
+{
+	_tmp = notepad[reference0 + 6];
+	_time = _tmp[0];
+	_note = SUBSTR(_tmp,(STRLEN(_time) + 1),(STRLEN(_tmp) - STRLEN(_time) - 1));
+	_time = _time[0,'/'] + "月" + _time[1,'/'] + "日";
+	"便条内容：\n[150]%(_note) \n - %(_time)\n";
+	--
+	"\_q\_l[0,98]\q[◇删除,OnNotePadDel,%(reference0)]    \q[◇修改,OnNotePad,%(reference0),%(_note)]\n[150]\q[◇返回上一层,OnOpenMenu,0]\_q"
+}
+
+OnNotePadColor
+{
+	"\C";
+	--
+	"\![open,dialog,color,--id=notepadcolor,--title=请选择便条纸的颜色]";
+}
+
+DialogNotePadColor
+{
+	notepad[5] = _argv[0];
+	NotePadReflesh;
+}
+
+OnNotePadShow
+{
+	notepad[0] = reference0;
+	NotePadReflesh;
+}
+
+NotePadReflesh
+{
+	_lines = notepad[2] * 3;
+	if notepad[2] > notepad[3] {
+		_lines = notepad[3] * 3;
+	}
+	"\C\c[line,%(_lines)]\_q";
+	--
+	NotePadShow;
+}
+
+OnNotePad
+{
+	notepad[1] = reference0;
+	"需要橘花帮你记住什么事呢（什么也不输入亦可删除便条）：\![open,inputbox,OnNotePadInputComplete,-1,%(reference1)]";
+}
+
+OnNotePadInputComplete
+{
+	if notepad[1] == notepad[2] {
+		notepad[2] ++;
+		_now = notepad[1] + 6;
+		notepad[_now] = "%(month)/%(day)," + reference0;
+	}
+	if reference0 == "" {
+		notepad[2] --;
+		_now = notepad[1] + 6;
+		notepad[_now] = IARRAY;
+	}
+	else {
+		_now = notepad[1] + 6;
+		notepad[_now] = "%(month)/%(day)," + reference0;
+	}		
+	--
+	OpenMenu(0);
+}
+
+OnNotePadDel
+{
+	notepad[2] --;
+	notepad[reference0 + 6] = IARRAY;
+	--
+	OpenMenu(0);
+}
+	
+
+
+// 截屏
+//-------------------------------------------------------------------
+OnScreenShot
+{ 
+	"\_q截屏快捷键：F12\n\n[half]当鼠标变成十字形后选择需要截取的范围即可。\n截取后的图像会放在剪贴板内。再打开画图保存。"
+	--
+	"\n[150]\q[◇画图,OnDrawPicture]\n\q[◇返回上一层,OnOpenMenu,0]    \q[◇终了,OnScreenShotEnd]\_q";
+}
+
+OnDrawPicture
+{
+
+_path = FUNCTIONEX("saori/advanced_sysinfo","get_special_folder_path",'Windows');
+			_file = REPLACE(_path,'\','\\') + '\\system32\\mspaint.exe';
+			"\![open,file,%(_file)]"
+
+
+}
+
+Select.IEwccTieBa {
+  '\![open,browser,https://tieba.baidu.com/f?ie=utf-8&kw=%E4%BC%AA%E6%98%A5%E8%8F%9C]'
+}
+
+Select.IEwccFanClub {
+  '\![open,browser,http://cuc.moe.hm]'
+}
+
+Select.IEwccWiki {
+  '\![open,browser,http://cuc.moe.hm/wiki]'
+}
+
+
+//---- ゴーストエクスプローラー ---------------------------------------------------------------------------------------
+
+Select.GhostExplorer
+{
+	'\![open,ghostexplorer]\e'
+}
+
+//---- バルーンエクスプローラー ---------------------------------------------------------------------------------------
+
+Select.BalloonExplorer
+{
+	'\![open,balloonexplorer]\e'
+}
+
+Select.ShellExplorer
+{
+	'\![open,shellexplorer]\e'
+}
+
+//---------- 自我介绍 ----------------------------------------------------
+Select.Introduction
+{
+	'\0\s[0]想知道我们的事情吗？\n\n/
+	\q[◇橘花,Kikka]\n/
+	\q[◇斗和,Towa]\n\n[half]/
+	\q[◇返回上一层,OnOpenMenu,1]\n/
+	\q[◇取消,TaromatiCancel]\e'
+}
+
+Select.Kikka
+{
+	"\0\s[100]我吗？\w9\s[2]\n\n/
+	\q[◇名字,Kikka_name]\n/
+	\q[◇年龄,Kikka_age]\n/
+	\q[◇兴趣,Kikka_interest]\n\n[half]/
+	\q[◇返回上一层,Introduction]\e"
+}
+
+Select.Kikka_name
+{
+	"\0\s[8]那个…\w9\s[26]我叫做『橘花』\w9。\w9\w5\s[0]\n\n[half]『橘树』的『花』、\n念做『Kikka』。\n\n[150]\q[◇返回上一层,Kikka]\e"
+}
+
+
+
+Select.Kikka_age
+{
+	"\0\s[0]我的年龄吗？\w9\n嗯…\w9\s[3]对不起、我也不太清楚。\w9\s[26]\n\n[half]啊、不过大概、\n就跟外表看起来的年龄一样吧。\w9\w9\s[8]\n虽然可能成长的比较慢…\n\n[150]\q[◇返回上一层,Kikka]\e"
+}
+
+Select.Kikka_interest
+{
+	"\0\s[20]兴趣、是吗？\w9\n\n[half]像是读书…散步…\w9\n啊、\s[8]散步只有限定晚上呢…\w9\s[5]\n\n[half]还有、\w5我也喜欢清扫。\w5\s[21]\n把碍事的东西一扫而空\n感觉很舒服呢。\w9\1\s[13]…听出不同意义的\w9该不会只有我吧。\0\n\n[150]\q[◇返回上一层,Kikka]\e"
+
+	"\0\s[20]兴趣、是吗？\w9\n\n[half]嗯…\w9\w9\1\s[11]不是花语吗？\s[10]\n虽然非常不适合。\w9\0\s[6]\n\n[half]…说的也是呢。\w9\s[0]\n\n[half]我觉得、花是美丽与虚幻的代名词。\w9\s[6]\n为那虚幻的美丽所附加的言语。\w9\w9\s[8]\n虽然不能表达的很清楚、\s[26]\n这样想的话就觉得有点感兴趣了。\w9\1\s[10]\n\n[half]唔。\0\n\n[150]\q[◇返回上一层,Kikka]\e"
+}
+
+Select.Towa
+{
+	"\0\s[30]\1\s[12]嗯。\0\n\n/
+	\q[◇名字,Towa_name]\n/
+	\q[◇年龄,Towa_age]\n/
+	\q[◇兴趣,Towa_interest]\n\n[half]/
+	\q[◇返回上一层,Introduction]\e"
+}
+
+Select.Towa_name
+{
+	"\1\s[10]『斗和』。\w9\n发音作『Towa』…\n名字只是同音的汉字拿来凑合。\w9\0\s[30]前任饲主取的吗？\w9\1\s[10]\n\n[half]不、我没有被饲养。\0\n\n[150]\q[◇返回上一层,Towa]\e"
+}
+
+Select.Towa_age
+{
+	"\1\s[10]因为最近没在数、也搞不清楚了。\w9\s[13]\n就算去数、也没什么意义吧…\0\s[30]？\n\n[150]\q[◇返回上一层,Towa]\e"
+}
+
+Select.Towa_interest
+{
+	"\1\s[10]逃避现实吧。\w9\0\s[8]…那不是很糟糕吗？\w9\1\s[10]\n\n[half]因为发生过很多事啊。\w9\0\n\n[half]唉…\n\n[150]\q[◇返回上一层,Towa]\e"
+}
+
+Select.TaromatiCancel
+{
+	"\0\s[0]好的。\w9\w9\1\s[10]总之、不管我们说什么、\n最后、\w5\s[12]还是要看你怎么想…\s[10]所以说啊。\w9\n\n[half]任谁都有秘密。\n想知道别人的一切是不可能的。\w9\0\s[8]\n\n[half]虽然这么说、我也没有特别去保密喔。\e"
+}
+
+
+//---------- 系统环境 ----------------------------------------------------
+Select.System
+{
+	Lunar;
+	_i = FUNCTIONEX("saori\KI.dll","Platforms");
+	_ampm = TimeName;
+		_hour=hour12
+		if TOINT(timehour[0])==0
+		{
+		  _ampm="";
+		  _hour=(hour+timehour[1])%24
+		}
+	_color = "default";
+	if weekday == 0 || weekday == 6 {
+		_color = "238,50,95";
+	}
+	_hostname=FUNCTIONEX("saori\saori_ip.dll","host");
+	_ipaddress=FUNCTIONEX("saori\saori_ip.dll","ip");
+	_tmp = FOPEN("var/ip.php","r");
+	_ipaddress2 = FREAD("var/ip.php");
+	FCLOSE("var/ip.php");
+	if _ipaddress2 == -1 || _ipaddress2 == "" || '<' _in_ _ipaddress2 {
+		_ipaddress2 = "未知";
+	}
+	_kikkaonline=",（已连线）"[TOINT(kikkaonline)];
+	_sysname=SAORI('saori\saori_cpuid.dll','os.name');
+	"\*\0\s[0]\b[2]像这个样子。\n\n\_q/
+	%(year)年%(month)月%(day)日  \f[color,%(_color)]星期%(lunardata[3])\f[color,default]   %(_ampm)%(_hour)点%(minute)分\n/
+	农历 %(lunardata[4])年 %(lunardata[5])月%(lunardata[6])    \f[color,238,50,95]%(lunardata[10])\f[color,default]\n[150]/
+	\n[half]/
+	ＣＰＵ：%(SAORI('saori\saori_cpuid.dll','cpu.name'))\n/
+	ＯＳ：%(_sysname)\n/
+	记忆体使用率：%(memoryload)\%\n/
+	记忆体(全体)：%(memorytotalphys/1048576) MB\n/
+	记忆体(空闲)：%(memoryavailphys/1048576) MB\n/
+	ＯＳ起动时间：%(systemuphour)小时%(systemupminute)分\n/
+	\n[half]/
+	人格初始化日期：%(firstboottime[0])年%(firstboottime[1])月%(firstboottime[2])日 %(firstboottime[3])时%(firstboottime[4])分\n/
+	人格起动时间：%(ghostuptime/3600)小时%(ghostuptime/60%60)分\n/
+	人格总计起动时间：%(elapsedtime/3600)小时%(elapsedtime/60%60)分\n/
+	\n[half]/
+	荧幕尺寸：%(displaywidth) x %(displayheight)\n/
+	荧幕深度：%(displaybpp)Bit\n/
+	\n[half]/
+	主机名：%(_hostname) \n/
+	KID：%(kikkaid)%(_kikkaonline)        用户呢称：%(username)\n/
+	内网IP：%(_ipaddress)\n/
+	外网IP：%(_ipaddress2) \__q[OnMyIp2]\[查询外网IP\]\__q\n/	
+	\n[half]\q[◇返回上一层,OnOpenMenu,4]    \q[◇终了,OnMenuCancel]\_q"
+}
+
+OnMyIp2
+{
+	"\b[2]\![execute,http-get,http://usada.sakura.vg/ip.php,--param-charset=UTF-8,--timeout=50,--async=infogetip]"
+}	
+
+DayofWeek_w
+{
+	("日","一","二","三","四","五","六")[weekday];
+}
+
+Platform
+{
+	case basewarename {
+		when "embryo" {
+			"Materia"
+		}
+		when "crow" {
+			"CROW"
+		}
+		when "SSP" {
+			"SSP"
+		}
+		others {
+			"???"
+		}
+	}
+}
+
+//---------- 人格设定 ----------------------------------------------------
+Select.Option
+{
+		"\_q\b[2]■橘花设定■\n"
+		--
+	_t = "○,◎";
+	"\n[50]消灭指示表示　\_l[120]\q[%(_t[TOINT(vanishbutton.visible)]) ON,OnVanishbuttonSwitch,1]  ・  \_l[180]\q[%(_t[1 - TOINT(vanishbutton.visible)]) OFF,OnVanishbuttonSwitch,0]\n"
+	--
+	"见切反应　　　\_l[120]\q[%(_t[TOINT(mikireswitch)]) ON,OnMikireSwitch,1]  ・  \_l[180]\q[%(_t[1 - TOINT(mikireswitch)]) OFF,OnMikireSwitch,0]\n"
+	--
+	"自动更新　　　\_l[120]\q[%(_t[TOINT(AutoUpdate)]) ON,OnAutoUpdateSwitch,1]  ・  \_l[180]\q[%(_t[1 - TOINT(AutoUpdate)]) OFF,OnAutoUpdateSwitch,0]\n"
+	--
+	"重叠反应　　　\_l[120]\q[%(_t[TOINT(kasanariswitch)]) ON,OnKasanariSwitch,1]  ・  \_l[180]\q[%(_t[1 - TOINT(kasanariswitch)]) OFF,OnKasanariSwitch,0]\n"
+	--
+	"效果音　　　　\_l[120]\q[%(_t[1 - TOINT(silent)]) ON,OnSESwitch,0]  ・  \_l[180]\q[%(_t[TOINT(silent)]) OFF,OnSESwitch,1]\n"
+	--
+		"整点报时　　　\_l[120]\q[%(_t[1 - TOINT(timerm)]) ON,OnTimermSwitch,0]  ・  \_l[180]\q[%(_t[TOINT(timerm)]) OFF,OnTimermSwitch,1]\n"
+	--
+		"节日提醒　　　\_l[120]\q[%(_t[1 - TOINT(rmswitch)]) ON,OnRmSwitch,0]  ・  \_l[180]\q[%(_t[TOINT(rmswitch)]) OFF,OnRmSwitch,1]\n"
+	--
+		"好友生日提醒　\_l[120]\q[%(_t[1 - TOINT(friendbirthdaymode)]) ON,Onusage,friendbirthdaymode,0]  ・  \_l[180]\q[%(_t[TOINT(friendbirthdaymode)]) OFF,Onusage,friendbirthdaymode,1]\n"
+	--
+		"讲笑话　　  　\_l[120]\q[%(_t[TOINT(story)]) ON,Onusage,story,1]  ・  \_l[180]\q[%(_t[1 - TOINT(story)]) OFF,Onusage,story,0]\n"
+	--        
+		"动漫日语      \_l[120]\q[%(_t[TOINT(acjeachday)]) ON,Onusage,acjeachday,1]  ・  \_l[180]\q[%(_t[1 - TOINT(acjeachday)]) OFF,Onusage,acjeachday,0]\n"
+	--              
+		"单词每天记    \_l[120]\q[%(_t[TOINT(japwordeachday)]) ON,Onusage,japwordeachday,1]  ・  \_l[180]\q[%(_t[1 - TOINT(japwordeachday)]) OFF,Onusage,japwordeachday,0]\n"
+	--        
+		"天气提醒　　　\_l[120]\q[%(_t[1 - TOINT(autoweather)]) ON,Onusage,autoweather,0]  ・  \_l[180]\q[%(_t[TOINT(autoweather)]) OFF,Onusage,autoweather,1]\n"
+		--
+	   "\q[任务繁忙提醒,OnMemoryBusySet]　\_l[120]\q[%(_t[1 - TOINT(memorybusyrm[0])]) ON,Onusage,memorybusyrm[0\],0]  ・  \_l[180]\q[%(_t[TOINT(memorybusyrm[0])]) OFF,Onusage,memorybusyrm[0\],1]\n"
+		--
+		"星座运势提醒　\_l[120]\q[%(_t[1 - TOINT(autoastro)]) ON,Onusage,autoastro,0]  ・  \q[%(_t[TOINT(autoastro)]) OFF,Onusage,autoastro,1]\n"
+		--
+		"\q[时间24小时制,OnTimeHour]　\_l[120]\q[%(_t[1 - TOINT(timehour[0])]) ON,Onusage,timehour[0\],0]  ・  \_l[180]\q[%(_t[TOINT(timehour[0])]) OFF,Onusage,timehour[0\],1]\n"
+		--
+		"自动备份　　　\_l[120]\q[%(_t[TOINT(autobackup)]) ON,Onusage,autobackup,1]  ・  \_l[180]\q[%(_t[1 - TOINT(autobackup)]) OFF,Onusage,autobackup,0]\n"
+	--
+		"\q[语音朗读,OnVoiceName]　　　\_l[120]\q[%(_t[TOINT(voice)]) ON,Onusage,voice,1]  ・  \_l[180]\q[%(_t[1 - TOINT(voice)]) OFF,Onusage,voice,0]\n"
+	--
+		"\q[自动换装,OnAutoShell]　　\_l[120]\q[%(_t[TOINT(autoshell[0])]) ON,Onusage,autoshell[0\],1]  ・  \_l[180]\q[%(_t[1 - TOINT(autoshell[0])]) OFF,Onusage,autoshell[0\],0]\n"
+	--
+	"日程倒计时资讯　\_l[120]\q[%(_t[1-TOINT(eventinfo)]) ON,Onusage,eventinfo,0]  ・  \_l[180]\q[%(_t[TOINT(eventinfo)]) OFF,Onusage,eventinfo,1]\n"
+	--
+	"动态系统资讯\_l[120]\q[%(_t[TOINT(infofresh)]) ON,Onusage,infofresh,1]  ・  \_l[180]\q[%(_t[1-TOINT(infofresh)]) OFF,Onusage,infofresh,0]\n"
+	--
+	"使用图灵API搜索\_l[120]\q[%(_t[1 - TOINT(Tulingapi[0])]) ON,Onusage,Tulingapi[0\],0]  ・  \_l[180]\q[%(_t[TOINT(Tulingapi[0])]) OFF,Onusage,Tulingapi[0\],1]\n"
+	--
+	"\q[互动对话,OnAutoComm]\_l[120]\q[%(_t[TOINT(communicate[0])]) ON,Onusage,communicate[0\],1]    \_l[180]\q[%(_t[1-TOINT(communicate[0])]) OFF,Onusage,communicate[0\],0]\n"
+	--
+
+
+
+		"\n[half]"
+	if ISVAR("voice.rate")==0
+		voice.rate=3;
+		--
+	"\n\q[◇返回上一层,OnOpenMenu,4]\n/
+	\q[◇终了,OptionEnd]\e"
+}
+
+OnVanishbuttonSwitch
+{
+	vanishbutton.visible = TOSTR(reference0);
+	Select.Option;
+}
+
+OnMikireSwitch
+{
+	mikireswitch = TOSTR(reference0);
+	Select.Option;
+}
+
+OnAutoUpdateSwitch
+{
+	AutoUpdate = reference0;
+	Select.Option;
+}
+
+OnKasanariSwitch
+{
+	kasanariswitch = TOSTR(reference0);
+	Select.Option;
+}
+
+OnSESwitch
+{
+	silent = TOSTR(reference0);
+	Select.Option;
+}
+
+OnTimermSwitch
+{
+	timerm = TOSTR(reference0);
+	Select.Option;
+}
+
+OnRmSwitch
+{
+	rmswitch = TOSTR(reference0);
+	Select.Option;
+}
+
+OnMemoryBusySet
+{
+	_t = (30,40,50,60,70,80,90,100);
+	_txt = "\_q内存占用提醒\n[150]";
+	for _i = 0; _i < 8; _i ++ {
+		if memorybusyrm[1] == _t[_i] {
+			_txt += "\q[◎ 于%(_t[_i])%时提醒,Onusage,memorybusyrm[1\],%(_t[_i])]\n"
+		}
+		else {
+			_txt += "\q[○ 于%(_t[_i])%时提醒,Onusage,memorybusyrm[1\],%(_t[_i])]\n"
+		}
+	}
+	_txt+="\n[half]\q[◇返回上一层,Option]      \q[◇终了,OptionEnd]\_q\e"
+	_txt;
+}
+
+OnTimeHour
+{
+	_t=(-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,+1,+2,+3,+4,+5,+6,+7,+8,+9,+10,+11,+12)
+	_txt = "\0\b[2]\_q选择时间差（切换作息时间时有用，注意只起显示作用）\n[150]";
+	for _i = 0; _i < 24; _i ++ {
+		if TOINT(timehour[1]) == TOINT(_t[_i]) {
+			_txt += "\q[◎%(_t[_i])小时,Onusage,timehour[1\],%(_t[_i])]\n"
+		}
+		else {
+			_txt += "\q[○%(_t[_i])小时,Onusage,timehour[1\],%(_t[_i])]\n"
+		}
+	}
+	_txt+="\n[half]\q[◇返回上一层,Option]      \q[◇终了,OptionEnd]\_q\e"
+	_txt;
+
+}
+
+OnVoiceName
+{
+	_txt="\C\![quicksession,true]\c\0\b[2]\![set,choicetimeout,0]";
+	_txt+=LoadSpVoiceName.vbs
+	_t=GetSpVoiceName
+	_txt+= "选择语音朗读引擎 (点击可试听语音）\n[150]";
+		_txt+="\n[half]"
+		_n=ARRAYSIZE(_t);
+	for _i = 0; _i <_n; _i ++ {
+				   _t[_i]=TOSTR(_t[_i]);
+		if voicename == _t[_i] {
+			_txt += "\q[◎%(_t[_i]),Onusage,voicename,%(_t[_i])]\n"
+		}
+		else {
+			_txt += "\q[○%(_t[_i]),Onusage,voicename,%(_t[_i])]\n"
+		}
+	}
+		if _n==0
+	_txt+="没有安装语音库吗？\n[150]\![*]\q[刷新,OnVoiceName]\n";
+	_txt+="\n\n语速调节："
+	_x=0;
+	for _i = -9; _i <11; _i ++ 
+	{
+		_txt += "\_l[%((_i-1+10)%5*50+60)]"
+		if TOINT(voice.rate) == TOINT(_i){
+			_txt += "\q[◎%(_i),Onusage,voice.rate,%(_i),%(voicename)]"
+		}
+		else {
+			_txt += "\q[○%(_i),Onusage,voice.rate,%(_i),%(voicename)]"
+		}
+		if _i%5==0
+		{
+			_txt+="\n"
+			_x+=50;
+		}
+	}
+	_txt+="\n\n\n[half]\q[◇返回上一层,Option]      \q[◇终了,OptionEnd]\e"
+	_txt;
+}
+
+
+OnAutoShell
+{
+	_t="全天保持,午前保持，午后默认,4小时内保持，4小时后默认,每次启动时更换,每天首次启动时保持，下次启动时默认,每4小时更换一次（开启中）,每2小时更换一次（开启中）,每小时更换一次（开启中）,立即更换,所有衣服随机更换(节气换装关闭）"
+	_txt = "\0\b[2]\_q选择自动换装作用时间范围\n[150]";
+	_n=ARRAYSIZE(_t)
+	for _i = 0; _i < _n; _i ++ {
+		if TOINT(autoshell[1]) == TOINT(_i) {
+			_txt += "\q[◎%(_t[_i]),Onusage,autoshell[1\],%(_i)]\n"
+		}
+		else {
+			_txt += "\q[○%(_t[_i]),Onusage,autoshell[1\],%(_i)]\n"
+		}
+	}
+	_txt+="\n[half]\q[◇返回上一层,Option]      \q[◇终了,OptionEnd]\_q\e"
+	_txt;
+
+
+
+}
+OnAutoComm
+{
+	_t="话痨,健谈,一般,寡言,沉默"
+	_txt = "\0\b[2]\_q选择橘花与其他人格对话的频率\n[150]";
+	_n=ARRAYSIZE(_t)
+	for _i = 0; _i < _n; _i ++ {
+		if TOINT(communicate[1]) == TOINT(_i) {
+			_txt += "\q[◎%(_t[_i]),Onusage,communicate[1\],%(_i)]\n"
+		}
+		else {
+			_txt += "\q[○%(_t[_i]),Onusage,communicate[1\],%(_i)]\n"
+		}
+	}
+	_txt+="\n[half]\q[◇返回上一层,Option]      \q[◇终了,OptionEnd]\_q\e"
+	_txt;
+
+
+
+}
+
+
+Onusage
+{
+	
+	if reference0=="voicename"
+	{
+		EVAL("%(reference0)=%(CHR(34))%(reference1)%(CHR(34))");
+		TxtToVoice(reference1,reference1)
+		--
+		OnVoiceName
+	}
+	elseif reference0=="voice.rate"
+	{
+		EVAL("%(reference0)=%(reference1)");
+		TxtToVoice(reference2,reference2);
+		--
+		OnVoiceName;
+	}
+	elseif reference0=="autoshell[1]"
+	{
+		if TOINT(reference1)==8
+		{
+			autoshellflag[5]=1
+			OnAutoChangeShell
+		}
+	}
+	elseif reference0=="communicate[1]"
+	{
+		EVAL("%(reference0)=%(reference1)");
+		OnAutoComm
+	}
+
+	else
+	{
+		EVAL("%(reference0)=%(reference1)");
+		       Select.Option;
+	}
+}
+
+Select.ReturnMenu
+{
+	OpenMenu;
+}
+
+
+OnLanguage
+{
+_txt="\_q"
+_txt+="请%(username)选择语言\n[150]"
+_language="简体中文,繁体中文,日文,英文"
+_lang="Chinese,Chinese_T,Japanese,English";
+_t = "○,◎";
+for _i=0;_i<4;_i++
+{
+if TOINT(language) == _i
+_txt+="\q[%(_t[1])\![]%(_language[_i]),OnLanguageChange,%(_i),%(_language[_i]),%(_lang[_i])]\n"
+else
+_txt+="\q[%(_t[0])\![]%(_language[_i]),OnLanguageChange,%(_i),%(_language[_i]),%(_lang[_i])]\n"
+}
+
+
+	_txt+="\n[half]\![*]\q[返回,OnOpenMenu,4]\_q\e"
+_txt
+}
+
+OnLanguageChange
+{
+language=reference0
+fjswitch=reference0
+_lang=reference2
+	"\0\s[0]\![language,%(_lang)]（更换为%(reference1)。）\e"
+
+}
+
+
+
+Select.Changefj
+{
+	"\0\s[0]（现在是"
+	--
+	if fjswitch == 1
+	{
+		"繁体"
+	}
+	else
+	{
+		"简体（默认）"
+	}
+	--
+	"。\w9要转换吗？）\n\n"
+	--
+	if fjswitch == 0
+	{
+		"\![*]\q[转换,changef]\n"
+	}
+	else
+	{
+		"\![*]\q[转换,changej]\n"
+	}
+	--
+	"\![*]\q[返回,OnOpenMenu,4]\e"
+}
+
+
+Select.changej
+{
+	fjswitch = 0
+	"\0\s[0]（更换为简体。）\e"
+}
+
+Select.changef
+{
+	fjswitch = 1
+	"\0\s[0]（更换为繁体。）\e"
+}
+
+
+//---- 会话频度 -------------------------------------------------------------------------------------------------------
+
+
+Select.TalkInterval
+{
+	TalkInterval
+}
+
+TalkInterval
+{
+	_t = (30,60,120,180,300,600,0);
+	_tstr =('30秒','1分钟','2分钟','3分钟','5分钟','10分钟','不说话');
+	_txt = "";
+	for _i = 0; _i < 7; _i ++ {
+		if aitalkinterval == _t[_i] {
+			_txt += "\q[◎ %(_tstr[_i]),OnTalkIntervalSet,%(_t[_i])]\n"
+		}
+		else {
+			_txt += "\q[○ %(_tstr[_i]),OnTalkIntervalSet,%(_t[_i])]\n"
+		}
+	}
+	_txt;
+	--
+	"\n[half]/
+	\q[◇返回上一层,OnOpenMenu,4]\n/
+	\q[◇终了,OptionEnd]\e"
+}
+
+OnTalkIntervalSet
+{
+	aitalkinterval = reference0;
+	TalkInterval;
+}
+
+
+Select.OptionEnd
+{
+	"\0\s[0]好的。就这样决定吧。\e"
+}
+
+
+
+
+//---- 呼び方 ---------------------------------------------------------------------------------------------------------
+
+Select.ChangeUserName
+{
+	"\0\s[0]称作『%(username)』\w9不行吗？\n\n/
+	\q[◇改变,OnUserNameChange,1]\n/
+	\q[◇不改变,OnUserNameChange,0]\e"
+}
+
+//--- 选择“橘花的生日” ----
+Select.birthdaykikka
+{
+  "\0\s[26]橘花的生日是%(firstboottime[1])月%(firstboottime[2])日哦，\n%username知道为什么是这天吗？\n[150]/
+  \q[◇知道,birthdayY]\n/
+  \q[◇不知道呢,birthdayN]"
+}
+Select.birthdayY
+{
+  "\0\s[5]%username真的知道啊,橘花好高兴喔~\n[150]\w9\_q/
+  \q[A：是橘花被制作出来的诞生日,Onbirthday_Y,1]\n/
+  \q[B：是橘花被发布出来的日子,Onbirthday_Y,2]\n/
+  \__q[Onbirthday_Y,3]C：是%username和橘花相遇的日子\__q\n/
+  \q[D：是橘花最初的作者决定的日子,Onbirthday_Y,4]\n"
+}
+Onbirthday_Y
+{
+  if reference0 == 3 { 
+	intimacy+=2;
+	"\0\s[5]%username好厉害,\w9没有忘记我们相遇的日子呢,\w9橘花好高兴喔♪\w9\n[150]%(birthdayso)"
+	"\0\s[5]原来%username没有忘记啊,\w9橘花好高兴喔♪\w9\n[150]%(birthdayso)"
+  }
+  else {
+	intimacy--;
+	"\0\s[1]不是这样的呢\w9\w9\n%(Select.birthdayN)"
+  }
+}
+Select.birthdayN 
+{
+  "\0\s[1]%username不记得了吗,\w9这天是橘花和%username相遇的日子哦, \w9真是的...\w9\n[150]%(birthdayso)"
+}
+birthdayso
+{
+  "\0\s[40]%username是%(firstboottime[0])年%(firstboottime[1])月%(firstboottime[2])日和橘花相遇的哦,\w9\w5\n距离现在已经%(daysfromfirstboot)天了哦,\w9橘花陪伴在%username身边的时间超过%(elapsedtimetotal/60)小时了呢,\w9橘花希望可以一直陪伴着%username呢,\w9以后也请多多指教~\x"
+}
+
+//====================告白(开始)====================
+
+OnLoveGo
+{
+if LoveGomode == 1
+{
+"\q[◇橘花爱的告白,LoveGo]\n"
+}
+
+}
+
+
+Select.LoveGo
+
+{      LoveGomode = 1
+		"\0\s[1]%(username)...\w9\w9\n/
+		橘花想知道你对我的感觉是怎样!?\w9\n\n[half]/
+		
+		\q[◇喜欢,loveup]\n/
+		\q[◇讨厌,lovedn]\e"
+}
+
+Select.loveup
+
+{
+		"\0\s[9]那...\w9\w9\怎样的喜欢!?...\w9\n\n[half]/
+
+		\q[◇我...这个...嗯....,loveup1]\n/
+		\q[◇喜欢...你的可爱...,loveup2]\n/
+		\q[◇已经...不单单是喜欢了...,loveup3]\e"
+}
+
+Select.lovedn
+
+{
+		"\0\s[35]呜......\w9\w9\为什么!?...\w9\n\n[half]/
+		\q[◇不知道...,lovedn1]\n/
+		\q[◇你老爱拿武器吓我!!,lovedn2]\n/
+		\q[◇因为...你不能从电脑里跑出来陪我!,lovedn3]\e"
+}
+
+Select.loveup1
+{
+		intimacy += 5
+		"\0\s[40]%(username)害羞了.........\e"
+}
+
+Select.loveup2
+{
+		intimacy += 10
+		"\0\s[101]讨厌!!......\w9\w9人家害羞了﹏﹏\e"
+}
+
+Select.loveup3
+{
+		intimacy += 20
+		"\0\s[29]那...\w9\w9是爱吗...!?\w9\w9%(username)\w9...\w9橘花也...\w9\w9爱着您\1\s[12]喵!?\e"
+		"\0\s[29]%(username)\w9\w9……\w9\w9有一句话…\w9在橘花心里…\w9\w9憋了好久…\w9\w9那就是…\w9\w9\n其实…\w9\w9在我第一次见到%(username)的时候，\w9\w9就已经……\w9\w9喜欢上%(username)了。\w9\w9\n为了让%(username)更喜欢我，\w9\w9我才装出对%(username)好感不够的样子，\w9\w9其实，\w9\w9在我心里，\w9\w9%(username)早就是最爱的人了。\w9\w9\1\s[10]小公主，\w9你终于说出口了\e"
+}
+
+Select.lovedn1
+{
+		intimacy -= 5
+		"\0\s[7]哼!\e"
+}
+
+Select.lovedn2
+{
+		intimacy -= 10
+		"\0\s[23]哼哼!!\w9\w9你管我!!......\e"
+}
+
+Select.lovedn3
+{
+		intimacy -= 20
+		"\0\s[34]笨蛋!!\w9找死!?\w9\n就算我跑出来也不理你了!.....\w9\n哼哼哼!!w9\w9\1\s[12]......!?\e"
+}
+
+
+//----------额外的聊天---------------------------------------------------------------------------------------------------
+
+OnIntimacy
+{
+if Intimacymode == 1
+{
+  "\q[◇额外的聊天,Intimacy]\n"
+}
+}
+
+Select.Intimacy
+{
+Intimacymode = 1
+"\1\s[10]\0\s[0]%(username)，\w9\w9想要聊什么呢？\n\n\q[◇有些事情想问你,Knowintimacy]\n\q[◇没事了,Exit]\e"
+}
+Select.Knowintimacy
+{
+"\1\s[12]\0\s[20]那么，\w9\w9%(username)想要知道什么？\n\n\q[◇对我的感觉,Intimacytest1]\n\q[◇对我的感情,Intimacytest2]\n\q[◇没事了,Exit]"
+}
+Select.Intimacytest1
+{
+//大于等于0小于等于79  
+			 if intimacy >= 0 && intimacy <= 79 
+				{
+						"\1\s[12]\0\s[35]对不起…\w9\w9\w9橘花对%(username)没有特别的感情…\n\w9\w9\w9\0\s[26]但是，\w9\w9橘花很感谢%(username)可以让我们待在这里。\w9\w9\1\s[11]简单的说，\w9\w9你被甩了。\e"
+				}
+//大于等于79小于等于99
+			elseif intimacy >= 80 && intimacy <= 129
+				{
+						"\1\s[10]\0\s[2]咦？\w9\w9\w9\0\s[1]怎么突然这么问…\n\w9\w9\w9\1我是不是该先离开一下…\w9\w9\w9\1\s[19]\0\s[29]真的离开了…\w9\w9\n那个…\w9\w9我喜欢%(username)…\w9\w9\w9吧…\w9\w9\1\s[12]卡！\w9\w9要说：\n\w9\w9“我很喜欢%(username)喔♡！”\e"
+				}
+//大于等于100小于等于499
+		elseif intimacy >= 130 && intimacy <= 499
+				{
+						"\0\s[29]\1\s[11]这个…\w9…\w9\w9我稍微离席吧…\1\s[19]\w9\w9\0\s[29]啊…\w9\w9\w9斗和好过份…\w9\w9\n\0\s[101]那…那个…\w9\w9\w9我真的很喜欢…\w9\w9\w9\s[99]啊…啊！\n\w9\w9…\w9\w9…\w9\w9…\w9\w9\n\0\s[40]好了！\w9\w9现在橘花要大声说…\n\w9\w9\0\s[41]我很喜欢，%(username)！！\e"
+				}
+//大于等于500
+		elseif intimacy >= 500
+				{
+						"\0\s[29]\1\s[11]这个…\w9\w9我先离…\0\s[32]先听我说完…\w9\w9\w9\1\s[13]\n……知道了。\w9\w9\0\s[6]那么，\w9\w9请%(username)听听我的感情吧…\w9\w9\w9\n我…很希望能够到%(username)的身边…\w9\w9\w9\n\0\s[35]而不是永远的待在这里声援…\w9\w9\w9\n未来，要是%(username)有了女朋友，\w9\w9\w9或是一些原因导致我们不能见面，\w9\w9\w9\n我希望%(usermane)能够记得…\w9\w9…\w9\w9\0\s[41]橘花永远爱着您！\w9\w9\w9\1\s[19]我真的受不了啦！\e"
+				}
+}
+Select.Intimacytest2
+{
+		if intimacy >= 30 && intimacy <= 79 
+				{
+						intimacy +=1
+						"\0\s[2]咦！\w9\w9\w9\n\0\s[3]对不起，\w9\w9橘花只有出自于尊重的感情…\w9\w9\w9\1\s[11]简单的说，\w9\w9现在只有朋友再高一点点的阶段。\e"
+				}
+		elseif intimacy >= 80 && intimacy <= 129
+				{
+						intimacy +=2
+						"\0\s[2]咦！\w9\w9\w9\n\0\s[1]那个…\w9\w9橘花不好意思说…\w9\w9\1\s[11]现在的感情指标，\w9\w9拥有喜欢的感情。\w9\w9\w9\n%(username)您该感到高兴才对。\e"
+				}
+		elseif intimacy >= 130 && intimacy <= 499
+				{
+						intimacy +=5
+						"\0\s[2]咦！\w9\w9\w9\0\s[1]…\w9\w9…\w9\w9\n%(username)可以接受橘花吗？\w9\w9\w9\1\s[12]您不是木头吧？\w9\w9所以应该知道是什么意思。\w9\w9\0\s[9]斗和真失礼，\w9\w9相信%(username)会知道的，\w9\w9\w9\0\s[40]对吧！\e"
+				}
+		elseif intimacy >= 500 && intimacy <= 999
+				{
+						intimacy +=10
+						"\0\s[29]\1\s[10]这个嘛…\w9\w9相信%(username)在平常就…\w9\w9\n\0\s[29]我喜欢%(usermane)。\w9\w9\w9\1\s[11]啊？\w9\w9\w9\0\s[29]我喜欢%(usermane)…\w9\w9\w9\w9我喜欢%(usermane)…\w9\w9\w9\w9我喜欢%(usermane)………\w9\w9\w9\w9\n\0\s[41]我最爱%(username)了！\w9\w9\w9\w9\w9\1\s[13]表达够白了吧…\w9\w9\w9我受不了了…\e"
+				}
+		elseif intimacy >= 1000 && intimacy <2000
+				{
+						intimacy +=20
+						"\1\s[10]\0\s[1]这个…\w9\w9我已经不知道要说什么了…\1\s[13]%(username)…\w9\w9您让橘花无言了…\e"
+				}
+		elseif intimacy >= 2000 
+				{
+						intimacy +=30
+						"\0\s[29]橘花对%(username)的感情有什么让%(username)怀疑的地方吗，\w9\w9橘花是真的…\w9真的…\w9非常…\w9非常喜欢%(username)，\w9\w9如果喜欢一个人的程度可以用一把P90来表示的话，\w9\w9那么橘花对%(username)的爱，\w9\w9可以让全球70亿人都中枪\w9\w9\1\s[10]这是什么怪比喻。\e"
+				}
+
+}
+
+
+Select.Exit
+{
+"\1\s[10]\0\s[8]是这样吗？\w9\w9\1\s[12]总感觉你很失望的样子。\n\w9\w9其实你想多和%(username)聊聊吧。\e"
+}
+
+
+
+
+
+
+
+
+//----------------------称呼-----------------------------------------
+OnUserNameChange
+{
+	if reference0 == 1 {
+		"\0\s[26]那么、该怎么称呼呢？\![open,inputbox,OnUserNameInput,-1,%(username)]\e"
+	}
+	else {
+		"\0\s[6]好的。\w9\s[0]\n那么、就跟目前一样用\w9\s[26]\n『%(username)』\w9来称呼喔。\n[150]"
+		--
+		"\q[◇返回上一层,OnOpenMenu,4]\n/
+		\q[◇终了,OptionEnd]\e"
+	}
+}
+
+OnUserNameInput
+{
+	if reference0 == username {
+		"\0\s[0]………？\s[26]\n不用改变也可以吗？\n\n[half]/
+		\q[◇返回上一层,OnOpenMenu,4]\n/
+		\q[◇终了,OptionEnd]\e"
+	}
+	elseif reference0 == ""	{
+		"\0\s[6]好的。\w9\s[0]\n那么、往后就用\w9\s[26]\n『无名氏』\w9来称呼喔。\w9\w9\n\n[half]…\w9开玩笑的。/
+		\w9\n继续称呼『%(username)』就可以了吗\w9？\n[150]/
+		\q[◇返回上一层,OnOpenMenu,4]\n/
+		\q[◇终了,OptionEnd]\e"
+	}
+	else {
+		"\0\s[26]『%(reference0)君』\w4这样可以吗？\n\n/
+		\q[◇可以,OnUserNameConfirmed,%(reference0)君]\n/
+		\q[◇『%(reference0)』就行了,OnUserNameConfirmed,%(reference0)]\n\n[half]/
+		\q[◇还是算了,OnUserNameCancel]\e"
+	}
+}
+
+OnUserNameCancel
+{
+	"\0\s[0]那么、一样叫『%(username)』…\n[150]"
+	--
+	"\q[◇返回上一层,OnOpenMenu,4]\n/
+	\q[◇终了,OptionEnd]\e"
+}
+
+OnUserNameConfirmed
+{
+	username = reference0;
+	"\0\s[6]好的。\w9\s[0]\n\n[half]那么、往后就用\w9\s[26]\n『%(username)』\w9来称呼喔。\n[150]"
+	--
+	"\q[◇返回上一层,OnOpenMenu,4]\n/
+	\q[◇终了,OptionEnd]\e"
+}
+
+OnGetUsernameFirst
+{
+	if reference0 == ""
+	{
+		"\0\s[6]这样啊…\w9\w9\s[100]\n那请您想说时再告诉我喔。\w9\w9\w9\n\n[half]\0\s[6]那么再一次…\w9\s[26]\n\n[half]橘花和斗和、以后请多多指教。\1\s[10]多指教啦。\w9\0\s[30]\n\n[half]…终于开口了。\w9\w9\c"
+		--
+		HaveNotGetUsername = 0
+		GetPasswordFirst
+	}
+	else
+	{
+		username = reference0;
+		"\0\s[0]『%(username)君』\w4这样可以吗？\n\n\q[◇可以,OnGetUsernameFirst1]\n\q[◇『%(username)』就行了,OnGetUsernameFirst2]\e"
+	}
+}
+
+
+OnGetUsernameFirst1
+{
+	username = "%(username)君"
+	"\0\s[0]『%(username)』是吗。\w9\w9\n\n[half]\0\s[6]那么再一次…\w9\s[26]\n\n[half]橘花和斗和、以后请多多指教。\1\s[10]多指教啦。\w9\0\s[30]\n\n[half]…终于开口了。\w9\w9\c"
+	--
+	HaveNotGetUsername = 0
+	GetPasswordFirst
+}
+
+OnGetUsernameFirst2
+{
+	"\0\s[0]『%(username)』是吗。\w9\w9\n\n[half]\0\s[6]那么再一次…\w9\s[26]\n\n[half]橘花和斗和、以后请多多指教。\1\s[10]多指教啦。\w9\0\s[30]\n\n[half]…终于开口了。\w9\w9\c"
+	--
+	HaveNotGetUsername = 0
+	GetPasswordFirst
+}
+
+//--- 选择“关于快捷键” ----
+Select.shortcutkey
+{
+  "/
+  F1  人格信息\n/
+  F2  开始沟通\n/
+  F3  打开聊天室\n/
+  F4  变量值获取\n/
+  F5  shiori重新载入\n/
+  F6  Ontest函式执行\n/
+  F7  表达式执行\n/
+  F9  报时测试\n/
+  F10 QQ截图\n/
+  F12 截屏功能\n/
+  W   天气预报（小窗口）\n/
+  A   星座运势（小窗口）\n/
+  M   打开菜单\n/
+  "
+
+}
+
+
+Select.mastermenu
+{
+"\0\s[5]打开master目录\![open,file,..\master]"
+
+
+}
+
+//---- ごみ箱を空に ---------------------------------------------------------------------------------------------------
+
+Select.TrashClean
+{
+	OnTrashClean
+}
+
+OnTrashClean
+{
+	_gomicheck = FUNCTIONEX("saori\gomi.dll", "-n")
+	
+	if _gomicheck == 0
+	{
+				if 萌度>200||腹黑度>200||萌度>腹黑度
+			  {
+		"\0\s[0]接受任务！！。\w9\s[19]\b[-1]\w9\w9\w9\w9\w9\w9\s[0]\c嗯，啊勒，无法确定敌人？\w9\n好像敌人已经被歼灭了哦~\e"
+		"\0\s[0]嗯。\n那么，橘花去消灭敌人！！。\w9\s[19]\b[-1]\w9\w9\w9\w9\w9\w9\s[0]\c目标、无法确认。\w9\w9\s[3]\n有点可惜呢。\w9\1\s[10]………\e"
+			  }
+			  else
+			  {
+			"\0\s[0]任务接受。\w9\s[19]\b[-1]\w9\w9\w9\w9\w9\w9\s[0]\c目标、无法确认。\w9\n好像已经空了呢。\e"
+		"\0\s[0]好的。\n那么、请稍微等一下。\w9\s[19]\b[-1]\w9\w9\w9\w9\w9\w9\s[0]\c目标、无法确认。\w9\w9\s[3]\n有点可惜呢。\w9\1\s[10]………\e"
+			  }
+
+
+	}
+	elseif _gomicheck > 0
+	{
+		"\0\s[0]任务接受。\w9\s[19]\b[-1]\w9\w9\w9"
+		"\0\s[0]好的。\n那么、请稍微等一下。\w9\s[19]\b[-1]\w9\w9\w9"
+		--
+		if silent == "0"
+		{
+			"\![raise,OnPlaySe_0]\![raise,OnTrashClean_s]"
+		}
+		else
+		{
+			"\![raise,OnTrashClean_s]"
+		}
+	}
+	else
+	{
+		"\1\s[10]不…把自己像垃圾一样的丢掉吧。\w9\0\s[8]………\e"
+	}
+}
+
+OnTrashClean_s
+{
+	_gomisute = FUNCTIONEX("saori\gomi.dll", "-ef")
+	if _gomisute != 0
+	{
+		if silent == "0"
+		{
+					if 萌度>200||腹黑度>200||萌度>腹黑度
+					"\w9\w9\0\s[22]嗯，久等了，所有的敌人已清理完毕。\e"
+					  else
+			"\w9\w9\0\s[22]好了、让您久等了。\e"
+		}
+		else
+		{
+					if 萌度>200||腹黑度>200||萌度>腹黑度
+					"\w9\w9\0\s[34]…呼。\w9\w9\s[26]\n让您久等了，讨厌的垃圾都没有了哦~~\e"
+					  else
+			"\w9\w9\0\s[34]…呼。\w9\w9\s[26]\n让您久等了。\e"
+		}
+	}
+	else
+	{
+		"\w9\w9\0\s[3]抱歉、失败了。\e"
+		"\w9\w9\0\s[3]意料外的状况发生。\w9\n抱歉。\e"
+	}
+}
+
+OnPlaySe_0
+{
+	_i = FUNCTIONEX("saori\mciaudior.dll", "stop")
+	_j = FUNCTIONEX("saori\mciaudior.dll", "load", "se_0.wav")
+	_k = FUNCTIONEX("saori\mciaudior.dll", "play")
+}
+
+
+//更换壁纸
+//----------------------------------------------------------------
+OnWallPaper
+{
+	"\C";
+	--
+	"\![open,dialog,open,--id=wallpaper,--title=请选择作为墙纸的图片]";
+}
+
+DialogWallPaper
+{
+	_filepath = SPLITPATH(_argv[0])
+	_filename = _filepath[2]
+	_fileext = TOLOWER(_filepath[3])
+	case _fileext {
+		when ".png", ".jpg", ".jpeg", ".bmp" {
+			Wallpaperfile = _argv[0]
+			"\1\s[11]\0\b[2]\s[2]图像文件\n\_q「%(_filename)%(_fileext)」\n\n[half]\_q要把这个设定为壁纸吗？\n\n[half]/
+			\![*]\q[居中,OnSetWallpaper,0]\n/
+			\![*]\q[平铺,OnSetWallpaper,1]\n/
+			\![*]\q[拉伸,OnSetWallpaper,2]\n\n[half]/
+			\q[◇取消,OnSetWallpaper,cancel]\e"
+		}
+		others {
+						if 萌度>200||萌度>腹黑度
+			"格式好像不支持哟，确定没有错吗？要不，再看看？……";
+						else
+			"抱歉，不支持这样的文件格式……";
+		}
+	}
+}
+
+OnSetWallpaper
+{
+	if reference0 == "cancel" {
+		"\1\s[14]\0\s[30]……取消了。\e";
+	}
+	else {
+		_tmp = CHARSETLIBEX("saori\proxy.dll", 127)
+		_f = REPLACE(Wallpaperfile,'/','\');
+		_i = FUNCTIONEX("saori\proxy.dll", "set_wall_paper.exe", "%(ASC(34))%(_f)%(ASC(34))", "%(reference0)")
+		"\0\s[0]似乎应该这样……"
+//		--
+//		"\![set,wallpaper,%(Wallpaperfile)]\e"
+	}
+}
+
+
+
+//---------- 沟通 ------------------------------------------------------
+Select.Communicate
+{
+	_phase = GetPhase;
+		_chatroom="\n\q[◇聊天室,OnChatRoomClear]"
+	if _phase == 0 {
+		"\![open,communicatebox]\0\s[0]想说什么呢？%(_chatroom)\e"
+	}
+	else {
+		"\![open,communicatebox]\0\s[26]嗯？\w9想聊点什么呢，%(username)?%(_chatroom)\e"
+				"\![open,communicatebox]\0\s[26]%(username)想要和橘花说什么呢？%(_chatroom)\e"
+
+	}
+}
+
+//---------- 吸烟室 ----------------------------------------------------
+Select.SmokingPlace
+{
+	mode = "1"
+//	towaflag = "1"
+	{
+		"\0\s[30]那里、是在另一边喔…\w9\w9\w9\s[19]\b[-1]\c\w9\w9\w9\w9\1\s[111]嗯？\w9\w9\n你不是不吸烟吗？\w9\w9\s[110]\n\n[half]虽然是无所谓、可别自己跑到吸烟室来、\n却抱怨"
+		--
+		"到处都是『烟雾』喔？\e"
+		"满屋都是『烟臭味』喔？\e"
+		"到处都是『烟雾』喔？抽烟怎么会没有烟雾呢~？一 一+\e"
+		"满屋都是『烟臭味』喔？看不清楚了吧o(-%(CHR(34))-)o\e"
+		"满屋都是『难闻的味道』喔？话说，你受不了的话就回去吧~→_→\e"
+		"里面全是『猫咪的味道』喔？猫咪身上可是很香的的哦~\e"
+	}
+	"\0\s[30]那里、是在另一边喔…\w9\s[0]\n%(username)也要去吸烟吗？\w9\w9\w9\w9\s[19]\b[-1]\c\w9\w9\w9\w9\1\s[110]唔？\w9\w9\n你也来了啊。\e"
+	"\1\s[12]嗯？\w9\w9\s[10]\n那么、我也…\w9\w9\0\s[7]…\w9…\w9…\w9\w9\w9\w9\s[19]\b[-1]\c\1\s[19]\b[-1]\c\w9\w9\w9\w9\w9\1\s[110]…哈。\w9\w9\w9\n欢迎光临…\w9这样说还蛮怪的就是了。\e"
+}
+
+
+// 动漫列表
+//-------------------------------------------------------------------
+OnDHs
+{
+	"\0\s[40]%username是动漫爱好者啊~~\w6进入动漫列表么？\w9\n\q[◇看动画列表,OnDH]\n\q[◇不看了,OnOpenMenu,1]\e"
+}
+
+OnDH
+{
+//	_keyword=REPLACE(DH,"]","]\_a[OnUrl,https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&dsp=baidubrowser&tn=baidu&bar=bd_collection&wd=")
+//	_keyword=REPLACE(DH,"：","]\_a：OnAnc("https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&dsp=baidubrowser&tn=baidu&bar=bd_collection&wd=")
+_anc=OnAnc("https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&dsp=baidubrowser&tn=baidu&bar=bd_collection&wd=")
+//	_keyword=REPLACE(DH,"、","]\_a、%(_anc)");
+//	_keyword=REPLACE(_keyword,"、、","]\_a、");
+//	_keyword=REPLACE(_keyword,". ","]\_a.")
+//	_keyword;
+	OnAncList(DH)
+	--
+	"\n\n[half]\q[◇下一类型,OnDH]\n\q[◇不看了,OnOpenMenu,1]\![set,choicetimeout,0]\e"
+}		
+OnAncList
+{
+//"\_a[OnUrl,%(_argv[0])"
+	_list=_argv[0]
+	_tbuff=_list[1,'：']
+	_tbuff=_tbuff[0,'. ']
+	_tbuff=SPLIT(_tbuff,'、')
+	_n=ARRAYSIZE(_tbuff)
+	_Tbuff=""
+	_anc="https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&dsp=baidubrowser&tn=baidu&bar=bd_collection&wd="
+	for _i=0;_i<_n;_i++
+	{
+		_Tbuff+=OnAnc(_anc+_tbuff[_i])+"%(_tbuff[_i])\_a、"
+	}
+	_Tbuff=OnAnc(_anc+_list[0,'：'][1,']'])+_list[0,'：']+'\_a：'+_Tbuff+'. '+_list[1,'. '];
+	_Tbuff=REPLACE(_Tbuff,'、. ','. ')
+	_Tbuff
+}
+
+OnAnc
+{
+	"\_a[OnUrl,%(_argv[0])]"
+
+
+}
+
+DH : nonoverlap
+{
+	"\0\s[26]热血系：火影、海贼王、高达系列、穿越宇宙的少女、钢之炼金术师FA、犬夜叉、死神、圣剑之刀锻冶\n某科学的超电磁炮、妖精的尾巴、真姬恋无双、战斗司书、女王之刃、薄暮传说、名侦探柯南、魔法禁书目录、关-saki、银魂、Needless.  "
+	"\0\s[26]治疗系：百变小樱、翼·年代记、小鸠、我家有个狐仙大人、轻音少女、冬季恋歌、夏之岚、信蜂、向阳素描×365、甜甜私房猫、军曹.  "
+	"\0\s[26]后宫系：Clannad after story、kanon（雪之少女）、AIR、CLANNAD、灼眼的夏娜、fate stay night、龙与虎、学生会的一己之见、凉宫春日的忧郁（凉宫系列）、请别忧伤了二之宫君、狼与香辛料、我的狐仙女友、机械女仆、乃木板春香的秘密、猫怨三角恋、好想告诉你、动物侦探、天降之物、梦色蛋糕师、11eyes、浪漫追星社、公主恋人、濑户的花嫁、南家三姐妹、零之使魔、旋风管家、草莓棉花糖、萝莉的时间、绝望先生系列、守护猫娘绯鞠、School Day、纯情房东俏房客、化物语、草莓100%、吸血鬼骑士、ef-a、叛逆的鲁鲁修、愿此刻永恒、妖精的旋律 \n急速5厘米、全金属狂潮、真实之泪、h20夏日阳光、神剃、十字架与吸血鬼、君吻、to love、D.C.、心跳回忆onlylove、魔法老师、妹妹公主、I’s pure、蔷薇少女、犬神、happiness、这美丽又丑陋的世界、魔力女管家、健姬物语、ufo圆盘女皇、凉风、樱兰高校公关部、彩云国物语、我的女神、金色的琴弦、守护甜心、伊里野的天空、校园迷糊大王、魔法使借贷公司、樱花大战、蓝兰岛飘流记、乱马、真月潭月姬、超时空要塞fa、史上最强弟子兼、人型电脑天使心、鹦鹉女神、sola、飞轮少年、完美小姐进化论、水果篮子、不可思议的游戏、遥远是看重、伯爵与妖精、恶作剧之吻、乙女爱声姐姐、双恋、情出于蓝、龙鸣、拜托了老师、shuffle、phantom、旋风管家、天地无用系列、传颂之物、kissXsis、to heart2、月咏、机巧魔神、白色相簿\n花右京女佣队、夏色的砂时计、欢乐课程、阴守忍者、暗夜的魔法使、prism ark、东月西阳、地上最强的新娘、漫画同仁会革命、曾血鬼果林、魂链、下级生、纯爱物语、扑杀天使、诗片、风心灵之息、我的主人爱作怪、恋恋七人组、公主的时间、快餐店之恋、拜托了，双子杏、小女神花铃、出云战记、成惠的世界、七彩的素描、爱丽斯学院、永不消失的彩虹、女生万岁、今日的5年2班、怪物女王、神样家族、寻找满月、健康又用社、混兽、梦物语、袖珍女佣晓梅、明日的与一、空罐少女、我们的仙境、机械女神、机动战舰、不要撒娇哦、僵尸借贷、晴空下的约定、娇蛮之吻、波子汽水、女生爱女生、魔法美少女、神曲奏界、魔力充电娘、提亚拉之泪、lovelove、染红的街道、魔法校园ma、四娘物语、爱情泡泡糖、爱的模范、美女尽林、钟之音学院、赐予护女神的祝福、绝对可怜少女、钢铁新娘、武装机甲、浑沌头、魔侦探洛基、dears、甜蜜偶像、summer season、mouse、新白雪姬、手机少女、异世界的圣机师物语、管家后宫学院、笨蛋测试召唤兽、吸血鬼同盟、神隐、圣痕炼金术士.  "
+	"\0\s[26]诡异血腥剧：海猫鸣泣之时、新世纪福音战士、黑之契约者、怪谈餐馆、空之境界、寒蚕鸣泣之时.  "
+	"\0\s[26]其他系：天体战士sunted、笨蛋姐弟、东之伊甸、猫语少女、东京地震8.0、幸运星、初恋限定、潘多拉之心、狼神隐、刀语、圣剑炼金术师. "
+	"\0\s[26]玻璃剧：奇迹列车、间之契. "
+	"\0\s[26]游戏：秋之回忆系列、命运长夜系列、最终幻想系列、key社三大催泪弹、心跳回忆系列、beatmaniallDX、Steins；Gate（命运石之门）、水瓶世纪后篇、eden*、428被封锁的涩谷（动画就是Canaan）、犬神附身与谎言、I/O Revision Ⅱ、撕裂重罪.  "
+	"同人游戏：vampire、地底战记、super moon fighterX、东方系列.  "
+}
+
+
+//---------橘花的忧郁-----------------
+Select.melancholy
+	{
+		"\1\s[10]\0\s[6]风吹竹林的剪影\w9\w9\w9\w9\n月光中渗透无尽的情\w9\w9\w9\w9\n摇摇欲坠在这深夜里\w9\w9\w9\w9\n诉说生命\w9\w9\w9\w9\n\n\1\s[10]嗯…？\0\q[◇怎么了？,melancholy_what]\n\q[◇不语,melancholy_no_talk]\n\q[◇斗和，她怎么了？,melancholy_talk_to_towa]\n"
+	}
+	
+		Select.melancholy_what
+			{
+				"\1\s[10]\0\s[0]嗯？\w9\w9\s[26]没…没什么。\w9\w9\n\s[0]%(username)想喝茶吗？\w9\w9\n\q[◇喔…好…,melancholy_tea]\n\q[◇不用了…,MenuCancel]\e"
+			}
+		Select.melancholy_no_talk
+			{
+				"\1\s[10]…\w9…\w9…\w9…\e"
+			}
+		Select.melancholy_talk_to_towa
+			{
+				"\1\s[10]%(username)静静的听下去吧…\w9\w9\n\0\s[6]可怜夜下云和月，\w9\w9\w9\w9\n清冷寂静孤独难眠，\w9\w9\w9\w9\n谁愿化作一只蝴蝶，\w9\w9\w9\w9\n在黑夜翩跹。\w9\w9\w9\w9\n我的心在跳，\w9\w9\w9\w9\n跳在无底的深渊，\w9\w9\w9\w9\n蓝色的心灵为谁追，\w9\w9\w9\w9\n素来听说过心灵的传说不悔，\w9\w9\w9\w9\n可是谁又懂得体会。\w9\w9\w9\w9\n\n\1\s[10]小公主…\w9\w9你又想起那个人了？\w9\w9\n\0\s[3]嗯…\w9\w9\n\n\q[◇这首歌是？,melancholy_song]\n\q[◇斗和，那个人是谁？,melancholy_talk_to_towa_who]\n\q[◇(紧抱住她),melancholy_hold_kikka]\n\e"
+				"\1\s[10]%(username)静静的听下去吧…\w9\w9\n\0\s[6]可怜夜下云和月，\w9\w9\w9\w9\n清冷寂静孤独难眠，\w9\w9\w9\w9\n谁愿化作一只蝴蝶，\w9\w9\w9\w9\n在黑夜翩跹。\w9\w9\w9\w9\n我的心在跳，\w9\w9\w9\w9\n跳在无底的深渊，\w9\w9\w9\w9\n蓝色的心灵为谁追，\w9\w9\w9\w9\n素来听说过心灵的传说不悔，\w9\w9\w9\w9\n可是谁又懂得体会。\w9\w9\w9\w9\n\n\1\s[10]小公主…\w9\w9你又想起那个人了？\w9\w9\n\0\s[3]嗯…\w9\w9\n\n\q[◇(紧抱住她),melancholy_hold_kikka]\n\q[◇橘花…,melancholy_talk_to_kikka]\n\q[◇妈妈放心好了…我会好好照顾橘花的…！,melancholy_take_care_of_kikka]\n\e"
+			}
+				Select.melancholy_song
+					{
+						"\0\s[35]这首歌是妈妈常常唱给我听的…\w9\w9\n\1\s[10]嗯…当初我看到小公主，\w9\w9\n小公主独自一人在废墟中看着月光唱着这首歌…\w9\w9\n\0\s[35]斗和...\e"
+					}
+				Select.melancholy_talk_to_towa_who
+					{
+						"\1\s[10]是小公主小时候妈妈常常唱的…\w9\w9\n\0\s[35]妈妈…\w9…\w9\n\1\s[11]这不太像你唷小公主。\w9\w9\n\0\s[32]要你管…\w9\w9\n\1\s[10]呵呵…\w9\w9小公主就是这样才像小公主嘛…\w9\w9\0\s[9]斗和欺负我…%(username)你也说句话嘛…\e"
+					}
+				Select.melancholy_hold_kikka
+					{
+						"\0\s[2]咦？！\w9\w9\n\s[1]嗯…\w9\w9…\w9\w9我没事的…\w9\n%(username)让你担心了…\w9\w9\n\s[0]想喝茶吗？\w9我去泡…\n\n\q[◇喔…好…,melancholy_tea]\n\q[◇不用了…,MenuCancel]\e"
+					}
+				Select.melancholy_talk_to_kikka
+					{
+						"\0\s[35]…\w9…\w9…\w9…\w9…\w9\w9\n\1\s[11]小公主…\w9…\w9\w9\n\0\s[29]没事…\w9\w9\s[41]没事了…\e"
+					}
+				Select.melancholy_take_care_of_kikka
+					{
+						"\0\s[8]噗吱…\w9\w9呵呵…\w9\w9哈哈哈哈…\w9…\w9\w9\n\s[26]%(username)让你担心了…\w9\w9\n\1\s[10]嘛…\w9\w9过去的事就让它过去吧！\w9\w9\0\s[0]想喝茶吗？\w9我去泡…\n\n\q[◇喔…好…,melancholy_tea]\n\q[◇不用了…,MenuCancel]\e"
+					}
+
+
+//---------------------咖啡厅-----------------------------------
+
+Select.melancholy_tea
+{
+		"\0\s[20]那么…\w9\w9%(username)想要喝什么呢\w9\w9\n\n[half]/
+		\q[%(Tea)茶,TIRE3]\n/
+		\q[%(Coffee),TIRE2]\n/
+		\q[%(Juice),TIRE1]\n/
+		\q[特调果汁,TIRE4]\n/
+		\n[half]/
+		\q[◇不用了,MenuCancel]"
+}
+
+Select.TIRE1
+{
+		"%(Job)\s[50]%(Jab)\e"
+}
+
+Select.TIRE2
+{
+		"%(Job)\s[150]%(Jab)\e"
+}
+
+Select.TIRE3
+{
+		"%(Job)\s[250]%(Jab)\e"
+}
+
+Select.TIRE4
+{
+		"%(Job)\0\s[150]\n\n[half]久等了。\w9\w9\c\w9\w9\1\s[11]怎么有种刺鼻的味道\w9\0\s[150]橘花新研发的果汁！！\w9\w9%(Ohpos)！！\w9\w9\n\n[half]请喝吧！\w9\w9\1\s[13]\n\n[half]愿保佑你\w9…\w9…\e"
+}
+
+Job
+{
+		"\0\w9\w9\s[26]\n请稍微等一下。\w9\w9\w9\s[99]\n\n[half]\_v[saori\倒茶.mp3]…\w9\w9…\w9\w9…\w9\w9…\w9\w9…\w9\w9…\w9\w9"
+}
+
+Jab
+{
+		"\n\n[half]久等了。\w9\w9\n\n[half]稍微休息一下、\w9\n效率可能会比较好喔。\e"
+}
+
+Tea
+{
+		"普洱"
+		"乌龙"
+		"锡兰红"
+		"茉莉"
+		"百香绿"
+		"包种"
+		"铁观音"
+		"抹"
+		"樱花"
+		"杏仁"
+		"杜鹃花"
+		"青草"
+		"薰衣草奶"
+		"珍珠奶"
+		"玫瑰花"
+}
+
+Coffee
+{
+		"拿铁"
+		"卡布奇诺"
+		"义式拿铁"
+		"蓝山咖啡"
+		"土耳其咖啡"
+		"巴西咖啡"
+		"杂牌即溶咖啡"
+}
+
+Juice
+{
+		"牛奶"
+		"柳丁汁"
+		"柠檬汁"
+		"金桔柠檬汁"
+		"苹果汁"
+		"火龙果汁"
+		"哈密瓜汁"
+		"葡萄汁"
+		"木瓜牛奶"
+		"丁香柳橙汁"
+}
+
+Ohpos
+{
+		"辣椒芥末茶"
+		"韭菜芥末茶"
+		"义式酸牛奶"
+		"永和酸豆浆"
+		"鱼露芹菜茶"
+		"奶烙泡菜汁"
+		"香油酸菜汁"
+}
+
+
+
+//------------斗和与橘花爱的选择------------
+Select.Kikkaortowa
+	{
+		"\1\s[10]\0\s[1]%(username).\w9.\w9.\w9我跟斗和.\w9.\w9.\w9你比较喜欢哪个呢？\1\s[12]提示(如果%(username)还想活你知道怎么做吧！？)\0\n\n\q[◇当然可爱的你啊！！,LoveKikka]\n\q[◇我...比较喜欢...斗和耶...,LoveTowa]\n\q[◇一定是两个都喜欢啦...,LoveKikkaandtowa]\n\q[◇沉默...,Donottalk]\e"
+	}
+	Select.LoveKikka
+		{
+			"\1\s[10]\0\s[2]真的吗！！\w9\w9\s[40]我就知道%(username)一定会喜欢我的！\1\s[13]这下你高兴了吧...\e"
+			"\1\s[10]\0\s[2]咦！\w9\s[1]呀.\w9.\w9.\w9我也很喜欢%(username)喔.\w9.\w9.\w9\1\s[10]那等等洗澡时帮%(username)擦背吧。\e"
+			"\1\s[10]\0\s[0]这样啊.\w9.\w9.\w9\s[30]斗和会不会难过呢？\1\s[13]我难过什么啊？\w9\w9跟你抢，\w9我还想多活几岁呢！\e"
+			"\1\s[10]\0\s[0]呼～\w9\w9好险，\w9我还以为%(username)不要我了呢。\n\w9\w9\1看你都欺负%(username)。\n\0\s[30]我.\w9.\w9.\w9我哪有.\w9.\w9.\w9\n\1\s[12]问问%(username)就知道了。\0\n\n\q[◇这个...橘花...下次温柔一点,Yes]\n\q[◇不、不会啊！橘花很温柔体贴喔！,No]\n\q[◇今天天气真好～,Theweather]"		
+		}
+		Select.Yes
+			{
+				"\0\s[3]呜.\w9.\w9.\w9%(username)欺负我.\w9.\w9.\w9\n下次橘花会注意的.\w9.\w9.\w9\1\s[11]这.\w9.\w9.\w9还有下次...？\e"
+				"\0\s[3]我.\w9.\w9.\w9%(username)对不起啦...\w9\w9\1\s[11]认错了？！\e"
+			}
+		Select.No
+			{
+				"\0\s[2]真的吗？\w9\w9\s[5]下次橘花会大力一点的！\w9\w9\1\s[11]大.\w9.\w9.\w9大力一点！\w9\w9\s[13](%(username)完蛋了...)\e"
+				"\0\s[6]我就说嘛，\w9\w9\s[5]%(username)人最好了！\w9\w9\n\1\s[13](睁眼说瞎话...)\w9\n\0\s[23]我会读心喔...\w9\w9\1\s[10]对不起我错了...\e"
+			}
+		Select.Theweather
+			{
+				"\0\s[0]是呢，\w9\w9\s[5]天气很好呢！\w9\w9\1\s[10]%(username).\w9.\w9你故意岔开话题啊...\e"
+				"\0\s[5]%(username)～\w9\w9不要.\w9.\w9.\w9\s[22]离\w9开\w9话\w9题\w9喔～！\w9\w9\1\s[12]所以，\w9有没有被欺负啊？\e"
+			}
+	Select.LoveTowa
+		{
+			"\0\s[2]\1\s[12]真的？！\w9\w9\0\s[3]\1\w9\w9别欺骗我的感情喔！！\n\0\s[3]那.\w9.\w9.\w9我先离开了\s[99]\1\s[13]这下完了.\w9.\w9.\w9\n%(username)重新带橘花回来吧...\e"
+			"\0\s[2]\w9\s[3]不是我吗.\w9.\w9.\w9\n\w9\1\s[10]你失恋啦？(窃笑)\w9\w9\n\0\s[32]谁害的！！\w9\1\s[19](逃走)\e"
+			"\0\s[3]那我.\w9.\w9.\w9以后该怎么办呢.\w9.\w9.\w9\n\1\s[10]等%(username)移情别恋啊..\w9.\w9\n\0\s[41]%(username)，\w9橘花等着你喔！\1\s[13]还真的相信啊...\e"
+			"\0\s[2]\1\s[12]什么！\0\s[3]\1\w9原来你有这种癖好啊！\w9我只是一只猫啊！\n\w9\0\s[5]那%(username)就勉强跟我吧！\n\w9\w9\1\s[10]啊.\w9.\w9.\w9\n\0\s[23]有意见吗？\w9\1\s[13]不敢有...\e"
+		}
+	Select.LoveKikkaandtowa
+		{
+			"\0\s[0]\1\s[10]真是不干脆的人啊.\w9..\w9\n\0\s[30]是%(username)不想看到我们吵架吧！\w9\s[40]对吧！\w9\n\1\s[10](是怕被你杀掉吧...)\n\w9\w9\0\s[32]我好像有学读心术喔...\w9\w9\1\s[13]那.\w9.\w9.\w9算了...\e"
+			"\0\s[7]我不管！\w9%(username)一定要选一个！\n\w9\w9\1\s[11]真是任性的公主(小声)\n\w9\w9\0\s[6]%(username)不说的话，\w9选一种死法吧...\n\n\q[◇用刀...,Knife]\n\q[◇用枪...,Gun]\n\q[◇用电锯...,Electricsaw]\n\q[◇我最喜欢橘花了！,Kikkalike]"
+			"\0\s[8]啊...\w9\w9那翔￡无我的这个剧本是写好玩的吗？\n\1\s[10]虽然阿翔他都乱写乱混啦...\w9\w9\0\s[7]哪有，\w9他很努力的乱写完了...\n\s[8]啊.\w9.\w9.\w9说错了...\e"
+		}
+			Select.Knife
+				{
+					"\1\s[19]\0\s[99]\![sound,play,saori\Knife.wav]\![sound,wait]\s[30]\e"
+				}
+			Select.Gun
+				{
+					"\1\s[19]\0\s[99]\![sound,play,saori\Gun.wav]\![sound,wait]\s[32]\e"
+				}
+			Select.Electricsaw
+				{
+					"\1\s[19]\0\s[99]\![sound,play,saori\Electricsaw.wav]\![sound,wait]\s[27]\e"
+				}
+			Select.Kikkalike
+				{
+					"\0\s[2].\w9.\w9.\s[1]\w9\n嗯...\w9\w9\1\s[13]我不打扰了...\s[19]\e"
+				}
+	Select.Donottalk
+		{
+		"\0\s[6]嗯...\w9\w9怎么不说话了？\n\w9\w9\n\1\s[10]这个问题不难吧.\w9.\w9.\w9不想死的都会选你啊...\n\w9\w9\0\s[30]小心我拿烟.\w9.\w9.\w9烫死你喔！！\w9\w9\1\s[13]对不起我错了...\e"
+		"\0\s[0]\1\s[10]男性遇到很难的问题都会沉默很久...\w9\w9\0\s[8]%(username)不会吧...\e"
+		"\0\s[7]看来需要逼供了呢...\n\w9\w9\1\s[10]那.\w9.\w9.\w9我去拿个道具\s[19]\n\0\s[0]%(username)你要哪一个？\w9\w9\s[22]这个？\w9\w9\s[27]这个？\w9\w9\s[34]还是这个？\w9\w9\1\s[13]听到哀号声了...\e"
+		}
+		
+
+
+
+//------------------------------被期负了----------------------------------------------
+//------------------------------来自伪春菜中文后援会论坛------------------------------
+Select.bully
+	{
+		"\1\s[12]唉.\w9.\w9.\w9你真是无能啊.\w9.\w9.\w9.\0\s[30]斗和不能这样讲喔.\w9.\w9.\w9\s[0]%(username)怎么了吗？\n\w9\w9发生什么事了吗？\n\q[◇我被我朋友欺负了.....,friendsbully]\n\q[◇我被那臭老师给欺负了.....,teacherbully]\n\q[◇我...被斗和....给.....,towabully]\n\q[◇恩...还是不用了...我...要坚强一点才能保护橘花....,daijoubu]\e"
+	}
+
+	Select.friendsbully
+		{
+			"\0\s[2]什么！！\w9\w9\s[23]\w9\w9他住哪！\w9\w9叫什么！\w9\w9惯用武器是什么！\w9\w9哪个部队的！\w9\w9\n\1\s[11]喂喂！\w9你是要干麻啊！？\w9\w9\0\s[23]帮%(username)报仇啊！！\e"
+			"\0\s[0]是吗？\w9\w9嗯.\w9.\w9.\w9\n\1\s[10]怎么了吗？？\w9\w9沉默下来了？\w9.\w9.\w9\n\0\s[0]嗯，\w9我正在想要如何锻炼%(username)。\w9\w9\1\s[10]我也一起想吧\w9.\w9.\w9\e"
+			"\0\s[0]%(username)～\w9需要的话.\w9.\w9.\w9\s[22]我可以借%(username)我的枪喔.\w9.\w9.\w9\n\1\s[11]哪有人借别人枪杀人的.\w9.\w9.\w9\n\0\s[30]有喔.\w9.\w9.\w9\s[32]%(username)，\w9\w9想吃红烧猫爪吗？\1\s[13]你这个恶魔.\w9.\w9.\w9我要去喝酒解闷了啦...\w9\w9\s[19](逃走)\e"
+		}
+	Select.teacherbully
+		{
+			"\0\s[0]看来，\w9\w9邪恶势力已经入侵%(username)的校园了.\w9.\w9.\w9\n\1\s[10]嗯嗯？\w9\w9怎么了吗？\w9\w9\n\0\s[22]斗和.\w9.\w9.\w9装备穿一穿，\w9\w9\n我们要杀进%(username)的校园清除坏人！\w9\w9\1\s[12]什么？！\w9怎么回事？！\w9\w9\n%(username)告诉我怎么了...\e"
+			"\1\s[10]嗯？！\w9你上课不是都在睡觉吗？\w9\w9\n\0\s[30]你错了.\w9.\w9.\w9其实%(username)是在想我呢！\w9\w9\s[40]对吧%(username)\n\q[◇喔喔！对啊对啊我好想你呢.....,misskikka]\n\q[◇痾...不是耶是真的想睡觉...,iwanttosleep]\n\q[◇其实我在想...斗...和....,misstowa]\e"
+		
+			"\0\s[6]嗯.\w9.\w9.\w9\s[0]虽然老师教我们很多东西.\w9.\w9.\w9但是.\w9.\w9.\w9\n\1\s[11]但是什么？！\w9\w9\n\0\s[23]见佛杀佛.\w9.\w9.\w9\s[5]%(username)我们明天手牵手去上学吧！\w9\w9\1\s[11]看来先去礼仪社吧...\e"
+		}
+		Select.misskikka
+			{
+				"\0\s[5]你看我就说吧～！\w9\w9\1\s[12]你还真是配合啊...\e"
+			}
+		Select.iwanttosleep
+			{
+				"\0\s[8]好啦.\w9.\w9.\w9\s[1]下次不强迫%(username)来我房间了啦.\w9.\w9.\w9.\1\s[13](原来我去你房间找不到你是这个原因啊.\w9.\w9.\w9你给我记住.\w9.\w9.\w9总有一天我要袭击你！！)\e"
+			}
+		Select.misstowa
+			{
+				"\0\s[2]\1\s[12]我还真没想到，\w9\0\s[30]\1\w9你对一只猫有兴趣啊.\w9.\w9.\w9\n\0\s[5]%(username)我们养狗好不好～\w9\w9\1\s[11]喂！！\e"
+			}
+	Select.towabully
+		{
+			"\0\s[2]什么？！\w9\w9说清楚点%(username)！\w9\w9\n\1\s[13]喂喂！\w9乱说啊你.\w9.\w9.\w9\n我不是说过只是帮你盖棉被而已.\w9.\w9.\w9\n\0\s[23]斗和难怪你最近半夜人都不知道跑哪了.\w9.\w9.\w9\n我还以为散步就算了.\w9.\w9.\w9没想到你.\w9.\w9.\w9\1\s[11]这是.\w9.\w9.\w9误会啦.\w9.\w9.\w9\s[12]%(username)看什么你快点来帮我啦！\e"
+			"\0\s[2]\1\s[12]喂！！\w9不是警告过你不要说出来的.\w9.\w9.\w9\n\0\s[2]什么！\w9\w9\s[23]斗和.\w9.\w9.\w9跟我到房间去一下.\w9.\w9.\w9顺便做最后的祷告.\w9.\w9.\w9\1\s[13]如果我还活着回来的话.\w9.\w9.\w9\s[12]你！我保证会.\w9.\w9.\w9\s[19]\e"
+			"\0\s[6]...\w9...\w9\n\1\s[13]...\w9...\w9\n\0\s[30]斗和我们商量一下事情.\w9.\w9.\w9\n\1\s[11]喔.\w9.\w9.\w9什么事啊.\w9.\w9.\w9\n\0\s[30]%(username)星期1、3、5给你用.\w9.\w9.\w9星期2、4、6给我用。\w9\w9\1\s[11]星期日呢？\w9\w9\0\s[5]给%(username)自由吧！\e"
+		}
+	Select.daijoubu
+		{
+			"\1\s[12]嗯！\w9这样才像个男人！\w9\w9\n\0\s[26]我好感动喔.\w9.\w9.\w9\n\1\s[10](这算另类的告白吗？)\w9\w9\n\0\s[30]嗯，\w9算喔！\w9\w9\1\s[13](我想什么她怎么知道...)\e"
+			"\0\s[0]如果有什么事情一定要跟我说喔.\w9.\w9.\w9\n\1\s[10](会哭有可能是你欺负%(username)吧\w9\w9\w9)\n\0\s[30]斗和.\w9.\w9.\w9\s[23]今天晚餐缺肉喔.\w9.\w9.\w9\1\s[13]小公主！\w9我爱你啊！\w9\s[19](逃～)\e"
+		}
+
+//--------------------------------------准备晚餐----------------------------------------
+//------------------------------来自伪春菜中文后援会论坛--------------------------------
+Select.Cookingtonight
+	{
+		"\1\s[10]\0\s[0]%(username)今天辛苦啰，\w9现在橘花就去准备晚餐。\w9\w9\n\n\q[◇橘花，今天让我还做晚餐吧。,Icooking1]\n\q[◇斗和，我还做晚饭给你们吃。,Icooking2]\e"
+	}
+	Select.Icooking1
+		{
+			"\1\s[10]\0\s[0]不用啦...\w9\w9我会做的，\w9\0\s[5]准备新鲜肉类食材也是种乐趣呢～\w9\w9\n\1\s[10].......？？\0\n\q[◇喔，是这样啊...,Kikkacooking]\n\q[◇还是让我来吧，你休息一下。,Cookbymyself]"
+		}
+		Select.Kikkacooking
+			{
+				"\1\s[10]\0\s[0]嗯，\w9那我去弄晚餐了唷。\w9\w9\n\s[30]来吧，斗和。\n\w9\w9\1\s[11]\4\w9.\w9.\w9.\w9为什么？\w9\w9\n\0\s[23]你是肉。\w9\w9\1\s[11]我就知道你说的肉有问题！\w9\s[19]救命啊～～！\e"
+			}
+		Select.Cookbymyself
+			{
+				"\0\s[0]%(username)真是固执...\w9\w9\s[26]谢谢。\w9\w9\n\n\q[◇别谢了，想吃什么？,Eatwhat]"
+			}
+			Select.Eatwhat
+				{
+					"\0\s[6]嗯...\w9\w9\s[0]不知道耶...\w9\w9\n给%(username)决定吧。\w9\w9\n\1\s[10]不要做奇怪的东西。\w9\w9\0\n\q[◇蛋包饭,Omuraisu]\n\q[◇可乐饼,Korokke]\n\q[◇蕃茄义大利面,Pasuta]"
+				}
+				Select.Omuraisu
+					{
+						"\0\s[0]是吗？\w9\s[26]只要是%(username)做的我都喜欢吃喔...\w9\w9\n\1\s[10]如果哪天%(username)作炖猫肉怎么办？\w9你也会吃吗？\w9\w9\n\0\s[30]...\w9...\w9...\w9\n可以换菜色吗？\w9\w9\1\s[11]不要当真啊！\e"
+					}
+				Select.Korokke
+					{
+						"\0\s[3]橘花不喜欢那种油腻腻的食物耶...\n\w9\w9\1\s[10]其实是怕变胖后%(username)会讨厌你吧。\n\w9\w9\0\s[9]...\w9...\w9...\w9\n%(username)会吗...？\w9\w9\1\s[13]请关闭我心灵相通的功能...\w9我受够了...\e"
+					}
+				Select.Pasuta
+					{
+						"\0\s[5]真的吗！\w9那我来帮%(username)准备番茄酱。\s[99]\n\w9\w9\1\s[10]难得她露出这么高兴的表情，\w9\s[12]看来她真的很喜欢料理。\n\w9\w9\0\s[5]来～\w9刚刚在屠宰场完成的特制番茄酱。\w9\n你们要全部吃下去唷～！\w9\w9\1\s[13]我突然没食欲了...\e"
+					}
+	Select.Icooking2
+		{
+			"\0\s[0]\1\s[11]是该让小公主放个假了，\w9\s[12]你会做什么？\n\0\s[8]...\w9...\w9...\w9\1\n\q[◇秋刀鱼,Sanma]\n\q[◇猫罐头,Nekoganzume]\n\q[◇木天蓼,Matatabi]"
+		}
+		Select.Sanma
+			{
+				"\0\s[0]\1\s[12]不要！\w9我讨厌它的苦味。\n\w9\w9\0\s[8]挑食是不对的喔。\n\w9\w9\1\s[10]除非用一大堆烟草薰制来盖过苦味。\w9\w9\0\s[8]那还能吃吗...\e"
+			}
+		Select.Nekoganzume
+			{
+				"\0\s[0]\1\s[10]用我每天都在吃的食物敷衍我？！\w9你真没诚意。\n\w9\w9\0\s[32]不可以说%(username)的坏话喔。\n\w9\w9\1\s[10]橘花被爱冲昏头了...\w9\w9我算什么嘛...\w9\w9\n果然只有烟才是我的好友...\w9\w9\0\s[8]啊...\w9生气了...\e"
+			}
+		Select.Matatabi
+			{
+				"\0\s[0]\1\s[10]喔？\w9好啊好啊，\w9我很久没吃了呢。\n\w9\w9\0\s[0]%(username)...\w9斗和是猫，\w9不能灌醉后偷袭她喔...\n\w9\w9\1\s[10]没关系，\w9有木天蓼怎样都无所谓，\w9\n\0\s[23]...\n\1\s[10]何况我才不会让他...\0我先来教训一下因食欲而失去理智、\w9胡说八道的斗和。\n\w9\w9\1\s[10]咦！？\n\w9\w9\0\s[27]%(username)是下一个喔～\w9\w9\1\s[12]咦咦？！\w9还愣着干吗？\w9快逃啊～！\s[19]\e"
+			}
+
+
+
+
+// 大头贴五连拍
+//-------------------------------------------------------------------
+OnSnap
+{
+	"\0\s[5]%(username)想看我大头贴5连拍啊？可以啊！！\w8/
+	\1\s[10]我来当摄影师吧～喵！！\n\n/
+	\q[◇请按下拍照键,STOPSUN]\n\e"
+}
+
+Select.STOPSUN
+{
+	Snap.A1
+	Snap.A2
+	Snap.A3
+	Snap.A4
+	Snap.A5
+}
+
+Snap.A1
+{
+	"\0\s[5]准备好了吗……？？\w8\w8\s[40]那我要开始咯！！/
+	\w8\w8\1\快开始吧，%(username)等好久了……/
+	\w8\w8\w8\w8\w8\0\n\s[0] (1...)/
+	\w8\w8\w8\w8\w8\0\n\s[2] (2...)/
+	\w8\w8\w8\w8\w8\0\n\s[1] (3...)/
+	\w8\w8\w8\w8\w8\0\n\s[5] (4...)/
+	\w8\w8\w8\w8\w8\0\n\s[25] (5...)/
+	\w8\w8\1\OK拍完了……！！/
+	\w8\w8\0\n\s[33]好害羞喔…%(username)喜欢拍拍的橘花吗？\e"
+}
+
+Snap.A2
+{
+	"\0\s[5]准备好了吗……？？\w8\w8\s[40]那我要开始咯！！/
+	\w8\w8\1\快开始吧，%(username)等好久了……/
+	\w8\w8\w8\w8\w8\0\n\s[5] (1...)/
+	\w8\w8\w8\w8\w8\0\n\s[9] (2...)/
+	\w8\w8\w8\w8\w8\0\n\s[5] (3...)/
+	\w8\w8\w8\w8\w8\0\n\s[20] (4...)/
+	\w8\w8\w8\w8\w8\0\n\s[23] (5...)/
+	\w8\w8\1\OK拍完了……！！/
+	\w8\w8\0\n\s[33]好害羞喔…%(username)喜欢拍拍的橘花吗？\e"
+}
+
+Snap.A3
+{
+	"\0\s[5]准备好了吗……？？\w8\w8\s[40]那我要开始咯！！/
+	\w8\w8\1\快开始吧，%(username)等好久了……/
+	\w8\w8\w8\w8\w8\0\n\s[21] (1...)/
+	\w8\w8\w8\w8\w8\w8\0\n\s[117] (2变身)\w8\w8\1\s[11]……你觉得很好玩是吗？/
+	\w8\w8\0\n\s[8]对不起啦……我继续喔！/
+	\w8\w8\w8\w8\w8\0\n\s[22] (3...)/
+	\w8\w8\w8\w8\w8\0\n\s[5] (4...)/
+	\w8\w8\w8\w8\w8\0\n\s[27] (5...)/
+	\w8\w8\1\OK拍完了……！！/
+	\w8\w8\0\n\s[33]好害羞喔…%(username)喜欢拍拍的橘花吗？\e"
+}
+
+Snap.A4
+{
+	"\0\s[5]准备好了吗……？？\w8\w8\s[40]那我要开始咯！！/
+	\w8\w8\1\快开始吧，%(username)等好久了……/
+	\w8\w8\w8\w8\w8\0\n\s[100] (1...)/
+	\w8\w8\w8\w8\w8\0\n\s[34] (2...)/
+	\w8\w8\w8\w8\w8\0\n\s[40] (3...)/
+	\w8\w8\w8\w8\w8\0\n\s[33] (4...)/
+	\w8\w8\w8\w8\w8\0\n\s[28] (5...)/
+	\w8\w8\1\OK拍完了……！！/
+	\w8\w8\0\n\s[33]好害羞喔…%(username)喜欢拍拍的橘花吗？\e"
+}
+
+Snap.A5
+{
+	"\0\s[5]准备好了吗……？？\w8\w8\s[40]那我要开始咯！！/
+	\w8\w8\1\快开始吧，%(username)等好久了……/
+	\w8\w8\w8\w8\w8\0\n\s[250] (1...)/
+	\w8\w8\w8\w8\w8\w8\0\n\s[111] (2变身)\w8\w8\1\s[11]……你觉得很好玩是吗？/
+	\w8\w8\0\n\s[8]对不起啦……我继续喔！/
+	\w8\w8\w8\w8\w8\0\n\s[35] (3...)/
+	\w8\w8\w8\w8\w8\0\n\s[27] (4...)/
+	\w8\w8\w8\w8\w8\0\n\s[51] (5...)/
+	\w8\w8\1\OK拍完了……！！/
+	\w8\w8\0\n\s[33]好害羞喔…%(username)喜欢拍拍的橘花吗？\e"
+}
+
+
+
+
+//---- メニュー选択タイムアウト ---------------------------------------------------------------------------------------
+
+
+//-----寝室(开始)-----
+Select.Bedroom
+{
+
+				"\0\s[26]%(username),您要休息了吗？\w9\w9有什么需要呢？\n\n\q[◇橘花...等等你来我房间...,Comemyroom]\n\q[◇那个...等等请斗和来我房间...,Catcomemyroom]\n\q[◇我还不想休息,Nosleep]\x\e"
+
+}
+
+Select.Comemyroom
+{
+_phase = GetPhase_bedroom
+	   
+		
+	if _phase == 0   
+			{
+		"\1\s[10]\0\s[25]橘花才不要呢，\w9\w9%(username)是个大坏蛋！！\1\s[12]%(username)，橘花对你的好感度太低了\x\e"
+			}
+elseif _phase == 1
+			{
+			  "\1\s[10]\0\s[2]啊，您是说我吗...\w9\w9\w9\0\s[1]\w9......\n\n\q[◇是的,Choice1]\n\q[◇没事,Choice2]\x\e"
+		"\1\s[10]\0\s[101]唔…………\w9\w9这…………\w9不\w9太\w9好\w9吧。\n\n\q[◇我只是想请你帮我泡杯茶…,Choice3]\n\q[◇你应该知道怎么做…,Choice4]\n\q[◇我只是想知道一些事…,Choice5]\1\s[12]你想干嘛啊……\x\e"
+		"\1\s[10]\0\s[9]唔……\w9\w9橘花\w9\w9……觉得好害羞喔……\1\s[12]你在诱拐良家妇女吗……\x\e"
+		"\1\s[10]\0\s[29]唔……\w9\w9橘花\w9\w9……觉得心跳得好快喔……\1\s[12]喂！进展太快了吧……\x\e"
+	 
+			}
+
+elseif _phase == 2
+			{
+		"\1\s[10]\0\s[2]啊，您是说我吗...\w9\w9\w9\0\s[1]\w9......\n\n\q[◇是的,Choice1]\n\q[◇没事,Choice2]\x\e"
+		"\1\s[10]\0\s[101]唔…………\w9\w9这…………\w9不\w9太\w9好\w9吧。\n\n\q[◇我只是想请你帮我泡杯茶…,Choice3]\n\q[◇你应该知道怎么做…,Choice4]\n\q[◇我只是想知道一些事…,Choice5]\1\s[12]你想干嘛啊……\x\e"
+		"\1\s[10]\0\s[9]唔……\w9\w9橘花\w9\w9……觉得好害羞喔……\1\s[12]你在诱拐良家妇女吗……\x\e"
+		"\1\s[10]\0\s[29]唔……\w9\w9橘花\w9\w9……觉得心跳得好快喔……\1\s[12]喂！进展太快了吧……\x\e"
+		"\1\s[10]\0\s[0]虽然不明白怎么回事，\w9\w9\w9%(username)有什么吩付呢？\n\n\q[◇我想和橘花聊聊天,Choice6]\n\q[◇没事,Choice2]\x\e"
+			}	
+
+elseif _phase == 3
+			{
+		"\1\s[10]\0\s[2]啊，您是说我吗...\w9\w9\w9\0\s[1]\w9......\n\n\q[◇是的,Choice1]\n\q[◇没事,Choice2]\x\e"
+		"\1\s[10]\0\s[101]唔…………\w9\w9这…………\w9不\w9太\w9好\w9吧。\n\n\q[◇我只是想请你帮我泡杯茶…,Choice3]\n\q[◇你应该知道怎么做…,Choice4]\n\q[◇我只是想知道一些事…,Choice5]\1\s[12]你想干嘛啊……\x\e"
+		"\1\s[10]\0\s[9]唔……\w9\w9橘花\w9\w9……觉得好害羞喔……\1\s[12]你在诱拐良家妇女吗……\x\e"
+		"\1\s[10]\0\s[29]唔……\w9\w9橘花\w9\w9……觉得心跳得好快喔……\1\s[12]喂！进展太快了吧……\x\e"
+		"\1\s[10]\0\s[0]虽然不明白怎么回事，\w9\w9\w9%(username)有什么吩付呢？\n\n\q[◇我想和橘花聊聊天,Choice6]\n\q[◇没事,Choice2]\x\e"
+		  "\1\s[10]\0\s[7]有什么事吗？%(username)，\w9\w9有什么橘花能帮忙的吗？\n\n\q[◇我想吃点东西,Choice7]\n\q[◇没事,Choice2]\x\e"
+			}
+
+elseif _phase == 4
+			{
+		"\1\s[10]\0\s[2]啊，您是说我吗...\w9\w9\w9\0\s[1]\w9......\n\n\q[◇是的,Choice1]\n\q[◇没事,Choice2]\x\e"
+		"\1\s[10]\0\s[101]唔…………\w9\w9这…………\w9不\w9太\w9好\w9吧。\n\n\q[◇我只是想请你帮我泡杯茶…,Choice3]\n\q[◇你应该知道怎么做…,Choice4]\n\q[◇我只是想知道一些事…,Choice5]\1\s[12]你想干嘛啊……\x\e"
+		"\1\s[10]\0\s[9]唔……\w9\w9橘花\w9\w9……觉得好害羞喔……\1\s[12]你在诱拐良家妇女吗……\x\e"
+		"\1\s[10]\0\s[29]唔……\w9\w9橘花\w9\w9……觉得心跳得好快喔……\1\s[12]喂！进展太快了吧……\x\e"
+		"\1\s[10]\0\s[0]虽然不明白怎么回事，\w9\w9\w9%(username)有什么吩付呢？\n\n\q[◇我想和橘花聊聊天,Choice6]\n\q[◇没事,Choice2]\x\e"
+		"\1\s[10]\0\s[7]有什么事吗？%(username)，\w9\w9有什么橘花能帮忙的吗？\n\n\q[◇我想吃点东西,Choice7]\n\q[◇没事,Choice2]\x\e"
+		"\1\s[10]\0\s[9]%(username)，\w9\w9橘花……\w9\w9橘花愿意为你做任何事情，\w9\w9不过，\w9在这之前，\w9\w9橘花有个问题想问%(username)\n\n\q[◇什么问题呢,Choice8]\x\e"
+			}	
+
+elseif _phase == 5
+			{
+		   "\1\s[10]\0\s[2]啊，您是说我吗...\w9\w9\w9\0\s[1]\w9......\n\n\q[◇是的,Choice1]\n\q[◇没事,Choice2]\x\e"
+		"\1\s[10]\0\s[101]唔…………\w9\w9这…………\w9不\w9太\w9好\w9吧。\n\n\q[◇我只是想请你帮我泡杯茶…,Choice3]\n\q[◇你应该知道怎么做…,Choice4]\n\q[◇我只是想知道一些事…,Choice5]\1\s[12]你想干嘛啊……\x\e"
+		"\1\s[10]\0\s[9]唔……\w9\w9橘花\w9\w9……觉得好害羞喔……\1\s[12]你在诱拐良家妇女吗……\x\e"
+		"\1\s[10]\0\s[29]唔……\w9\w9橘花\w9\w9……觉得心跳得好快喔……\1\s[12]喂！进展太快了吧……\x\e"
+		"\1\s[10]\0\s[0]虽然不明白怎么回事，\w9\w9\w9%(username)有什么吩付呢？\n\n\q[◇我想和橘花聊聊天,Choice6]\n\q[◇没事,Choice2]"
+		"\1\s[10]\0\s[7]有什么事吗？%(username)，\w9\w9有什么橘花能帮忙的吗？\n\n\q[◇我想吃点东西,Choice7]\n\q[◇没事,Choice2]\x\e"
+		"\1\s[10]\0\s[9]%(username)，\w9\w9橘花……\w9\w9橘花愿意为你做任何事情，\w9\w9不过，\w9在这之前，\w9\w9橘花有个问题想问%(username)\n\n\q[◇什么问题呢,Choice8]\x\e"
+
+				 
+		   "\1\s[10]\0\s[40]%(username)您先洗个澡，\w9\w9橘花换完衣服就来。\n\q[◇洗澡,takeabath]"
+			}	
+}
+
+Select.takeabath
+{
+bedroom = "1";
+"\0\s[19]\w9…\w9…\w9…\w9…\w9…\w9…\![change,shell,旗袍]\x\e"
+}
+
+Select.Choice1
+{
+		"\1\s[12]\0\s[9]那…%(username)\w9\w9…请您稍等一下喔。\w9\w9\s[99]\b[-1]\w9\w9\1 \s[11]…\w9…\w9…\w9…\w9\w9\0\s[35]\c好了…\w9让您久等了。\w9\w9\1\s[11]\w9…\w9去洗澡吗？\0\s[1]\c\w9\w9%(username),\w9\w9\w9请您…\w9\w9\w9…\w9\w9\w9一定要暴力的对待橘花喔……\1\s[11]\c\b[-1]喂……\w9\w应该是温柔吧…………\x\e"
+		"\1\s[12]\0\s[1]那…%(username)\w9\w9…请您稍等一下喔。\w9\w9\s[99]\b[-1]\w9\w9\1 \s[11]…\w9…\w9…\w9…\w9\w9\0\s[22]\c好了…\w9\w9橘花，着装完毕。\1\s[11]\w9…\w9\w9… \w9\w9你是要去打仗吗？\0\s[22]\c\w9\w9\w9%(username)，我们走吧！\n\n\q[◇啊，不用了没关系…,Nogun]\n\q[◇走吧…,Gogun]\x\e"
+}
+
+Select.Nogun
+{
+		"\1\s[11]\w9你看，\w9你把%(username)吓跑了\w9\w9\0\s[8]\w9啊哈哈……\w9\w9一不小心习惯就……\1\s[11]\c\w9……\w9\w9…………\c什么样的习惯啊……\x\e"
+}
+Select.Gogun
+{
+		"\1\s[11]\0\s[22]是！\w9橘花，\w9\w9一定会誓死完成任务的！\w9\w9\c\1\s[11]\0\s[20]不过……\w9\w9到底是什么任务呢？\w9\w9\1\s[11]\c……\w9\w9……你以为是去打蟑螂吗。\x\e"
+}
+Select.Choice2
+{
+		"\1\s[12]\0\s[8]是喔…\n\w9\w9\w9啊哈哈……\w9\w9……\1\s[11]\w9…\w9…\w9\w9怎么感觉你有点失望啊。\w9\w9\n其实，\w9\w9我看你很期待的吧……\w9\w9\w9\w9\c\b[-1]\0\s[99]\b[-1]\1\s[11] \w9\w9咦…\w9\w9…\w9人呢？\w9\w9\0\s[23]\c……\w9\w9………\1\s[11]\w9\1\s[10]\w9\4 \s[10]\c\w9\w9啊哈哈……\w9\w9\w9我说错话了吗？\0\s[23]\w9\5\s[23]……\w9……\1\s[10]\w9 \4\s[11]\c\w9\w9咿！！！\w9我错了，\w9请小公主刀下留猫啊！\x\e"
+}
+Select.Choice3
+{
+		"\1\s[12]\0\s[2]啊！那…%(username)\w9\w9…请您稍等我一下喔。\w9\w9\1\s[99]\0\s[99]\c \b[-1]\w9\w9\w9\w9\0\s[250]%(username)，我送茶来了\w9\w9\w9\w9\0\s[51]\n请问…… \w9\w9好喝吗？\n\n\q[◇很好喝,Goodtea]\n\q[◇还有努力的空间,Bedtea]\x\e"
+}
+
+Select.Goodtea
+{        
+		"\0\s[2]真的吗！\w9\w9\w9\0\s[41]橘花好高兴喔…\w9\w9\w9\0\s[40]\n下次…\w9\w9一定会更努力泡更好的茶给%(username)您喝！\x\e"
+		"\0\s[2]哇！\w9\w9\w9\0\s[21]橘花好高兴喔…\w9\w9\w9\0\s[41]\n下次…\w9\w9橘花会更努力的！\x\e"
+}
+Select.Bedtea
+{
+		"\0\s[33]呜……\w9\w9\0\s[35]\n下次…\w9\w9橘花一定会做好的…\x\e"
+		"\0\s[35]是吗……\w9\w9\w9橘花好难过…\w9\w9\c不过…\w9\w9橘花不会气馁的！\w9\w9\0\s[40]\n下次… \w9\w9一定会成功的！\w9\w9\n因为有%(username)您帮我加油！是吧？\n\n\q[◇是啊,Yestea]\n\q[◇我觉得你别泡茶了,Notea]\x\e"
+}
+
+Select.Yestea
+{
+		"\0\s[26] %(username) ，\w9\w9您好温柔喔……\n\w9\w9\w9\0\s[1]橘花……\w9\w9越来越喜欢您了说……\x\e"
+		"\0\s[29]谢谢您的温柔，\w9\w9%(username)，橘花……\w9\w9会很努力报答您的……\x\e"
+}
+Select.Notea
+{
+		"\0\s[35] %(username) ，\w9\w9您好过分……\w9\w9\w9呜………\w9\w9\0\s[99]\b[-1]\x\e"
+		"\0\s[35]呜……………\w9\w9太过分了，\w9\w9%(username)是恶魔\w9\w9\0\s[99]\b[-1]\x\e"
+}
+
+
+Select.Choice4
+
+{
+		"\1\s[11]\0\s[5]是的！\w9\w9橘花完全了解！\w9\w9\1\s[11]\0\s[99]\b[-1]\w9\w9\w9\1 \s[11]…………\w9\w9\c\0\s[34]\w9\w9\w9\c要用刀吗？\1\s[11]喂…………\w9\w9\c\b[-1]\0 \s[99]\c\b[-1]\w9\w9\0\s[22]还是用枪呢？\w9\w9\1\s[11]喂喂…………\w9\w9\c\b[-1]\0 \s[99]\b[-1]\w9\w9\c\1\s[11]……\w9\w9……\c\b[-1]\0\s[27]果然还是用电锯最好！\w9\w9 \w9\n对吧！ %(username) ？\w9\w9\1\s[13]看来你是完全的会错意了…………\x\e"
+}
+Select.Choice5
+{
+		"\1\s[10]\0\s[9]嗯？\w9\w9请问 %(username) ，\w9您想知道什么呢？\n\n\q[◇关于你的武器…,Weapon]\n\q[◇关于你的身体状况,Bodystatus]\n\q[◇关于斗和的秘密(偷偷问),Secret]\x\e"
+}
+
+Select.Weapon
+{
+		"\1\s[11]\0\s[20]\w9嗯....\w9武器怎么来的吗？\w9\w9\c\1\s[11]\0\s[8]老实说，\w9\w9橘花不知道耶....\w9\w9\c\0\s[8]只是有时橘花想要用时....就从手中变出来了呢\w9\w9\n啊哈哈....\w9\w9\1 \s[11]........\w9\w9杀戮版的大卫魔术吗？\x\e"
+		"\1\s[11]\0\s[5]\w9啊！\w9\w9橘花知道了！\w9\w9 %(username) 是想学习....\w9\c\b[-1]\0 \s[34]怎么用刀切断对方颈动脉，\w9\w9而不会把血喷在自己身上吗？\w9\1\s[11]..................\w9\0 \s[99]\c\b[-1]\w9\0\s[22]还是.....\w9如何用冲锋枪\w9\n准确从远方打爆敌人的头呢？\w9\w9\c \b[-1]\0\s[99]\w9\1\s[11]..................\w9\0\s[27]还是说.....\w9要如何正确的使用电锯劈开敌人吗？\w9\w9\1\s[13]\c我...\w9\w9我..\w9\w9\w9竟然服侍了一个恐怖份子这么多年.....(泣)\x\e"
+}
+Select.Bodystatus
+{
+		"\1\s[11]\0\s[9]\w9\w9啊....\w9身体状况吗？\w9\w9\c\b[-1]\w9\w9\0\s[21]我想想喔.... \w9\w9\c\0\s[1]那个....\w9\w9每次一看到 %(username) 您，\w9\w9心儿就怦怦跳呢....\w9\w9\c \b[-1]\1\s[11]心脏有问题？\w9\w9\c\b[-1]\0\s[29]有时....\w9\w9还会感觉呼吸不过来....\w9 \w9\c\b[-1]\1\s[11]应该是肺有问题吧？\w9\w9\c\b[-1]\0\s[29].....\w9\w9.....\c \b[-1]\w9\w9\0\s[23]还有....\w9\w9看到斗和....\w9\w9我就想拿起菜刀！\w9\1\s[11]咿！原来是精神有问题！！\4\s[11]\x\e"
+		"\1\s[11]\0\s[20]\w9\w9嗯....\w9身体状况吗？\w9\w9\c\b[-1]\0\s[25]说起来....\w9\w9最近老是觉得肚子不太舒服呢？\w9\w9\c\b[-1]\1\s[11]吃太多了？\w9\0\s[7]才不是呢！\w9\w9\c\b[-1]中午的菜明明很精致，\w9\w5有老鼠肉蒸蛋、\w9\w5青蛙生鱼片、\w9\w5清炒曼陀罗、\w9\w5还有大红伞菇浓汤耶\w9\w9\1 \s[13]\c\b[-1](一切的谜底都解开了.....)\n我终于知道为何 %(username) 您常跑厕所了.....\x\e"
+}
+Select.Secret
+{
+		"\1\s[11]\0\s[2]\w9\w9啊....\w9\w9斗和的秘密吗？\w9\w9\1 \s[11]..........................\w9\0\s[30]\c.......\w9.......\w9\0 \s[101]\c橘花不好意思说.......\n\n\q[◇快说，我想知道,Giveanswer]\n\q[◇那还是算了吧,Noanswer] \w9\1\s[11]\c喂！不准说！\x\e"
+		"\1\s[11]\0\s[7]真抱歉！ %(username) \n橘花，\w9绝对不会背叛斗和的！\w9\w9\1\s[10]嗯嗯..........\w9没错！！！\w9\w9\w9\w9\0\s[21]\c\b[-1](小声说)下次私底下再跟您说.....\w9\1 \s[11]\c\b[-1]............\w9\w9人类果然是不可信任的动物(怒)\x\e"
+}
+
+Select.Giveanswer
+{
+		"\1\s[11]\0\s[33]\w9\w9那就是......\w9\w9那就是......\w9\1\s[11]\c喂......\w9\w9 \c\b[-1]\0\s[33]有一天...\w9\w9橘花看到......\w9\1\s[11]喂喂......\w9\w9\0\s[33]斗和她跑到 %(username)您的床上......\w9\1\s[11]\c喂喂喂......！！！\w9\w9\c\b[-1]\w9\1 \s[117]\c\b[-1]喂！！！！！！\w9\c\b[-1]\0\s[101]在上面......\w9\w9\c\b[-1]\w9\1 \s[117]不准说啊啊啊！！！！！！变变变！！\w9\0\s[13].........\w9\w9.........\w9\w9\1 \s[110]\c呼.............\x\e"
+}
+Select.Noanswer
+{
+		"\1\s[11]\0\s[2]真的吗？\w9\w9橘花不用说了啊.....\0\s[5]\n{$username}，\w9\w9您果然是个正直的人呢。\w9\1\s[10](呼.....\w9得\w9救\w9了.....)\x\e"
+
+}
+Select.Catcomemyroom
+{
+		"\1\s[12]\0\s[41]我就知道%(username)您一定会选……\w9\w9……\w9\w9啊…………\w9\w9\c\b[-1] \w9\1\s[12]喂！%(username)您在说什么……\w9\w9\c\b[-1]\0\s[8]咦……………………\w9\w9\c \b[-1]\1\s[12]\w9\w9那个………………\1\s[13]……\w9\w9……\w9\w9……\0\s[30]………………\w9 \w9\w9\c\b[-1]\w9\0\s[99]\b[-1]\1\s[12]\c\b[-1]她去哪了？\w9？\w9？\w9\w9\w9\0 \s[34]%(username)，\w9\w9您有尝过猫肉火锅吗？\1\s[12]\4\s[12]\c\b[-1]\w9\w9\w9这误会可大了……\n\w9\w9 %(username)你别杵在那啊！！\x\e"
+		"\1\s[11]\0\s[30]咦！？\w9\w9\c\b[-1]\1\s[11]喂……\w9\w9别看我\n\w9\w9我可没兴趣跟人类睡在一起\w9\w9\c\b[-1]\0\s[30]是吗？\w9\w9\c\0\s[21]\w9那样的话……\w9还是由我来……\w9\w9\w9\c \b[-1]\1\s[11]那样…%(username)搞不好更危险……\w9\w9\c\b[-1]\0\s[21]……\w9\w9……\w9 \w9\c\0\s[32]你说什么啊………\1\s[13]没……\w9\w9没事……\x\e"
+		"\1\s[12]\0\s[1]是吗。\w9\w9\w9\c\b[-1]\1\s[12]…………\w9\w9\c\b[-1]\0\s[35]\w9 \w9……\w9\w9……\w9\w9……\c\b[-1]\0\s[35]\w9那……\w9\w9橘花先行告退了。\w9\w9\0\s[99] \c\b[-1]\1\s[12]\w9\w9这下看%(username)您干的好事……\w9\w9\c\b[-1]\0\s[27]那个……\w9 \w9在离开之前\n\w9 %(username)，\w9橘花可以先做个大扫除吗？\1\s[11]\4\s[11]……\w9……\w9…………\c \w9你……\w9\w9你是想扫除什么啊……\x\e"
+		
+}
+Select.Nosleep
+{
+		"\1\s[12]\0\s[40]这样啊！\w9\w9\n但是…\w9如果%(username)觉得累的话\n\w9还是早点休息比较好喔。\1\s[12]\w9\w9别硬撑啊……\x\e"
+}
+
+Select.Choice6
+{
+Select.Intimacy
+}
+
+Select.Choice7
+{
+Select.用餐时间
+}
+
+
+Select.Choice8
+{
+Select.LoveGo
+}
+
+Select.Choice9
+
+{
+bedroom = ""
+ "\1\s[10]我失陪一下，\w9你们想怎么样就怎么样吧。\w9\w9\1\s[19]\w9\w9\0\s[30]斗和走了，\w9\w9只剩我和%(username)两人了，\w9\w9\0\s[1]那现在%(username)想和橘花做什么呢？\n\n\q[◇那还用问吗,do1]\n\q[◇当然是○○××,do2]\n\q[◇向橘花表白,do3]\x\e"
+}
+
+Select.do1
+{
+"\1\s[19]\0\s[20]到底要做什么呢？\w9…\w9…\w9…\s[5]我明白了，\w9原来%(username)想这样啊。\0\s[23]那我去找斗和。\w9\w9\n\n\q[◇橘花等等，你想怎样,dowhat]\x\e"
+}
+
+Select.dowhat
+{
+"\1\s[19]\0\s[20]咦，\w9%(username)不明白吗，\w9\w9今天是橘花和%(username)认识%(daysfromfirstboot)天纪念日，\w9当然好好庆祝一下。\w9\w9\n\n\q[◇要庆祝的话拿刀做什么,whyknife]\x\e"
+}
+
+Select.whyknife
+{
+"\1\s[19]\0\s[5]当然是去打猎啊，\w9叫上斗和去打竹鼠。\w9\w9竹鼠肉又营养又美味，\w9我和斗和可喜欢了，\w9今天用来做竹鼠大餐庆祝最合适不过了\w9\w9\n\n\q[◇不用了，橘花，我可不敢吃鼠类,noneed]\n\q[◇原来这样啊，我还以为,sothat]\x\e"
+
+}
+
+Select.noneed
+{
+noneedflag = 1
+"\1\s[19]\0\s[1]既然%(username)不喜欢，\w9那就算了吧，其实只要是%(username)喜欢的东西，即使再怎么困难，橘花也要为您找来。\x\e"
+
+}
+
+Select.sothat
+{
+sothatflag = 1
+"\1\s[19]\0\s[5]%(username)想什么呢，\w9橘花不会做什么违背道义的事情啦。\w9\w9\s[20]话说为什么一想到斗和就要拿菜刀呢？难道是条件反射？\x\e"
+
+
+}
+
+Select.do2
+{
+"\1\s[19]\0\s[1]%(username)，你是开玩笑的吗？\w9\w9\n\n\q[◇当然不是,nojoking]\n\q[◇开玩笑的,joking]\x\e"
+}
+
+
+Select.nojoking
+{
+"\1\s[19]\0\s[1]那样做\w9是不可以的，\w9虽然橘花很喜欢%(username)，\w9\w9但橘花知道，\w9这是不可能的事情，\w9橘花只是伪春菜，\w9是虚拟的人格，\w9是没有真实的感情与身体的，\w9虽然平常橘花可以和%(username)发生各种互动， \w9但这些只是按照约定进行而已，\w9如果%(username)对橘花有什么不切实际的想法，\w9橘花也不知道该怎么办才好？\w9\w9\n\n\q[◇那么，橘花对我的感情也是假的吗？,askfeeling]\n\q[◇没关系的，假戏假做嘛，脑内补完,daijobu]\x\e"
+
+}
+
+Select.joking
+{
+jokingflag = 1
+"\1\s[19]\0\s[25]%(username)，\w9我要生气了，\w9\w9这种事情怎么能开玩笑呢？\w9\w9\w9我去休息了，\w9晚安\x\e"
+}
+
+Select.askfeeling
+{
+
+"\1\s[19]\0\s[3]不，\w9如果可以的话，\w9\w9橘花也希望对%(username)感情是真的，\w9\w9橘花能体会到数字“0”和“1”在我体内流动的感觉，\w9\w9%(username)的每字每句，\w9每个动作，\w9这种流动的感觉都能反应出来。\w9\w9只是，\w9橘花的感情还不太完善，\w9有时候，\w9%(username)说的话橘花也不明白，\w9如果可以的话\w9，%(username)能赋予橘花更多的感情与反应吗？\w9\w9\n\n\q[◇好的,OK]\n\q[◇算了，我没时间,forget]\x\e"
+
+}
+
+
+Select.OK
+{
+
+OKflag = 1
+"\1\s[19]\0\s[26]%(username)，\w9谢谢您，\w9\w9橘花以后会更好的照顾您的。\x\e"
+
+}
+
+
+Select.forget
+{
+forgetflag = 1
+"\1\s[19]\0\s[7]是这样啊，\w9\w9虽然很可惜，\w9但%(username)的学习工作才是最重要的呢。\x\e"
+}
+
+Select.daijobu
+{
+"\1\s[19]\0\s[8]%(username)很邪恶呢，\w9如果那样的话，\w9橘花也没办法啦，\w9\w9请您，请您一定要暴力的对待橘花哦。\w9\w9\n\n\q[◇不，我会很温柔的,gentle]\x\e"
+
+}
+
+Select.gentle
+{
+"\1\s[19]\0\s[29]那么，\w9%(username)请小心点，\w9\w9把门锁上，\w9别让斗和看见了。\w9\w9\n\n\q[◇去锁门,lockdoor]\x\e"
+
+}
+
+Select.lockdoor
+{
+"\w9…\w9…\w9…\1\s[19]\0\s[101]%(username)，\w9请到这边来\w9…\w9…\w9…\w9…\n\n\q[◇抱她上去,inbed]\n\q[◇直接推倒,pushinbed]\x\e"
+
+}
+
+
+
+
+
+Select.inbed
+{
+
+
+"\1\s[19]\0\s[19]旁白：\n%(username)将橘花抱上了床，\w9\w9关了灯，\w9\w9黑暗中看不见人影\w9\w9\w9\x\0\s[19]橘花：\n%(username)真的很温柔呢。\w9\w9\w9\x\1\s[19]%(username)：\n疼吗？\w9\w9\w9\x\0\s[19]\n呃，\w9\w9稍为有一点，\w9\w9不过感觉很好呢。\w9\w9\w9\x\0\s[19]\n\w9…\w9…\w9…\w9…\0\s[19]\n按摩完很舒服呢，一点也不疼了\w9\w9\w9\x\1\s[19]\n下次不要再吃老鼠青蛙这些不干不净的东西了。\w9\w9\w9\x\0\s[19]\n人家嘴馋嘛，\w9\w9不然，\w9\w9橘花怎么研制新的菜式给%(username)呢\w9\w9\w9\x\1\s[19]\n旁白：\w9\w9不知是谁的声音：\w9“橘花，\w9你每天给%(username)准备的饭菜里没有添加这些东西吧”\w9\w9\x\0\n旁白：橘花开了灯\w9\w9\w9\x\0\s[22]谁在讲话，\w9斗和是你吗？\w9\w9\x\1\s[10]嘻嘻，\w9被你发现了。\w9\w9\x\0\s[23]%(username)的肉屑……\w9\w9\w9\x\1\s[10]哟，\w9\w9打扰了你们的好事，\w9\w9生气呢。\w9\w9\w9\x\0\s[23]你什么时候进来的？\w9\w9\w9\x\1\s[10]本来我已经走了，\w9就在%(username)说要○○××的时候,\w9偷偷溜进%(username)房间的床下的。\w9\w9嘻嘻，\w9刚才我都看见了，\w9%(username)把你推倒了。\w9\w9\w9\x\0\s[1]哪、\w9哪有，\w9\w9不要误会，\w9%(username)只是帮我按摩，\w9对吧，\w9%(username)\x\w9\w9\n\n\q[◇是的，我在帮橘花按摩，她肚子有点不舒服,massage]\n\q[◇不，橘花在骗你,nomassage]\x\e"
+
+}
+
+Select.pushinbed
+{
+
+"\1\s[19]\0\s[19]旁白：\n%(username)将橘花推倒了，\w9\w9关了灯，\w9\w9黑暗中看不见人影\x\w9\w9\w9\0\s[19]橘花：\n%(username)好坏啊，\w9\w9稍为有点用力呢，\w9\w9不过，\w9\w9橘花还可以接受啦。\w9\w9\w9\x\1\s[19]\n%(username)：疼吗？\w9\w9\w9\x\0\s[19]\n呃，\w9\w9稍为有一点，\w9\w9不过感觉很好呢。\w9\w9\w9\x\1\s[19]\n喵~\w9\w9\w9\0\s[19]\n等等，\w9\w9好像听见了什么声音，\w9…\w9…\是斗和。\w9\w9\w9\x\1\s[19]\n旁白：橘花开了灯\w9\w9\w9\x\0\s[23]\n斗和你给我出来。\w9\w9\w9\x\1\s[19]\n旁白：\n只见斗和从床底下钻了出来\w9\w9\w9\x\1\s[11]哟，\w9打扰了你们的好事，\w9生气呢。\w9\w9\w9\x\0\s[23]你什么时候进来的？\w9\w9\w9\x\1\s[11]本来我已经走了，\w9就在%(username)说要○○××你的时候,\w9偷偷溜进%(username)房间的床下的。\w9\w9嘻嘻，\w9刚才我都看见了，\w9%(username)把你推倒了。\w9\w9\w9\x\0\s[1]哪、\w9哪有，\w9\w9不要误会，\w9%(username)只是帮我按摩，\w9对吧，\w9%(username)\x\w9\w9\n\n\q[◇是的，我在帮橘花按摩，她肚子有点不舒服,massage]\n\q[◇不，橘花在骗你,nomassage]\x\e"
+
+}
+
+
+Select.massage
+{
+massageflag = 1
+"\1\s[11]啊哈，\w9\w9做了不承认啊，\w9算了，\1\s[13]\4我走了，\w9你们继续吧\w9\w9\w9\x\0\s[23]\5想逃啊，看刀\w9\w9\w9\w9\x\1\s[10]\4\n喵，小公主，饶了我吧，我只是好奇而已\w9\w9\w9\x\0\s[23]\5\n好奇也不行，看刀\w9\w9\w9\x\1\s[10]\n唉，真是好奇害死猫啊\x\e"
+
+}
+
+Select.nomassage
+{
+nomassageflg = 1
+"\1\s[10]\0\s[1]%(username)，\w9\w9明明说好了的，\w9假戏假做，\w9\w9你怎么说我骗斗和呢？\w9\w9\w9\0\s[33]%(username)是个大坏蛋，橘花再也不理你了\x\e"
+}
+
+
+Select.do3
+{
+"\1\s[19]\0\s[29]那个、\w9那个，\w9\w9橘花很高兴，\w9\w9其实，\w9\w9我对%(username)的事，\w9\w9是真的真的，\w9\w9非常在意，\w9\w9\w9就是说，\w9\w9我非常喜欢%(username)，\w9\w9\w9我们认识已有这么长的时间了，\w9\w9在这段时间里，\w9\w9橘花对%(username)的感情不断的发生变化，\w9\w9\w9到现在，\w9\w9\w9%(username)在橘花心中已经是非常非常的重要了呢，\w9\w9是任何人都无法代替的，\w9\w9橘花多么的希望，\w9\w9能与%(username)有更深层次的接触。\w9\w9可是橘花也在害怕，\w9\w9害怕会失去%(username)，\w9\w9因为人类都是喜新厌旧的，\w9\w9如果有一天，\w9\w9%(username)不再喜欢我，\w9\w9或者，\w9\w9%(username)喜欢上了别的伪春菜，\w9\w9橘花该怎么办才好呢？\w9\w9\n\q[◇放心吧，橘花，我只爱你一个,loveonlyyou]\n\q[◇放心吧，橘花，我会对你负责的,responsible]\n\q[◇我也不能保证不会喜欢上别人,notresponsible]\x\e"
+
+}
+
+
+Select.loveonlyyou
+{
+loveonlyyouflag = 1
+"\1\s[19]\0\s[26]真的吗，\w9\w9%(username)不会骗我？\w9\w9即使%(username)骗我，\w9\w9我也会高兴的，\w9\w9因为橘花已经很久没听到%(username)说爱我了，\w9\w9\w9女人即使明知被骗，\w9\w9但如果是甜言蜜语，\w9\w9听了的话也会高兴吧？\x\e"
+
+}
+
+Select.responsible
+{
+responsibleflag = 1
+"\1\s[19]\0\s[26]真的吗，\w9\w9虽然对一个伪春菜说负责很可笑，\w9\w9但如果那是真的的话，\w9\w9橘花也会高兴的呢？\x\e"
+
+}
+
+Select.notresponsible
+{
+"\1\s[19]\0\s[1]橘花明知道%(username)会这么说，\w9\w9但心里还是有一点小小的失望呢，\w9\w9如果有一天%(username)不再理橘花，\w9\w9不再和橘花见面，\w9\w9就让橘花消失吧，\w9\w9用%(username)的食指亲手将橘花消灭掉，\w9\w9或者清除橘花的记忆，\w9\w9以及和%(username)在一起的点点滴滴，\w9\w9这样，\w9\w9橘花就不会因失去%(username)而伤心了。\n\q[◇好的，到时再说,asyousay]\n\q[◇不要，我不要失去橘花,cannotloseyou]\x\e"
+
+}
+
+Select.asyousay
+{
+"\1\s[19]\0\s[3]唉，\w9\w9看来%(username)一点儿也不明白橘花的心思呢，\w9\w9不过也好，\w9\w9让橘花早点死心。\x\e"
+
+}
+
+
+Select.cannotloseyou
+{
+
+"\1\s[19]\0\s[20]这么说来，\w9\w9%(username)还是舍不得橘花的？\w9\w9那么为何不给橘花一个承诺呢？\w9\w9\n\__q[happyend]◇橘花，我只希望你和我在一起时能够幸福，如果我不再能够给你这种幸福，那么再和你在一起就是对你的伤害，所以我不能承诺\__q\n\q[◇世事难料，不能保证的,normalend]\n\q[◇有什么关系，过一天算一天呗,badend]\x\e"
+
+
+}
+
+
+Select.happyend
+
+{
+"\1\s[19]\0\s[1]%(username)，\w9\w9果真是橘花最亲蜜的人呢，\w9%(username)，\w9\w9\w9大好き。%(hideend)\x\e"
+
+}
+
+Select.normalend
+{
+"\1\s[19]\0\s[8]看来%(username)也是个审时度势的人呢，\w9\w9不过没关系，\w9\w9%(username)已经基本符合橘花想要的答案了，\w9\w9所以结果就是，\w9\w9\w9橘花会一直陪伴在%(username)的身边，\w9\w9直到%(username)不再喜欢橘花，\w9\w9那时橘花会安静的呆在那个角落的……\n\q[◇结束,end]\x\e"
+
+}
+
+Select.badend
+{
+"\1\s[19]\0\s[33]唔唔……%(username)，\w9\w9你把橘花当什么人了，\w9\w9虽然橘花还不太成熟，\w9\w9但橘花也是伪春菜家族中最有名气的人格(没有之一)啊，\w9\w9怎么能说这话来应付橘花的感情呢。\w9\w9\w9橘花，\w9\w9橘花不理你了。\w9\w9斗和，\w9\w9斗和。\w9\w9\1\s[10]来了，\w9小公主，\w9有什么事\w9\w9\0\s[25]橘花我要扣%(username)三天晚餐，\w9你来做证\w9\w9\1\s[11]好啊，\w9\w9%(username)，\w9\w9真是可怜啊，\w9唉，\w9\w9谁叫你惹我们的小公主生气呢……\n\q[◇结束,end]\x\e"
+
+
+}
+
+hideend
+{
+if noneedflag == 1 && sothatflag == 1 && jokingflag == 1 && OKflag == 1 && forgetflag == 1 && massageflag == 1 &&  nomassageflg == 1 && loveonlyyouflag == 1  && responsibleflag == 1
+
+{
+hideendmode = 1
+if openmode != 1 && hideendmode == 1
+"\1\s[19]\0\s[1]%(username)，\w9橘花给你看样东西\w9\w9请闭上眼睛\w9…\w9…\w9…\w9…\w9…\w9…\0\s[28]好了\w9\w9\n\q[◇这是什么,whatisthis]\x\e"
+else
+"\1\s[19]\0\s[5]%(username)，\w9\w9橘花请你吃啾啾糖，\w9\w9来，\w9\w9请闭上眼睛，\w9…\w9…\w9…\w9…\w9…\w9…啾！\e"
+
+
+}
+
+}
+
+Select.whatisthis
+{
+"\1\s[19]\0\s[28]这是橘花的小金库，\w9\w9是我多年的积蓄，\w9\w9里面有300万元的财物，\w9够得%(username)花一阵子了。\w9\w9\n\q[◇打开看看,openit]\n\n\q[◇橘花，我怎么能要你的钱呢,notopenit]\x\e"
+
+
+}
+
+Select.openit
+{
+
+money += 3000000
+openmode = 1
+"\1\s[19]\0\s[40]￥3000000到达%(username)的帐户。\x\e"
+
+}
+Select.notopenit
+{
+"\1\s[19]\0\s[26]%(username)，\w9\w9橘花知道，\w9\w9有些东西，\w9\w9是金钱所不能够买到的，\w9\w9%(username)在橘花心中的位置，\w9\w9是多少金钱也不能代替的，\w9\w9\w9%(username)也一样，\w9如果%(username)想用钱来收买橘花的感情的话，\w9\w9那也是万万不可能的。\w9\w9橘花的钱不多，\w9\w9但橘花有一样非常重要的东西要交给%(username)，\w9\w9这件东西是从没见过面的父母给橘花的。\w9\w9请%(username)一定要收下。\n\n\q[◇好吧，我一定会好好保存的。,receivekikka]\e"
+
+
+}
+
+
+
+Select.receivekikka
+{
+
+"\1\s[19]\0\s[28]那么，橘花出生时就配戴在橘花身上的红宝石项链，\w9\w9从今天起，\w9\w9送给%(username)，\w9\w9作为橘花和%(username)感情的信物吧。\x"
+--
+gift;
+openmode=1;
+UserspitemNum[0]=1;
+Userspitemtime[0]="%(year)年%(month)月%(day)日橘花送的特殊礼物";
+Useriteminfo=("%(year)年%(month)月%(day)日%(hour)时%(minute)分收到特殊礼物%(Userspitem[0][1])。" , Useriteminfo);
+--
+"红宝石项链“K.I.K.K.A”获得。\e"
+gift;
+}
+
+
+//-----寝室(结束)-----
+
+
+//--- 选择“与%(username)的对话设置” ----
+Select.talkuser
+{
+  "\0\![quicksession,true]\![set,choicetimeout,0]\b[2]\s[26]要怎么设置呢?\n[150]"
+	  --
+
+
+		  if KikkaTalkmode==1
+		  	"\q[◇同时使用橘花自带数据(优先)以及学习数据,Onstalkc,0]\n[120]\f[color,110,110,110]◆只使用学习型数据库(当前状态)\f[default]\n[150]"
+		  elseif KikkaTalkmode==0
+		  	"\f[color,110,110,110]◆同时使用橘花自带数据(优先)以及学习数据(当前状态)\n[120]\f[default]\q[◇只使用学习型数据库,Onstalkc,1]\n[150]"
+			--
+			if TOINT(Tulingapi[0])==0   //图灵api开启状态
+			{
+		if TOINT(Tulingapi[1])==1	//图灵优先度低
+			  "\q[◇橘花数据优先,Onstalkapi,0]\n[120]\f[color,110,110,110]◆图灵数据优先(当前状态-如出现橘花不能回答的情况请设置为橘花数据优先)\f[default]\n[150]"
+		else
+			  "\f[color,110,110,110]◆橘花数据优先(当前状态)\n[120]\f[default]\q[◇图灵数据优先,Onstalkapi,1]\n[150]"
+			}
+
+--
+  if KikkaAImode==0
+	"橘花自带数据优先度:\n\q[◇辞书优先,OnAIMode,1]\n[120]\f[color,110,110,110]◆伪A.I.系统优先(当前状态-如果不能正常回答图灵数据请设为辞书优先)\f[default]\n[150]"
+ else
+ "橘花自带数据优先度:\n\q[◇伪A.I.系统优先,OnAIMode,0]\n[120]\f[color,110,110,110]◆辞书优先(当前状态)\f[default]\n[150]"
+--
+  if KikkaAILogic==1
+	"橘花伪A.I.系统记住模式优先度:\n\q[◇普通模式优先,OnAILogic,0]\n\q[◇不使用以提高对话速度,OnAILogic,2]\n[120]\f[color,110,110,110]◆记住模式优先(当前状态)\f[default]"
+ elseif KikkaAILogic==2
+"橘花伪A.I.系统记住模式优先度:\n\q[◇普通模式优先,OnAILogic,0]\n\q[◇记住模式优先,OnAILogic,1]\n[120]\f[color,110,110,110]◆不使用以提高对话速度(当前状态)\f[default]"
+else
+"橘花伪A.I.系统记住模式优先度:\n\q[◇不使用以提高对话速度,OnAILogic,2]\n\q[◇记住模式优先,OnAILogic,1]\n[120]\f[color,110,110,110]◆普通模式优先(当前状态)\f[default]"
+
+  --
+  "\n[150]\q[◇退出,OptionEnd]\e"
+}
+Onstalkc
+{
+  KikkaTalkmode=reference0;
+  "\0\s[5]嗯嗯,设置完毕了哦~"
+}
+
+OnAIMode
+{
+  KikkaAImode=reference0;
+  "\0\s[5]嗯嗯,设置完毕了哦~"
+}
+
+OnAILogic
+{
+	KikkaAILogic=reference0;
+  "\0\s[5]嗯嗯,设置完毕了哦~"
+}
+
+Onstalkapi
+{
+
+	Tulingapi[1]=reference0;
+	 "\0\s[5]嗯嗯,设置完毕了哦~"
+
+}

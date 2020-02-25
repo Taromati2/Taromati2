@@ -1,0 +1,5 @@
+charset,Shift_JIS
+type,shell
+name,‘Ì‘€•ž
+accept,‹k‰Ô
+directory,taisou

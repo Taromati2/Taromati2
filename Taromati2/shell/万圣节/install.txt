@@ -1,0 +1,5 @@
+charset,Shift_JIS
+type,shell
+name,ƒnƒƒEƒBƒ“
+accept,‹k‰Ô
+directory,halloween

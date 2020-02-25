@@ -1,0 +1,116 @@
+﻿/////////
+///////// 英汉互查字典
+///////// written by KikkaAIdb.[2009-12-29][2010-3-15改字典]★
+
+//----------------------------------------------------------------------------------------------------------------
+Select.dictionary
+{
+	if QuickStartVersion{
+		NeedUpdate
+		return
+	}
+	"\0\s[0]\_q请输入需要查询的词语!  橘花知道8万词条哦~\n可以是英文也可以是中文!(使用模糊查询)\n[150]提示: 小写数字会被忽略，当存在中文时忽略英文！\n[150]\![*]\q[◇返回上一层,OnOpenMenu,1]\n\![*]\q[◇取消,Onoverdic,Ondict]\![open,inputbox,Ondict,-1,%(Dicword[0])]\e"
+}
+Onoverdic
+{
+  ERASvalueex;
+  "好的...\![close,inputbox,%(reference0)]\e"
+}
+
+Ondict
+{
+  _w="";
+  _j=0;
+  _p=1;
+  _a=CUTSPACE(reference0);
+  if _argv[0]!=null {
+    _p=TOINT(_argv[0]);
+    _a=Dicword[0];
+  }
+  Dicword[0]=_a;
+  _a=TOLOWER(_a);
+  _a = RE_REPLACE(_a,"[ ]","-");
+  //_b = RE_REPLACE(_a,"\w",null);//用这句有时候会不起作用,原因未知
+  _b = RE_REPLACE(_a,"[abcdefghijklmnopqrstuvwxyz1234567890-]",null);
+  //_a = RE_REPLACE(_a,"\d",null);
+  _a = RE_REPLACE(_a,"[0123456789]",null);
+  if _b!=null
+    _j=SQLite("-f","SELECT * FROM dictionary WHERE ONE LIKE'%%(_b)%'");
+  elseif STRLEN(_a)==1
+    _j=SQLite("-f","SELECT * FROM dictionary WHERE ONE LIKE'%(_a)|%'");
+  elseif _a!=null
+    _j=SQLite("-f","SELECT * FROM dictionary WHERE ONE LIKE'%(_a)%'");
+  _tola=(_j+7)/8;
+  Dicword[1]=_tola;
+  for _i=(_p-1)*8;_i<_j && _i<(_p-1)*8+8;_i++ {
+    _t=EVAL("valueex" + _i);
+    _Endic=_t[0,"|"];
+    _Cdic="复制该词";
+    if _Endic==_argv[1]
+      _Cdic="\f[color,240,20,220]已复制啦♪\f[default]";
+    _w+="\f[bold,true]%(_Endic)\f[bold,false]\_l[150,-]\![*]\__q[OnCopydic,%(_Endic),%(_p)]%(_Cdic)\__q\n"+_t[1,"|"]+"\n[130]";
+  }
+  if _a==null {
+    Select.dictionary;
+  }
+  else {
+    if _j==0 {
+      if STRLEN(_a)==1
+        "\0\s[0] %reference0 吗?\n只是个字母吧,还有其他含义吗...\n[130]\![*]\q[继续搜索,dictionary]\n\![set,choicetimeout,36000]\![*]\q[◇返回上一层,OnOpenMenu,0]\n\![*]\q[◇取消,over00]\e"
+      else
+        "\0\s[0]没有找到呢...\n[130]%(Select.dictionary)\e"
+    }
+    --
+    if (_p-1)*8+8<_j
+      "\0\s[26]\b[2]\_q符合记录条目为%(_j),以下为第%((_p-1)*8+1)-%((_p-1)*8+8)条结果:\n[150]%(_w)\n[50]"
+    else
+      "\0\s[26]\b[2]\_q符合记录条目为%(_j),以下为第%((_p-1)*8+1)-%(_j)条结果:\n[150]%(_w)\n[50]"
+    --
+    if _p==1 && _j>8
+      "\_l[20,-]<<上一页\_l[93,-]\q[第1页,Ondicselepag]    共%(_tola)页\_l[200,-]\q[下一页>>,OndicPage,%(_p+1)]"
+    elseif _p==1
+      ""
+    elseif (_p-1)*8+8>_j
+      "\_l[20,-]\q[<<上一页,OndicPage,%(_p-1)]\_l[93,-]\q[第%(_p)页,Ondicselepag]    共%(_tola)页\_l[200,-]下一页>>"
+    else 
+      "\_l[20,-]\q[<<上一页,OndicPage,%(_p-1)]\_l[93,-]\q[第%(_p)页,Ondicselepag]    共%(_tola)页\_l[200,-]\q[下一页>>,OndicPage,%(_p+1)]"
+    --
+    "\n[150]\![*]\q[继续搜索,dictionary]\![set,choicetimeout,36000]\n\![*]\q[◇返回上一层,OnOpenMenu,0]  \![*]\q[◇取消,Onoverdic]" 
+  }
+}
+
+OndicPage
+{
+  Ondict(reference0);
+}
+
+Ondicselepag
+{
+  "\0\s[0]\_q\![set,choicetimeout,20000]请输入页数（半角数字）,共有 %(Dicword[1]) 页!(只显示前125页)\n[200]\![*]\q[取消,Onoverdic,Ondicsp]\![open,inputbox,Ondicsp,20000]\e"
+}
+
+Ondicsp//选页
+{
+  _a=CUTSPACE(reference0);
+  _b=RE_REPLACE(_a,"[0123456789]",null);
+  if _b!=null || _a==null {
+    Ondicselepag;
+  }
+  else {
+    _a=TOINT(_a);
+    if _a>Dicword[1] || _a>125
+      "\0\s[0]输入的页数过大,总页数%(Dicword[1])(只显示前125页),请重新输入~\w8\w8\c%(Ondicselepag)\e"
+    elseif _a<=0 {
+      Ondicselepag;
+    }
+    else {
+      Ondict(_a);
+    }
+  }
+}
+
+OnCopydic//注:这样使用复制对象为中文时会出现乱码
+{
+  FUNCTIONEX("saori\textcopy2.dll", "%(reference0)");
+  "\0\s[0]\b[2]橘花已成功复制单词 『%(reference0)』 到剪贴板了喔♪\n%(Ondict(reference1,reference0))"
+}

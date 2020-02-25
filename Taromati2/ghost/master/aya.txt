@@ -1,0 +1,82 @@
+﻿ ///////// 文　ゴーストテンプレート
+///////// aya.txt (設定ファイル)
+///////// written by umeici.
+
+charset, UTF-8
+charset.dic, UTF-8
+charset.file, UTF-8
+charset.extension, default
+
+//---- 読み込む辞書 ---------------------------------------------------------------------
+dic, aya\aya_config.dic		// 文 ver.3 形式辞書設定辞書
+dic, aya\aya_shiori.dic		// 文 ver.3 形式辞書制御辞書
+dic, aya\aya_compatible.dic	// AYAに移行用
+dic, aya\aya_sysex.dic		// aya_shiori.dicから分離した
+dic, aya\aya_string.dic		// 文字列リソース辞書
+dic, aya\aya_file.dic		//by steve02081504
+dic, aya\aya_env.dic		//by steve02081504
+
+dic, dic\QuickStart.dic		//快速启动包缩小一半的秘诀
+
+dic, dic\MAGIC.dic
+dic, dic\base.dic        // 由steve02081504编写
+
+dic, dic\aya_aitalk.dic		// ランダムトーク辞書
+dic, dic\aya_mouse.dic		// マウス入力関連辞書
+dic, dic\aya_etc.dic		        // 種々のイベント辞書
+dic, dic\aya_aitalk_t.dic
+dic, dic\aya_comm.dic
+
+dic, dic\SQL.dic        // 由steve02081504整理、编写
+
+dic, dic\H.dic        // 由在蹲局子的steve02081503编写
+
+dic, dic\bootend.dic		// 起動/終了/切り替えトーク辞書
+dic, dic\pseudoAI.dic
+dic, dic\password.dic		//密
+dic, dic\kikkastock.dic		//橘花行情
+dic, dic\database_edit.dic		//数据库管理界面
+dic, dic\OnCalendar.dic		//日历
+dic, dic\menu.dic			//主目录
+dic, dic\hotkey.dic			//热键
+dic, dic\playwithlrc.dic		//播放器
+dic, dic\dictionary.dic		//字典
+dic, dic\games.dic			//游戏(OX，21点，猜拳，猜数字，双色球)
+dic, dic\flower.dic			//花语
+dic, dic\classtable.dic			//课程表
+dic, dic\boxgame.dic			//推箱子
+dic, dic\poem.dic			//诗歌
+dic, dic\happyquest.dic		//开心词典
+dic, dic\lunar.dic			//农历
+dic, dic\clothes.dic			//更衣室
+dic, dic\changeshell.dic		//试衣间
+dic, dic\puzzle.dic			//拼图
+dic, dic\nurturance.dic		//养成系统
+dic, dic\clock.dic			//时间，整点报时
+dic, dic\internet.dic			//网络，天气预报，邮件，RSS
+dic, dic\Tarro.dic			//塔罗
+dic, dic\Other.dic			//记事本，五十音，好感
+dic, dic\comm&user.dic		//教学       
+dic, dic\jumptest.dic			//心理测试
+dic, dic\zodiac.dic			//星座测试
+dic, dic\test.dic			//橘花题库测试
+dic, dic\otherserv.dic			//其他服务   
+dic, dic\story.dic			//讲笑话
+dic, dic\opera.dic			//剧情故事
+dic, dic\miniuse.dic			//便利功能       
+dic, dic\rpggame.dic			//橘花斗和传
+dic, dic\interactive.dic		//伪春菜人格大乱斗
+dic, dic\tetrisgame.dic		//俄罗斯方块
+dic, dic\snake.dic			//贪食蛇
+dic, dic\Gobang.dic			//五子棋
+dic, dic\GobangData.dic			//五子棋数据库
+dic, dic\HuaRongDao.dic		//华容道
+dic, dic\linkwnd.dic			//连连看
+dic, dic\BombGoldFlower.dic            //炸金花
+dic, dic\amusement+park.dic		//游乐园
+dic, dic\aya_aa.dic			//游乐园剧情开发
+dic, dic\uno.dic			//uno
+//---- 実行ログ ------------------------------------
+-------------------------------------
+// log, aya.log			// 実行ログをayame.logに記録します。開発時には記録しておいたほうが良いです。
+// iolog, on

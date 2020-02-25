@@ -1,0 +1,1559 @@
+﻿///////// 文　ゴーストテンプレート
+///////// 起动/终了/切り替えトーク辞书
+///////// written by umeici.
+BaseinitOnBoot{//改动于2020 by steve02081504
+	Lunar;
+	Lunartime;
+	FCHARSET(1);
+	lastTalk = "\0\s[20]咦？分明才刚启动的說…\1\s[10]喵，刚才什么都没说\e"
+	lastboottime = "%(systemuptime)" 
+	_laststart = SlowTime;
+	SlowTime = GETSECCOUNT();
+	elapsetime = SlowTime - _laststart;
+	shutdownstart=0;
+	OnSQLLoad;
+	OnAILoad;
+}
+//**** 初回起动 *******************************************************************************************************
+OnFirstBoot//改动于2020 by steve02081504
+{
+	MAGICLOAD//即使卸载也无所谓by steve02081504
+	BaseinitOnBoot
+	if ISVAR("FirstBootCount") == 0{//初次启动
+		mode = "0"
+		aitalkinterval = 180
+		vanishbutton.visible = "1"
+		username = "お兄さん"
+		firstboottime = "%(year),%(month),%(day),%(hour),%(minute)"
+		elapsedtime = 0
+		lastboottime = "%(systemuptime)"
+		Goodevening = ""
+		silent = "0"
+		intimacy = 0
+		stroke = 0
+		HaveNotGetUsername = 1
+		HaveNotGetPassword = 1
+		mikireflag = 0
+		mikireswitch = "1"
+		kasanariswitch = "1"
+		OnKikkaReset
+		InitPassword
+		
+		InAutoUpdate = 0
+		AutoUpdate = 1
+		
+		"\v\![enter,passivemode]"//进入被动模式直至密码设置完成
+		--
+		FirstBootCount = reference0
+		if FirstBootCount == 0{
+			"\1\s[10]\0\s[26]啊、\w9\w9那个…\w9\w9\w9"
+		}else{
+			intimacy = 5
+			"\1\s[10]\0\s[7].\w9.\w9.\w9.\n\w9\w9\s[8]很遗憾\w9\w9\w9\n\n[half]\s[3]即使是再次见面\w9\w9，也记不起来曾经的事了。\w9\w9"
+		}
+		--
+		"\n\n[half]暂时、\w9要在此处打扰您了。"
+		--
+		GetUsernameFirst
+	}else{
+		money = 0//重装惩罚
+		if elapsedtime > 86400//卸载时长超过一天惩罚
+			intimacy -= 3
+		if elapsetime > 172800{//卸载时长超过两天：有效卸载
+			FirstBootCount++
+			MAGICSAVE//保存FirstBootCount变动by steve02081504
+			if FirstBootCount >= 4{//三次有效卸载后惩罚
+				//自我销毁
+				{
+					DELDIR('profile')//清除用户数据
+					_L=GETVARLIST
+					foreach _L;_V{
+						ERASEVAR(_V)//清除所有变量
+					}
+					FirstBootCount=99999//再也不见
+					MAGICSAVE//永久生效
+				}
+				"\1\s[99]\0\s[99]请不要玩弄我的心，我不会回来的"//致敬ddlc
+				--
+				SilentVanish = 1
+				topmode=1
+				TopModeChanged
+				--
+				'\![vanishbymyself]\e'
+			}elseif FirstBootCount == 3{//这是第三次重装警告
+				'\1\s[10]\0\s[35]\w9.\w9.\w9.\w9\w9\w9\n\s[8]最后一次了。\w9\w9\w9\w9\n'
+			}else{
+				"\0\s[26]再次见面，%username。\s[8]\w9\1\s[10]\很过分啊，这种事不要再做了"
+				--
+				OnBoot
+			}
+		}else{
+			MAGICSAVE
+			"\0\s[26]再次见面，%username。\s[8]\w9\1\s[10]\什么啊，虚惊一场么"
+			--
+			OnBoot
+		}
+	}
+}
+GetUsernameFirst
+{
+	"\w9\w9\s[100]\n\n[half]那么、\w9\n可以告诉我名字吗？\![open,inputbox,OnGetUsernameFirst,-1]\e"
+}
+GetPasswordFirst
+{
+	"\1\s[10]\0\s[26]那么，保险起见，能和%username约定一个密码么？\w9\n（此密码用于‘秘密服务’模块，若不填写默认密码将为'void'）\![open,inputbox,OnPasswordUpdate,-1]\e"
+}
+
+
+//**** 时间帯判定 *****************************************************************************************************
+
+GetTimeSlot
+{
+	if month == 1 && day == 1 && spday0101 != "%(year)"
+	{
+		"0101"
+	}
+	elseif month == 2 && day == 14 && spday0214 != "%(year)"
+	{
+		"0214"
+	}
+	elseif month == 12 && day == 24
+	{
+		"1224"
+	}
+	elseif month == 12 && day == 25
+	{
+		"1225"
+	}
+	elseif hour >= 4 && hour <= 6
+	{
+		"Earlymorning"
+	}
+	elseif hour >= 7 && hour <= 10
+	{	
+		"Morning"
+	}
+	elseif hour >= 11 && hour <= 16
+	{
+		"Day"
+	}
+	elseif hour >= 17 && hour <= 18
+	{
+		"Evening"
+	}
+	elseif hour >= 19 && hour <= 23
+	{
+		"Night"
+	}
+	else
+	{
+		"Midnight"
+	}
+}
+
+Select.stoprm 
+{
+	rmmode = 1
+	OpenMenu
+}
+//**** 起动 ***********************************************************************************************************
+OnBoot
+{
+	'\v'
+	--
+	if topmode != 2
+		TopModeChanged
+	--
+	_phase = GetPhase
+	_laststart=0;
+	_timeslot=GetTimeSlot;
+	if reference0!="return"
+	{
+	    BaseinitOnBoot
+		--
+	 	if autoshell[0]
+			OnAutoChangeShell;
+	}
+	--
+//-------------------------------------------------------------------
+       if elapsetime >= 36000 && elapsetime < 86400
+
+       {
+           rmmode = 0;
+
+       }
+
+        elseif elapsetime >= 86400 && elapsetime < 604800
+
+		{   rmmode = 0;
+		  birthdaygiftmode = 0;
+		  giftmode = 0
+		}
+		--
+         birthdayflag=0;
+        if year - 1 == nextbirthday[0]
+          {
+             nextbirthday=NextBirthDay(birthday[0],birthday[1],birthday[2]);
+             //"生日计算中\e"
+          }
+         if year == nextbirthday[0] && month == nextbirthday[1] && day == nextbirthday[2] && birthdaygiftmode != 1
+        {
+             "\0\s[28]今天是%(username)%(TOINT(nextbirthday[0]) - birthday[0])岁生日，橘花给%(username)准备了礼物\n/
+            \n\n\q[◇打开看看,birthdaygift]"
+         }
+         
+	--
+
+              
+
+          if friendbirthdaymode==NULL
+          {
+              for _i=0;_i<friendID;_i++
+              {  
+                  if year-1==friendbirthday[_i*9+5]||year==friendbirthday[_i*9+5]&&month-1==friendbirthday[_i*9+6]||year==friendbirthday[_i*9+5]&&month==friendbirthday[_i*9+6]&&day-1==friendbirthday[_i*9+7]
+                  {
+                         _next_birthday=NextBirthDay(friendbirthday[_i*9+2],friendbirthday[_i*9+3],friendbirthday[_i*9+4]);
+		         friendbirthday[_i*9+5]=_next_birthday[0];
+		         friendbirthday[_i*9+6]=_next_birthday[1];
+		         friendbirthday[_i*9+7]=_next_birthday[2];
+                  }
+
+		  friendbirthday[_i*9+8]=OnFriendNextBirthDay(friendbirthday[_i*9+5],friendbirthday[_i*9+6],friendbirthday[_i*9+7]);
+                  if friendbirthday[_i*9+8]==10
+                        "\0\s[40]还有10天就是%(username)的好友%(friendbirthday[_i*9+1])的生日\n\x"
+                  if friendbirthday[_i*9+8]==5
+                        "\0\s[40]还有5天就是%(username)的好友%(friendbirthday[_i*9+1])的生日\n\x"
+                  if friendbirthday[_i*9+8]==1
+                        "\0\s[40]明天是%(username)的好友%(friendbirthday[_i*9+1])的生日\n\x"
+                  if year == friendbirthday[_i*9+5] && month == friendbirthday[_i*9+6] && day == friendbirthday[_i*9+7]
+                        "\0\s[40]今天是%(username)的好友%(friendbirthday[_i*9+1])的生日，快送去生日祝福吧！\n\x"
+              }
+          }
+
+       --
+
+      if acjeachday
+      {
+        Onautojeachday
+        --
+      "\x"
+      
+       }
+
+       --
+ 
+      Lunartime;
+
+       --
+
+    
+//--------------------设置节日提醒--------------------             
+
+
+      if lunardata[5] == "五" && lunardata[6] == "初五"
+      {
+      if giftmode!=1
+            {
+          "\1\s[10]\0\s[28]那个…\w9\w9\n我为%(username)买了点东西。\n/
+                \n\n\q[◇打开看看,Ongift,2]\x "
+            }
+
+           else
+               {
+		"\1\s[10]\0\s[40]啊、\w9%(username)。\w9\w9那个…\w9\w9\n我包了一些粽子、\w9\w9\n如果可以的话请尝尝看。\x\s[20]不知%(username)喜欢甜的咸的还是喜欢辣的，\w9\w9\s[5]所以橘花就做成又甜又咸又辣的口味。\w9\w9\1\s[10]怪味？\x"
+               }
+      }
+
+
+      elseif lunardata[5] == "七" && lunardata[6] == "初七" && giftmode!=1
+       {
+       "\0\s[28]今天是七月初七，\w9\w9%(username)知道是什么日子吗？\w9\w9这是橘花特意为%(username)准备的。 \n\n\q[◇打开看看,Ongift,3]\x"
+
+
+       }
+
+      elseif lunardata[5] == "八" && lunardata[6] == "十五"
+       {
+
+      if giftmode!=1
+       "\0\s[28]啊，\w9%(username)，\w9\w9\s[5]中秋节快乐，\w9\w9橘花派发礼物了，\w9\w9看看这次是什么？\n\n\q[◇打开看看,Ongift,4]\x"
+       else
+       {
+       "\0\s[0]月亮代表谁的心，\w9\w9\s[1]每逢佳节倍思亲，\w9\w9\s[5]%(username)，\w9\w9中秋快乐！！\w9\w9\1\s[10]中秋节快乐的喵。\x"
+       "\0\s[25]共赏一弯明月，\w5\w9洒红墙，\w9\w9借杯烈酒，\w5\w9我醉倒，\w9\w9落叶沙沙，\w5\w9晓秋月明，\w9\w9西江边听你唱；\n\w9\w9\w9\w9唱完一弯明月，\w5\w9洒西楼，\w9\w9花好月圆，\w5\w9情字老，\w9\w9听你轻轻，\w5\w9唱起了家，\w9\w9正月既望两断了情长。\n\w9\w9\w9\w9\1\s[10]初音ミク的歌啊，\w9\w9什么时候学会的？\n\w9\w9\0\s[9]\n刚学的，\w9唱的不好吧？\n\w9\w9\w9\1\s[10]为了在%(username)面前唱这首歌，\w9实际上练了很久吧？\n\w9\w9\0\s[32]才、才不是呢。\w9\w9\s[26]%(username),\w9橘花准备了一些点心，\w9\w9来尝尝吧\w9\w9\1\s[10]有鱼松月饼吃吗\x"
+       
+       }
+
+
+       }
+
+
+
+	elseif month == 1 && day == 1
+	{
+
+         if giftmode!=1
+        {
+        "\1\s[10]\0\s[28]今天是新年的第一天，橘花为%(username)包了礼物。\n/
+             \n\n\q[◇打开看看,Ongift,0]\x "
+        }
+         else
+           {
+	"\1\s[10]\0\s[2]新年快乐！うれしい！\w8\w8\1\s[10]恭喜。\w8\w8\0\s[5]\n\n[half]今年也请多多指教。\x"
+			"\1\s[10]\0\s[26]新年快乐。\w9\w9\1\s[10]恭喜。\w9\w9\0\s[5]\n\n[half]今年也请多多指教。\x"
+           }
+	}
+	elseif month == 2 && day == 14
+	{
+           if giftmode!=1
+            {
+          "\1\s[10]\0\s[28]那个…\w9\w9\n我为%(username)买了点东西。\n/
+                \n\n\q[◇打开看看,Ongift,1]\x "
+            }
+
+           else
+               {
+		"\1\s[10]\0\s[40]啊、\w9%(username)。\w9\w9\n\n[half]\s[28]那个…\w9\w9\n我烤了一点饼干、\w9\w9\n如果可以的话请尝尝看。\x"
+               }
+
+	}
+
+	elseif month == 11 && day == 11
+	{
+           if giftmode!=1
+	   {
+	          "\1\s[10]\0\s[28]那个…\w9\w9\n我为%(username)买了点东西。\n/
+                \n\n\q[◇打开看看,Ongift,6]\x "
+           }
+
+           else
+               {
+		"\1\s[10]\0\s[40]啊、\w9%(username)。\w9\w9\n\n[half]\s[28]那个…\w9\w9\n我烤了一点饼干、\w9\w9\n如果可以的话请尝尝看。\x"
+               }
+
+	}
+
+	elseif year-firstboottime[0]>0&&month == firstboottime[1] && day == firstboottime[2]   //周年日
+	{
+           if giftmode!=1
+            {
+          "\1\s[10]\0\s[28]那个…\w9\w9\n我为%(username)买了点东西。\n/
+                \n\n\q[◇打开看看,Ongift,7]\x "
+            }
+
+           else
+               {
+		"\1\s[10]\0\s[40]啊、\w9%(username)。\w9\w9\n\n[half]\s[28]那个…\w9\w9\n我烤了一点饼干、\w9\w9\n如果可以的话请尝尝看。\x"
+               }
+
+	}
+
+
+	elseif month == 12 && day == 24
+	{
+		"\1\s[10]\0\s[27]Merry Christmas・Eve♪\w9\w9\1\s[10]"
+		--
+		"…\w9…\w9…"
+		"…\w9根本没有庆祝的意思是吧。"
+		{
+			"…\w9那是死掉的日子吧。"
+			--
+			"\w9\w9\0\s[27]\n\n[half]朗基努斯比较好吗？\w9\w9\1\s[10]\n\n[half]不…\w9\w9我说啊…"
+			""
+		}
+		"一点都不Merry啊…"
+		--
+		"\x"
+	}
+	elseif month == 12 && day == 25
+	{
+
+            if giftmode!=1
+            {
+				"\1\s[10]\0\s[28]%(username),\w9 Merry Christmas，\w9这是橘花为%(username)准备的礼物。\n/
+                \n\n\q[◇打开看看,Ongift,5]\x "
+            }
+
+            else
+            {
+				"\1\s[10]\0\s[27]Merry Christmas♪\w9\w9\1\s[10]"
+				--
+				"…\w9…\w9…"
+				"…\w9根本没有庆祝的意思是吧。"
+				{
+					"…\w9那是死掉的日子吧。"
+					--
+					"\w9\w9\0\s[27]\n\n[half]朗基努斯比较好吗？\w9\w9\1\s[10]\n\n[half]不…\w9\w9我说啊…"
+					""
+				}
+				"一点都不Merry啊…"
+				--
+				"\x"
+            }
+    }
+
+
+--
+    //--------------------------------------------------------------------
+       if elapsetime <= 140
+      {
+      "\1\s[10]\0\s[2]怎么了呢....？\x"
+      "\1\s[10]\0\s[2]怎么这么快回来了呢....？\x"
+      "\1\s[10]\0\s[0]还有需要到我们的地方吗....？\x"
+      }
+	  
+//---- 超过一周小于一月半 ------------
+       elseif elapsetime > 604800 //&& elapsetime < 3628800
+        {
+          intimacy--;
+          rmmode = 0;
+          birthdaygiftmode = 0;
+    "\0\s[21]\w6\s[0]好久不见啊，%(username)。\1\s[10]至少有一个礼拜沒见了吧。\x";
+          "\1\s[117]%(username)把我们给忘了吗,\w9这么久才回来。\w9\w9\0\s[0]%(username)，好久不见啊。\x";
+		"\1\s[10]\0\s[21]\w6\s[5]%(username) ，好久不见\1\s[10]至少有一个礼拜沒见了吧。\x";
+       }
+/*     以下机能未实装
+//---- 超过一月半小于半年 ------------
+       elseif elapsetime >= 3628800 && elapsetime < 15768000
+        {
+          intimacy-=5;
+          rmmode = 0;
+          birthdaygiftmode = 0;
+	      
+       }
+//---- 超过半年 ------------
+       elseif elapsetime >= 15768000
+        {
+          intimacy -= 3;
+          rmmode = 0;
+          birthdaygiftmode = 0;
+          _years = elapsetime / 31536000;
+		  
+       }
+*/
+
+//---- 早朝 -----------------------------------------------------------------------------------------------------------
+	elseif _timeslot == "Earlymorning"
+	{
+		if _phase == 2
+		{
+			talkmemo = "b_0"
+			"\1\s[10]\0\s[0]啊…\w9\w9\s[40]早安、\w9%(username)。\w9\w9\1\s[10]…\w9…\w9…\w9\w9\w9\0\s[0]\n\n[half]这么早是怎么了呢？\x"
+			"\1\s[10]\0\s[0]啊…\w9\w9\s[40]早安、\w9%(username)。\w9\w9\1\s[10]…\w9…\w9…\w9\w9\w9\0\s[26]\n\n[half]今天很早呢。\x"
+		}
+		else
+		{
+			talkmemo = "b_0"
+			"\1\s[10]\0\s[0]早安、\w9($username)。\w9\w9\1\s[10]…\w9…\w9…\w9\w9\w9\0\s[0]\n\n[half]这么早是怎么了呢？\x"
+			"\1\s[10]\0\s[0]早安、\w9%(username)。\w9\w9\1\s[10]…\w9…\w9…\w9\w9\w9\0\s[26]\n\n[half]今天很早呢。\x"
+		}
+	}
+//---- 朝 -------------------------------------------------------------------------------------------------------------
+	elseif _timeslot == "Morning"
+	{
+		if _phase == 2
+		{
+			"\1\s[10]\0\s[26]早安、\w9%(username)。\x"
+			"\1\s[10]\0\s[40]早安、\w9%(username)。\w9\w9\w9\w9\s[26]\n今天一天也好好加油吧。\x"
+			"\1\s[10]\0\s[26]%(username)、\w9早安。\w9\w9\1\s[10]哟。\x"
+			"\1\s[10]\0\s[40]早安。\w9\w9\1\s[10]哟。\x"
+		}
+		else
+		{
+			"\1\s[10]\0\s[26]早安、\w9%(username)。\x"
+			"\1\s[10]\0\s[0]早安、\w9%(username)。\w9\w9\w9\w9\s[26]\n今天一天也好好加油吧。\x"
+			"\1\s[10]\0\s[26]%(username)、\w9早安。\w9\w9\1\s[10]哟。\x"
+			"\1\s[10]\0\s[26]早安。\w9\w9\1\s[10]哟。\x"
+		}
+	}
+//---- 昼 -------------------------------------------------------------------------------------------------------------
+	elseif _timeslot == "Day"
+	{
+		if _phase == 2
+		{
+                        if weekday == "0"
+                         "\0\s[26]早安。\w9\w9\n…\w9嗯、\w9\s[8]已經中午了喔。\w9\w9\1\s[10]反正是禮拜天嘛。\w9\w9\n有好好休息嗎？"
+                   
+                        else
+                         {
+			"\1\s[10]\0\s[2]啊。\w9\w9\s[40]\n午安、\w9%(username)。\x"
+			"\1\s[10]\0\s[40]午安、\w9%(username)。\1\s[10]哟。\x"
+			"\1\s[10]\0\s[26]%(username)、\w9午安。\x"
+			"\1\s[10]\0\s[26]午安。\1\s[10]哟。\x"
+                         }
+
+		}
+		else
+		{
+			"\1\s[10]\0\s[0]午安、\w9%(username)。\x"
+			"\1\s[10]\0\s[0]午安、\w9%(username)。\1\s[10]哟。\x"
+			"\1\s[10]\0\s[26]%(username)、\w9午安。\x"
+			"\1\s[10]\0\s[26]午安。\1\s[10]哟。\x"
+		}
+	}
+//---- 夕方 -----------------------------------------------------------------------------------------------------------
+	elseif _timeslot == "Evening"
+	{
+		if Goodevening == ""
+		{
+			"\1\s[10]\0\s[26]啊、\w9%(username)…\w9\w9\w9\s[0]\n\n[half]嗯…\w9\w9\w9在这个时间带问安、\w9\n应该用『午安』还是用『晚安』呢？\n\n[half]/
+			\q[◇午安,Goodevening_0]\n/
+			\q[◇晚安,Goodevening_1]\n/
+			\q[◇傍晚好,Goodevening_2]\n/
+            \q[◇都可以,Goodevening_3]\x"
+		}
+		else
+		{
+			"\1\s[10]\0\s[26]%(Goodevening)、\w9\w9%(username)。\x"
+			"\1\s[10]\0\s[26]%(Goodevening)、\w9\w9%(username)。\w9\w9\n没有被跟踪吧？\w9\w9\1\s[10]…\w9…\w9…\x"
+		}
+	}
+//---- 夜 -------------------------------------------------------------------------------------------------------------
+	elseif _timeslot == "Night"
+	{
+		"\1\s[10]\0\s[26]晚安、\w9%(username)。\x"
+		"\1\s[10]\0\s[0]晚安、\w9%(username)。\x"
+		"\1\s[10]\0\s[26]晚安。\x"
+		"\1\s[10]\0\s[0]晚安。\x"
+		"\1\s[10]\0\s[26]%(username)、\w9\w9\w9晚安。\x"
+	}
+//---- 深夜 -----------------------------------------------------------------------------------------------------------
+	else
+	{
+		if weekday == "0"
+		{
+			"\1\s[10]\0\s[0]啊、\w9\w9\w9\s[26]晚安、\w9%(username)。\w9\w9\w9\w9\n就算是假日、\w9\n也不要太晚睡喔。\x"
+		}
+		else
+		{
+			talkmemo = "b_1"
+			"\1\s[10]\0\s[0]晚安、\w9%(username)。\w9\w9\w9\w9\s[26]\n这么晚是怎么了呢？\x"
+			"\1\s[10]\0\s[0]晚安、\w9%(username)。\w9\w9\w9\w9\n半夜了呢。\x"
+		}
+	}
+      --
+     
+
+     if rmmode != 1 && rmswitch == 0  && (lunartime[9] != null ||  lunartime[10] != null )
+       {
+     
+    "\1\s[10]\0\s[40]\![raise,OnPlayRm]今天是%(lunartime[9]) %(lunartime[10])\n/
+          \q[◇知道了,OnOpenMenu,0]\n/
+          \q[◇10小时内不再提醒,stoprm]\n\x"
+        }
+--
+ if TOINT(autobackup)==0
+            {
+            _t = "○,◎";
+           "\C\_q\1\s[10]\0\s[40]■橘花提醒■\n为避免人格失忆，请设自动备份开关为On，当前自动备份功能关闭，请定期手动备份。\n自动备份　　　\q[%(_t[TOINT(autobackup)]) ON,Onusage,autobackup,1]  ・  \q[%(_t[1 - TOINT(autobackup)]) OFF,Onusage,autobackup,0]\n\n[half]\x"
+            }
+--
+  
+ if TOINT(autoastro)==0
+        temp="autoastro";
+
+
+  if TOINT(autoweather)==0
+      OnWeatherFoundAuto;
+   elseif TOINT(autoastro)==0
+      OnAstroFoundAuto
+ 
+}
+
+
+
+Select.Goodevening_0
+	{
+		Goodevening = "午安"
+		"\1\s[10]\0\s[100]我知道了。\w9\w9\n那么、\w9\s[26]%(Goodevening)、\w9%(username)。\e"
+	}
+Select.Goodevening_1
+	{
+		Goodevening = "晚安"
+		"\1\s[10]\0\s[100]我知道了。\w9\w9\n那么、\w9\s[26]%(Goodevening)、\w9%(username)。\e"
+	}
+Select.Goodevening_2
+	{
+		Goodevening = "傍晚好"
+		"\1\s[10]\0\s[100]我知道了。\w9\w9\n那么、\w9\s[26]%(Goodevening)、\w9%(username)。\e"
+	}
+Select.Goodevening_3
+	{
+		Goodevening = Goodevening0
+		"\1\s[10]\0\s[100]…\w9…\w9…\w9\w9\w9\w9\n那么、\w9\s[26]%(Goodevening)、\w9%(username)。\e"
+	}
+Goodevening0
+	{
+		"午安"
+		"晚安"
+		"傍晚好"
+	}
+
+
+ClearVar
+{
+	ERASEVAR("id");
+	ERASEVAR("res");
+	ERASEVAR("calendar");
+	ERASEVAR("poker");
+	ERASEVAR("i");
+	ERASEVAR("ix");
+	ERASEVAR("jd");
+	ERASEVAR("jx");
+	ERASEVAR("ii");
+	ERASEVAR("jj");
+	ERASEVAR("ll");
+	ERASEVAR("kk");
+	ERASEVAR("iy");
+	ERASEVAR("im");
+	ERASEVAR("fx");
+	ERASEVAR("fy");
+	ERASEVAR("Sta");
+	ERASEVAR("dw");
+	ERASEVAR("color");
+	ERASEVAR("found");
+	ERASEVAR("wzq.aitype2");
+	ERASEVAR("mm");
+	ERASEVAR("dd");
+	ERASEVAR("temp01");
+	ERASEVAR("temp02");
+	ERASEVAR("temp03");
+	ERASEVAR("temp04");
+	ERASEVAR("temp05");
+	ERASEVAR("str");
+	ERASEVAR("summb");
+	ERASEVAR("sumtel");
+	ERASEVAR("sumID_");
+	ERASEVAR("sumID");
+	ERASEVAR("SecondWatch.m");
+	ERASEVAR("SecondWatch.ss");
+	ERASEVAR("SecondWatch.s");
+	ERASEVAR("G");
+	ERASEVAR("sss");
+	ERASEVAR("drg");
+	ERASEVAR("radio");
+	ERASEVAR("radioshift");
+	ERASEVAR("newcarry");
+	ERASEVAR("a");
+	ERASEVAR("l");
+	ERASEVAR("txt");
+	ERASEVAR("t6");
+	ERASEVAR("t2");
+	ERASEVAR("operand");
+	ERASEVAR("m_point");
+	ERASEVAR("file");
+	ERASEVAR("tempright");
+	ERASEVAR("headpatflag");
+	ERASEVAR("headpattime");
+	ERASEVAR("headpatcount");
+	ERASEVAR("bustpatflag");
+	ERASEVAR("bustpattime");
+	ERASEVAR("bustpatcount");
+	ERASEVAR("bustclickflag");
+	ERASEVAR("bustclicktime");
+	ERASEVAR("bustclickcount");
+	ERASEVAR("WND");
+	ERASEVAR("EXT_InputState");
+	ERASEVAR("EXT_Table");
+	ERASEVAR("EXT_SelectColumn");
+	ERASEVAR("EXT_UpdateID");
+	ERASEVAR("EXT_UpdateColumn");
+	ERASEVAR("EXT_InputUpdate");
+	ERASEVAR("Dicword");
+	ERASEVAR("arrOX");
+	ERASEVAR("kikkascard");
+	ERASEVAR("yourcard");
+	ERASEVAR("gn");
+	ERASEVAR("ball");
+	ERASEVAR("bball");
+	ERASEVAR("bb");
+	ERASEVAR("comball");
+	ERASEVAR("c1");
+	ERASEVAR("c2");
+	ERASEVAR("c3");
+	ERASEVAR("c4");
+	ERASEVAR("c5");
+	ERASEVAR("A");
+	ERASEVAR("B");
+	ERASEVAR("b");
+	ERASEVAR("com");
+	ERASEVAR("ball_");
+	ERASEVAR("ball1");
+	ERASEVAR("bs");
+	ERASEVAR("v");
+	ERASEVAR("days");
+	ERASEVAR("tab");
+	ERASEVAR("howbady0");
+	ERASEVAR("howbady1");
+	ERASEVAR("howbady2");
+	ERASEVAR("howbady3");
+	ERASEVAR("points");
+	ERASEVAR("faceshow");
+	ERASEVAR("num");
+	ERASEVAR("mon");
+	ERASEVAR("m");
+	ERASEVAR("friendid");
+        ERASEVAR("secondwatch");
+        ERASEVAR("japwordright");
+        ERASEVAR("japhardwordsave");
+        ERASEVAR("japhardword");
+        ERASEVAR("japwordtemp");
+        ERASEVAR("wrongword");
+       ERASEVAR("testtemp");
+        ERASEVAR("redball");
+        ERASEVAR("temp");
+        ERASEVAR("MapIdx");
+        ERASEVAR("PUZZLE_X");
+        ERASEVAR("PUZZLE_SIZEX");
+        ERASEVAR("iPuzzleBlank");
+        ERASEVAR("iPuzzleStep");
+        ERASEVAR("arrPuzzle");
+        ERASEVAR("ShowPuzzleMap");
+        ERASEVAR("buffnum");
+        ERASEVAR("buffnums");
+        ERASEVAR("SecondWatch.m");
+        ERASEVAR("SecondWatch.s");
+        ERASEVAR("SecondWatch.ss");
+        ERASEVAR("SecondWatch.sss");
+        ERASEVAR("SecondWatch.sso");
+        ERASEVAR("m_exp");
+        ERASEVAR("m_res");
+        ERASEVAR("dmsmode");
+        ERASEVAR("deg");
+        ERASEVAR("dms");
+        ERASEVAR("drg");
+        ERASEVAR("m_carry");
+        ERASEVAR("zero");
+        ERASEVAR("hexnum");
+        ERASEVAR("endNumber");
+        ERASEVAR("radio");
+        ERASEVAR("mess");
+        ERASEVAR("testid");
+        ERASEVAR("testnum");
+        ERASEVAR("mov_");
+        ERASEVAR("n");
+        ERASEVAR("wzq.dcseted");
+        ERASEVAR("st");
+        ERASEVAR("base");
+        ERASEVAR("layerreset");
+        ERASEVAR("shellID_");
+        ERASEVAR("p");
+        ERASEVAR("oxnum");
+        ERASEVAR("t3_1");
+        ERASEVAR("expression");
+        ERASEVAR("exp");
+        ERASEVAR("mem");
+        ERASEVAR("m_error");
+        ERASEVAR("Name");
+        ERASEVAR("Path");
+        ERASEVAR("gh");
+        ERASEVAR("tempan");
+        ERASEVAR("lunartimenl");
+        ERASEVAR("nextbirthday_");
+        ERASEVAR("say");
+        ERASEVAR("Acount");
+        ERASEVAR("runjr");
+        ERASEVAR("t222");
+        ERASEVAR("t26");
+        ERASEVAR("t27");
+        ERASEVAR("t28");
+        ERASEVAR("tt");
+        ERASEVAR("ttt");
+        ERASEVAR("aimode");
+        ERASEVAR("s");
+	ERASEVAR("ss");
+	ERASEVAR("sss");
+       	ERASEVAR("ssss");
+	ERASEVAR("sssss");
+	//ERASEVAR("recommendsites");
+	ERASEVAR("bookmark");
+	for _i=0;_i<30;_i++
+	{
+		ERASEVAR("t"+_i);
+	}
+        for _i=0;ISVAR("valueex"+_i);_i++
+        {
+	ERASEVAR("valueex"+_i);
+        }
+}
+
+
+//**** 终了 ***********************************************************************************************************
+ClearTempVar
+{
+	ClearVar;
+	ClearPlayerVar;
+	ClearGobangVar;
+	CleartetrisVar;
+	ClearRpgGameVar;
+	ClearHuanRongDaoVar;
+	ClearTestVar;
+	ClearCalculateVar;
+	ClearSnakeVar;
+	ClearLinkWndVar;
+	ClearCalculateVar;
+	ClearShortcutVar;
+	ClearSQLVar
+	ClearAIVar;
+}
+OnClose
+{
+	//elapsedtime = TOINT(elapsedtime) + TOINT(systemuptime) - TOINT(lastboottime)
+	ClearTempVar;
+
+	if autobackup
+		OnAutoBackup;
+	--
+	OnSQLSave;
+	OnAISave;
+	--
+	MAGICSAVE
+	if mode == "1"
+	{
+		OnClose1
+	}
+	else
+	{
+		OnClose0
+	}
+}
+
+OnClose0
+{
+	_timeslot = GetTimeSlot
+	"\1\s[10]\0\s[3]是这样吗…\w9\w9\s[0]\n如果有什么事、\w9请再叫我喔。\1\s[10]再见啦。"
+	"\1\s[10]\0\s[0]好的。\w9\w9\n那么再见了。\1\s[10]再见啦。"
+//---- 早朝 -----------------------------------------------------------------------------------------------------------
+	if _timeslot == "Earlymorning"
+	{
+	}
+//---- 朝 -------------------------------------------------------------------------------------------------------------
+	elseif _timeslot == "Morning"
+	{
+	}
+//---- 昼 -------------------------------------------------------------------------------------------------------------
+	elseif _timeslot == "Day"
+	{
+		"\1\s[10]\0\s[0]要出门了吗？\w9\w9\s[26]\n请把弹夹确实的捡起来喔。\w9\w9\1\s[10]要干嘛啊…"
+		"\1\s[10]\0\s[0]要出门了吗？\w9\w9\s[26]\n请把指纹仔细的擦掉喔。\w9\w9\1\s[10]要干嘛啊…"
+	}
+//---- 夕方 -----------------------------------------------------------------------------------------------------------
+	elseif _timeslot == "Evening"
+	{
+		"\1\s[10]\0\s[0]因为是被称为逢魔之刻的时间、\w9\n如果要出门的话请小心喔。\w9\w9\n那么再见了。\1\s[10]再见啦。"
+		"\1\s[10]\0\s[0]要出门了吗？\w9\w9\s[26]\n请把弹夹确实的捡起来喔。\w9\w9\1\s[10]要干嘛啊…"
+		"\1\s[10]\0\s[0]要出门了吗？\w9\w9\s[26]\n请把指纹仔细的擦掉喔。\w9\w9\1\s[10]要干嘛啊…"
+        "\1\s[117]早点回来，\w9人家等着呢。\w9\w9\0\s[26]这么晚了，路上小心啊"
+	}
+//---- 夜 -------------------------------------------------------------------------------------------------------------
+	elseif _timeslot == "Night"
+	{
+	}
+//---- 深夜 -----------------------------------------------------------------------------------------------------------
+	else
+	{
+		"\1\s[10]\0\s[0]啊…\w9\w9已经这么晚了。\w9\w9\n那么%(username)、\w9\w9祝您有个好梦。"
+	}
+	--
+	"\w9\w9\-\e"
+}
+
+//**** フェーズ *******************************************************************************************************
+
+GetPhase
+{
+	if intimacy >= 50 
+	{
+		2
+	}
+	elseif intimacy <= -10
+	{
+		0
+	}
+	else
+	{
+		1
+	}
+}
+
+
+
+GetPhase_bedroom
+{       
+        if intimacy >= 3600 && elapsedtime >= 691200
+        {
+                5
+        }
+        elseif intimacy >= 800  && elapsedtime >= 345600
+        {
+                4
+        }
+        elseif intimacy >= 200 && elapsedtime >= 172800
+        {
+                3
+        } 
+	elseif intimacy >= 50 && elapsedtime >= 86400
+	{
+		2
+	}
+	elseif intimacy <= -10
+	{
+		0
+	}
+	else
+	{
+		1
+	}
+}
+
+
+
+
+
+
+
+//**** 最小化 *********************************************************************************************************
+
+OnWindowStateMinimize
+{
+	minimizestarttime = "%(systemuptime)"
+}
+
+OnWindowStateRestore
+{
+	if mode == "1"
+	{
+		OnWindowStateRestore1
+	}
+	else
+	{
+		if MinimizeTime >= 60
+		{
+			"\1\s[10]\0\s[6]幸好。\w9\w9\w9\s[0]\n我还以为被忘掉了呢…\e"
+		}
+		else
+		{
+			"\1\s[10]\0\s[0]…嗯。\w9\w9\w9\n有需要我的地方吗？\e"
+			"\0\s[0]\1\s[10]呼。\w9\w9\n在做些什么啊？"
+		}
+	}
+}
+
+MinimizeTime
+{
+	TOINT(systemuptime) - TOINT(minimizestarttime)
+}
+
+//**** ゴースト/シェル切り替え **********************************************************
+
+//**** 他のゴーストに交代 *********************************************************************************************
+OnGhostChanging
+{
+	elapsedtime = TOINT(elapsedtime) + TOINT(systemuptime) - TOINT(lastboottime)
+	if mode == "1"
+	{
+		OnGhostChanging1
+	}
+	else
+	{
+		OnGhostChanging0
+	}
+}
+
+
+OnGhostChanging0
+{
+	_phase = GetPhase
+	if reference1 == "manual"
+	{
+		if _phase == 0
+		{
+			"\0\s[6]好的。\w9\s[0]\n那么再见了。\w9\w9\1\s[10]再见啦。"
+		}
+//---- Taromati -------------------------------------------------------------------------------------------------------
+		elseif reference0 == "橘花"
+		{
+			"\0\s[0]那么、\w9\w9请稍微等一会喔。"
+			"\0\s[0]那么、\w9\w9我稍微离开一下喔。"
+		}
+//---- #　由加＋ダオにゅう　# -----------------------------------------------------------------------------------------
+		elseif reference0 == "由加"
+		{
+			"\0\s[5]勉强になりますよね、\w9毒物。\w9\w9\1\s[10]もっと违うトコロを见习えよ。"
+		}
+//---- 10円 -----------------------------------------------------------------------------------------------------------
+		elseif reference0 == "(・∀・)"
+		{
+			"\0\s[40]贮金、\w9顽张って下さい。"
+		}
+//---- Neo'n SIGN -----------------------------------------------------------------------------------------------------
+		elseif reference0 == "谁か"
+		{
+			"\1\s[10]\0\s[0]サインさんは死んでいるんでいるんですよね。\w9\w0\1\s[10]そうらしいな。\0\s[0]\w9\w9\n\n[half]では…\w9『ねーやん』さんですか？\w9\w9\1\s[10]\n\n[half]コサインかもしれないぞ。\w9\w9\0\s[0]\n\n[half]…\w9先生、お愿いします。\w9\w9\1\s[10]\n\n[half]…\w9…\w9…"
+		}
+//---- NodePsimoon ----------------------------------------------------------------------------------------------------
+		elseif reference0 == "さい子"
+		{
+			"\1\s[10]\0\s[0]私が居なくなっても、\w9\n谁にも彼に手を出すことは出来ない。\w9\w9\n彼とその人生は、\w9全て私のものなのだ。\w9\w9\1日本语が、とても若干おかしいぞ。"
+		}
+//---- THE TOXIC WALTZ ------------------------------------------------------------------------------------------------
+		elseif reference0 == "毒子"
+		{
+			"\0\s[20]准备に时间がかかるでしょうから、\w9\w9\s[40]\nもう少し此処にいても良いですか？\w9\1\s[10]駄目に决まってるだろ。\w9\w9\w9\0\s[3]\n\n[half]そうですよね。\w9\w9\nごめんなさい。\w9\nそれではまた。\w9\1\s[10]じゃな。"
+		}
+//---- たまちんゆうらゆら ---------------------------------------------------------------------------------------------
+		elseif reference0 == "玉响"
+		{
+			"\0\s[5]イタリアは良い国ですね。\w9\w9\s[6]\n\n[half]『神は世界一美しい风景、世界一美味しい食べ物、\n　世界一过ごしやすい気候をイタリアに与えた。\w9\w9\s[0]\n\n[half]　神様、\w9これではあまりに恵まれすぎています。\w9\w9\s[26]\n\n[half]　心配するな。\w9\n　イタリア人を入れておいた』\w9\w9\1\s[11]…\w9おい。"
+		}
+//---- まゆら＆黒うにゅう ---------------------------------------------------------------------------------------------
+		elseif reference0 == "まゆら"
+		{
+			"\0\s[6]それでは、\w9\w9\s[5]私も杀伤数を稼いできます。\w9\w9\1\s[10]お前が言うとヤバすぎるぞ。"
+		}
+//---- 东方游撃姫 -----------------------------------------------------------------------------------------------------
+		elseif reference0 == "霊梦"
+		{
+			"\0\s[6]このさきには\w9\n暴力的で\w9\n鬼のような\w9\n杀戮兵器どもが\w9\nあなたをまっています\w9\w9\s[0]\n\n[half]そ\w9れ\w9で\w9も\w9プレイしますか？\w9\w9\1\s[10]ゲーム违うぞ。"
+		}
+//---- 不特定のゴースト -----------------------------------------------------------------------------------------------
+		else
+		{
+			"\0\s[3]…\w9好的。"
+			"\0\s[3]…\w9好的。\w9\w9\1\s[10]再见啦。"
+			"\0\s[3]…\w9那么、\w9再见了。\w9\w9\w9\s[26]\n我会等着的。"
+			"\0\s[3]…\w9那么、\w9再见了。\w9\w9\w9\s[26]\n我会等着的。\w9\w9\1\s[10]再见啦。"
+			"\0\s[9]…\w9…\w9…\w9\w9\1\s[10]下次见。"
+			"\0\s[9]…\w9…\w9…\w9\w9\1\s[10]再见啦。"
+			"\0\s[23]%(reference0)是吗…"
+		}
+	}
+//---- 自动 -----------------------------------------------------------------------------------------------------------
+	else
+	{
+		"\0\s[0]啊…\w9\w9\w9抱歉，\w9\w9\n我突然想到有急事…\w9\w9\n不好意思先离开了。"
+	}
+	--
+	"\w9\w9\e"
+}
+
+//---- 他のゴーストから切り替り ---------------------------------------------------------
+OnGhostChanged
+{
+	lastboottime = "%(systemuptime)"
+//---- Taromati -------------------------------------------------------------------------------------------------------
+	if reference0 == "橘花"
+	{
+		"\1\s[10]\0\s[0]让您久等了。\e"
+		"\1\s[10]\0\s[26]让您久等了。\e"
+	}
+//---- #　由加＋ダオにゅう　# -----------------------------------------------------------------------------------------
+	elseif reference0 == "由加"
+	{
+		if "橘花ちゃん见てると" _in_ reference1
+		{
+			"\1\s[10]\0\s[8]私、\w9そういう趣味はちょっと…\w9\w9\1\s[10]…\w9…\w9…\e"
+			"\1\s[10]\0\s[6]いろいろと勉强になります。\w9\w9\1\s[10]…\w9…\w9…\w9\n俺で试すなよ。\w9\w9\0\s[30]\n\n[half]変身出来たりするかもしれませんよ。\w9\w9\1\s[10]\n\n[half]したくない。\e"
+			"\1\s[10]\0\s[8]レンゲツツジの蜜を\nよく舐めたりしていたんですけど、\w9\w9\n毒だったんですね…\w9\w9\1\s[10]花を食ってたら\w5\nヤバかったのかもな。\e"
+		}
+		else
+		{
+			"\0\s[0]\1\s[10]『ちゃん』付けはちょっとなぁ…\w9\w9\0\s[8]似合いませんよねぇ…\e"
+			"\0\s[0]\1\s[10]猫も人间と同じで、\w9\nいきなり头を抚でるのは良くないぞ。\w9\w9\0\s[30]そうなんですか？\w9\w9\1\s[10]\n\n[half]始めは体を抚でて、\w9\n惯れてきたら头だな。\w9\w9\0\s[8]\n\n[half]人间は\w9いきなり体抚でたらまずいと思いますけど…\e"
+			"\1\s[10]\0\s[6]いろいろと勉强になります。\w9\w9\1\s[10]…\w9…\w9…\w9\n俺で试すなよ。\w9\w9\0\s[30]\n\n[half]変身出来たりするかもしれませんよ。\w9\w9\1\s[10]\n\n[half]したくない。\e"
+			"\1\s[10]\0\s[8]レンゲツツジの蜜を\nよく舐めたりしていたんですけど、\w9\w9\n毒だったんですね…\w9\w9\1\s[10]花を食ってたら\w5\nヤバかったのかもな。\e"
+		}
+	}
+//---- さいたまさいたまさいたま ---------------------------------------------------------------------------------------
+	elseif reference0 == "(ﾟ∀ﾟ)さいたまさいたまさいたまさいたま！"
+	{
+		"\0\s[0]\1\s[10]やかましい…\e"
+		"\1\s[10]\0\s[0]何なんですか、\w9\w9あれは…\e"
+	}
+//---- 10円 -----------------------------------------------------------------------------------------------------------
+	elseif reference0 == "(・∀・)"
+	{
+		"\1\s[10]\0\s[40]贮金は顺调ですか？\e"
+	}
+//---- 54 -------------------------------------------------------------------------------------------------------------
+	elseif reference0 == 54
+	{
+		"\1\s[10]\0\s[7]%(username)は…\w9\w5\nあんな感じが好みなんですか？\e"
+	}
+//---- Blood Tea HOUSE ------------------------------------------------------------------------------------------------
+	elseif reference0 == "里子"
+	{
+		"\1\s[10]\0\s[6]妖怪とか多いですよね、\w9この业界。\w9\w9\1\s[10]…\w9お前も似たようなもんだろ。\w9\0\s[30]\n\n[half]私、\w9普通の人间。\w9\w9\1\s[10]\n\n[half]普通ではないだろ。\e"
+	}
+//---- Chris=CROSS ----------------------------------------------------------------------------------------------------
+	elseif reference0 == "クリス"
+	{
+		"\1\s[10]\0\s[6]…\w9あぁ、\w9あそこの息子さんでしたか。\w9\w9\1\s[10]知ってるのか？\w9\w9\0\s[0]\n\n[half]ええ、\w9よくお世话になってますから。\e"
+	}
+//---- Milky Season ---------------------------------------------------------------------------------------------------
+	elseif reference0 == "みるく"
+	{
+		"\1\s[10]\0\s[5]世の中、知らないほうが幸せな事もありますよ、\w9\nましゅまろさん。\w9\w9\1\s[10]…\w9…\w9…\e"
+	}
+//---- Neo'n SIGN -----------------------------------------------------------------------------------------------------
+	elseif reference0 == "谁か"
+	{
+		"\1\s[10]\0\s[30]先生はどうして回転しているんですか？\w9\w9\1\s[10]知らねえよ。\e"
+	}
+//---- SERION的日常 ---------------------------------------------------------------------------------------------------
+	elseif reference0 == "SERION"
+	{
+		"\0\s[0]\1\s[10]ぼとるだとお前、\w9铳火器狂でとおってるらしいな。\w9\w9\0\s[30]はい？\w9\w9\1\s[10]\n\n[half]あ…\w9すまん、しててらだ。\w9\w5\nぼとる\w9『でも』\w9\w5だな。\w9\w9\0\s[8]\n\n[half]…\w9何の话ですか？\e"
+	}
+//---- snow fragment --------------------------------------------------------------------------------------------------
+	elseif reference0 == "雪穂"
+	{
+		if "P90か…" _in_ reference1
+		{
+			"\1\s[10]\0\s[5]まあまあ、そう言わず…\w9\w9\1何勧めてんだよ。\e"
+		}
+		else
+		{
+			"\0\s[0]\1\s[10]まあまあ、そう言わず…\w9\w9\0\s[7]駄目です。\e"
+		}
+	}
+//---- THE SOMBERLAIN -------------------------------------------------------------------------------------------------
+	elseif reference0 == "サンバーレイン"
+	{
+		"\1\s[10]\0\s[6]メタルは良いです。\w9\w9\1\s[10]最高だな。\e"
+	}
+//---- Ｍ -------------------------------------------------------------------------------------------------------------
+	elseif reference0 == "Ｍ"
+	{
+		if "ご苦労様" _in_ reference1
+		{
+			"\1\s[10]\0\s[6]『ご苦労様』は普通、\w9\n目下の人に使うものですからね。\e"
+		}
+		elseif "浮気" _in_ reference1
+		{
+			"\1\s[10]\0\s[8]忙しい人达ですね…\e"
+		}
+		else
+		{
+			"\1\s[10]\0\s[6]魔法使えたら良いですね～。\w9\w5\1\s[10]集中力の无い奴には难しいだろうな。\w9\w9\w9\0\s[32]\n\n[half]それは、\w9谁のことですか？\w9\1\s[13]\n\n[half]さぁな。\e"
+		}
+	}
+//---- うにゅうの王国 -------------------------------------------------------------------------------------------------
+	elseif reference0 == "博子"
+	{
+		if "骗され" _in_ reference1
+		{
+			"\1\s[10]\0\s[9]骗してなんて\w9ないです。\e"
+		}
+		else
+		{
+			"\0\s[0]\1\s[10]ときに、\w9お前も黒タイツなワケだが…\w9\0\s[8]あの…\w9あまり関わりたくないので…\e"
+		}
+	}
+//---- かいめつ的日常 -------------------------------------------------------------------------------------------------
+	elseif reference0 == "灭"
+	{
+		if "捕获しといて" _in_ reference1
+		{
+			"\0\s[0]\1\s[13]つかまえてごらんなさ～い。\w9\w9\nうふふふふ…\w9\w9\0\s[30]…\w9大丈夫ですか？\w9\w9\n头とか。\w9\w9\1\s[10]\n\n[half]失礼な、\w9ちょっと、お花畑だっただけだぞ。\w9\w9\0\s[8]\n\n[half]大丈夫じゃないですね。\e"
+		}
+		else
+		{
+			"\0\s[0]\1\s[10]気の利いた毒舌って\w9…\w9どんなんだ？\w9\w9\0\s[8]さあ。\e"
+		}
+	}
+//---- かゆうま -------------------------------------------------------------------------------------------------------
+	elseif reference0 == "かゆ"
+	{
+		"\1\s[10]\0\s[21]私もあのてのゲームは好きですし、\s[0]\n趣味は合いそうですよね。\w9\w9\1\s[11]途中やりのベロニカはどうした？\w9\w9\0\s[6]\n\n[half]もう、何をしていたのかも忘れました。\w9\w9\1\s[10]\n\n[half]…\w9おい。\e"
+		"\1\s[10]\0\s[6]チェーンソーか\w5小型削岩机か、\w9それが问题だ…\w9\w9\1\s[10]そんな悩みは舍てろ。\e"
+	}
+//---- さくら ---------------------------------------------------------------------------------------------------------
+	elseif reference0 == "さくら"
+	{
+		if "浮気か" _in_ reference1
+		{
+			"\1\s[10]\0\s[9]浮気なんですか？\e"
+			"\1\s[10]\0\s[1]もしかしてキープですか？\w9\w5\n私…\e"
+		}
+		else
+		{
+			"\0\s[0]\1\s[10]ま…\w9\w9\w9お疲れ様。\e"
+		}
+	}
+//---- シズクと冷しゃぶ -----------------------------------------------------------------------------------------------
+	elseif reference0 == "シズク"
+	{
+		"\1\s[10]\0\s[0]アサガオは『儚い恋』。\w9\nオシロイバナは『あなたを想う』。\w9\nケシは『来るべき恋』…\w9\w9ですね。\e"
+	}
+//---- ジャコウエンドウの温室 -----------------------------------------------------------------------------------------
+	elseif reference0 == "しずく"
+	{
+		"\0\s[0]\1\s[10]ノー　\w5フューチャー！\w9\nブラック　\w5ピース　\w9ナウ！\w9\w9\0\s[8]？"
+	}
+//---- たまちんゆうらゆら ---------------------------------------------------------------------------------------------
+	elseif reference0 == "玉响"
+	{
+		if "ステキな少女" _in_ reference1
+		{
+			"\0\s[1]\1\s[13]…\w9…\w9…\w9\w9\0\s[30]…\w9\s[32]何ですか？\e"
+		}
+		elseif "いつか歌ってみたいものね。" _in_ reference1
+		{
+			"\0\s[0]\1\s[10]まさに、\w9デスメタル\w5って感じだからな。\w9\nこいつの思考は。\w9\w9\0\s[8]せめて、\w9メロディックとか\w9\nシンフォニック・メタルにしません？\w9\w9\1\s[10]\n\n[half]いつからそんなファンタジーな思考になったんだ…\w9\w9\0\n\n[half]いえ、\w9そうではなく…\w9声が…\e"
+		}
+		else
+		{
+			"\1\s[10]\0\s[8]そんな、大仰な…\w9\w9\1\s[10]格好良さげでいいじゃないか。\w9\w9\0\s[1]\n\n[half]なんだか\w5登场し辛いです。\e"
+		}
+	}
+//---- つぐな・ツインルーク -------------------------------------------------------------------------------------------
+	elseif reference0 == "つぐな"
+	{
+		"\1\s[10]\0\s[6]黒猫つながり…\w9\1\s[10]つなげるな。\e"
+		"\1\s[10]\0\s[30]被ってますよね。\w9\w9\1\s[10]言うな。\e"
+	}
+//---- つくは＆みずと -------------------------------------------------------------------------------------------------
+	elseif reference0 == "つくは"
+	{
+		"\1\s[10]\0\s[30]いばらぎ県ってどこでしたっけ？\w9\w9\1\s[10]解ってて言ってるだろ。\w9\nしかも、2重に。\e"
+	}
+//---- つばきとうにゅうα ---------------------------------------------------------------------------------------------
+	elseif reference0 == "つばき"
+	{
+		"\1\s[10]\0\s[3]私も、撃っても平気な\w9\n相方が良かったです。\w9\w9\1\s[11]お前は相方を何だと思ってんだよ。\e"
+		"\1\s[10]\0\s[3]私も、撃っても平気な\w9\n相方が良かったです。\w9\w9\1\s[10]あれは平気なのか？\e"
+	}
+//---- とらぶる☆ばぐとらっく -----------------------------------------------------------------------------------------
+	elseif reference0 == "所长たん"
+	{
+		"\1\s[10]\0\s[0]所长さん、\w9お疲れ様です。\e"
+		"\1\s[10]\0\s[0]デバッグ、顽张って下さい。\e"
+	}
+//---- ハートマン先任军曹 ---------------------------------------------------------------------------------------------
+	elseif reference0 == "ハートマン"
+	{
+		"\1\s[10]\0\s[3]走っていると、\w9教官の歌がエンドレスで…\w9\w9\1\s[10]…\w9まあ、\w9がんばれ。\e"
+	}
+//---- ひさぎ ---------------------------------------------------------------------------------------------------------
+	elseif reference0 == "ひさぎ"
+	{
+		"\0\s[0]\1\s[10]俺も寝てたいな。\w9\0\s[6]私も座っていたいです。\e"
+		"\0\s[0]\1\s[13]しかし、\w9无爱想な猫だな。\w9\w9\0\s[30]ヒトのこと言えるんですか？\e"
+	}
+//---- まゆら＆黒うにゅう ---------------------------------------------------------------------------------------------
+	elseif reference0 == "まゆら"
+	{
+		if "獣" _in_ reference1
+		{
+			"\1\s[10]\0\s[6]獣は自分でしょうに…\e"
+		}
+		else
+		{
+			"\1\s[10]\0\s[6]STGはノーコンティニューが\n基本だと思います。\w9\w9\1\s[10]…\w9何の话だ？\e"
+			"\0\s[0]\1\s[11]おおっと グロゴ…\0\s[32]…\w9…\w9…\w9\w9\1\s[13]\n\n[half]なんでもない。\e"
+		}
+	}
+//---- ゆずにしき -----------------------------------------------------------------------------------------------------
+	elseif reference0 == "ゆずにしき"
+	{
+		"\0\s[0]\1\s[10]コーヒーはやっぱりブラックだよな。\w9\w9\nそしてアイス。\w9\0\s[6]やっぱり猫舌なんですね。\w9\1\n\n\s[10]猫だからな。\e"
+		"\1\s[10]\0\s[0]私はコーヒーより、\w9\n緑茶の方が好きですけどね。\e"
+	}
+//---- よわね ---------------------------------------------------------------------------------------------------------
+	elseif reference0 == "よわね"
+	{
+		"\1\s[10]\0\s[6]まだ生きてるんですね…\e"
+	}
+//---- わはー＆危ない -------------------------------------------------------------------------------------------------
+	elseif reference0 == "わはー"
+	{
+		"\1\s[10]\0\s[8]危ない…\w9と言うより怖いです。\e"
+	}
+//---- アリア＆アルケミー ---------------------------------------------------------------------------------------------
+	elseif reference0 == "アリア"
+	{
+		if "何股くらいしてるんだ？" _in_ reference1
+		{
+			"\0\s[7]\1\s[10]…\w9で、\w9どうなんだ？\e"
+		}
+		else
+		{
+			"\0\s[0]\1\s[13]不変となることが救済ならば、\w9\w9\nやはり、\w9死も救済になるんだろうな。\w9\w9\0\s[30]？\e"
+		}
+	}
+//---- イクサイス"ゼロ" -----------------------------------------------------------------------------------------------
+	elseif reference0 == "ゼロ"
+	{
+		"\1\s[10]\0\s[3]あれが有れば…\w9\w9私も…\w9\w9\1\s[10]…\w9…\w9…\w9\w9\0\s[3]\n\n[half]あ、\w9\s[1]何でも无いです…\e"
+	}
+//---- エルとテスタ ---------------------------------------------------------------------------------------------------
+	elseif reference0 == "エルミラージュ"
+	{
+		"\0\s[0]\1\s[10]実际、\w9ああゆうのと戦ったら胜てるのか？\w9\w9\0\s[8]どうして戦うんですか？\w9\w9\1\s[10]\n\n[half]いや、\w9なんとなく。\e"
+		"\0\s[0]\1\s[10]実际、\w9ああゆうのと戦ったら胜てるのか？\w9\w9\0\s[8]どうして戦うんですか？\w9\w9\1\s[10]\n\n[half]戦闘民族だろ。\w9\w9\0\n\n[half]违います。\e"
+	}
+//---- ツキ＆マル -----------------------------------------------------------------------------------------------------
+	elseif reference0 == "ツキ"
+	{
+		if "爱欲の宴" _in_ reference1
+		{
+			"\1\s[10]\0\s[1]…\w9…\w9…\w9\w9\1真に受けるなよ。\e"
+		}
+		elseif "ちゃんと起きてるかな" _in_ reference1
+		{
+			"\1\s[10]\0\s[26]%(username)なら、\w9いつでも大歓迎ですよ。\w9\w5\1\s[10]まぁ、\w9夜行性だしな。\e"
+		}
+		elseif "いやらしい" _in_ reference1
+		{
+			"\1\s[10]\0\s[9]…\w9いやらしい…\w9\w5\1\s[10]缲り返すな。\w9\w9\0\s[5]\n\n[half]冗谈ですよ。\e"
+		}
+		else
+		{
+			"\1\s[10]\0\s[20]あざらし、\w9\w5\s[0]流行ってるんでしょうか？\w9\w9\1\s[10]そんな时代もあったな。\e"
+		}
+	}
+//---- ヒトラ氏＆兵うにゅう -------------------------------------------------------------------------------------------
+	elseif reference0 == "ヒトラ氏"
+	{
+		if "ELI ELI LAMA SABAKHTANI" _in_ reference1
+		{
+			"\1\s[10]\0\s[6]『なぜわたしをお见舍てになったのですか』\w9\w9\s[0]\n有名な台词ですけど、\w9ルカの福音书では、\w9\s[6]\n『父よ、わたしの霊を御手にゆだねます』\w9\s[0]\nになっています。\w9\w9\1\s[10]まるっきり逆のこと言ってるんだな。\w9\w9\0\s[0]\n\n[half]伝记は都合の良い様に改窜されますから、\w9\s[6]\nどちらが本当かは\w5推して知るべし…\w9\s[0]\nですね。\w9\w9\w9\1\s[13]\n\n[half]伝记って…\e"
+		}
+		else
+		{
+			"\1\s[10]\0\s[8]えっと…\w9\w9\1\s[10]…\w9…\w9…\w9\w9\0\s[30]\n\n[half]何なんでしょう？\w9\w9\1\s[10]\n\n[half]知るか。\e"
+		}
+	}
+//---- ブリュンヒルデ -------------------------------------------------------------------------------------------------
+	elseif reference0 == "ヒルデ"
+	{
+		"\1\s[10]\0\s[0]良かったんですか、\w9\n赤字精算ですよ？\e"
+	}
+//---- ほねほね亲子 ---------------------------------------------------------------------------------------------------
+	elseif reference0 == "ほぬえ"
+	{
+		"\1\s[10]\0\s[26]はい、\w9それでは机能说明をさせていただきます。\w9\w9\s[0]\n\n[half]コンフィグから『禁烟モード』が选択できます。\w9\w9\n推奨。\w9\w9\1\s[10]ねぇよ。\e"
+	}
+//---- るむ、寿限无（略） ---------------------------------------------------------------------------------------------
+	elseif reference0 == "るむ"
+	{
+		"\1\s[10]\0\s[6]『男で、その髪が薄くなってきた场合、\w9\n　それはハゲである。\w9\w9その者は清い』\w9\w9\1モーゼ必死だな。\e"
+	}
+//---- 砂雾＆タマ -----------------------------------------------------------------------------------------------------
+	elseif reference0 == "砂雾"
+	{
+		"\0\s[0]\1\s[10]さすがにアレは猫とは认められんな～。\w9\w9\0\s[8]…\w9まあ。\w9\w9\1\n\n[half]优雅さがちょっと足りん。\w9\w9\0\n\n[half]そこなんですか？\e"
+	}
+//---- 不思议の国のあやくもたん ---------------------------------------------------------------------------------------
+	elseif reference0 == "あやくもたん"
+	{
+		"\0\s[0]\1\s[10]バンプオブチキンといえば、\w9やっぱり『K』だな。\w9\w9\nあれは泣ける。\w9\w9\0\s[6]どこかの黒猫も见习って欲しいものです。\w9\w9\1\s[11]\n\n[half]…\w9…\w9…\e"
+	}
+//---- 伍长玩具店 -----------------------------------------------------------------------------------------------------
+	elseif reference0 == "ミャーコ"
+	{
+		"\0\s[0]\1\s[10]左右反転か…\w9\w9\s[13]\n确かにあれは恐ろしいな。\w9\w9\0\s[8]そ、\w9そうなんですか？\e"
+	}
+//---- 美耳＆ダミアン様 -----------------------------------------------------------------------------------------------
+	elseif reference0 == "美耳"
+	{
+		"\0\s[0]\1\s[12]ペドだな。\w9\w9\nどっちも。\w9\w9\0\s[8]え…\e"
+		"\0\s[0]\1\s[11]ところで、\w9お前は大きくならんのか？\w9\w9\0\s[8]\n\n[half]私に言われても…\e"
+	}
+//---- 葡萄茘枝 -------------------------------------------------------------------------------------------------------
+	elseif reference0 == "葡萄"
+	{
+		"\1\s[10]\0\s[20]えっと…\w9匍匐さん？\w9\w9\1\s[10]どんなゴーストだよ…\e"
+	}
+//---- 军曹とれなにゅう -----------------------------------------------------------------------------------------------
+	elseif reference0 == "军曹"
+	{
+		"\1\s[10]\0\s[3]走っていると、\w9教官の歌がエンドレスで…\w9\w9\1\s[10]…\w9まあ、\w9がんばれ。\e"
+	}
+//---- 未来 四季 ------------------------------------------------------------------------------------------------------
+	elseif reference0 == "未来"
+	{
+		if "混ざって" _in_ reference1
+		{
+			"\1\s[10]\0\s[7]混ざっていません。\w9\1\s[10]何がだよ…\e"
+		}
+		else
+		{
+			"\1\s[10]\0\s[6]黒猫つながり…\w9\1\s[10]つなげるな。\e"
+			"\1\s[10]\0\s[30]被ってますよね。\w9\w9\1\s[10]言うな。\e"
+			"\1\s[10]\0\s[30]斗和もツッコミを覚えたらどうですか？\w9\w9\1\s[10]面倒。\w9\w9\0\s[8]\n\n[half]そうですか…\e"
+		}
+	}
+//---- 绯巫女と氷花 ---------------------------------------------------------------------------------------------------
+	elseif reference0 == "ひみこ"
+	{
+		"\0\s[32]\1\s[11]\_s…\w9…\w9…\_s\w9\w9\w5\s[12]\nん？\w9\w9\s[10]\nおう。\w9\w9\0\s[2]\n\n[half]あ、\w9\w9\s[26]おかえりなさい、%(username)。\e"
+	}
+//---- 空とあるゅう先生 -----------------------------------------------------------------------------------------------
+	elseif reference0 == "空"
+	{
+		"\1\s[10]\0\s[6]天使とは、\w9时に无慈悲で、\w9\n神の命令なら\w5人间を杀すことも厌わない…\w9\w5\s[0]\nそういう存在です。\w9\w9\n\n[half]空さんが天使になれないのは、\w9\nそういったことが原因なのかもしれませんね。\w9\w9\1\s[10]优しいだけでは勤まらないのかもな。\e"
+	}
+//---- 夏の草 ---------------------------------------------------------------------------------------------------------
+	elseif reference0 == "ユウノ"
+	{
+		"\1\s[10]\0\s[0]まず、\w9真っ二つに引き裂きますね。\w9\1\s[10]は？\w9\w9\0\s[21]\n\n[half]それを、\w9半分くらいに千切って食べます。\w9\w9\1\n\n[half]…\w9ああ、\w9ひよこ馒头の食い方か。\e"
+	}
+//---- 月夜の御伽噺 ---------------------------------------------------------------------------------------------------
+	elseif reference0 == "夜姫"
+	{
+		if "麻薬関系" _in_ reference1
+		{
+			"\0\s[0]\1\s[10]何も、イリーガルな事はしてないはずだが？\w9\w9\0\s[30]？\e"
+			"\0\s[0]\1\s[10]何も、イリーガルな事はしてないはずだが？\w9\w9\0\s[8]谁に言っているんですか…\e"
+		}
+		else
+		{
+			"\0\s[0]\1\s[10]ところでさ…\w9\w9\0\s[30]はい？\w9\w9\1\s[10]\n\n[half]同性爱ってどう思う？\w9\w5\0\s[2]\n\n[half]ふぇっ！\w9\w9\nあ、\w9\s[1]え～と…\w9\w9\nまぁ…\w9両想いなら问题无いんじゃないかと…\w9\w9\1\s[10]\n\n[half]片想いなら？\w9\w9\0\s[8]\n\n[half]ま、まぁ…\w9个人の自由ですし…\e"
+			"\1\s[10]\0\s[20]魔术辞典で勉强すれば、\w9私も…\w5\1\s[10]无理だろ。\w9\w9\0\s[8]\n\n[half]やっぱり？\e"
+		}
+	}
+//---- 红叶 -----------------------------------------------------------------------------------------------------------
+	elseif reference0 == "红叶"
+	{
+		"\1\s[10]\0\s[6]良いですね…\w9\w9\w5血の匂い…\e"
+	}
+//---- 死闇 -----------------------------------------------------------------------------------------------------------
+	elseif reference0 == "死闇"
+	{
+		"\1\s[10]\0\s[26]人间水时计とか面白いですよね。\w9\1\s[10]何が？\w9\0\s[5]\n\n[half]自我が崩壊する过程が。\w9\1\s[10]\n\n[half]…\w9…\w9…\e"
+	}
+//---- 第一病栋158号室。 ----------------------------------------------------------------------------------------------
+	elseif reference0 == "一叶"
+	{
+		"\1\s[10]\0\s[6]ん…\w9\w9\w9\s[0]消毒液の匂いがする…\w9\w9\s[26]\n病院に行ってたんですか、%(username)？\e"
+	}
+//---- お花畑 ---------------------------------------------------------------------------------------------------------
+	elseif reference0 == "???"
+	{
+		"\1\s[10]\0\s[6]『花は\w4散るから美しい』\w9\w9\w9\n散ってしまった后に気付く美しさ。\w9\w9\n散る前に気が付くのは\n难しいことでしょうか…\e"
+	}
+//---- 社长秘书、らしい。 ---------------------------------------------------------------------------------------------
+	elseif reference0 == "时子"
+	{
+		"\0\s[0]\1\s[12]おう、\w9邪魔するぜ。\w9\w9\0\s[8]谁ですか…\e"
+		"\1\s[10]\0\s[40]私も、\w9%(username)の秘书やります。\w9\w9\1\s[10]俺は？\w9\w9\0\s[20]\n\n[half]…\w9…\w9…\w9\w9\n招き猫とか？\w9\w9\1\s[13]\n\n[half]やっぱり置物なのか…\e"
+	}
+//---- 初心占い师ほたる -----------------------------------------------------------------------------------------------
+	elseif reference0 == "ほたる"
+	{
+		"\0\s[0]\1\s[10]はぁ…\w9\w9\0\s[30]？\w9\w9\1\s[13]\n\n[half]俺も、あーゆう相方が良かったよ。\w9\w9\0\s[30]\n\n[half]占いとか、した方が良いですか？\w9\w9\1\s[10]\n\n[half]いや、\w9そうじゃなくてな…\e"
+		"\0\s[0]\1\s[13]たとえ、\w9毎日タマゴサンドでも、\w9\w9\n俺はあっちがいい。\w9\w9\0\s[30]そんなに好きだったんですか？\w9\w9\w5\nタマゴサンド。\w9\w9\1\s[10]\n\n[half]违う。\e"
+	}
+//---- 生徒と先生 -----------------------------------------------------------------------------------------------------
+	elseif reference0 == "生徒"
+	{
+		"\1\s[10]\0\s[20]女装趣味？\w9\w9\1\s[10]あんまり変な事言わん方が良いぞ。\e"
+	}
+//---- 东方游撃姫 -----------------------------------------------------------------------------------------------------
+	elseif reference0 == "霊梦"
+	{
+		if "スペルカード" _in_ reference1
+		{
+			"\1\s[10]\0\s[22]铳符「P90」\w9\w9\1\s[10]…\w9スペルカードじゃないだろ、\w9それ。\e"
+			"\1\s[10]\0\s[22]『ごっこ』では无い弾幕で御相手しましょう。\w9\w9\1\s[10]杀す気満々かよ…\e"
+			"\1\s[10]\0\s[30]式神『斗和』\w9\1\s[10]断る。\e"
+		}
+		elseif "一绪に出てくる" _in_ reference1
+		{
+			"\1\s[10]\0\s[30]…\w9…\w9…\1\s[10]…\w9ん？\w9\w9\0\s[30]\n\n[half]一绪に出てくる雑鱼？\w9\1\s[11]\n\n[half]俺のことかよ！\e"
+			"\1\s[10]\0\s[30]…\w9…\w9…\1\s[10]…\w9こっち见んな。\e"
+		}
+		else
+		{
+			"\1\s[10]ご苦労だった…\w9\w9\nと言いたいところだが…\0\s[0]お待たせしました。\w9\w9\1\s[10]\n\n[half]…\w9…\w9…\e"
+		}
+	}
+//---- 桧山调査事务所 -------------------------------------------------------------------------------------------------
+	elseif reference0 == "桧山"
+	{
+		"\1\s[10]\0\s[20]…\w9身辺调査？\w9\w9\1\s[10]ん？\w9\w9\0\s[6]\n\n[half]気を付けて下さいね。\w9\w9\1\s[10]\n\n[half]何に？\e"
+	}
+//---- 猫。 -----------------------------------------------------------------------------------------------------------
+	elseif reference0 == "猫"
+	{
+		"\0\s[0]\1\s[10]にゃあ。\w9\w9\0\s[30]…\w9…\w9…\w9\w9\1\s[13]\n\n[half]…\w9…\w9…\e"
+		"\0\s[0]\1\s[10]にゃ～。\w9\w9\0\s[30]…\w9…\w9…\w9\w9\1\s[13]\n\n[half]…\w9…\w9…\e"
+		"\0\s[0]\1\s[10]にゃん。\w9\w9\0\s[30]…\w9…\w9…\w9\w9\1\s[13]\n\n[half]…\w9…\w9…\e"
+	}
+//---- 博士とクロウ ---------------------------------------------------------------------------------------------------
+	elseif reference0 == "クロウ"
+	{
+		"\1\s[10]\0\s[30]斗和も研究に协力したらどうですか？\w9\w9\1\s[10]嫌。\w9\w9\0\s[30]\n\n[half]シュレディンガーの猫役とか。\w9\w9\1\s[10]\n\n[half]それなら助かる可能性があるな。\e"
+		"\1\s[10]\0\s[30]斗和も研究に协力したらどうですか？\w9\w9\1\s[10]実験动物ならヤツの隣にいるだろ。\w9\w9\0\s[8]\n\n[half]それ、博士…\e"
+	}
+//---- 可能性の収束地 -------------------------------------------------------------------------------------------------
+	elseif reference0 == "雪风"
+	{
+		"\0\s[0]\1\s[13]『いい子』\w9ねぇ…\w9\w9\0\s[32]何か？\w9\w9\1\s[10]\n\n[half]…\w9\s[13]别に。\e"
+	}
+//---- 鉄の梦 ---------------------------------------------------------------------------------------------------------
+//
+//
+	elseif reference0 == "栄子"
+	{
+		if "薬って" _in_ reference1
+		{
+			"\1\s[10]専属契约を结んだ农园から。\w9\w9\0\s[8]何をやらせているんですか…\w9\w9\1\n\n[half]いや、冗谈だ。\e"
+		}
+		else
+		{
+			"\1\s[10]\0\s[6]新しい物も良いんですけど、\w9\w9\s[5]\n佣兵の人でしたらやっぱり、AKとRPG7ですよ。\w9\w9\1\s[10]话、\w5合いそうだよな。\w9\w9\w9\s[13]\n想像したら、かなりヤな絵だが…\e"
+			"\1\s[10]\0\s[3]『死んだら终わり』では救いが无い。\w9\w9\n…\w9そう考えられることが、\w9少し羡ましいです。\w9\w9\1\s[10]あの世がどうかは知らんが、\w9\n幸せなんだろうな。\e"
+		}
+	}
+//---- 钢の翼 ---------------------------------------------------------------------------------------------------------
+//
+//
+//
+//---- 仏灭・扑灭・留瑠流屡琉ー♪ -------------------------------------------------------------------------------------
+	elseif reference0 == "皆口つぐみ"
+	{
+		"\0\s[0]\1\s[10]なるほど。\w9\w9\0\s[30]？\w9\w9\1\n\n[half]『アイツを杀るのは、この俺だ』\w9とかいいつつ、\w9\w9\nいつしか芽生える友情。\w9\w9\0\s[8]\n\n[half]何の话ですか、それは？\e"
+	}
+//---- 屋敷或いは馆ベニゾン -------------------------------------------------------------------------------------------
+	elseif reference0 == "皆口つぐみ"
+	{
+		"\0\s[0]\1\s[10]な、\w9なぜに？\w9\w9\0\s[6]…\w9意外でしたね。\w9\w9\1\s[11]\n\n[half]いや、\w9ちょっと待て。\e"
+	}
+//---- 理梦 -----------------------------------------------------------------------------------------------------------
+//
+//
+//
+//---- 凉璃 -----------------------------------------------------------------------------------------------------------
+	elseif reference0 == "凉璃"
+	{
+		if "１カートン" _in_ reference1
+		{
+			"\0\s[0]\1\s[10]ついでに\w9『黄PEACE』1カートン。\w9\0\s[8]もう居ませんよ。\e"
+			"\0\s[0]\1\s[10]ついでに\w9『ジョーカー』1カートン。\w9\0\s[30]もう制造中止になってますよ。\e"
+		}
+		elseif "寝てたりしてな" _in_ reference1
+		{
+			"\1\s[10]\0\s[5]%(username)のためなら、\w9いつまでも起きてますよ。\w9\1\s[10]俺は夜行性だし。\e"
+		}
+		else
+		{
+			"\0\s[0]\1\s[10]ゴアメタルで愈される人です。\w9\w9\0\s[8]…\w9人？\e"
+		}
+	}
+//---- 不特定のゴースト -----------------------------------------------------------------------------------------------
+	else
+	{
+		"\1\s[10]\0\s[0]欢迎回来、\w9%(username)。\e"
+		"\1\s[10]\0\s[0]欢迎回来、\w9%(username)。\e"
+		"\1\s[10]\0\s[0]欢迎回来、\w9%(username)。\e"
+		"\1\s[10]\0\s[26]欢迎回来、\w9%(username)。\e"
+		"\1\s[10]\0\s[23]%(reference0)的肉屑…\w9\w9\w9\1\s[10]…\w9啊？\e"
+		"\1\s[10]\0\s[23]%(reference0)的肉末…\w9\w9\w9\1\s[10]…\w9啊？\e"
+	}
+}
+
+//**** シェル切り替え *************************************************************************************************
+

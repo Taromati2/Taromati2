@@ -1,0 +1,5 @@
+﻿charset,UTF-8
+type,shell
+name,SETSUKO OHARA
+accept,橘花
+directory,SETSUKO OHARA

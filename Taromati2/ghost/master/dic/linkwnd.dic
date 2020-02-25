@@ -1,0 +1,3417 @@
+//伪春菜连连看V2.5.3
+#define    BLANK_STATE    -1 
+#define    PATH            data\LinkWnd
+
+OnLinkWnd   //入口函数
+{
+	if QuickStartVersion{
+		NeedUpdate
+		return
+	}
+	_txt="";
+	playLinkWnd=1;
+	_w=LoadMapSeed;
+	levelmax=(30,36,36,36,36,LinkWndMapNum[0]+LinkWndMapNum[0]/2,LinkWndMapNum[1]+LinkWndMapNum[1]/2,LinkWndMapNum[2],LinkWndMapNum[3],LinkWndMapNum[4],LinkWndMapNum[5],LinkWndMapNum[6],LinkWndMapNum[7]); //关卡总数   
+        levelmax=(levelmax,levelmax,levelmax)
+	playlinkmusic=linkmusic;
+        musicid=0;
+	LinkWndPlayNum=TOINT(LinkWndPlayNum);
+	LinkWndFlag="";
+        m_level=1;
+ 
+	if TOINT(m_levels[13*link_timemode])==TOINT(ClearMode[13*link_timemode])&&levelname==0
+		LinkWndnd=0;
+	if linkwndmusic==0
+		_txt+="\![sound,stop]\![sound,wait]";
+	_txt+="\![raise,OnInitLinkWnd]";
+	_txt;
+	
+}
+
+
+CheckLinkWnd   //参数检查
+{
+	
+	LinkBallInfo=("0,34,%(mylinkball[0]),绯红之眼","1,19,%(mylinkball[1]),魅力之眼","2,5,%(mylinkball[2]),黄金之瞳","3,23,%(mylinkball[3]),守护之眼","4,7,%(mylinkball[4]),空之眼","5,21,%(mylinkball[5]),海之瞳","6,25,%(mylinkball[6]),魔幻之瞳","7,11,%(mylinkball[7]),光明之瞳","8,18,%(mylinkball[8]),幸运之瞳","9,31,%(mylinkball[9]),神圣之瞳","10,35,%(mylinkball[10]),上帝之眼");
+	m_dir[0] = 1;
+	m_dir[1] = 2;
+	m_dir[2] = 3;
+	m_dir[3] = 4;
+	if LinkWndMode==NULL
+		LinkWndMode=0;
+	if LinkWndMode==0
+	{
+		LinkWnd_LEFT    = -20;               
+		LinkWnd_TOP     = -5; 
+		m_nCol=6+2;      //水平数量
+		m_nRow=6+2 ;     //竖直数量
+		LinkWndWIDTH=42;
+		LinkWndHigh=48;
+	}
+	elseif LinkWndMode==1
+	{
+		LinkWnd_LEFT    = -25;               
+		LinkWnd_TOP     = 0; 
+		m_nCol=8+2;
+		m_nRow=8+2;
+		LinkWndWIDTH=35;
+		LinkWndHigh=40;
+	}
+	elseif LinkWndMode==2
+	{
+		LinkWnd_LEFT    = -17;               
+		LinkWnd_TOP     = 10;        
+		m_nCol=10+2;
+		m_nRow=10+2;
+		LinkWndWIDTH=28;
+		LinkWndHigh=32;
+	}
+	
+	elseif LinkWndMode==3
+	{
+		LinkWnd_LEFT    = -16;               
+		LinkWnd_TOP     = 10;        
+		m_nCol=14+2;
+		m_nRow=14+2;
+		LinkWndWIDTH=21;
+		LinkWndHigh=24;
+	}
+	LinkBallWIDTH=28;
+	LinkBallHigh=32;
+	if ISVAR("LinkWndnd")==0
+		LinkWndnd=0;
+	
+	if LinkWndnd==0
+		难度="简单";
+	elseif LinkWndnd==1
+		难度="普通";
+	elseif LinkWndnd==2
+		难度="困难";
+	
+	
+                     _timemode=0
+                     if link_timemode==0||link_timemode==1
+                     _timemode=link_timemode+1
+                    if levelname>0
+		    {
+                     levelsort=13*_timemode+uselinkselfmap*4+(levelname-1)*4+LinkWndMode+1;
+                     }
+                    else
+	            levelsort=13*_timemode;
+	if freemode==0
+	{
+		MatchNum=TOINT(4+((LinkWndMode+1)*(LinkWndnd+1)*0.25+m_levels[levelsort]*0.5)*2);
+		if m_levels[13*link_timemode]>=7&&levelsort==0
+			MatchNum=TOINT(4+((LinkWndMode+1)*(LinkWndnd+1)*0.25+m_levels*0.5)*2);
+                if levelname==1
+			MatchNum=TOINT(5+(LinkWndnd+m_levels[levelsort]*0.5)*2);
+		if levelname==2
+			MatchNum=TOINT(12+LinkWndnd*12);
+	}
+	
+	
+	if MatchNum>36
+		MatchNum=36;
+	linkwndmoney=TOINT((m_levels[13*link_timemode]*0.5+LinkWndMode+LinkWndnd+1)*(LinkWndMode+1)*50) ;
+	if LinkWndSeed>3
+	{
+		LinkWndLife+=LinkWndSeed/3;
+		LinkWndSeed=LinkWndSeed%3;
+	}
+	
+	if LinkWndLife>=1&&LinkWndSeed<=0
+	{
+		LinkWndLife--;
+		LinkWndSeed=3;
+	}
+	if uselinkselfmap==1
+	{
+		if TOINT(m_levels[levelsort]+1)>TOINT(LinkWndMapNum[LinkWndMode+4])
+			m_levels[levelsort]=TOINT(LinkWndMapNum[LinkWndMode+4]);
+		
+	}
+			
+}
+
+
+OnInitLinkWnd   //新游戏入口
+{
+	_txt="\C\![quicksession,1]\c\b[2]";
+	mess="";
+	playLinkWnd=1;
+	map=IARRAY;
+        _txt+=CheckLinkWnd;   
+	_txt+=Loadm_map;
+	zs = 0;
+	select=-1;
+	m_nY1= BLANK_STATE;
+	m_nX1= BLANK_STATE;
+
+	if freemode==0
+	{
+		LinkWndLife=3;
+                if link_timemode==0
+                 LinkWndLife=LinkWndMode
+		LinkWndSeed=3;
+	}
+		/*
+		for _i=1; _i<m_nRow-1; _i++ 
+		{
+		for _j=1; _j<m_nCol-1; _j++
+		{
+		
+		  if m_map[_i*m_nCol+_j] != BLANK_STATE 
+		  {
+		  continue;
+		  }
+		  
+			m_map[_i*m_nCol+_j] = RAND(MatchNum) + 1;
+			
+			  zs ++;
+			  m = RAND(m_nRow-2)+ 1;
+			  n = RAND(m_nCol-2)+ 1;
+			  
+				while  m_map[m*m_nCol+n] !=BLANK_STATE && zs<=(m_nRow-2)*(m_nCol-2);
+				{
+				m = RAND(m_nRow-2)+ 1;
+				n = RAND(m_nCol-2)+ 1;
+				}
+				
+				  if m_map[m*m_nCol+n] ==BLANK_STATE 
+				  {
+				  m_map[m*m_nCol+n] =  m_map[_i*m_nCol+_j];
+				  zs ++;
+				  }
+				  }
+				  }
+	*/
+
+        link_timebase=(m_MapSeed.Num+MatchNum)*1200
+        if link_timemode==1
+	link_timebase=(m_MapSeed.Num+MatchNum)*150
+	link_timebar=GETTICKCOUNT
+        link_timemax=link_timebase+GETTICKCOUNT
+	_txt+=OnDrawLinkWnd;
+	_txt+=LinkWndMenu;
+    
+	_txt;
+}
+
+m_MapSeed.Load    //地图种子读取
+{
+	_m_MapSeed.Seed=IARRAY;
+	if freemode==0
+	{
+		if levelname==2
+		{
+			if uselinkselfmap==1
+				_m_MapSeed.Seed=LoadMapSeed(LinkWndMode,TOINT(m_levels[levelsort])+1,1);
+			else
+			{
+				if LinkWndMode==2||LinkWndMode==3
+					_m_MapSeed.Seed=LoadMapSeed(LinkWndMode,TOINT(m_levels[levelsort])+1,0);
+				else
+				{
+					if (TOINT(m_levels[levelsort])+1)%3==0
+						_m_MapSeed.Seed=RandomMapSeed((m_nRow-2)*(m_nCol-2));
+					else
+					{
+						_m_levels=TOINT(m_levels[levelsort])+1-(TOINT(m_levels[levelsort])+1)/3;
+						_m_MapSeed.Seed=LoadMapSeed(LinkWndMode,_m_levels,0);
+					}
+				}
+			}
+		}
+		else
+			_m_MapSeed.Seed=RandomMapSeed((m_nRow-2)*(m_nCol-2));
+    }
+	else
+	{
+		
+		LinkWndMode=RAND(4);
+		CheckLinkWnd;
+                if LinkWndMapNum[4+LinkWndMode]&&RAND(10)>6
+                {   
+		     _m_MapSeed.Seed=LoadMapSeed(LinkWndMode,RAND(LinkWndMapNum[4+LinkWndMode])+1,1);
+                }
+                           
+		elseif LinkWndMapNum[LinkWndMode]
+		{
+			_k=RAND(10);
+			if _k>3
+			{
+	                    if LinkWndMode==2||LinkWndMode==3
+                 	       _m_MapSeed.Seed=LoadMapSeed(LinkWndMode,RAND(ClearMode[5+LinkWndMode])+1,0);
+                            else
+                            {
+					_m_levels=ClearMode[5+LinkWndMode]-ClearMode[5+LinkWndMode]/3;
+					_m_MapSeed.Seed=LoadMapSeed(LinkWndMode,RAND(_m_levels)+1,0);
+		 	     }
+                        }
+			else
+				_m_MapSeed.Seed=RandomMapSeed((m_nRow-2-RAND(LinkWndMode*LinkWndMode))*(m_nCol-2-2*RAND(LinkWndMode+1)));
+		}
+		else
+			_m_MapSeed.Seed=RandomMapSeed((m_nRow-2-RAND(LinkWndMode*LinkWndMode))*(m_nCol-2-2*RAND(LinkWndMode+1)));
+		
+	}
+	_m_MapSeed.Seed;
+	
+}
+
+
+Loadm_map     //加载地图
+{
+	_mode=_argv[0];
+	_maplevel=_argv[1];
+	m_MapSeed.Num=0;
+	_m_MapSeed.Seed=IARRAY;
+	_m_MapSeed.map=IARRAY;
+	_nElemID=IARRAY;
+	_m_levels=0;
+	
+	if playLinkWnd==3
+		_m_MapSeed.Seed= m_MapSeed.Seed;  
+	else
+		_m_MapSeed.Seed=m_MapSeed.Load;
+	if freemode==1
+        	m_MapSeed.Seed=_m_MapSeed.Seed;
+	
+	if _m_MapSeed.Seed=="error"
+	{
+		mess="地图错误，地图文件不存在";
+		return;
+	}
+	if _m_MapSeed.Seed=="error01"
+	{
+		mess="错误的地图方块数量";
+		return;
+	}
+	
+	
+	for _i=0; _i<m_nRow; _i++ 
+	{
+		for _j=0; _j<m_nCol; _j++
+		{
+			_m_MapSeed.map[_i*m_nCol+_j]=-1;
+		}
+	}
+	
+	
+	
+	for _i=0; _i<m_nRow; _i++ 
+	{
+		for _j=0; _j<m_nCol; _j++
+		{
+			_m_MapSeed.map[_i*m_nCol+_j]=TOINT(_m_MapSeed.Seed[(_i-1)*(m_nCol-2)+_j-1]);
+			if TOINT(_m_MapSeed.Seed[_i*m_nCol+_j])==1;
+			m_MapSeed.Num++;
+			
+		}
+	}
+	m_Map.nLeft = m_MapSeed.Num;
+	
+	if m_MapSeed.Num % 2 
+	{
+		mess="错误的地图,方块数量不为偶数";
+		
+		return;
+	}
+		
+	_num=m_MapSeed.Num/2;
+	for _i = 0; _i < _num; _i++
+	{
+		_nElemID[_i * 2 + 1]=RAND(MatchNum)+1;
+		_nElemID[_i * 2] = _nElemID[_i * 2 + 1];
+	}
+				
+        Clearm_map;
+	//将方块填入地图
+	for _i=1; _i<m_nRow-1; _i++ 
+	{
+		for _j=1; _j<m_nCol-1; _j++
+		{
+						
+			//如果地图种子的_i行_j列是true，则从入围方块里随机选一块填进去
+			if TOINT(_m_MapSeed.Seed[(_i-1)*(m_nCol-2)+_j-1])==1
+			{
+		        	_tmp = RAND(m_MapSeed.Num);
+							
+		        	//如果之前已被选进去，则重选
+		        	while _nElemID[_tmp] == -1 
+		        	{
+			        	_tmp = RAND(m_MapSeed.Num);
+		        	}
+		        	//将tmp的id填进去并且将其设置为已选
+		        	m_map[_i*m_nCol+_j] = _nElemID[_tmp];
+				_nElemID[_tmp] = -1;
+			}
+			else 
+				m_map[_i*m_nCol+_j] = -1;
+		}
+	}
+				
+        if CheckNum!=m_Map.nLeft
+       {     	
+         mess="错误的地图，方块数量不一致";
+	return;				
+	}			
+}
+
+
+
+
+
+Clearm_map    //地图清空
+{
+     m_map=IARRAY;
+     for _i=0; _i<m_nRow; _i++ 
+     {
+          for _j=0; _j<m_nCol; _j++
+		{
+			m_map[_i*m_nCol+_j]=BLANK_STATE;
+		}
+		
+	  }	
+     }
+
+
+
+
+RandomMapSeed   //随机地图种子
+{
+	_cnt=TOINT(_argv[0]);
+	_num=(m_nRow-2)*(m_nCol-2);
+	if _cnt>_num
+	{
+        _mapseed="error01";
+        _mapseed;return;
+	}
+	_mapseed=IARRAY
+		for _i=0; _i<m_nRow-2; _i++ 
+		{
+			for _j=0; _j<m_nCol-2; _j++
+			{
+                _mapseed[_i*(m_nCol-2)+_j]=0;          
+			}
+			
+		}
+		
+		for _i=0; _i<_cnt;_i++
+		{
+			_id = RAND(_num);
+			while _mapseed[_id/(m_nRow-2)*(m_nCol-2)+_id%(m_nRow-2)]
+			{
+				_id = RAND(_num);
+			}
+			_mapseed[_id/(m_nRow-2)*(m_nCol-2)+_id%(m_nRow-2)]=1;
+			
+		}
+		_mapseed;
+}
+
+
+OnDrawLinkWnd   //绘图
+{
+	playLinkWnd=1;
+	_txt="\C\![quicksession,1]\c\![set,choicetimeout,0]\b[2]";
+        if reference0=="return"
+             link_timemax=link_timebar+GETTICKCOUNT
+        if link_timemax-GETTICKCOUNT>=link_timebase
+           link_timemax=GETTICKCOUNT+link_timebase
+        link_timebar=link_timemax-GETTICKCOUNT
+        if link_timebar<0
+         link_timebar=0
+	if LinkWndFlag=="optionchange"
+	{
+		OnLinkWnd;return
+	}
+	_PIC="data\LinkWnd\bmp130.bmp";
+	if LinkWndMode==1
+		_PIC="data\LinkWnd\bmp1301.bmp";
+	elseif LinkWndMode==2
+		_PIC="data\LinkWnd\bmp1302.bmp";
+	elseif LinkWndMode==3
+		_PIC="data\LinkWnd\bmp1303.bmp";
+	
+	
+	for  _i=1; _i<m_nRow-1; _i++
+	{
+		for _j=1; _j<m_nCol-1; _j++ 
+		{
+			_x = _j*(LinkWndWIDTH-1);
+			_y = _i*(LinkWndHigh-1);
+			
+			if  m_map[_i*m_nCol+_j] >0 
+			{
+				_sort=m_map[_i*m_nCol+_j];		
+				_txt+="\_l[%(_x+LinkWnd_LEFT),%(LinkWnd_TOP+_y)]\__q[OnLButtonDown,%(_j),%(_i)]\_b[%(_PIC),inline,--clipping=1 %((_sort-1)*LinkWndHigh+1) %(LinkWndWIDTH) %((_sort)*LinkWndHigh)]\__q";
+			}
+			if m_map[_i*m_nCol+_j] >0 && select==_i*m_nCol+_j
+			{
+				_sort=m_map[_i*m_nCol+_j];
+				_txt+="\_l[%(_x+LinkWnd_LEFT),%(LinkWnd_TOP+_y)]\__q[OnLButtonDown,%(_j),%(_i)]\_b[%(_PIC),inline,--clipping=%(LinkWndWIDTH+1) %((_sort-1)*LinkWndHigh+1) %(LinkWndWIDTH*2) %((_sort)*LinkWndHigh)]\__q";
+				
+			}
+		}
+	}
+//	_txt+=DrawFoot;
+	_txt+=LinkWndMenu;
+	if linkwndmusic==NULL
+	{     
+		_txt+=BGMusic;
+	}
+	_txt;
+}
+
+OnResort    //重排入口
+{
+	LinkWndLife--;
+	_txt=""
+		_txt+=Resort;
+	_txt+=OnDrawLinkWnd;
+	
+	_txt;
+	
+}
+
+Resort
+{                 
+	_pos = 0;
+    _nElemID=IARRAY;
+	for _i=1; _i<m_nRow-1; _i++ 
+	{
+		for _j=1; _j<m_nCol-1; _j++
+		{
+			if m_map[_i*m_nCol+_j] != -1
+			{
+				_nElemID[_pos] = m_map[_i*m_nCol+_j];
+				_pos++;
+			}
+		}
+	}
+	
+	for _i=1; _i<m_nRow-1; _i++ 
+	{
+		for _j=1; _j<m_nCol-1; _j++
+		{
+			if m_map[_i*m_nCol+_j] != -1
+			{
+				//产生随机数
+				_tmp=RAND(_pos);
+				while _nElemID[_tmp] == -1 
+				{
+					_tmp=RAND(_pos);
+				}
+				
+				m_map[_i*m_nCol+_j] = _nElemID[_tmp];
+				_nElemID[_tmp] = -1;
+			}
+		}
+	}
+	
+}
+
+
+
+BGMusic   //音乐
+{
+	
+	_txt="";
+	if freemode==0
+	{
+		//TOINT(m_levels[levelsort])/(levelsort/levelsort*3)%3
+		if levelname%3==0
+		{
+			if LinkWndMode==0
+				_txt+=PlayWithLyric("loop",0,"data\LinkWnd\bg.mid");
+			elseif LinkWndMode==1
+				_txt+=PlayWithLyric("loop",0,"data\LinkWnd\easymap.mid");
+			elseif LinkWndMode==2
+				_txt+=PlayWithLyric("loop",0,"data\LinkWnd\normal.mid");
+			elseif LinkWndMode==3
+				_txt+=PlayWithLyric("loop",0,"data\LinkWnd\hard.mid");
+		}
+		
+		elseif levelname%3==1
+		{
+			if LinkWndMode==0
+				_txt+=PlayWithLyric("loop",0,"data\LinkWnd\bg_01.mid");
+			elseif LinkWndMode==1
+				_txt+=PlayWithLyric("loop",0,"data\LinkWnd\bg_02.mid");
+			elseif LinkWndMode==2
+				_txt+=PlayWithLyric("loop",0,"data\LinkWnd\bg_03.mid");
+			elseif LinkWndMode==3
+				_txt+=PlayWithLyric("loop",0,"data\LinkWnd\bg_04.mid");
+		}
+		
+		elseif levelname%3==2
+		{
+			if LinkWndMode==0
+				_txt+=PlayWithLyric("loop",0,"data\LinkWnd\Rich16.mid");
+			elseif LinkWndMode==1
+				_txt+=PlayWithLyric("loop",0,"data\LinkWnd\Rich22.mid");
+			elseif LinkWndMode==2
+				_txt+=PlayWithLyric("loop",0,"data\LinkWnd\Rich19.mid");
+			elseif LinkWndMode==3
+				_txt+=PlayWithLyric("loop",0,"data\LinkWnd\Canon8.mid");
+		}
+		
+	}
+	else
+	{
+	
+		  // if linkwndmusic==NULL&&freemode==1
+        //{
+             linkmusicfile=playlinkmusic[musicid]
+           _txt+=PlayWithLyric("play",0,linkmusicfile);
+
+       // }
+        
+	}	
+	_txt;
+	
+}
+
+
+linkmusic       //音乐列表
+{
+	_a="bg.mid,easymap.mid,normal.mid,hard.mid,bg_01.mid,bg_02.mid,bg_03.mid,bg_04.mid,Rich16.mid,Rich22.mid,Rich19.mid,Canon8.mid";
+	_music="";
+	for _i=0; _i<12; _i++ 
+	{
+		if _music[_i] != -1
+		{
+			
+			_tmp=RAND(12);
+			while _a[_tmp] == -1 
+			{
+				_tmp=RAND(12);
+			}
+			
+			_music[_i] ="PATH\" + _a[_tmp];
+			_a[_tmp] = -1;
+		}
+	}
+	
+	
+	
+	_music;
+	
+	
+	
+	/*
+	"easymap.mid"
+	"normal.mid"
+	"hard.mid"
+	"bg_01.mid"
+	"bg_02.mid"
+	"bg_03.mid"
+	"bg_04.mid"
+	"fancy.mid"
+	"Rich22.mid"
+	"Rich19.mid"
+	"Canon8.mid"
+	*/
+}
+
+
+
+LinkWndMenu    //游戏目录
+{
+	//_txt="\C\![quicksession,true]\c\![set,choicetimeout,0]\b[2]"
+	_txt="\0\s[26]\_l[10,0]\q[新游戏,OnInitLinkWnd]  \_l[75,0]\q[设定,OnLinkWndOption]";
+	if freemode
+		_txt+="\_l[120,0]N:%(m_MapSeed.Num) C:%(CheckNum) L：%(m_Map.nLeft)";
+	else
+		_txt+="\_l[120,0]◆%(TOINT(m_levels[levelsort])+1),N:%(m_MapSeed.Num),L:%(m_Map.nLeft)";
+	_txt+="\_l[230,-]\q[终了,OnLinkWndGameOver]";;
+        _timeleft=link_timebar/1000
+        if link_timemode==NULL||link_timemode==1
+        _txt+="\n\_l[10,-]\__q[OnLinkBar,%(_timeleft)]%(LinkBar(link_timebar,link_timebase))\__q\_l[15,-]%(_timeleft)"
+        else
+        {
+	_txt+="\n\_l[10,-]生命数:%(LinkWndLife)";  
+		if freemode
+			_txt+=" \_l[75,-]\__q[OnBuyLinkSeed]种子数:%(LinkWndSeed)\__q";
+		else
+			_txt+="\_l[75,-]种子数:%(LinkWndSeed)";
+         }
+	_txt+=CheckLinkWnd;
+		if LinkWndLife>=0&&LinkWndSeed>=1
+			_txt+="\_l[130,-]\q[提示,Onremind]";
+		else
+			_txt+="\_l[130,-]\f[color,192,192,192]提示\f[color,default]";
+                if link_timemode==NULL
+                 _txt+=":%(LinkWndSeed)"
+		if LinkWndLife>=1
+			_txt+="\_l[180,-]\q[重排,OnResort]";
+		else
+			_txt+="\_l[180,-]\f[color,192,192,192]重排\f[color,default]";
+                if link_timemode==NULL
+                 _txt+=":%(LinkWndLife)"
+		_txt+="\_l[230,-]\q[帮助,OnLinkWndHelp]";
+
+		if mess!=""
+			_txt+="\n"+mess;
+		_txt;
+		
+}
+OnLinkBar
+{
+"还剩%(reference0)秒\x"
+--
+OnDrawLinkWnd
+
+}
+
+OnBuyLinkSeed    //种子购买
+{
+	_txt="\C\![quicksession,true]\c\![set,choicetimeout,0]\b[2]";
+	if reference0=="buy"
+	{
+		if money>=TOINT(reference1)
+		{
+			money-=TOINT(reference1);
+			LinkWndSeed+=TOINT(reference2);
+			_txt+="购买%(reference2)粒种子，花费%(reference1)金钱。\n";
+		}
+		else
+			_txt+="金钱不足，不能购买\n";
+	}
+	else
+		_txt+="\n";
+	_txt+=ShowMoney+"\n";
+	_txt+=CheckLinkWnd;
+	_txt+="\种子购买（购买后请在休闲模式使用完，否则数量会重置。）\n";
+	_txt+="生命数:%(LinkWndLife)  种子数:%(LinkWndSeed)\n";
+	_txt+="\0\s[40]种子可以金钱来购买，价格是10粒/1000金钱，种子数量超过3能自动转换为生命，要购买多少种子呢？\n";
+	_txt+="\q[10,OnBuyLinkSeed,buy,1000,10]  \q[20,OnBuyLinkSeed,buy,2000,20]  \q[40,OnBuyLinkSeed,buy,4000,40]  \q[50,OnBuyLinkSeed,buy,5000,50]  \q[60,OnBuyLinkSeed,buy,6000,60]  \q[80,OnBuyLinkSeed,buy,8000,80]  \q[100,OnBuyLinkSeed,buy,10000,100]\n";
+	
+	
+	_txt+="\n\n\n\n\q[◇返回,OnDrawLinkWnd]";
+	_txt;
+}
+
+OnLinkWndOption     //设定
+{
+//	_txt="\![quicksession,1]\![set,choicetimeout,0]\b[2]";
+      //  if playLinkWnd==2;
+       	_txt="\C\![quicksession,1]\c\![set,choicetimeout,0]\b[2]";
+	LinkWndFlag="";
+	LinkBall.select="";
+	if reference0=="ms"
+	{
+		LinkWndMode=reference1;
+		LinkWndFlag="optionchange";
+	}
+	
+	elseif reference0=="nd"
+	{
+		LinkWndnd=reference1;
+		LinkWndFlag="optionchange";
+	}
+	elseif reference0=="free"
+	{
+		freemode=reference1;
+		LinkWndFlag="optionchange";
+	}
+	elseif reference0=="gk"
+	{	
+		levelsort=reference2;
+		m_levels[levelsort]=reference1;
+		LinkWndFlag="optionchange";
+	}
+	elseif reference0=="matchnum"
+	{	
+		MatchNum=reference1;
+		LinkWndFlag="optionchange";
+	}
+	
+	elseif reference0=="levelname"
+	{
+		levelname=reference1;
+		LinkWndFlag="optionchange";
+	}
+	elseif reference0=="linkwndmusic"
+	{
+		linkwndmusic=reference1;
+		if linkwndmusic
+			_txt+="\![sound,stop]";
+	}
+	elseif reference0=="uselinkselfmap"
+	{
+		uselinkselfmap=reference1;	
+	}
+	elseif reference0=="link_timemode"
+	{
+		link_timemode=reference1;
+                LinkWndFlag="optionchange";	
+	}
+
+	
+	elseif reference0=="LinkBall"|| _argv[0]=="LinkBall"
+	{
+		LinkBall.select=TOINT(reference1);
+		if TOINT(shiftmode)==0
+		{
+			if _argv[1]!=""
+				LinkBall.select=TOINT(_argv[1]);
+			if TOINT(mylinkball[LinkBall.select])>=2&&LinkBall.select<10
+			{
+				mylinkball[LinkBall.select]=TOINT(mylinkball[LinkBall.select])-2;
+				mylinkball[LinkBall.select+1]=TOINT(mylinkball[LinkBall.select+1])+1;
+			}
+		}
+		elseif TOINT(shiftmode)==1
+		{
+			if _argv[1]!=""
+				LinkBall.select=TOINT(_argv[1]+1);
+			if TOINT(mylinkball[LinkBall.select])>=1&&LinkBall.select>0
+			{
+				mylinkball[LinkBall.select]=TOINT(mylinkball[LinkBall.select])-1;
+				mylinkball[LinkBall.select-1]=TOINT(mylinkball[LinkBall.select-1])+2;
+			}
+		}
+
+        	elseif TOINT(shiftmode)==2
+		{
+			if _argv[1]!=""
+				LinkBall.select=TOINT(_argv[1]);
+			if TOINT(mylinkball[LinkBall.select])>=2&&LinkBall.select<10
+			{
+                                mylinkball[LinkBall.select+1]=TOINT(mylinkball[LinkBall.select+1])+TOINT(mylinkball[LinkBall.select]/2);
+				mylinkball[LinkBall.select]=TOINT(mylinkball[LinkBall.select])-2*TOINT(mylinkball[LinkBall.select]/2);
+			}
+		}
+
+        	elseif TOINT(shiftmode)==3
+		{
+			if _argv[1]!=""
+				LinkBall.select=TOINT(_argv[1]+1);
+			if TOINT(mylinkball[LinkBall.select])>=1&&LinkBall.select>0
+			{
+				mylinkball[LinkBall.select-1]=TOINT(mylinkball[LinkBall.select-1])+2*TOINT(mylinkball[LinkBall.select]);
+                                mylinkball[LinkBall.select]=TOINT(mylinkball[LinkBall.select])-TOINT(mylinkball[LinkBall.select]);
+			}
+		}
+
+
+	}
+	elseif reference0=="shift"
+	{
+		shiftmode=TOINT((shiftmode+1)%4);
+	}
+	
+	_t = "◇,◆";	
+	_txt+="休闲模式：\q[%(_t[TOINT(freemode)]) ON,OnLinkWndOption,free,1]  \q[%(_t[1 - TOINT(freemode)]) OFF,OnLinkWndOption,free,0]\n";	
+	_m_levels="";
+	_txt+=CheckLinkWnd;
+	_txt+=CheckLinkMapNum;
+	
+	if freemode==NULL
+	{       
+		_t = "◆,◇,◇,◇,◆,◇,◇,◇,◆,◇,◇,◇,◆,◇,◇,◇,◆";
+		_txt+="游戏模式：\n\q[%(_t[TOINT(LinkWndMode)])人眼,OnLinkWndOption,ms,0,人眼]   \q[%(_t[TOINT(LinkWndMode)+3])地眼,OnLinkWndOption,ms,1,地眼]   \q[%(_t[TOINT(LinkWndMode)+6])天眼,OnLinkWndOption,ms,2,天眼]   \q[%(_t[TOINT(LinkWndMode)+9])神眼,OnLinkWndOption,ms,3,神眼]\n";
+		_t = "◆,◇,◇,◆,◇,◇,◆,◇,◇,◆,◇,◇,◆";
+		_txt+="游戏难度：\n\q[%(_t[TOINT(LinkWndnd)])简单,OnLinkWndOption,nd,0,简单] \q[%(_t[TOINT(LinkWndnd)+2])普通,OnLinkWndOption,nd,1,普通]  \q[%(_t[TOINT(LinkWndnd)+4])困难,OnLinkWndOption,nd,2,困难]\n";
+		_t = "◆,◇,◇,◆,◇,◇,◆,◇,◇,◆,◇,◇,◆";
+                _txt+="时间模式：\q[%(_t[TOINT(link_timemode)])普通模式,OnLinkWndOption,link_timemode,0]  \q[%(_t[TOINT(link_timemode)+2])争分获秒模式,OnLinkWndOption,link_timemode,1]  \q[%(_t[TOINT(link_timemode)+4])生命模式,OnLinkWndOption,link_timemode,2]\n"; 
+
+		_m_levels="";
+		_levelname="";
+		_n="金钱模式,成就模式,地图模式";
+		_txt+="关卡类型：";
+		for _i=0;_i<3;_i++
+		{
+			if levelname==_i   
+				_levelname[_i]="◆%(_n[_i])";
+			else
+				_levelname[_i]="◇%(_n[_i])";
+			
+			_txt+= "\_l[%((_i%6)*70+60),-]";
+_txt+="\f[color,108,129,182]\q[%(_levelname[_i]),OnLinkWndOption,levelname,%(_i)]\f[color,default]";
+			if (_i+1)%6==0
+			{
+				_txt+="\n";
+			}	
+		}
+		_txt+="\n";
+		if levelname==0
+		{
+			_txt+="金钱模式关卡：(完成神眼3个难度模式方能进入下一关）\n";
+			for _i=0;_i<30;_i++
+			{
+				
+				if TOINT(m_levels[levelsort])==_i
+					_m_levels[_i]=" ◆%(_i+1) ";
+				else
+					_m_levels[_i]=" ◇%(_i+1) ";
+				_a=_关卡[_i];
+				_txt += "\_l[%((_i%6)*50)]";
+				if _i<=TOINT(ClearMode[levelsort])
+					_txt+="\f[color,108,129,182]\q[%(_m_levels[_i]),OnLinkWndOption,gk,%(_i),%(levelsort)]\f[color,default]";
+				else
+					_txt+="\f[color,192,192,192]%(_m_levels[_i])\f[color,default]";
+				if (_i+1)%6==0
+				{
+					_txt+="\n";
+				}
+			} 
+		}
+		elseif levelname==1
+		{
+			_txt+="成就模式关卡：（请选择要完成的游戏模式）\n";
+			
+			for _j=0;_j<4;_j++
+			{     
+				if LinkWndMode== _j
+				{
+					_t="人眼,地眼,天眼,神眼";
+					_txt+="%(_t[_j])成就关卡：\n";
+					for _i=0;_i<36;_i++
+					{
+						
+						if TOINT(m_levels[levelsort])==_i
+							_m_levels[_i]=" ◆%(_i+1) ";
+						else
+							_m_levels[_i]=" ◇%(_i+1) "; 
+						_txt += "\_l[%((_i%6)*50)]";
+						if _i<=TOINT(ClearMode[levelsort])
+							_txt+="\f[color,108,129,182]\q[%(_m_levels[_i]),OnLinkWndOption,gk,%(_i),%(levelsort)]\f[color,default]";
+						else
+							_txt+="\f[color,192,192,192]%(_m_levels[_i])\f[color,default]";
+						if (_i+1)%6==0
+						{
+							_txt+="\n";
+						}
+					}
+					
+					
+				}
+				
+				
+			}
+			_PIC="data\LinkWnd\bmp1302.bmp";
+			_shift=("合并,下,两个","转换,上,一个","全部合并,下,所有","全部转换,上,所有")
+				_txt+="获得水晶球成就(点击水晶球可将其%(_shift[shiftmode][2])该水晶球\f[color,108,129,182]\__q[OnLinkWndOption,shift]%(_shift[shiftmode][0])\__q\f[color,default]为%(_shift[1-shiftmode][2])%(_shift[shiftmode][1])颜色的水晶球，或使用键盘数字选择）\n";
+			foreach LinkBallInfo;_i
+			{
+				_x = _i[0]*(LinkBallWIDTH-1);
+				_y = _i[0]*(LinkBallHigh-1);
+				_sort=_i[1];
+				if LinkBall.select==_i[0]
+					_txt+="\__q[OnLinkWndOption,LinkBall,%(_i[0]),%(_i[3])]\_b[%(_PIC),inline,--clipping=%(LinkBallWIDTH+1) %((_sort-1)*LinkBallHigh+1) %(LinkBallWIDTH*2) %((_sort)*LinkBallHigh)]\__q";
+				else
+					_txt+="\__q[OnLinkWndOption,LinkBall,%(_i[0]),%(_i[3])]\_b[%(_PIC),inline,--clipping=1 %((_sort-1)*LinkBallHigh+1) %(LinkBallWIDTH) %((_sort)*LinkBallHigh)]\__q";
+			}
+			_txt+="\n[20]";
+			_a=1;
+                        _allrewards=0
+			foreach LinkBallInfo;_i
+			{
+				_txt+="\_l[%(_i[0]*27)]";
+				_txt+="%(TOINT(_i[2]))";
+				_allrewards+=TOINT(_i[2])*_a;
+				_a=_a*2;
+			}
+			_txt+="\n总成就：%(_allrewards)\n";
+			
+			
+		}
+		
+		elseif levelname==2
+		{
+			if uselinkselfmap==0
+			{
+				for _j=0;_j<4;_j++
+				{
+					if LinkWndMode== _j
+					{
+						_t="人眼,地眼,天眼,神眼";
+						_txt+="%(_t[_j])地图关卡：\n";
+						_n=0;
+						if LinkWndMode==2||LinkWndMode==3
+							_n=LinkWndMapNum[_j];
+						else
+							_n=LinkWndMapNum[_j]+(LinkWndMapNum[_j])/2;
+						
+						for _i=0;_i<_n;_i++
+						{
+							
+							if TOINT(m_levels[levelsort])==_i
+								_m_levels[_i]=" ◆%(_i+1) ";
+							else
+								_m_levels[_i]=" ◇%(_i+1) "; 
+							_txt += "\_l[%((_i%6)*50)]";
+							if _i<=TOINT(ClearMode[levelsort])
+								_txt+="\f[color,108,129,182]\q[%(_m_levels[_i]),OnLinkWndOption,gk,%(_i),%(levelsort)]\f[color,default]";
+							else
+								_txt+="\f[color,192,192,192]%(_m_levels[_i])\f[color,default]";
+							if (_i+1)%6==0
+							{
+								_txt+="\n";
+							}
+						}
+						
+					}
+				}
+			}
+			else
+			{ 
+				for _j=0;_j<4;_j++
+				{
+					if LinkWndMode== _j
+					{
+						_t="人眼,地眼,天眼,神眼";
+						_txt+="%(_t[_j])自建地图：\n";                               
+						_n=LinkWndMapNum[4+_j];
+						
+						for _i=0;_i<_n;_i++
+						{
+							
+							if TOINT(m_levels[levelsort])==_i
+								_m_levels[_i]=" ◆%(_i+1) ";
+							else
+								_m_levels[_i]=" ◇%(_i+1) "; 
+							_txt += "\_l[%((_i%6)*50)]";
+							_txt+="\f[color,108,129,182]\q[%(_m_levels[_i]),OnLinkWndOption,gk,%(_i),%(levelsort)]\f[color,default]";
+							if (_i+1)%6==0
+							{
+								_txt+="\n";
+							}
+						}
+						
+						
+					}
+					
+				}
+				
+				
+			}
+			
+			_txt+="\n";
+			_t = "◇,◆";
+			_txt+="自建地图：\q[%(_t[TOINT(uselinkselfmap)]) ON,OnLinkWndOption,uselinkselfmap,1]  \q[%(_t[1-TOINT(uselinkselfmap)]) OFF,OnLinkWndOption,uselinkselfmap,0]\n";  
+                        if uselinkselfmap
+			      _txt+="\q[删除最新,OnLinkMapSave,del,%(LinkWndMode),%(LinkWndMapNum[LinkWndMode+4])]\n";
+		}
+		
+		
+		_txt+="该模式下最高闯关数:%(TOINT(m_levelstop[levelsort]))\n";
+         }
+         else
+         {
+			 _txt+="方块类型：\n";
+			 _matchnum=IARRAY;
+			 for _i=5;_i<=36;_i++
+			 {
+				 if TOINT(MatchNum)==_i
+					 _matchnum[_i]=" ◆%(_i) ";
+				 else
+					 _matchnum[_i]=" ◇%(_i) "; 
+				 _txt += "\_l[%(((_i-5)%6)*50)]";
+				 _txt +="\q[%(_matchnum[_i]),OnLinkWndOption,matchnum,%(_i)]";
+				 if (_i-4)%6==0
+				 {
+					 _txt+="\n";
+				 }
+			 }
+			 _txt+="\n";
+		 }
+		 
+		 _t = "◆,◇,◇,◆,◇,◇,◆";
+		 _txt+="背景音乐：\q[%(_t[TOINT(linkwndmusic)]) ON,OnLinkWndOption,linkwndmusic,0]  \q[%(_t[TOINT(linkwndmusic+2)]) OFF,OnLinkWndOption,linkwndmusic,1]  \q[%(_t[TOINT(linkwndmusic+4)])禁音,OnLinkWndOption,linkwndmusic,2]";
+		 _txt+="方块类型：%(MatchNum)   方块总数：%(m_MapSeed.Num)   剩余方块数：%(m_Map.nLeft)\n";
+		 
+		 _txt += "\_l[0,-]\q[◇新游戏,OnLinkWnd]";
+		 if LinkWndFlag!="optionchange"
+			 _txt += "\_l[60,-]\q[◇返回,OnDrawLinkWnd,return]";
+		 if levelname==2&&(TOINT(m_levels[levelsort])!=TOINT(ClearMode[levelsort])||uselinkselfmap)||freemode
+			 _txt +="\_l[120,-]\q[◇地图编辑器,OnLinkMapEditor]";
+		 _txt +="\_l[220,-]\q[◇终了,OnLinkWndGameOver]";
+		 _txt;
+		 playLinkWnd=2;
+}
+
+
+OnLinkWndGameOver    //游戏结束
+{
+	_txt="\0\s[0]\b[0]不玩了吗。";
+	_txt+=ClearLinkWndVar;
+	
+	_txt+="\e";
+	_txt;
+}
+
+
+ClearLinkWndVar   //变量消除
+{
+	if linkwndmusic==NULL
+	{
+		"\![sound,stop]";
+	}
+	ERASEVAR("playLinkWnd");
+	ERASEVAR("m_map");
+	ERASEVAR("map");
+	ERASEVAR("x");
+	ERASEVAR("xx");
+	ERASEVAR("y");
+	ERASEVAR("yy");
+	ERASEVAR("模式");
+	ERASEVAR("难度");
+	ERASEVAR("花式模式");
+	ERASEVAR("shiftmode");
+	ERASEVAR("levelmax");
+	ERASEVAR("LinkWndMapNum");
+	ERASEVAR("playlinkmusic");
+	ERASEVAR("LinkBallInfo");
+	ERASEVAR("m_nCol");
+	ERASEVAR("m_nRow");
+	ERASEVAR("LinkWndWIDTH");
+	ERASEVAR("LinkWndHigh");
+	ERASEVAR("LinkBallWIDTH");
+	ERASEVAR("LinkBallHigh");
+	ERASEVAR("linkwndmoney");
+	ERASEVAR("zs");
+	ERASEVAR("m_nY1");
+	ERASEVAR("m_nX1");
+	ERASEVAR("m_MapSeed.Num");
+	ERASEVAR("m_MapSeed.Seed");
+	ERASEVAR("m_Map.nLeft");
+	ERASEVAR("hint");
+	ERASEVAR("rm_x");
+	ERASEVAR("rm_y");
+	ERASEVAR("rm_X");
+	ERASEVAR("rm_Y");
+	ERASEVAR("select");
+	ERASEVAR("m_level");
+	ERASEVAR("m_nY");
+	ERASEVAR("m_nX");
+	ERASEVAR("m_ny");
+	ERASEVAR("m_nx");
+	ERASEVAR("bAdd");
+	ERASEVAR("select.mapseed");
+	ERASEVAR("SetLinkMap.mode");
+	ERASEVAR("iii");
+	ERASEVAR("nElemID");
+	ERASEVAR("m_map_id");
+	ERASEVAR("musicid");
+	ERASEVAR("playlinkmusic");
+	ERASEVAR("linkmusicfile");
+	ERASEVAR("link_timebase");
+	ERASEVAR("link_timebar");
+	ERASEVAR("link_timemax");
+}
+
+Onremind     //提醒
+{
+	_txt="\C\![quicksession,1]\c\![set,choicetimeout,0]\b[2]";
+	
+	_PIC="data\LinkWnd\bmp130.bmp";
+	if LinkWndMode==1
+		_PIC="data\LinkWnd\bmp1301.bmp";
+	elseif LinkWndMode==2
+		_PIC="data\LinkWnd\bmp1302.bmp";
+	elseif LinkWndMode==3
+		_PIC="data\LinkWnd\bmp1303.bmp";
+	_rm="";
+
+	if Find2Block//CheckPath
+	{
+		_j=hint[0];_i=hint[1];
+		_x = _j*(LinkWndWIDTH-1);
+		_y = _i*(LinkWndHigh-1);
+		_rm="\_l[%(_x+LinkWnd_LEFT),%(LinkWnd_TOP+_y)]\__q[OnLButtonDown,%(_j),%(_i)]\_b[%(_PIC),inline,--clipping=%(LinkWndWIDTH+1) %((m_map[_i*m_nCol+_j]-1)*LinkWndHigh+1) %(LinkWndWIDTH*2) %((m_map[_i*m_nCol+_j])*LinkWndHigh)]\__q";
+		_j=hint[2];_i=hint[3];
+		_x = _j*(LinkWndWIDTH-1);
+		_y = _i*(LinkWndHigh-1);
+		_rm+="\_l[%(_x+LinkWnd_LEFT),%(LinkWnd_TOP+_y)]\__q[OnLButtonDown,%(_j),%(_i)]\_b[%(_PIC),inline,--clipping=%(LinkWndWIDTH+1) %((m_map[_i*m_nCol+_j]-1)*LinkWndHigh+1) %(LinkWndWIDTH*2) %((m_map[_i*m_nCol+_j])*LinkWndHigh)]\__q";
+		select=-1;
+                
+
+		if rm_x!=hint[0]||rm_y!=hint[1]||rm_X!=hint[2]||rm_Y!=hint[3]
+		{
+                       if link_timemode==1
+                         link_timemax-=2000
+                       else 
+			LinkWndSeed--;
+                        rm_x=hint[0];
+			rm_y=hint[1];
+                        rm_X=hint[2];
+			rm_Y=hint[3];
+			//PlayWithLyric
+			if linkwndmusic!=2
+				_txt+=PlayWithLyric("play",0,"data\LinkWnd\select.wav");  //避免连连看禁用背景音乐导致游戏稍卡顿的问题的关键
+			//_txt+="\![sound,play,data\LinkWnd\select.wav]";    
+		}
+		elseif rm_x==hint[0]&&rm_y==hint[1]&&rm_X==hint[2]&&rm_Y==hint[3]
+		{
+			_txt+=ClearTwo(hint[0],hint[1],hint[2],hint[3]);
+			if linkwndmusic!=2
+				_txt+=PlayWithLyric("play",0,"data\LinkWnd\match.wav");
+			_txt+="\![sound,play,data\LinkWnd\match.wav]";
+			_rm="";   
+		}          
+		
+	}	
+	else
+		_txt+=WinCheck;
+	_txt+=OnDrawLinkWnd;
+	_txt+=_rm;
+	_txt;
+	
+}
+
+
+OnLinkWndHelp   //帮助
+{
+
+	_txt="\C\![quicksession,1]\c\![set,choicetimeout,0]\b[2]";
+	_txt+="伪春菜版连连看（V2.5）游戏规则\n/
+		选择一对相同的水晶球进行连线，但此线应避开其他水晶球，并其所呈现的连线路径不超过二转弯（见范例图示）。如符合规定则消除此对水晶球；游戏模式有人眼，地眼，天眼，神眼四个模式，其中，关卡又分为金钱、成就、地图三个模式。金钱模式中完成神眼三个难度模式才会追加新关卡。V2.5版增加普通时间模式和争分获秒模式,原有关卡移至生命模式,普通模式为在规定时间完成,消除方块时间不会增加,争分获秒模式时间较少,但是消除方块时间可以增加,而使用提式时间就会减少,在生命模式中，一生命含3种子，消耗1种子可使用提示一次，消耗三种子生命值减一。注意，当出现残局时，会消耗一生命进行重排，生命值及种子为零游戏结束，休闲模式不会强制重排消耗生命，但种子数不会重设，以便购买获得种子";
+		_txt+="\n\_b[data\LinkWnd\bmp141.bmp,inline,--option=opaque]";
+	
+	_txt+="\n[150]\q[◇返回,OnDrawLinkWnd,return]  \q[◇终了,OnLinkWndGameOver]";
+	
+	_txt;
+	
+}
+
+
+OnLButtonDown    //鼠标操作
+{
+	
+	_txt="\C\![quicksession,1]\c\![set,choicetimeout,0]\b[2]";
+	_x=reference0;
+	_xx=reference0;
+	_y=reference1;
+	_yy=reference1;
+	//2.在游戏区域内并且该区域还有该区域不是空的区域
+	
+	
+	if TOINT(m_levels[levelsort]+1)%6>0
+		m_level=TOINT(m_levels[levelsort]+1)%6;
+	else 
+		m_level=RAND(2)+2*(TOINT(m_levels[levelsort]+1)/2%2+1);
+	if freemode 
+		m_level=1;
+	if levelname==2 
+	{
+		if LinkWndMode==0||LinkWndMode==1
+		{
+			if (m_levels[levelsort]+1)%3!=0
+				m_level=1;
+		}
+		else
+			m_level=1;
+	}
+	if  m_nX1 != -1 && m_nY1 != -1 && (m_nX1 != _x || m_nY1 != _y) 
+	{
+		if m_map[m_nY1*m_nCol+m_nX1]==m_map[_y*m_nCol+_x]	
+		{
+			//已经找到一对 ,检查是否能连
+			m_nY = m_nY1;
+			m_nX = m_nX1;
+			
+			m_ny = _y;
+			m_nx = _x; 
+			
+			if IsLink(m_nX,m_nY,m_nx,m_ny) 
+			{
+				_txt+=ClearTwo(m_nX,m_nY,m_nx,m_ny);
+				//map=m_map;
+                                if link_timemode==1
+                                link_timemax+=3000
+				if linkwndmusic!=2
+					_txt+=PlayWithLyric("play",0,"data\LinkWnd\match.wav");
+
+				//_txt+="\![sound,play,data\LinkWnd\match.wav]";
+				m_nY1 = -1;
+				m_nX1 = -1;
+				select=-1;
+				
+			}
+			else
+			{
+				//还原上次选择,并记录当前选择
+				m_nY1 = _y;
+				m_nX1 = _x;
+				select=m_nY1*m_nCol+m_nX1;
+				if linkwndmusic!=2
+					_txt+=PlayWithLyric("play",0,"data\LinkWnd\select.wav");
+				//_txt+="\![sound,play,data\LinkWnd\select.wav]";
+			}
+		}
+		else
+		{
+			//还原上次选择,并记录当前选择
+			m_nY1 = _y;
+			m_nX1 = _x;
+			select=m_nY1*m_nCol+m_nX1;
+			//_txt+="\![sound,play,data\LinkWnd\select.wav]";
+			if linkwndmusic!=2
+				_txt+=PlayWithLyric("play",0,"data\LinkWnd\select.wav");
+		}
+	}
+	else 
+	{
+		m_nY1 = _y;
+		m_nX1 =_x;
+		select=m_nY1*m_nCol+m_nX1;
+		if linkwndmusic!=2
+			_txt+=PlayWithLyric("play",0,"data\LinkWnd\select.wav");
+		//_txt+="\![sound,play,data\LinkWnd\select.wav]";
+	}
+
+		_txt+=WinCheck; 
+	_txt+=OnDrawLinkWnd;
+	_txt;
+}
+/*
+GetIJRect
+{
+	_i=_argv[0];
+	_j=_argv[1];
+	_x = _j*LinkBallWIDTH + 10;
+	_y = _i*LinkBallHigh + LinkBallWIDTH-1;
+//	CRect(_x, _y, _x+LinkBallWIDTH-1, _y+LinkBallHigh-1);
+	(_x,_y);
+}
+
+CRect
+{
+	_PIC="data\LinkWnd\link.png"
+	_x=_argv[0];
+	_y=_argv[1];
+	_X=_argv[2];
+	_Y=_argv[3];
+	"\__q\_b[%(_PIC),inline,--clipping=%(_x) %(_y) %(_X) %(_Y)]\__q";
+
+}
+
+BitBlt
+{
+	_PIC="data\LinkWnd\link.png"
+	_nXDest=_argv[0];
+	_nYDest=_argv[1];
+	_nWidt=_argv[2];
+	_nHeight=_argv[3];
+	_nXSrc=_argv[4];
+	_nYSrc=_argv[5];
+        "\__q\_b[%(_PIC),inline,--clipping=%(_nXSrc) %(_nYSrc) %(_nXSrc+_nWidt) %(_nYSrc+_nHeight)]\__q";
+
+}
+
+
+DrawHint
+{
+	_pt1.i=_argv[0];
+	_pt1.j=_argv[1];
+	_pt2.i=_argv[2];
+	_pt2.j=_argv[3];
+	_m = 0;
+	_n = 0;
+	if _pt1.i == -1 || _pt1.j == -1 ||_pt2.i == -1 ||_pt2.j == -1
+	{
+		0;return ;
+	}
+
+	_rc = GetIJRect(_pt1.i, _pt1.j);
+	_rc2 =GetIJRect(_pt2.i,_pt2.j); 
+	                   
+	for _i=0; _i<5&&m_map[_pt1.i*m_nCol+_pt1.j]!= 0&& m_map[_pt2.i*m_nCol+_pt2.j] != 0; _i++
+	{
+		if _pt1.i == m_nY1 && _pt1.j == m_nX1)
+		{
+			_m = 4;
+			_n = 0;
+		}
+		elseif _pt2.i == m_nY1 &&_pt2.j ==m_nX1)
+		{
+			_m = 0;
+			_n = 4;
+		}
+		pDC->BitBlt(_rc[0]+_m, _rc[1], LinkBallWIDTH-_m-1, LinkBallHigh-1,LinkBallWIDTH+1+m, (abs(m_map[_pt1.i*m_nCol+_pt1.j])-1)*48+1);
+		pDC->BitBlt(_rc2[0]+_n, _rc2[1], LinkBallWIDTH-_n-1, LinkBallHigh-1,LinkBallWIDTH +1+_n, (abs(m_map[_pt2.i*m_nCol+_pt2.j])-1)*48+1);
+		pWnd->DrawFocus(pDC, pWnd->m_fi, pWnd->m_fj);
+
+	//	::Sleep(150);
+		
+	//	pDC->BitBlt(rc.left+m, rc.top, 41-m, 47, &crydc, 1+m, (abs(pWnd->m_map[pWnd->pt1.i][pWnd->pt1.j])-1)*48+1, SRCCOPY);
+	//	pDC->BitBlt(rc2.left+n, rc2.top, 41-n, 47, &crydc, 1+n, (abs(pWnd->m_map[pWnd->pt2.i][pWnd->pt2.j])-1)*48+1, SRCCOPY);
+	//	pWnd->DrawFocus(pDC, pWnd->m_fi, pWnd->m_fj);
+
+		//::Sleep(150);
+
+		m = 0;
+		n = 0;
+	}
+
+//	CloseHandle((HANDLE)pWnd->m_ThHandle);
+//	pWnd->m_ThHandle = NULL;
+//	_endthread();
+
+//	return 1;
+}
+*/
+
+
+
+WinCheck    //胜利检查
+{
+	_txt="\C\![quicksession,1]\c\![set,choicetimeout,0]\b[2]";
+	
+	
+	if freemode==1
+	{
+		if IsWin 
+		{
+			LinkWndPlayNum++;
+			_txt+=OnInitLinkWnd;
+			_txt;return;
+		}
+	}
+	
+	if !Find2Block &&!IsWin 
+	{
+		if LinkWndLife>0&&freemode==0&&link_timemode==2
+		{
+			playLinkWnd=4;
+			LinkWndLife--
+				_txt+="\c\0\s[8]残局，消耗一生命进行重排\x";
+			while !CheckPath
+			{
+				_txt+=Resort;
+			}
+		}
+		elseif freemode==1||link_timemode==0||link_timemode==1
+		{
+			_txt+=Resort;
+		}
+		else
+		{
+			playLinkWnd=4;
+                        if m_levels[levelsort]>ClearMode[levelsort]
+			m_levels[levelsort]=ClearMode[levelsort];
+			if TOINT(m_levels[levelsort])>=TOINT(levelmax[levelsort])
+				m_levels[levelsort]=TOINT(levelmax[levelsort]-1);
+			_txt+="\c\0\s[8]游戏结束\x";
+			_txt+=OnLinkWnd;
+		}
+          
+ 
+	}
+	if (link_timemode==0||link_timemode==1)&&link_timebar<=0&&!IsWin
+		{
+			playLinkWnd=4;
+                   if m_levels[levelsort]>ClearMode[levelsort]
+			m_levels[levelsort]=ClearMode[levelsort];
+			if TOINT(m_levels[levelsort])>=TOINT(levelmax[levelsort])
+				m_levels[levelsort]=TOINT(levelmax[levelsort]-1);
+			_txt+="\c\0\s[8]时间用完,游戏结束\x";
+			_txt+=OnLinkWnd;
+		}
+	
+	
+	
+	
+	
+	if IsWin 
+	{
+		
+		LinkWndPlayNum++;
+		if levelname==0
+		{
+			playLinkWnd=4;
+			money+=TOINT(linkwndmoney);
+			_txt+="\c\0\s[5]恭喜%(username)胜利闯关,获得金钱%(linkwndmoney)。即将开始新局\x";
+			if LinkWndnd<2
+				LinkWndnd++;
+			else
+			{
+				
+				if LinkWndMode<3
+				{
+					LinkWndnd=0;;
+					LinkWndMode++;
+				}
+				else
+				{
+					playLinkWnd=4;
+					LinkWndnd=0;
+					LinkWndMode=0;
+					LinkWndOption=1;
+					if TOINT(ClearMode[levelsort]+1)<TOINT(levelmax[levelsort])&&TOINT(m_levels[levelsort])==TOINT(ClearMode[levelsort])
+					{
+						ClearMode[levelsort]=TOINT(ClearMode[levelsort])+1;
+						m_levels[levelsort]=ClearMode[levelsort];
+						LinkWndnd=0;
+						LinkWndMode=0;
+						_txt+="\c恭喜%(username)爆关，新关卡及新选项设定追加,继续下一等级。\x";
+					}
+					elseif TOINT(ClearMode[levelsort]+1)==TOINT(levelmax[levelsort])&&TOINT(m_levels[levelsort]==ClearMode[levelsort])
+					{
+						ClearMode[levelsort]=TOINT(ClearMode[levelsort])+1;
+						m_levels[levelsort]=ClearMode[levelsort];
+						_txt+="\c恭喜%(username)完成全部关卡,继续下一等级。\x";
+					}
+					else
+					{
+						m_levels[levelsort]=TOINT(m_levels[levelsort])+1;
+						_txt+="\c恭喜%(username)胜利闯关,继续下一等级。\x";
+					}
+					
+				}
+	                }
+ 			if LinkWndnd==0
+			{ 
+				_txt+="\![sound,stop]";
+				_txt+="\![sound,wait]";
+			}
+		}
+		
+		elseif levelname==1
+		{
+			playLinkWnd=4;
+			_linkballname=LinkBallInfo[LinkWndMode][3];
+			if TOINT(ClearMode[levelsort]+1)<TOINT(levelmax[levelsort])&&TOINT(m_levels[levelsort])==TOINT(ClearMode[levelsort])
+			{
+				ClearMode[levelsort]=TOINT(ClearMode[levelsort])+1;
+				m_levels[levelsort]=ClearMode[levelsort];
+				
+				
+				_txt+="\c恭喜%(username)胜利闯关,获得%(_linkballname)×%(m_levels[levelsort])。即将开始新局，新关卡及新选项设定追加\x";
+			}
+			elseif TOINT(ClearMode[levelsort]+1)==TOINT(levelmax[levelsort])&&TOINT(m_levels[levelsort])==TOINT(ClearMode[levelsort])
+			{
+				ClearMode[levelsort]=TOINT(ClearMode[levelsort])+1;
+				m_levels[levelsort]=ClearMode[levelsort];
+				_txt+="\c恭喜%(username)完成全部关卡,获得%(_linkballname)×%(m_levels[levelsort])。继续下一等级。\x";
+			}
+			else
+			{
+				m_levels[levelsort]=TOINT(m_levels[levelsort])+1;
+				_txt+="\c恭喜%(username)胜利闯关,获得%(_linkballname)×%(m_levels[levelsort])。继续下一等级。\x";
+			}
+			
+			mylinkball[LinkWndMode]=TOINT(mylinkball[LinkWndMode])+m_levels[levelsort];
+		}
+		else
+		{
+			playLinkWnd=4;
+			if TOINT(ClearMode[levelsort]+1)<TOINT(levelmax[levelsort])&&TOINT(m_levels[levelsort])==TOINT(ClearMode[levelsort])
+			{
+				ClearMode[levelsort]=TOINT(ClearMode[levelsort])+1;
+				m_levels[levelsort]=ClearMode[levelsort];
+				
+				
+				_txt+="\c恭喜%(username)胜利闯关,即将开始新局，新关卡及新选项设定追加\x";
+			}
+			elseif TOINT(ClearMode[levelsort]+1)==TOINT(levelmax[levelsort])&&TOINT(m_levels[levelsort])==TOINT(ClearMode[levelsort])
+			{
+				ClearMode[levelsort]=TOINT(ClearMode[levelsort])+1;
+				m_levels[levelsort]=ClearMode[levelsort];             
+				_txt+="\c恭喜%(username)完成全部关卡。\x";
+			}
+			else
+			{
+				m_levels[levelsort]=TOINT(m_levels[levelsort])+1;
+				_txt+="\c恭喜%(username)胜利闯关,继续下一关。\x";
+			}
+			
+			if m_levels[levelsort]>=levelmax[levelsort]
+			{
+				m_levels[levelsort]=0;
+				LinkWndnd=(LinkWndnd+1)%3;
+			}
+			
+		}
+		
+		if TOINT(m_levels[levelsort])>TOINT(m_levelstop[levelsort])
+			m_levelstop[levelsort]=TOINT(m_levels[levelsort]);
+		if LinkWndPlayNum%10==0
+		{
+			playLinkWnd=4;
+			_linkballname=LinkBallInfo[0][3];
+			_txt+="\c恭喜%(username)完成闯关次数10次，获得额外%(_linkballname)×100，额外金钱1000\x";
+			mylinkball[0]=TOINT(mylinkball[0])+100;
+			money+=1000;
+		}
+		_txt+=OnInitLinkWnd;
+		
+	}
+	_txt;
+}
+
+CheckNum    //方块数量检查
+{
+	_num=0;
+	for _i=0; _i<m_nRow; _i++ 
+	{
+		for _j=0; _j<m_nCol; _j++
+		{
+			if	m_map[_i*m_nCol+_j]>0
+				_num++;
+		}
+		
+	}
+	_num;
+}
+
+
+CheckPath     //路径搜索1.0
+{
+	
+	for  _i=1; _i<m_nRow-1; _i++
+	{
+		for _j=1; _j<m_nCol-1; _j++ 
+		{
+			if m_map[_i*m_nCol+_j]==BLANK_STATE 
+				continue; 
+			if m_map[_i*m_nCol+_j+1]!=BLANK_STATE && m_map[_i*m_nCol+_j]==m_map[_i*m_nCol+_j+1] 
+			{hint[1]=_i;hint[0]=_j;hint[3]=_i;hint[2]=_j+1;1;return}
+			if m_map[_i*m_nCol+_j-1]!=BLANK_STATE && m_map[_i*m_nCol+_j]==m_map[_i*m_nCol+_j-1]
+			{hint[1]=_i;hint[0]=_j;hint[3]=_i;hint[2]=_j-1;1;return}
+			
+			if m_map[(_i+1)*m_nCol+_j]!=BLANK_STATE && m_map[_i*m_nCol+_j]==m_map[(_i+1)*m_nCol+_j]
+			{hint[1]=_i;hint[0]=_j;hint[3]=_i+1;hint[2]=_j;1;return}
+			
+			if m_map[(_i-1)*m_nCol+_j]!=BLANK_STATE && m_map[_i*m_nCol+_j]==m_map[(_i-1)*m_nCol+_j]
+			{hint[1]=_i;hint[0]=_j;hint[3]=_i-1;hint[2]=_j;1;return}
+		}
+	}
+	
+	if rm_x==-1||rm_y==-1
+	{
+		
+		for  _i=1; _i<m_nRow-1; _i++
+		{
+			for _j=1; _j<m_nCol-1; _j++ 
+			{
+				if m_map[_i*m_nCol+_j]==BLANK_STATE 
+					continue; 
+				
+				if m_map[_i*m_nCol+_j+1]!=BLANK_STATE && m_map[_i*m_nCol+_j]!=m_map[_i*m_nCol+_j+1] &&  m_map[_i*m_nCol+_j-1]!=BLANK_STATE && m_map[_i*m_nCol+_j]!=m_map[_i*m_nCol+_j-1] &&  m_map[(_i+1)*m_nCol+_j]!=BLANK_STATE && m_map[_i*m_nCol+_j]!=m_map[(_i+1)*m_nCol+_j] &&  m_map[(_i-1)*m_nCol+_j]!=BLANK_STATE && m_map[_i*m_nCol+_j]!=m_map[(_i-1)*m_nCol+_j]
+					continue; 
+				
+				
+				for  _k=_i; _k<m_nRow-1; _k++
+				{
+					for _l=1; _l<m_nCol-1; _l++ 
+					{
+						if m_map[_k*m_nCol+_l]==BLANK_STATE 
+							continue; 
+						
+						if m_map[_k*m_nCol+_l+1]!=BLANK_STATE && m_map[_k*m_nCol+_l]!=m_map[_k*m_nCol+_l+1] &&  m_map[_k*m_nCol+_l-1]!=BLANK_STATE && m_map[_k*m_nCol+_l]!=m_map[_k*m_nCol+_l-1] &&  m_map[(_k+1)*m_nCol+_l]!=BLANK_STATE && m_map[_k*m_nCol+_l]!=m_map[(_k+1)*m_nCol+_l] &&  m_map[(_k-1)*m_nCol+_l]!=BLANK_STATE && m_map[_k*m_nCol+_l]!=m_map[(_k-1)*m_nCol+_l] 
+							continue; 
+						
+						if m_map[_i*m_nCol+_j]==m_map[_k*m_nCol+_l]&&IsLink(_j,_i,_l,_k) && !(_i==_k&&_j==_l) && m_map[_k*m_nCol+_l]!=BLANK_STATE
+						{hint[1]=_i;hint[0]=_j;hint[3]=_k;hint[2]=_l;1;return;}
+					}
+				}
+				
+			}
+		}
+	}
+	else
+	{	
+		for  _i=m_nRow-2; _i>0; _i--
+		{
+			for _j=m_nCol-2; _j>0; _j--
+			{
+				if m_map[_i*m_nCol+_j]==BLANK_STATE 
+					continue; 
+				
+				if m_map[_i*m_nCol+_j+1]!=BLANK_STATE && m_map[_i*m_nCol+_j]!=m_map[_i*m_nCol+_j+1] &&  m_map[_i*m_nCol+_j-1]!=BLANK_STATE && m_map[_i*m_nCol+_j]!=m_map[_i*m_nCol+_j-1] &&  m_map[(_i+1)*m_nCol+_j]!=BLANK_STATE && m_map[_i*m_nCol+_j]!=m_map[(_i+1)*m_nCol+_j] &&  m_map[(_i-1)*m_nCol+_j]!=BLANK_STATE && m_map[_i*m_nCol+_j]!=m_map[(_i-1)*m_nCol+_j]
+					continue; 
+				
+				
+				for  _k=_i; _k>0; _k--
+				{
+					for _l=m_nCol-2; _l>0; _l--
+					{
+						if m_map[_k*m_nCol+_l]==BLANK_STATE 
+							continue; 
+						
+						if m_map[_k*m_nCol+_l+1]!=BLANK_STATE && m_map[_k*m_nCol+_l]!=m_map[_k*m_nCol+_l+1] &&  m_map[_k*m_nCol+_l-1]!=BLANK_STATE && m_map[_k*m_nCol+_l]!=m_map[_k*m_nCol+_l-1] &&  m_map[(_k+1)*m_nCol+_l]!=BLANK_STATE && m_map[_k*m_nCol+_l]!=m_map[(_k+1)*m_nCol+_l] &&  m_map[(_k-1)*m_nCol+_l]!=BLANK_STATE && m_map[_k*m_nCol+_l]!=m_map[(_k-1)*m_nCol+_l] 
+							continue; 
+						
+						if m_map[_i*m_nCol+_j]==m_map[_k*m_nCol+_l]&&IsLink(_j,_i,_l,_k) && !(_i==_k&&_j==_l) && m_map[_k*m_nCol+_l]!=BLANK_STATE
+						{hint[1]=_i;hint[0]=_j;hint[3]=_k;hint[2]=_l;1;return}
+					}
+				}
+				
+			}
+		}
+	}
+	
+	0;return;
+	
+}
+
+
+Find2Block   //路径搜索2.0
+{
+		for  _i=1; _i<m_nRow-1; _i++
+		{
+			for _j=1; _j<m_nCol-1; _j++ 
+			{
+				if m_map[_i*m_nCol+_j]==BLANK_STATE 
+					continue; 
+				if m_map[_i*m_nCol+_j+1]!=BLANK_STATE && m_map[_i*m_nCol+_j]==m_map[_i*m_nCol+_j+1] 
+                {hint[1]=_i;hint[0]=_j;hint[3]=_i;hint[2]=_j+1;1;return}
+				if m_map[_i*m_nCol+_j-1]!=BLANK_STATE && m_map[_i*m_nCol+_j]==m_map[_i*m_nCol+_j-1]
+				{hint[1]=_i;hint[0]=_j;hint[3]=_i;hint[2]=_j-1;1;return}
+				
+				if m_map[(_i+1)*m_nCol+_j]!=BLANK_STATE && m_map[_i*m_nCol+_j]==m_map[(_i+1)*m_nCol+_j]
+				{hint[1]=_i;hint[0]=_j;hint[3]=_i+1;hint[2]=_j;1;return}
+				
+				if m_map[(_i-1)*m_nCol+_j]!=BLANK_STATE && m_map[_i*m_nCol+_j]==m_map[(_i-1)*m_nCol+_j]
+                {hint[1]=_i;hint[0]=_j;hint[3]=_i-1;hint[2]=_j;1;return}
+			}
+		}
+		
+	
+	
+	
+	
+	
+	//第一个方块从地图的0位置开始
+	for _i = 0; _i <m_nRow*m_nCol; _i++
+	{
+		if m_map[_i] == BLANK_STATE
+			continue;
+		//第二个方块从前一个方块的后面开始
+		for _j = _i + 1; _j <m_nRow*m_nCol; _j++
+		{
+			if m_map[_j] == BLANK_STATE
+				continue;
+			//第二个方块不为空 且与第一个方块的图形相同
+			if m_map[_i] == m_map[_j]
+			{
+				//算出对应的虚拟行列位置
+				_x1 = _i%m_nCol;
+				_y1 = _i/m_nCol;
+				_x2 = _j%m_nCol;
+				_y2 = _j/m_nCol;
+				
+				//判断是否可以连通
+				if IsLink(_x1,_y1,_x2,_y2)
+				{
+					
+					hint[0]=_x1;hint[1]=_y1;hint[2]=_x2;hint[3]=_y2;1;return
+				}
+			}
+		}
+	}
+	0;return
+}
+
+/*
+FindPath
+{
+	_pts.i=m_nX;
+	_pts.j=m_nY;
+	_pte.i=m_nx
+	_pte.j=m_ny
+	_map=m_map;
+ 	_map2=m_map;
+	int dr = 0;
+
+//	ElemType e, et;
+//	InitStack(s);
+
+	_curpos.i = _pts.i;
+	_curpos.j = _pts.j
+	_step = 0;
+	_rdr = 0;
+	_cdr = 0;
+	
+	_ci = _pts.i - _pte.i;
+	_cj = _pts.j - _pte.j;
+	
+	SetDirect(_ci, _cj);
+
+	while ( !StackEmpty(s) );
+	{
+		if (Pass(map, curpos, pts, pte))
+		{
+			if (rdr != cdr)
+			{
+				rdr = cdr;
+				step ++;
+			}
+
+			if (step >= 4)
+			{
+				curpos.i = -1;
+				curpos.j = -1;
+				continue;
+			}
+		
+			e.rdr = rdr;
+			e.dr = 1;
+			e.pt = curpos;
+			e.step = step;
+
+			if (e.pt.i == pte.i && e.pt.j == pte.j)
+			{
+				if (step <=3)
+				{
+					Push(s, e);
+					return 1;
+				}
+				else
+				{
+					curpos.i = -1;
+					curpos.j = -1;
+					continue;
+				}
+			}
+			else
+			{
+				FootPrint(map, curpos);
+				Push(s, e);
+				cdr = e.dr;
+				curpos = NextPos(map, curpos, m_dir[0]);
+			}
+		}
+		else
+		{
+			if ( !StackEmpty(s) )
+			{
+				Pop(s, e);
+				while ( e.dr == 4 && !StackEmpty(s))
+				{
+					if (e.dr == 4)
+					{
+						map[e.pt.i][e.pt.j] = map2[e.pt.i][e.pt.j];
+					}
+					Pop(s, e);
+				}
+
+				if (e.dr < 4)
+				{
+					rdr = e.rdr;
+					step = e.step;
+					e.dr ++;
+					
+					Push(s, e);
+					cdr = e.dr;
+					curpos = NextPos(map, e.pt, m_dir[e.dr-1]);
+				}
+			}
+		}
+	
+	}
+	
+	DestroyStack(s);
+	return 0;
+
+}
+
+StackEmpty
+{
+	for _i=0;_argv[_i]!="";_i++
+	{
+		_S,=_argv[_i];
+	}
+	if _S[_i]==_S[0]
+		1;//为空
+	else
+		0;//不为空
+}
+
+SetDirect
+{	
+	_ci=_argv[0]; 
+	_cj=_argv[1]; 
+	if (abs(_ci) > abs(_cj) && _cj != 0) || _ci == 0
+	{
+		if _cj<0
+		{
+			m_dir[0] = 4;
+			m_dir[2] = 2;
+		}
+		else
+		{
+			m_dir[0] = 2;
+			m_dir[2] = 4;
+		}
+
+		if _ci<0
+		{
+			m_dir[1] = 3;
+			m_dir[3]  = 1;
+		}
+		else
+		{
+			m_dir[1] = 1;
+			m_dir[3] = 3;
+		}
+	
+	}
+	else 
+	{
+		if _ci<0
+		{
+			m_dir[0] = 3;
+			m_dir[2]  = 1;
+		}
+		else
+		{
+			m_dir[0] = 1;
+			m_dir[2] = 3;
+		}
+
+		if _cj<0
+		{
+			m_dir[1] = 4;
+			m_dir[3] = 2;
+		}
+		else
+		{
+			m_dir[1] = 2;
+			m_dir[3] = 4;
+		}
+
+	}
+
+	0;
+	return;
+}
+
+
+
+
+FootPrint
+{
+
+	if (map[pos.i][pos.j] >=0)
+	{
+		map[pos.i][pos.j] = 1;
+	}
+}
+
+Pass
+{
+
+	pt=
+	pts
+	pte
+	if (pt.i<0 || pt.j<0)
+	{
+		return 0;
+	}
+
+	if (map[pt.i][pt.j] == 0  
+		|| (pt.i  == pte.i && pt.j == pte.j))
+	{
+		return 1;	
+	}
+	else if (pt.i  == pts.i && pt.j == pts.j)
+	{
+		if (map[pt.i][pt.j] > 0)
+		{
+			map[pt.i][pt.j] = 0 - abs(map[pt.i][pt.j]);
+			return 1;
+		}
+	}
+	return 0;
+}
+*/
+//
+//  消去这两块
+//
+ClearTwo
+{
+	_txt="\C\![quicksession,1]\c\![set,choicetimeout,0]\b[2]";
+	_m_nX1=_argv[0];
+	_m_nY1=_argv[1];
+	_xx=_argv[2];
+	_yy=_argv[3];
+	_ix=0;
+	_id=0;
+	_jx=0;
+	_jd=0;
+	m_Map.nLeft-=2
+		if m_level == 1
+		{
+			m_map[_m_nY1*m_nCol+_m_nX1] = BLANK_STATE;
+			m_map[_yy*m_nCol+_xx] = BLANK_STATE;
+		}
+		elseif m_level == 2
+		{
+			if _m_nX1 == _xx 
+			{
+				_a=IARRAY;
+				_a2=IARRAY;
+				
+				
+				// m_nCol=8+2
+				//m_nRow=8+2
+				//memset(a, 0, 12*sizeof(int));
+				
+				for _i=0;_i<m_nRow+1;_i++
+				{
+					_a[_i] = BLANK_STATE;
+				}
+				
+				
+				for _i=1; _i<m_nRow-1; _i++
+				{
+					_a[_i] = m_map[_i*m_nCol+_m_nX1];
+				}
+				//memcpy(a2, a, 12*sizeof(int));
+				_a2=IARRAY;
+				_a2=_a;
+				
+				if  _m_nY1 > _yy 
+				{
+					_id=_m_nY1;
+					_ix=_yy;
+				}
+				else
+				{
+					_id=_yy;
+					_ix=_m_nY1;
+				}
+				
+				
+				//int _i = _m_nY1 > _yy ? _m_nY1 : _yy;
+				//int _ix = _m_nY1 < _yy ? _m_nY1 : _yy;
+				
+				//  ::memcpy(a+_i, a2+_i+1, (10 - _i)*sizeof(int));
+				//::memcpy(a2, a, 12*sizeof(int));
+				//::memcpy(a+_ix, a2+_ix+1, (10 - _ix)*sizeof(int));
+				
+				
+				for _i=0;_i<m_nRow-1-_id;_i++
+				{
+					_a[_i+_id]=_a2[_i+_id+1];
+				}
+				_a2=IARRAY;
+				_a2=_a;
+				
+				
+				
+				
+				for _i=0;_i<m_nRow-1-_ix;_i++
+				{
+					_a[_i+_ix]=_a2[_i+_ix+1];
+				}
+				
+				
+				for _i=0; _i<m_nRow; _i++
+				{
+					m_map[_i*m_nCol+_m_nX1] = _a[_i];
+				}
+			}
+			else 
+			{
+				for _i= _m_nY1; _i<m_nRow-1; _i++
+				{
+					m_map[_i*m_nCol+_m_nX1] = m_map[(_i+1)*m_nCol+_m_nX1];
+				}
+				
+				for _i= _yy; _i<m_nRow-1; _i++ 
+				{
+					m_map[_i*m_nCol+_xx] = m_map[(_i+1)*m_nCol+_xx];
+				}
+			}
+		}
+		elseif m_level ==3
+		{
+			if  _m_nX1 == _xx 
+			{
+				_a=IARRAY;
+				_a2=IARRAY;
+				
+				for _i=0;_i<m_nRow+1;_i++
+				{
+					_a[_i] = BLANK_STATE;
+				}
+				
+				
+				
+				for _i=1; _i<m_nRow-1; _i++
+				{
+					_a[_i] = m_map[(m_nRow-1-_i)*m_nCol+_m_nX1];
+				}
+				
+				_a2=IARRAY;
+				_a2=_a;
+				
+				if  _m_nY1 > _yy 
+				{
+					_ix=_m_nY1;
+					_id=_yy;
+				}
+				
+				else
+				{
+					_ix=_yy;
+					_id=_m_nY1;
+				}
+				
+				//int _ix = _m_nY1 > _yy ? _m_nY1 : _yy;
+				//int _i = _m_nY1 < _yy ? _m_nY1 : _yy;
+				
+				_ix = m_nRow-1 -_ix;
+				_id  = m_nRow-1 -_id;
+				
+				
+				
+				
+				
+				//::memcpy(a+_i, a2+_i+1, (10 - _i)*sizeof(int));
+				//::memcpy(a2, a, 12*sizeof(int));
+				//::memcpy(a+_ix, a2+_ix+1, (10 - _ix)*sizeof(int));
+				
+				
+				for _i=0;_i<m_nRow-1-_id;_i++
+				{
+					_a[_i+_id]=_a2[_i+_id+1];
+				}
+				_a2=IARRAY;
+				_a2=_a;
+				
+				
+				
+				
+				for _i=0;_i<m_nRow-1-_ix;_i++
+				{
+					_a[_i+_ix]=_a2[_i+_ix+1];
+				}
+				
+				
+				for _i=1; _i<m_nRow-1; _i++
+				{
+					m_map[_i*m_nCol+_m_nX1] = _a[m_nRow-1-_i];
+				}
+			}
+			else 
+			{
+				
+				
+				
+				for _i=_m_nY1; _i>0; _i--
+				{
+					m_map[_i*m_nCol+_m_nX1] = m_map[(_i-1)*m_nCol+_m_nX1];
+				}
+				
+				for _i=_yy; _i>0; _i--
+				{
+					m_map[_i*m_nCol+_xx] = m_map[(_i-1)*m_nCol+_xx];
+				}
+				
+				
+			}
+			
+		}
+		elseif m_level ==4
+		{
+			if  _m_nY1 == _yy 
+			{
+				
+				_a=IARRAY;
+				_a2=IARRAY;
+				
+				//int a[19];
+				//int a2[19];
+				//memset(a, 0, 19*sizeof(int));
+				//m_nCol
+				for _j=0;_j<m_nCol+1;_j++
+				{
+					_a[_j] = BLANK_STATE
+				}
+				
+				
+				
+				for _j=1;_j<m_nCol-1;_j++
+				{
+					_a[_j] = m_map[_m_nY1*m_nCol+_j];
+				}
+				//memcpy(a2, a, 19*sizeof(int));
+				_a2=IARRAY;
+				_a2=_a;
+				
+				if  _m_nX1 > _xx 
+				{
+					_jd=_m_nX1;
+					_jx=_xx;
+				}
+				else
+				{
+					_jx=_m_nX1;
+					_jd=_xx;
+				}
+				
+				//int _jd = _m_nX1 > _xx ? _m_nX1 : _xx;
+				//int _jx = _m_nX1 < _xx ? _m_nX1 : _xx;
+				
+				//::memcpy(a+_jd, a2+_jd+1, (17 - _jd)*sizeof(int));
+				//::memcpy(a2, a, 19*sizeof(int));
+				//::memcpy(a+_jx, a2+_jx+1, (17 - _jx)*sizeof(int));
+				
+				
+				
+				for _j=0;_j<m_nCol-1-_jd;_j++
+				{
+					_a[_j+_jd]=_a2[_j+_jd+1];
+				}
+				_a2=IARRAY;
+				_a2=_a;
+				
+				
+				
+				for _j=0;_j<m_nCol-1-_jx;_j++
+				{
+					_a[_j+_jx]=_a2[_j+_jx+1];
+				}
+				
+				
+				for  _j=1; _j<m_nCol-1; _j++
+				{
+					m_map[_m_nY1*m_nCol+_j] = _a[_j];
+				}
+				
+			}
+			else
+			{
+				for _j= _m_nX1; _j<m_nCol-1; _j++ 
+				{
+					m_map[_m_nY1*m_nCol+_j] = m_map[_m_nY1*m_nCol+_j+1];
+				}
+				
+				for _j= _xx; _j<m_nCol-1; _j++
+				{
+					m_map[_yy*m_nCol+_j] = m_map[_yy*m_nCol+_j+1];
+				}
+				
+			}
+		}
+		elseif m_level==5
+		{
+			if  _m_nY1 == _yy 
+			{
+				_a=IARRAY;
+				_a2=IARRAY;
+				
+				//int a[19];
+				//int a2[19];
+				//memset(a, 0, 19*sizeof(int));
+				
+				for _j=0;_j<m_nCol+1;_j++
+				{
+					_a[_j] = BLANK_STATE;
+				}
+				
+				
+				for _j=1; _j<m_nCol-1; _j++
+				{
+					_a[_j] = m_map[_m_nY1*m_nCol+m_nCol-1-_j];
+				}
+				
+				
+				
+				//memcpy(a2, a, 19*sizeof(int));
+				
+				_a2=IARRAY;
+				_a2=_a;
+				
+				
+				if  _m_nX1 > _xx 
+				{
+					_jx=_m_nX1;
+					_jd=_xx;
+				}
+				else
+				{
+					_jd=_m_nX1;
+					_jx=_xx;
+				}
+				//int _jx = _m_nX1 > _xx ? _m_nX1 : _xx;
+				//int _jd = _m_nX1 < _xx ? _m_nX1 : _xx;
+				
+				_jx =m_nCol-1 - _jx;
+				_jd =m_nCol-1 - _jd;
+				
+				//::memcpy(a+_jd, a2+_jd+1, (17 - _jd)*sizeof(int));
+				//::memcpy(a2, a, 19*sizeof(int));
+				//::memcpy(a+_jx, a2+_jx+1, (17 - _jx)*sizeof(int));
+				
+				
+				for _j=0;_j<m_nCol-1-_jd;_j++
+				{
+					_a[_j+_jd]=_a2[_j+_jd+1];
+				}
+				_a2=IARRAY;
+				_a2=_a;
+				
+				
+				for _j=0;_j<m_nCol-1-_jx;_j++
+				{
+					_a[_j+_jx]=_a2[_j+_jx+1];
+				}
+				
+				
+				a=IARRAY;
+				a=_a;
+				/* for _i=1; _i<m_nRow-1; _i++
+				{
+				m_map[_i*m_nCol+_m_nX1] = _a[(m_nRow-1-_i)];
+				}
+				*/
+				for _j=1; _j<m_nCol-1; _j++
+				{
+					m_map[_m_nY1*m_nCol+_j] = _a[m_nCol-1-_j];
+				}
+			}
+			else
+			{
+				for _j= _m_nX1; _j>0; _j-- 
+				{
+					m_map[_m_nY1*m_nCol+_j] = m_map[_m_nY1*m_nCol+_j-1];
+				}
+				
+				for _j= _xx; _j>0; _j--
+				{
+					m_map[_yy*m_nCol+_j] = m_map[_yy*m_nCol+_j-1];
+				}
+				
+			}
+			
+			
+		}
+		
+		elseif m_level==6
+		{
+			if   _m_nX1 == _xx 
+			{
+				for _j= _m_nX1; _j<m_nCol-1; _j++ 
+				{
+					m_map[_m_nY1*m_nCol+_j] = m_map[_m_nY1*m_nCol+_j+1];
+				}
+				
+				for _j= _xx; _j<m_nCol-1; _j++
+				{
+					m_map[_yy*m_nCol+_j] = m_map[_yy*m_nCol+_j+1];
+				}
+				
+				
+				
+				for _i=_m_nY1; _i>0; _i--
+				{
+					m_map[_i*m_nCol+_m_nX1] = m_map[(_i-1)*m_nCol+_m_nX1];
+				}
+				
+				for _i=_yy; _i>0; _i--
+				{
+					m_map[_i*m_nCol+_xx] = m_map[(_i-1)*m_nCol+_xx];
+				}
+				
+				
+				
+				
+				
+				
+			}
+			
+			else 
+			{
+				
+				
+				
+				for _i=_m_nY1; _i>0; _i--
+				{
+					m_map[_i*m_nCol+_m_nX1] = m_map[(_i-1)*m_nCol+_m_nX1];
+				}
+				
+				for _i=_yy; _i>0; _i--
+				{
+					m_map[_i*m_nCol+_xx] = m_map[(_i-1)*m_nCol+_xx];
+				}
+				
+				
+			}
+			
+			
+		}	
+		
+		_txt;
+}
+
+
+
+
+OnReputLinkWnd
+{
+	_txt="";
+	_txt+=ReputLinkWnd;
+	_txt+=OnDrawLinkWnd;
+	_txt;
+}
+
+Search 
+{
+	for  _i=1; _i<m_nRow-1; _i++
+	{
+		for _j=1; _j<m_nCol-1; _j++ 
+		{
+			
+			if m_map[_i*m_nCol+_j]==m_map[_k*m_nCol+_l]&&IsLink(_j,_i,_l,_k) && !(_i==_k&&_j==_l) && m_map[_k*m_nCol+_l]!=BLANK_STATE
+			{hint[1]=_i;hint[0]=_j;hint[3]=_k;hint[2]=_l;1;return;}
+			
+			
+			
+		}
+	}
+	0;return;
+}
+
+
+//
+//  判断选中的两个方块是否可以消除
+//
+
+IsLink
+{
+	
+	_x1=_argv[0];
+	_y1=_argv[1];
+	_x2=_argv[2];
+	_y2=_argv[3];
+	//X直连方式
+	if _x1==_x2 
+	{
+		if X1_Link_X2(_x1,_y1,_y2) 
+		{1;return }
+	}
+	//Y直连方式
+	elseif _y1==_y2 
+	{
+		if Y1_Link_Y2(_x1,_x2,_y1) 
+		{1;return }
+	}
+	
+	//一个转弯直角的联通方式
+	if OneCornerLink(_x1,_y1,_x2,_y2) 
+	{
+		1;return 	
+	}
+	//两个转弯直角的联通方式
+	
+	elseif TwoCornerLink(_x1,_y1,_x2,_y2) 
+	{
+		1;return;
+	}
+	0;return;
+	
+}
+
+DrawFoot
+{
+
+       _foot="data\LinkWnd\foot.png"
+	_txt="";
+	_k=0
+	for  _i=1; _i<m_nRow-1; _i++
+	{
+		for _j=1; _j<m_nCol-1; _j++ 
+		{
+
+			_x = _j*(LinkWndWIDTH-1);
+			_y = _i*(LinkWndHigh-1);
+			_X=LinkWndWIDTH/2
+			_Y=LinkWndHigh/2
+			_a=0;
+			if _i==_k
+				_a=LinkWndHigh/2-2;
+			if map[_i*m_nCol+_j]=="X"
+				_txt+="\_l[%(_x+LinkWnd_LEFT),%(LinkWnd_TOP+_y+_Y)]\_b[%(_foot),inline,--option=opaque,--clipping=0 %(LinkWndHigh-1) %(LinkWndWIDTH) %(LinkWndHigh+1)]";//画横线
+			if map[_i*m_nCol+_j]=="Y" 
+				_txt+="\_l[%(_x+LinkWnd_LEFT+_X),%(LinkWnd_TOP+_y)]\_b[%(_foot),inline,--option=opaque,--clipping=%(LinkWndWIDTH-1) 0 %(LinkWndWIDTH+1) %(LinkWndHigh)]";//画竖线
+			if map[_i*m_nCol+_j]=="XY"{
+	_txt+="\_l[%(_x+LinkWnd_LEFT),%(LinkWnd_TOP+_y+_Y)]\_b[%(_foot),inline,--option=opaque,--clipping=0 %(LinkWndHigh-1) %(LinkWndWIDTH+_X) %(LinkWndHigh+1)]";//画直角
+			_k=_i
+			}
+		if map[_i*m_nCol+_j]=="YX"
+_txt+="\_l[%(_x+LinkWnd_LEFT+_X),%(LinkWnd_TOP+_y)]\_b[%(_foot),inline,--option=opaque,--clipping=%(LinkWndWIDTH-1) %(_a) %(LinkWndWIDTH+1) %(LinkWndHigh)]";//画直角
+
+		}
+	}
+	_txt
+}
+//
+//X直接连通
+//
+X1_Link_X2
+{
+	_x=_argv[0];
+	_y1=_argv[1];
+	_y2=_argv[2];
+	//保证_y1的值小于_y2
+	if _y1>_y2 
+	{
+		//数据交换
+		_n=_y1;
+		_y1=_y2;
+		_y2=_n;
+	}
+	
+	//直通 	
+	for _i=_y1+1;_i<=_y2;_i++ 
+	{
+	
+		if _i==_y2 
+		{1;
+		return }
+		map[_i*m_nCol+_x]="Y";
+		if m_map[_i*m_nCol+_x]!=BLANK_STATE 
+			break;
+	
+	}
+	//左通
+	if XThrough(_x-1,_y1,0)&&XThrough(_x-1,_y2,0) 
+	{1;return}
+	//右通
+	if XThrough(_x+1,_y1,1)&&XThrough(_x+1,_y2,1)
+	{1;return }
+	0;return 
+}
+
+//
+//Y直接连通
+//
+
+Y1_Link_Y2
+{
+	_x1=_argv[0];
+	_x2=_argv[1];
+	_y=_argv[2];
+	
+	if _x1>_x2 
+	{
+		_x=_x1;
+		_x1=_x2;
+		_x2=_x;
+	}
+	//直通
+	for _i=_x1+1;_i<=_x2;_i++ 
+	{
+	
+		if _i==_x2 
+		{1;return }
+		map[_y*m_nCol+_i]="X";
+		if m_map[_y*m_nCol+_i]!=BLANK_STATE 
+			break;
+	}
+	//上通
+	if YThrough(_x1,_y-1,0)&&YThrough(_x2,_y-1,0) 
+	{1;return }
+	//下通
+	if YThrough(_x1,_y+1,1)&&YThrough(_x2,_y+1,1) 
+	{1;return }
+	0;return 
+}
+
+//
+// 是否同一直线通
+//
+
+LineX
+{
+	_x=_argv[0];
+	_y1=_argv[1];
+	_y2=_argv[2];
+	if _y1>_y2 
+	{
+		_y=_y1;
+		_y1=_y2;
+		_y2=_y;
+	}
+	for _y=_y1;_y<=_y2;_y++ 
+	{
+		map[_y*m_nCol+_x]="YX";
+		if m_map[_y*m_nCol+_x]!=BLANK_STATE 
+		{0;return }
+		if _y==_y2 
+		{1;return }
+
+	}
+	0;return
+}
+
+//
+// 是否同一直线通
+//
+LineY
+{
+	_x1=_argv[0];
+	_x2=_argv[1];
+	_y=_argv[2];
+	if _x1>_x2 
+	{
+		_x=_x1;
+		_x1=_x2;
+		_x2=_x;
+	}
+	for _x=_x1;_x<=_x2;_x++ 
+	{
+		map[_y*m_nCol+_x]="XY";
+		if m_map[_y*m_nCol+_x]!=BLANK_STATE 
+		{0;return }
+		if _x==_x2 
+		{1;return }
+
+	}
+	0;return 
+}
+
+//
+//  1直角接口连通
+//
+OneCornerLink
+{
+	_x1=_argv[0];
+	_y1=_argv[1];
+	_x2=_argv[2];
+	_y2=_argv[3];
+	ss=""
+		if _x1>_x2 
+		{
+			_n=_x1;
+			_x1=_x2;
+			_x2=_n;
+			_n=_y1;
+			_y1=_y2;
+			_y2=_n;
+            
+		}
+		if _y2<_y1 
+		{
+			if LineY(_x1+1,_x2,_y1)&&LineX(_x2,_y1,_y2+1) 
+			{1;return;}
+			if LineY(_x2-1,_x1,_y2)&&LineX(_x1,_y2,_y1-1) 
+			{1;return;}
+			0;return; 
+			
+		}	
+		
+		else
+		{
+			if LineY(_x1+1,_x2,_y1) && LineX(_x2,_y1,_y2-1)
+			{
+				1; return;
+				
+			}
+			
+			if LineY(_x2-1,_x1,_y2) && LineX(_x1,_y2,_y1+1)
+			{
+				1; return;
+			}	                
+			
+			0;return; 
+		}
+		
+		0;return; 
+		
+}
+
+//
+//  2直角接口连通
+//
+
+TwoCornerLink
+{
+	_x1=_argv[0];
+	_y1=_argv[1];
+	_x2=_argv[2];
+	_y2=_argv[3];
+	if _x1>_x2 
+	{
+		_n=_x1;
+		_x1=_x2;
+		_x2=_n;
+		_n=_y1;
+		_y1=_y2;
+		_y2=_n;
+	}
+	//右通
+	if XThrough(_x1+1,_y1,1)&&XThrough(_x2+1,_y2,1) 
+	{1;return;}
+	//左通
+	if XThrough(_x1-1,_y1,0)&&XThrough(_x2-1,_y2,0) 
+	{1;return;}
+	//上通
+	if YThrough(_x1,_y1-1,0)&&YThrough(_x2,_y2-1,0) 
+	{1;return;}
+	//下通
+	if YThrough(_x1,_y1+1,1)&&YThrough(_x2,_y2+1,1) 
+	{1;return;}
+	
+	
+	
+	//右
+	for _x=_x1+1;_x<m_nCol;_x++ 
+	{
+		if m_map[_y1*m_nCol+_x]>-1 
+			break;
+		if OneCornerLink(_x,_y1,_x2,_y2) 
+		{1;return;}
+	}
+	
+	
+	
+	//左
+	for _x=_x1-1;_x>-1;_x-- 
+	{
+		if m_map[_y1*m_nCol+_x]!=BLANK_STATE 
+			break;
+		if OneCornerLink(_x,_y1,_x2,_y2)
+		{1;return;}
+	}
+	
+	//上
+	
+	for _y=_y1-1;_y>-1;_y-- 
+	{
+		if m_map[_y*m_nCol+_x1]!=BLANK_STATE 
+			break;
+		if OneCornerLink(_x1,_y,_x2,_y2) 
+		{1;return;}
+	}
+	
+	//下
+	for _y=_y1+1;_y<m_nRow;_y++ 
+	{
+		if m_map[_y*m_nCol+_x1]!=BLANK_STATE 
+			break;
+		if OneCornerLink(_x1,_y,_x2,_y2) 
+		{1;return;}
+	}
+	
+	0;return; 
+}
+
+XThrough
+{
+	_x=_argv[0];
+	_y=_argv[1];
+	bAdd=_argv[2];
+	if bAdd 
+	{
+		for _i=_x;_i<m_nCol;_i++ 
+		{
+			if m_map[_y*m_nCol+_i]!=BLANK_STATE 
+			{0;return;}
+			map[_y*m_nCol+_i]="XT"
+		}
+	}
+	else
+	{
+		for _i=0;_i<=_x;_i++ 
+		{
+			if m_map[_y*m_nCol+_i]!=BLANK_STATE 
+			{0;return;}
+			map[_y*m_nCol+_i]="XT"
+		}
+	}
+	1;return;
+}
+
+YThrough
+{
+	_x=_argv[0];
+	_y=_argv[1];
+	_bAdd=_argv[2];
+	if _bAdd 
+	{
+		for _i=_y;_i<m_nRow;_i++ 
+		{
+			if m_map[_i*m_nCol+_x]!=BLANK_STATE 
+			{0;return;}
+			map[_i*m_nCol+_x]="YT"
+		}
+	}
+	else
+	{
+		for _i=0;_i<=_y;_i++
+		{
+			if m_map[_i*m_nCol+_x]!=BLANK_STATE
+			{0;return;}
+			map[_i*m_nCol+_x]="YT"
+		}
+	}
+	1;return;
+}
+
+CheckLinkMapNum     //地图数量检查
+{
+	LinkWndMapNum=(0,0,0,0,0,0,0,0);
+	_mapfile = "data\LinkWnd\mapseed.txt";
+	if FOPEN(_mapfile,"r") 
+	{
+		_buff = FREAD(_mapfile);
+		while _buff!=-1 
+		{
+			_buff = FREAD(_mapfile);
+			if "#0" _in_ _buff
+				LinkWndMapNum[0]++;
+			if "#1" _in_ _buff
+				LinkWndMapNum[1]++;
+			if "#2" _in_ _buff
+				LinkWndMapNum[2]++;
+			if "#3" _in_ _buff
+				LinkWndMapNum[3]++;
+		}
+		FCLOSE(_mapfile);
+	}
+	
+	_mapfile="profile/selfmapseed.txt";
+	if FOPEN(_mapfile,"r") 
+	{
+		_buff = FREAD(_mapfile);
+		while _buff!=-1 
+		{
+			_buff = FREAD(_mapfile)
+                if "#0" _in_ _buff
+                    LinkWndMapNum[4]++;
+				if "#1" _in_ _buff
+					LinkWndMapNum[5]++;
+                if "#2" _in_ _buff
+					LinkWndMapNum[6]++;
+				if "#3" _in_ _buff
+                    LinkWndMapNum[7]++;
+		}
+		FCLOSE(_mapfile);
+	}
+	
+	
+}
+
+LoadMapSeed
+{
+	_mode= "#"+_argv[0];
+	_num =""+_argv[1];
+        _sw=_argv[2];
+	CheckLinkMapNum;
+	_txt = "";
+        _mapfile=""
+	if _sw==0
+	_mapfile = "data/LinkWnd/mapseed.txt";  
+	else
+        _mapfile="profile/selfmapseed.txt";
+	
+	if FOPEN(_mapfile,"r") {
+		_buff = FREAD(_mapfile);
+		while _buff != -1 && (_buff[0] != _mode || _buff[1] != _num) {
+			_buff = FREAD(_mapfile);
+		}
+		if _buff == -1 {
+			_mapseed="error";
+			_mapseed;retrun;
+		}
+		else {
+			LinkWndMode=_argv[0];
+			for _buff = FREAD(_mapfile);_buff != -1 && _buff !="";_buff = FREAD(_mapfile) {
+				_txt += _buff;
+			}
+			_txt;
+		}
+		FCLOSE(_mapfile);
+	}
+	
+}
+
+//
+//   检测是否已经赢得了游戏
+//
+IsWin
+{
+	//检测所有是否尚有非未被消除的方块
+	// (非BLANK_STATE状态)
+	for _i=0;_i<m_nRow*m_nCol;_i++ 
+	{
+		if m_map[_i] != BLANK_STATE 
+		{
+			{ 0;return;}
+		}
+	}
+	
+	1;return;
+}
+
+//连连看地图编辑器
+OnLinkMapEditor
+{
+	CheckLinkWnd;
+	CheckLinkMapNum;
+	playLinkWnd=3;
+	if freemode==0
+        	m_MapSeed.Seed=m_MapSeed.Load;
+	LinkMapEditorShow;
+}
+
+LinkMapEditorShow   //地图绘图
+{
+	_txt="\C\![quicksession,1]\c\![set,choicetimeout,0]\b[2]";
+	_PIC=("data/LinkWnd/0.bmp","data/LinkWnd/1.bmp","data/LinkWnd/border.bmp");
+	m_MapSeed.Num=0;
+	for  _i=0; _i<m_nRow-2; _i++
+	{
+		for _j=0; _j<m_nCol-2; _j++ 
+		{
+			_x = (_j+1)*(LinkWndWIDTH-1);
+			_y = (_i+1)*(LinkWndWIDTH-1);
+			_z=45;
+			//_txt+="\_l[%(_x+LinkWnd_LEFT-1),%(LinkWnd_TOP+_y-1+_z)]\_b[%(_PIC[2]),inline,--option=opaque,--clipping=0 %(59-LinkWndWIDTH) %(LinkWndWIDTH+1) 60]\__q";
+			if  TOINT(m_MapSeed.Seed[_i*(m_nCol-2)+_j])==0 
+			{
+				m_MapSeed.Seed[_i*(m_nCol-2)+_j]=0;
+				_txt+="\_l[%(_x+LinkWnd_LEFT),%(LinkWnd_TOP+_y+_z)]\__q[OnSetLinkMap,%(SetLinkMap.mode),%(select.mapseed),%(_j),%(_i)]\_b[%(_PIC[0]),inline,--option=opaque,--clipping=0 0 %(LinkWndWIDTH) %(LinkWndWIDTH)]\__q";
+			}
+			
+			elseif TOINT(m_MapSeed.Seed[_i*(m_nCol-2)+_j])==1
+			{
+				_txt+="\_l[%(_x+LinkWnd_LEFT),%(LinkWnd_TOP+_y+_z)]\__q[OnSetLinkMap,%(SetLinkMap.mode),%(select.mapseed),%(_j),%(_i)]\_b[%(_PIC[1]),inline,--option=opaque,--clipping=0 0 %(LinkWndWIDTH) %(LinkWndWIDTH)]\__q";
+				m_MapSeed.Num++;
+			}
+			_txt+="\_l[%(_x+LinkWnd_LEFT),%(LinkWnd_TOP+_y+_z)]\_b[%(_PIC[2]),inline,--option=opaque,--clipping=0 0 1 %(LinkWndWIDTH)]";
+			_txt+="\_l[%(_x+LinkWnd_LEFT),%(LinkWnd_TOP+_y+_z)]\_b[%(_PIC[2]),inline,--option=opaque,--clipping=0 0 %(LinkWndWIDTH) 1]";
+			if _i==TOINT(m_nRow-3)
+			{
+				_x = (_j+1)*(LinkWndWIDTH-1);
+				_y = (_i+2)*(LinkWndWIDTH-1);
+				_txt+="\_l[%(_x+LinkWnd_LEFT),%(LinkWnd_TOP+_y+_z)]\_b[%(_PIC[2]),inline,--option=opaque,--clipping=0 0 %(LinkWndWIDTH) 1]";
+			}
+			if _j==TOINT(m_nCol-3)
+			{
+				_x = (_j+2)*(LinkWndWIDTH-1);
+				_y = (_i+1)*(LinkWndWIDTH-1);
+				_txt+="\_l[%(_x+LinkWnd_LEFT),%(LinkWnd_TOP+_y+_z)]\_b[%(_PIC[2]),inline,--option=opaque,--clipping=0 0 1 %(LinkWndWIDTH)]";
+			}                     
+		}
+	}
+	
+	_txt+=LinkMapMenu;
+	_txt;
+}
+
+LinkMapMenu    //地图目录
+{
+	_txt="\0\s[26]";
+	
+	CheckLinkMapNum;
+	if m_MapSeed.Num%2==0
+	{
+		_txt+="\_l[0,0]\q[新游戏,OnInitLinkWnd]";
+		if uselinkselfmap==1
+		{
+			_txt+="\_l[40,0]\q[保存,OnLinkMapSave,save,%(LinkWndMode),%(m_levels[levelsort]+1)]";
+			_txt+="\_l[70,0]\q[另存,OnLinkMapSave,saveas,%(LinkWndMode),%(LinkWndMapNum[LinkWndMode+4]+1)]";
+		}
+		else
+		{
+			_txt+="\_l[40,0]\q[保存,OnLinkMapSave,save,%(LinkWndMode),%(m_levels[4+levelsort]+1)]";
+			_txt+="\_l[70,0]\q[另存,OnLinkMapSave,saveas,%(LinkWndMode),%(LinkWndMapNum[LinkWndMode+4]+1)]";      
+		}
+		
+	}
+	else
+	{
+		_txt="\_l[0,0]\f[color,192,192,192]新游戏\f[color,default]";
+		_txt+="\_l[70,0]\f[color,192,192,192]保存\f[color,default]";
+		
+	}
+_t=" 普通  ,地图种子插件"[TOINT(linkmapmode)];
+	_txt+="\_l[100,0]\q[%(_t),OnSetLinkMap,linkmapmode]"
+	_txt+="\_l[180,0]\q[设定,OnLinkWndOption]  方块数：%(m_MapSeed.Num)";
+	_PIC=("data/LinkWnd/0.bmp","data/LinkWnd/1.bmp","data/LinkWnd/border.bmp","data/LinkWnd/border_select.bmp");
+if TOINT(linkmapmode)==0
+{
+	_txt+="\_l[00,28]\q[互换,OnSetLinkMap,exchange]";
+        _txt+="\_l[35,-]\q[Y对称,OnSetLinkMap,Y-copy]";
+	_txt+="\_l[75,-]\q[X对称,OnSetLinkMap,X-copy]";
+	_txt+="\_l[120,-]\q[斜线对称,OnSetLinkMap,Z-copy]";
+        _txt+="\_l[180,-]\q[镜像,OnSetLinkMap,mirror]";
+	_txt+="\_l[220,-]\q[倒置,OnSetLinkMap,invert]";
+        _txt+="\_l[260,-]\q[斜角,OnSetLinkMap,corner]";
+	_txt+="\_l[0,50]\__q[OnSetLinkMap,select.mapseed,0]\_b[%(_PIC[0]),inline,--option=opaque,--clipping=0 0 20 20]\__q";
+	_txt+="\_l[7,54]0";
+	_txt+="\_l[25,55]\q[全部置0,OnSetLinkMap,allset,0]";
+        _txt+="\_l[70,55]\q[行置0,OnSetLinkMap,rowset,0]";
+	_txt+="\_l[110,55]\q[列置0,OnSetLinkMap,colset,0]";
+	_txt+="\_l[145,50]\__q[OnSetLinkMap,select.mapseed,1]\_b[%(_PIC[1]),inline,--option=opaque,--clipping=0 0 20 20]\__q";
+        _txt+="\_l[152,54]1";
+	_txt+="\_l[170,55]\q[全部置1,OnSetLinkMap,allset,1]";
+	_txt+="\_l[215,55]\q[行置1,OnSetLinkMap,rowset,1]";
+	_txt+="\_l[255,55]\q[列置1,OnSetLinkMap,colset,1]";
+}
+else
+{
+
+
+
+}	
+	if select.mapseed==0&&SetLinkMap.mode=="SetLinkMap.Click";
+	{
+		_txt+="\_l[0,50]\_b[%(_PIC[3]),inline,--option=opaque,--clipping=0 0 20 20]";
+	}
+	if select.mapseed==1&&SetLinkMap.mode=="SetLinkMap.Click";
+	{
+		_txt+="\_l[145,50]\_b[%(_PIC[3]),inline,--option=opaque,--clipping=0 0 20 20]";
+	}
+	
+	
+
+	
+	_txt
+}
+
+OnSetLinkMap   //地图设定
+{
+    _mode=reference0;
+    select.mapseed=reference1;
+    _j=reference2;
+    _i=reference3;
+    select=_i*(m_nCol-2)+_j
+    _m_MapSeed.Seed=IARRAY
+    if _argc>0
+    {
+		_mode=_argv[0];
+                select.mapseed=_argv[1];
+		_j=_argv[1];
+		_i=_argv[2];
+    }
+    if _mode=="linkmapmode"
+    {
+linkmapmode=(TOINT(linkmapmode)+1)%2
+    }
+    elseif _mode=="select.mapseed"
+    {
+		select.mapseed=reference1;
+		SetLinkMap.mode="SetLinkMap.Click";
+    }
+	
+    elseif _mode=="SetLinkMap.Click"
+    {
+		m_MapSeed.Seed[_i*(m_nCol-2)+_j]=select.mapseed;
+    }
+	
+    elseif _mode=="allset"
+    {
+		for  _i=0; _i<m_nRow-2; _i++
+		{
+			for _j=0; _j<m_nCol-2; _j++ 
+			{
+				m_MapSeed.Seed[_i*(m_nCol-2)+_j]=TOINT(reference1);
+			}
+		}
+    }
+    elseif _mode=="rowset"
+    {
+        SetLinkMap.mode="rowset"
+        if select!=0
+        {
+	    for _j=0; _j<m_nCol-2; _j++ 
+	    {
+		m_MapSeed.Seed[_i*(m_nCol-2)+_j]=TOINT(reference1);
+  	    }
+        }
+		
+    }	
+
+   elseif _mode=="colset"
+    {
+        SetLinkMap.mode="colset"
+        if select!=0
+        {
+	   for  _i=0; _i<m_nRow-2; _i++
+	    {
+		m_MapSeed.Seed[_i*(m_nCol-2)+_j]=TOINT(reference1);
+  	    }
+        }		
+    }
+
+    elseif _mode=="exchange"
+    {
+		for  _i=0; _i<m_nRow-2; _i++
+		{
+			for _j=0; _j<m_nCol-2; _j++ 
+			{
+				m_MapSeed.Seed[_i*(m_nCol-2)+_j]=1-TOINT(m_MapSeed.Seed[_i*(m_nCol-2)+_j]);
+			}
+		}
+    }	
+ 
+
+    elseif _mode=="mirror"
+    {
+		for  _i=0; _i<m_nRow-2; _i++
+		{
+			for _j=0; _j<(m_nCol-2)/2; _j++ 
+			{
+                               
+                                _k=TOINT(m_MapSeed.Seed[_i*(m_nCol-2)+_j]);
+                                m_MapSeed.Seed[_i*(m_nCol-2)+_j]=TOINT(m_MapSeed.Seed[_i*(m_nCol-2)+m_nCol-3-_j]);
+                                m_MapSeed.Seed[_i*(m_nCol-2)+m_nCol-3-_j]=_k;
+                               
+			}
+		}
+    }	
+
+  elseif _mode=="invert"
+    {
+		for  _i=0; _i<(m_nRow-2)/2; _i++
+		{
+			for _j=0; _j<m_nCol-2; _j++ 
+			{
+                               
+                                _k=TOINT(m_MapSeed.Seed[_i*(m_nCol-2)+_j]);
+                                m_MapSeed.Seed[_i*(m_nCol-2)+_j]=TOINT(m_MapSeed.Seed[(m_nRow-3-_i)*(m_nCol-2)+_j]);
+                                m_MapSeed.Seed[(m_nRow-3-_i)*(m_nCol-2)+_j]=_k;
+                               
+			}
+		}
+    }	
+
+  elseif _mode=="corner"
+    {
+		for  _i=0; _i<m_nRow-2; _i++
+		{
+			for _j=_i; _j<m_nCol-2; _j++ 
+			{
+                               
+                                _k=TOINT(m_MapSeed.Seed[_i*(m_nCol-2)+_j]);
+                                m_MapSeed.Seed[_i*(m_nCol-2)+_j]=TOINT(m_MapSeed.Seed[_j*(m_nCol-2)+_i]);
+                                m_MapSeed.Seed[_j*(m_nCol-2)+_i]=_k;
+                               
+			}
+		}
+    }	
+
+ elseif _mode=="Y-copy"
+    {
+		for  _i=0; _i<m_nRow-2; _i++
+		{
+			for _j=0; _j<(m_nCol-2)/2; _j++ 
+			{
+                               
+                                _k=TOINT(m_MapSeed.Seed[_i*(m_nCol-2)+_j]);
+                                if TOINT(m_MapSeed.Seed[_i*(m_nCol-2)+m_nCol-3-_j])==1
+                                      m_MapSeed.Seed[_i*(m_nCol-2)+_j]=TOINT(m_MapSeed.Seed[_i*(m_nCol-2)+m_nCol-3-_j]);
+                                if _k==1
+                                m_MapSeed.Seed[_i*(m_nCol-2)+m_nCol-3-_j]=_k;
+                               
+			}
+		}
+      }
+
+     elseif _mode=="X-copy"
+    {
+		for  _i=0; _i<(m_nRow-2)/2; _i++
+		{
+			for _j=0; _j<m_nCol-2; _j++ 
+			{
+                                _k=TOINT(m_MapSeed.Seed[_i*(m_nCol-2)+_j]);
+                                if TOINT(m_MapSeed.Seed[(m_nRow-3-_i)*(m_nCol-2)+_j])==1
+                                   m_MapSeed.Seed[_i*(m_nCol-2)+_j]=TOINT(m_MapSeed.Seed[(m_nRow-3-_i)*(m_nCol-2)+_j]);
+                                if _k==1
+                                m_MapSeed.Seed[(m_nRow-3-_i)*(m_nCol-2)+_j]=_k;
+                               
+			}
+		}
+    }	
+
+       elseif _mode=="Z-copy"
+    {
+		for  _i=0; _i<m_nRow-2; _i++
+		{
+			for _j=_i; _j<m_nCol-2; _j++ 
+			{
+                               
+                                _k=TOINT(m_MapSeed.Seed[_i*(m_nCol-2)+_j]);
+                                if TOINT(m_MapSeed.Seed[_j*(m_nCol-2)+_i])==1
+                                  m_MapSeed.Seed[_i*(m_nCol-2)+_j]=TOINT(m_MapSeed.Seed[_j*(m_nCol-2)+_i]);
+                                if _k==1
+                                m_MapSeed.Seed[_j*(m_nCol-2)+_i]=_k;
+                               
+			}
+		}
+    }	
+
+	LinkMapEditorShow;
+}
+
+OnLinkMapSave    //地图保存
+{
+	CheckLinkMapNum;
+	_save=reference0;
+	_mode= "#"+reference1;
+	_num =""+reference2;
+	_mapfile="profile/selfmapseed.txt";
+	_mapfile2="data/LinkWnd/selfmapseed.txt";
+	_buff="";
+	_txt="";
+	FCHARSET(1);
+	if FOPEN(_mapfile,'r')==0
+	{
+		_t = FOPEN(_mapfile,'w');
+		_t = FWRITE(_mapfile,"自建连连看地图文本");
+		FCLOSE(_mapfile);
+	}
+	FCLOSE(_mapfile);
+	
+	
+	
+	if _save=="saveas"
+	{
+		_t = FOPEN(_mapfile,'a');
+		_t=FWRITE(_mapfile,"");
+		_buff="%(_mode),%(_num),%(m_nCol-2),%(m_nRow-2),";
+		_t = FWRITE(_mapfile,_buff);
+		
+		for  _i=0; _i<m_nRow-2; _i++
+		{
+			_buff="";
+			for _j=0; _j<m_nCol-2; _j++ 
+			{
+				_buff+=TOINT(m_MapSeed.Seed[_i*(m_nCol-2)+_j])+","
+			}
+			_t = FWRITE(_mapfile,_buff);
+		}
+		
+		FCLOSE(_mapfile);
+		"成功另存为新地图\x"
+			--
+			LinkMapEditorShow;
+	}
+	
+	
+	elseif _save=="save"
+	{
+		
+		_t = FOPEN(_mapfile2,'w');
+		FCLOSE(_mapfile2);
+		_t=FOPEN(_mapfile,"r");
+		_buff = FREAD(_mapfile);
+		FCLOSE(_mapfile);  
+		_t = FOPEN(_mapfile2,'a');
+		FWRITE(_mapfile2,_buff); 		   
+		for _k=0;_k<4;_k++
+		{
+			if TOINT(reference1)==_k
+			{
+				_buff="off";
+				for _j=1;_j<TOINT(reference2);_j++
+				{
+					if FOPEN(_mapfile,"r") 
+					{ 
+						_buff = FREAD(_mapfile);
+						while _buff != -1 && (_buff[0] != _mode || _buff[1] != ""+_j) 
+						{
+							_buff = FREAD(_mapfile);
+						}
+						_t = FWRITE(_mapfile2,_buff);
+						if _buff!=-1
+						{
+							for _buff = FREAD(_mapfile);_buff != -1&& _buff !="";_buff = FREAD(_mapfile) 
+							{
+								
+								_t = FWRITE(_mapfile2,_buff);
+								
+							}
+						}
+						_t=FWRITE(_mapfile2,"");
+					}
+					FCLOSE(_mapfile);  
+				}
+				
+				
+				if _buff=="off"
+					_t=FWRITE(_mapfile2,"");
+				_buff="%(_mode),%(_num),%(m_nCol-2),%(m_nRow-2),"
+				_t = FWRITE(_mapfile2,_buff);
+				
+				for  _i=0; _i<m_nRow-2; _i++
+				{
+					_buff="";
+					for _j=0; _j<m_nCol-2; _j++ 
+					{
+						_buff+=TOINT(m_MapSeed.Seed[_i*(m_nCol-2)+_j])+",";
+					}
+					_t = FWRITE(_mapfile2,_buff);
+				}
+				_t=FWRITE(_mapfile2,"");
+				_num =TOINT(reference2+1);                  
+				for _j=_num;_j<=TOINT(LinkWndMapNum[4+_k]);_j++
+				{
+					if FOPEN(_mapfile,"r") 
+					{ 
+						_buff = FREAD(_mapfile);
+						while _buff != -1 && (_buff[0] != _mode || _buff[1] != ""+_j) 
+						{
+							_buff = FREAD(_mapfile);
+						}
+						_t = FWRITE(_mapfile2,_buff);
+						if _buff!=-1
+						{
+							for _buff = FREAD(_mapfile);_buff != -1&& _buff !="";_buff = FREAD(_mapfile) 
+							{
+								
+								_t = FWRITE(_mapfile2,_buff);
+								
+							}
+						}
+						_t=FWRITE(_mapfile2,"");
+					}
+					FCLOSE(_mapfile);  
+				}
+				
+			}
+			
+			else
+			{
+				for _j=1;_j<=LinkWndMapNum[4+_k];_j++
+				{
+					if FOPEN(_mapfile,"r") 
+					{       
+						_buff = FREAD(_mapfile);
+						while _buff != -1 && (_buff[0] != "#"+_k || _buff[1] != ""+_j) 
+						{
+							_buff = FREAD(_mapfile);
+						}
+						_t = FWRITE(_mapfile2,_buff);
+						if _buff!=-1
+						{
+							for _buff = FREAD(_mapfile);_buff != -1&& _buff !="";;_buff = FREAD(_mapfile) 
+							{
+								
+								_t = FWRITE(_mapfile2,_buff);
+								
+							}
+						}
+						_t=FWRITE(_mapfile2,"");
+					}
+					FCLOSE(_mapfile);  
+				}
+				
+			}
+			
+		}
+		FCLOSE(_mapfile2); 		   
+		
+		if FCOPY(_mapfile2,"profile"); 
+		"成功保存\x";
+		--
+			LinkMapEditorShow;
+	}
+	elseif _save=="del"
+	{
+		_t = FOPEN(_mapfile2,'w');
+		FCLOSE(_mapfile2);
+		_t=FOPEN(_mapfile,"r"); 
+		_buff = FREAD(_mapfile);
+		FCLOSE(_mapfile);  
+		_t = FOPEN(_mapfile2,'a');
+		FWRITE(_mapfile2,_buff); 
+		for _k=0;_k<4;_k++
+		{
+			if TOINT(reference1)==_k
+			{
+				for _j=1;_j<LinkWndMapNum[4+_k];_j++
+				{
+					if FOPEN(_mapfile,"r") 
+					{       
+						_buff = FREAD(_mapfile);
+						while _buff != -1 && (_buff[0] != "#"+_k || _buff[1] != ""+_j) 
+						{
+							_buff = FREAD(_mapfile);
+						}
+						_t = FWRITE(_mapfile2,_buff);
+						if _buff!=-1
+						{
+							for _buff = FREAD(_mapfile);_buff != -1&& _buff !="";;_buff = FREAD(_mapfile) 
+							{
+								
+								_t = FWRITE(_mapfile2,_buff);
+								
+							}
+						}
+						_t=FWRITE(_mapfile2,"");
+					}
+					FCLOSE(_mapfile);  
+					
+					
+				}
+			}
+			else
+			{
+				for _j=1;_j<=LinkWndMapNum[4+_k];_j++
+				{
+					if FOPEN(_mapfile,"r") 
+					{       
+						_buff = FREAD(_mapfile);
+						while _buff != -1 && (_buff[0] != "#"+_k || _buff[1] != ""+_j) 
+						{
+							_buff = FREAD(_mapfile);
+						}
+						_t = FWRITE(_mapfile2,_buff);
+						if _buff!=-1
+						{
+							for _buff = FREAD(_mapfile);_buff != -1&& _buff !="";;_buff = FREAD(_mapfile) 
+							{
+								
+								_t = FWRITE(_mapfile2,_buff);
+								
+							}
+						}
+						_t=FWRITE(_mapfile2,"");
+					}
+					FCLOSE(_mapfile);  
+					
+					
+				}
+				
+			}
+			
+			
+		}
+		FCLOSE(_mapfile2); 
+        _t=FCOPY(_mapfile2,"profile"); 	
+        OnLinkWndOption;	   
+	}
+	
+	FCHARSET(1);
+}
+
+LinkBar
+{
+	_maxlen = 100;
+	_percent = _argv[0];
+	_max = 100;
+	_len = 0;
+	if _argv[1] != "" {
+		_max = _argv[1];
+	}
+	if _argv[2] != "" {
+		_maxlen = _argv[2];
+	}
+ 	_txt = "";
+	_length = _percent * _maxlen / _max;
+	if _length > 0 {
+		if _length > _maxlen {
+			_length = _maxlen;
+		}
+		_txt += "\_b[PATH\linkbar.png,inline,--option=opaque,--clipping=%(134 - _length) 0 134 10]";
+	}
+        if _length <0
+       _length=0
+	if _length < _maxlen  {
+		_txt += "\_b[PATH\linkbar_blank.png,inline,--option=opaque,--clipping=0 0 %(_maxlen - _length) 10]";
+        }
+	_txt;
+}

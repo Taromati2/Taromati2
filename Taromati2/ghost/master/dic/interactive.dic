@@ -1,0 +1,1974 @@
+﻿//-------------------关于伪春菜人格大乱斗 -----------------------------------------------------
+//此程序支持多个人格进行互动战斗，使用前提是都是AYA语言的人格，使用方法是将辞书复制到每个要使用的人格的dic目录里面，在aya.txt里调用本辞书，最后在menu里调用On战斗开始，三个人格的使用要注意一定由最先开启的人格进入乱斗，也就是说乱斗的发起者也是其他人格的呼叫者。本辞书可随意移植到要使用的人格里，但本辞书的原始作者保留最终修改与发布的权利。
+                                                                 //by 广岛秋泽\fancyang
+
+
+On战斗开始
+{
+	//---- 決定攻击对象
+  
+	if ghostexcount > 0
+	{
+		// res_reference0 指定人格
+                if fjswitch
+                fjswitch="-1"
+		指定人格 = ghostexlist[RAND(ghostexcount)]
+	}
+	case 指定人格
+	{
+		if 指定人格 != "" && ghostexcount == 1
+		{
+			
+                    "准备和人格%(指定人格)进行战斗，接下来应该进行怎样的战斗？\n/
+                    \q[猜拳大作战,OnHandGameVSMode]\n/
+                    \q[一对一单挑,OnOneByOneBegin]\n"
+		}
+                elseif ghostexcount==2
+                {
+                 "当前人格数量为3，是否进行人格大乱斗？\n/
+                    \q[人格大乱斗,On人格大乱斗模式]"
+
+                }
+                 elseif ghostexcount>=3
+                {
+                 "人格数量超出限制，请保留三个人格\n"
+                    
+
+                }
+		else
+		{
+			"\0\s[0]没有呼叫出任何人格，无法进行战斗。请确定要呼叫的人格安装了interactive.dic这个辞书，一定要由第一个开启的人格发起战斗，也就是说乱斗的发起者也是其他人格的呼叫者。否则会有BUG出现。\e"
+		}
+	}
+}
+
+OnHandGameVSMode
+{
+
+"请选择游戏模式\n/
+\__q[OnHandGameVSBegin]帮%selfname出拳\__q\n/
+\__q[OninterHandGameVSBegin]%selfname自己出拳\__q"
+
+}
+
+OnHandGameVSBegin
+{
+OnHandGameReset
+
+--
+"\![raiseother,%(指定人格),OnHandGameReset]"
+--
+OnHandGameVSChoice
+
+}
+
+OnHandGameVSChoice
+{
+
+
+受到伤害=reference0
+
+    if reference1 !=NULL
+        {
+         HP0=reference1
+        }
+    if reference2 !=NULL
+        {
+         HP1=reference2
+        }
+
+
+
+    if 受到伤害>0
+        { 
+         
+          HP0-=受到伤害
+         "\0%(被动作)，%selfname损血100\x"
+        
+        }
+
+   --
+     if HP0>0 && HP1>0
+        {
+
+         "%selfname应该出\n/
+          \q[◇剪刀,OnShowHandVS,1,%(HP0),%(HP1)]\n/
+          \q[◇石头,OnShowHandVS,2,%(HP0),%(HP1)]\n/
+          \q[◇布,OnShowHandVS,3,%(HP0),%(HP1)]\n/
+          \q[◇不用了,On战斗开始]"
+
+          }
+
+   elseif HP0<=0 && HP1>0
+         {
+
+         "%selfname战斗失败了\x"
+
+         }
+
+         elseif HP0>0 && HP1<=0
+         {
+         "%selfname战斗胜利了\x"
+
+         }
+
+--
+主动信息
+
+}
+
+
+OnShowHandVS
+{
+"我出"
+--
+    switch reference0
+        {
+                ""
+                "剪刀\n\w9\x"
+                "石头\n\w9\x"
+                "布\n\w9\x"
+        
+        }
+
+--
+"\![raiseother,%(指定人格),OnHandGameVS,%(reference0),%(reference1),%(reference2)]"
+
+
+
+}
+
+
+OnHandGameVS
+{
+
+   if reference1 !=NULL
+        {
+          HP0=reference1
+        }
+    if reference2 !=NULL
+        {
+         HP1=reference2
+        }
+
+
+if HP0>0 && HP1>0
+{
+
+_i=RAND(3)+1
+--
+
+
+        "\0\s[0]我出.\w8"
+        --
+    switch _i
+        {
+                ""
+                "剪刀\n\w9\x"
+                "石头\n\w9\x"
+                "布\n\w9\x"
+        
+        }
+
+     --
+                  if (3 + _i - reference0)%3==0
+                
+                  {
+                   atk=0
+                    "\0平手,HP不变\x"
+                      --         
+                      "\![raiseother,%(指定人格),OnHandGameVSChoice,%(atk),%(HP0),%(HP1)]"
+                         
+                  }  
+                  elseif (3 + _i - reference0)%3==1
+                  {
+                    atk=100
+                    "\0我赢了,轮到我发动攻击\x"
+                    --            
+                      "\![raiseother,%(指定人格),OnHandGameVSChoice,%(atk),%(HP0),%(HP1)]"
+                  
+                  }
+                  elseif (3 + _i - reference0)%3==2
+                  {
+                     atk=0
+                    HP1 -= 100
+                    "\0我输了\x"
+                    --               
+                   "\0%(被动作)，%selfname损血100\x"
+                      --
+                      "\![raiseother,%(指定人格),OnHandGameVSChoice,%(atk),%(HP0),%(HP1)]"
+                    
+                  }
+                
+            
+}
+
+elseif HP0>0 && HP1<=0
+{
+
+"%selfname战斗失败了\x\n/
+\q[返回,On战斗开始]"
+
+}
+
+elseif HP0<=0 && HP1>0
+{
+
+"%selfname战斗胜利了\x\n/
+\q[返回,On战斗开始]"
+
+}
+
+
+--
+被动信息
+
+}
+
+主动信息
+{
+
+"\_q\1\![set,choicetimeout,0]%selfnameHP：%(HP0)\n/
+%(指定人格)HP：%(HP1)\_q"
+
+}
+
+被动信息
+{
+
+"\_q\1\![set,choicetimeout,0]%selfnameHP：%(HP1)\n/
+%(指定人格)HP：%(HP0)\_q"
+
+}
+
+
+OninterHandGameVSBegin
+{
+if fjswitch
+   fjswitch="-1"
+指定人格 = ghostexlist[RAND(ghostexcount)]
+OnHandGameReset
+
+--
+"\![raiseother,%(指定人格),OnHandGameReset]"
+--
+OninterHandGame
+
+}
+
+OnHandGameReset
+{
+if fjswitch
+   fjswitch="-1"
+指定人格 = ghostexlist[RAND(ghostexcount)]
+HP0=1000
+HP1=1000
+atk=0
+}
+
+
+OninterHandGame
+{
+
+r0=reference0 
+受到伤害=reference1
+if reference2 !=NULL
+{
+HP0=reference2
+}
+if reference3 !=NULL
+{
+HP1=reference3
+}
+
+
+g0=_argv[0]
+g1=_argv[1]
+   _i=RAND(3)+1
+
+
+      if 受到伤害>0
+        { 
+         
+          HP0-=受到伤害
+         "\0%(被动作)，%selfname损血100\x"
+        
+        }
+
+     --
+  
+  if HP0>0 && HP1>0
+    {
+
+
+        "\0\s[0]我出.\w8"
+        --
+    switch _i
+        {
+                ""
+                "剪刀\n\w9\x"
+                "石头\n\w9\x"
+                "布\n\w9\x"
+        
+        }
+
+
+
+         if reference0 ==NULL
+            {
+     "\![raiseother,%(指定人格),OninterHandGame,%(_i),%(atk),%(HP1),%(HP0)]"
+            }
+
+         else
+            {
+
+             if (3 + _i - reference0)%3 ==0
+                   {
+                     atk=0
+                    "\0平手,HP不变\x"
+                    --
+                   
+                    "\![raiseother,%(指定人格),OninterHandGame,,%(atk),%(HP1),%(HP0)]"
+                        
+                  
+                   }
+             elseif (3 + _i - reference0)%3 ==1
+                   {
+                    atk=100
+                    "\0我赢了,轮到我发动攻击\x"
+
+                                 --
+                    "\![raiseother,%(指定人格),OninterHandGame,,%(atk),%(HP1),%(HP0)]"
+                             atk=0
+                       
+                   }
+             elseif (3 + _i - reference0)%3 ==2
+                   {
+                    atk=0
+                    HP0-=100
+                    "\0我输了\x"
+                   --
+                    "\0%(被动作)，%selfname损血100\x"
+                                 --
+                    "\![raiseother,%(指定人格),OninterHandGame,,%(atk),%(HP1),%(HP0)]"
+                            
+                           
+                   }
+           }
+   }
+     
+
+elseif HP0<=0 && HP1>0
+{
+
+HP0=0
+"\0战斗失败了\x\n/
+\q[返回,On战斗开始]"
+
+}
+
+elseif HP0>0 && HP1<=0
+{
+
+HP1=0
+"\0战斗胜利了\x\n/
+\q[返回,On战斗开始]"
+
+
+}
+
+--
+
+                          InterGameinfo
+
+
+
+}
+
+InterGameinfo
+{
+"\_q\1\![set,choicetimeout,0]%selfnameHP：%(HP0)\n/
+%(指定人格)HP：%(HP1)\_q"
+}
+
+
+OneByOneinfo
+{
+"\1\![set,choicetimeout,0]%selfnameHP：%(HP0)  SP：%(SP0)\n/
+%(指定人格)HP：%(HP1)"
+
+}
+
+
+OnOneByOneBegin
+{
+OnOneByOneReset
+mode="onebyone"
+--
+"\![raiseother,%(指定人格),OnOneByOneReset]"
+--
+OnOneByOne
+
+}
+
+
+OnOneByOneReset
+{
+if fjswitch
+   fjswitch="-1"
+指定人格 = ghostexlist[RAND(ghostexcount)]
+HP0=1000
+HP1=1000
+SP0 = 500
+SP1 = 500
+ANG = 1
+IGN = 1
+STR0ADD=0
+STR1ADD=0
+DEF0ADD=0
+DEF1ADD=0
+DEF0MINUS=0
+DEF1MINUS=0
+STR0=20+STR0ADD
+STR1=20+STR1ADD
+DEF=1
+DEF0=15+DEF0ADD-DEF0MINUS
+DEF1=15+DEF1ADD-DEF1MINUS
+防御回合=-1
+神威祈福回合=-1
+呐喊回合=-1
+赎罪回合=-1
+天使之光回合=-1
+天使之怒回合=-1
+沉默回合=-1
+SILENT0=0
+SILENT1=0
+}
+
+OnOneByOneVar
+{
+STR0=TOINT(20+STR0ADD)
+STR1=TOINT(20+STR1ADD)
+DEF0=TOINT(DEF*(15+DEF0ADD-DEF0MINUS))
+
+
+
+}
+
+
+OnOneByOne
+{
+
+On回合判定
+
+--
+if reference0 !=NULL
+{
+HP0=reference0
+}
+
+if reference1 !=NULL
+{
+HP1=reference1
+}
+
+
+if reference3 !=NULL
+{
+DEF1=reference3
+}
+
+SILENT0=reference4
+DEF0MINUS=reference2
+
+--
+OnOneByOneVar
+
+if HP0>0 && HP1>0
+{
+On战斗选项
+
+}
+
+elseif HP0>0 && HP1<=0
+{
+"%selfname战斗胜利了。\x"
+}
+
+elseif HP0<=0 && HP1>0
+{
+"%selfname战斗失败了。\x"
+}
+
+
+
+--
+OneByOneinfo
+
+}
+
+
+
+On战斗选项
+{
+
+"\0\![set,choicetimeout,0]%selfname请选择攻击方式\n\n[half]/
+\q[物理攻击,On物理攻击]\n"
+--
+   if SILENT[1]==1
+                    "\f[color,192,192,192]使用战技\f[color,default]\n" 
+                        else
+			"\q[使用战技,On使用战技]\n"
+--
+
+"\q[治疗,On治疗选择]\n/
+\q[防御,On防御]\n/
+"
+
+
+}
+
+
+
+
+On物理攻击
+{
+
+物理攻击
+
+
+--
+    if mode=="onebyone"
+    {
+    "\![raiseother,%(指定人格),On反击,%(HP1),%(HP0),%(DEF1MINUS),%(DEF0),%(SILENT1)]"
+    }
+
+    elseif mode=="挑战"
+    {
+   "\![raiseother,%(指定人格),On挑战反击,%(HP1),%(HP0),%(HP2),%(DEF1MINUS),%(DEF0),%(DEF2),%(SILENT1),%(指定人格),%(自身名字)]"
+    }
+
+}
+
+物理攻击
+{
+
+i = RAND(100)
+  if i<60
+     {
+       物理伤害=TOINT(ANG*(4*STR0-2*DEF1*IGN))
+      HP1-=物理伤害
+    "%(动作),%(指定人格)损血%(物理伤害)\x"
+  
+     }
+
+  else
+     {
+     物理伤害=TOINT(ANG*1.5*(4*STR0-2*DEF1*IGN))
+      HP1-=物理伤害
+      "%(动作二),%(指定人格)受伤了，损血%(物理伤害)\x"
+    
+     }
+
+}
+
+
+On使用战技
+{
+    if SILENT0!=1
+     {
+"\b[2]\![set,choicetimeout,0]\![quicksession,true]\__q[Onusespatk,0,30]神威祈福：自身物攻提升10，有效三回合，消耗SP30\__q\n/
+\__q[Onusespatk,1,25]双连击：攻击两次，消耗SP25\__q\n/
+\__q[Onusespatk,2,30]呐喊：自身防御提升10，有效三回合，消耗SP30\__q\n/
+\__q[Onusespatk,3,20]赎罪：下一次攻击时，无视对方防御力，消耗SP20\__q\n/
+\__q[Onusespatk,4,30]天使之光：对方防御减10，有效三回合，消耗SP30\__q\n/
+\__q[Onusespatk,5,20]天使之怒：攻击时给予对方的伤害翻倍，效果只在使用之后第一次攻击后消失，消耗SP20\__q\n/
+\__q[Onusespatk,6,20]沉默：对方无法使用技能攻击，有效三回合，消耗SP20\__q\n/
+\n\n\n\q[返回,On战斗选项]\n/
+"
+     }
+
+
+
+  else
+    {
+"处于沉默状态无法发动战技\x"
+    --
+  On战斗选项
+
+    }
+
+
+
+}
+
+Onusespatk
+{
+战技ID=reference0
+消耗SP=TOINT(reference1)
+
+--
+  发动战技
+      --
+OnOneByOneVar
+      --
+if mode=="onebyone"
+    {
+    "\![raiseother,%(指定人格),On反击,%(HP1),%(HP0),%(DEF1MINUS),%(DEF0),%(SILENT1)]"
+    }
+
+    elseif mode=="挑战"
+    {
+     "\![raiseother,%(指定人格),On挑战反击,%(HP1),%(HP0),%(HP2),%(DEF1MINUS),%(DEF0),%(DEF2),%(SILENT1),%(指定人格),%(自身名字)]"
+    }
+
+
+--
+OneByOneinfo
+
+
+}
+
+Onusespatkvs
+{
+战技ID=reference0
+消耗SP=TOINT(reference1)
+
+    --
+  发动战技
+
+  --
+OnOneByOneVar
+      --
+
+"\![raiseother,%(指定人格),OnOneByOne,%(HP1),%(HP0),%(DEF1MINUS),%(DEF0),%(SILENT1)]"
+ 
+
+
+}
+
+
+发动战技
+{
+
+   if SP0>=消耗SP && SILENT0!=1
+   {
+      if 战技ID==0
+         {
+           
+         STR0ADD=10
+         神威祈福回合=3
+         "%selfname使用了神威祈福，STR提升10。\x"
+
+         }
+      elseif 战技ID==1
+         {
+            战技伤害=TOINT(ANG*2*(4*STR0-2*DEF1*IGN))
+            HP1-=战技伤害
+            "%selfname对%(指定人格)使用了双连击，%(指定人格)损血%(战技伤害)\x"
+         }
+      elseif 战技ID==2   
+         {
+         DEF0ADD=10    
+         呐喊回合=3
+          "%selfname使用了呐喊，DEF提升10。\x"
+         }
+      elseif 战技ID==3
+         {
+         IGN=0
+         赎罪回合=1
+         "%selfname使用了赎罪，%(指定人格)DEF被无视了。\x"
+         }
+      elseif 战技ID==4
+         {
+         DEF1MINUS=10
+         天使之光回合=3
+          "%selfname使用了天使之光，%(指定人格)DEF降低10。\x"
+         }
+      elseif 战技ID==5
+         {
+         ANG=2
+         天使之怒回合=1
+         "%selfname使用了天使之怒\x"
+         }
+      elseif 战技ID==6
+         {
+         沉默回合=3
+         SILENT1=1
+          "%selfname使用了沉默，%(指定人格)被封技了\x"
+         }
+      
+--
+SP0-=消耗SP
+
+    }
+
+  else
+    {
+"SP不足\x"
+    --
+  On战斗选项
+
+    }
+
+
+
+ 
+}
+
+
+On回合判定
+{
+     
+      if 防御回合>0
+         {
+        防御回合--
+         }
+      elseif 防御回合==0
+       {
+       防御回合=-1
+        --
+       DEF=1
+       }
+
+
+
+
+   
+      if 神威祈福回合>0
+         {
+        神威祈福回合--
+         }
+      elseif 神威祈福回合==0
+       {
+       神威祈福回合=-1
+        --
+       STR0ADD=0
+       "%selfname使用的祈福技能失效了\x"
+       }
+    
+--
+      if 呐喊回合>0
+         {
+        呐喊回合--
+         }
+      elseif 呐喊回合==0
+       {
+       呐喊回合=-1
+        --
+       DEF0ADD=0
+       "%selfname使用的呐喊技能失效了\x"
+       }
+    
+  --
+ 
+      if 赎罪回合>0
+         {
+        赎罪回合--
+         }
+
+      elseif 赎罪回合==0
+       {
+       赎罪回合=-1
+       --
+       IGN=1
+       "%selfname使用的赎罪技能失效了\x"
+       }
+    
+--
+  
+      if 天使之光回合>0
+         {
+        天使之光回合--
+         }
+      elseif 天使之光回合==0
+       {
+       天使之光回合=-1
+        --
+       DEF1MINUS=0
+       "%selfname使用的天使之光技能失效了\x"
+       }
+
+--
+
+      if 天使之怒回合>0
+         {
+        天使之怒回合--
+         }
+         elseif 天使之怒回合==0
+       {
+       天使之怒回合=-1
+        --
+       ANG=1
+       "%selfname使用的天使之怒技能失效了\x"
+       }
+    
+--
+  
+      if 沉默回合>0
+         {
+        沉默回合--
+         }
+       elseif 沉默回合==0
+       {
+       沉默回合=-1
+       --
+       SILENT1=0
+       "%selfname使用的沉默技能失效了\x"
+       }
+    
+
+--
+OnOneByOneVar
+
+}
+
+On治疗选择
+{
+   
+"消耗50SP以回复300的HP，是否要治疗？\n/
+\q[是,On治疗自己]\n/
+\q[否,On战斗选项]\n/
+"
+   
+
+
+}
+
+
+On治疗自己
+{
+
+On治疗
+
+
+--
+if mode=="onebyone"
+    {
+    "\![raiseother,%(指定人格),On反击,%(HP1),%(HP0),%(DEF1MINUS),%(DEF0),%(SILENT1)]"
+    }
+
+    elseif mode=="挑战"
+    {
+       "\![raiseother,%(指定人格),On挑战反击,%(HP1),%(HP0),%(HP2),%(DEF1MINUS),%(DEF0),%(DEF2),%(SILENT1),%(指定人格),%(自身名字)]"
+    }
+
+
+
+}
+
+On治疗
+{
+ if SP0>=50
+   {
+       if HP0<=700
+        {
+          HP0+=300
+          SP0-=50
+          "%selfname使用了治疗术，HP回复300\x"
+        }
+       elseif HP0>700
+        {
+        "%selfname使用了治疗术，HP回复%(1000-HP0)\x"
+          HP0=1000
+          SP0-=50
+          
+        }
+
+
+   }
+
+
+ else
+   {
+    "SP不足，不能治疗\x"
+
+   }
+}
+
+
+On防御
+{
+
+"准备好防御以应对下一次攻击\x"
+防御回合=0
+DEF=2
+--
+if mode=="onebyone"
+    {
+    "\![raiseother,%(指定人格),On反击,%(HP1),%(HP0),%(DEF1MINUS),%(DEF0),%(SILENT1)]"
+    }
+
+    elseif mode=="挑战"
+    {
+       "\![raiseother,%(指定人格),On挑战反击,%(HP1),%(HP0),%(HP2),%(DEF1MINUS),%(DEF0),%(DEF2),%(SILENT1),%(指定人格),%(自身名字)]"
+    }
+
+
+
+}
+
+On反击
+{
+if fjswitch
+   fjswitch="-1"
+指定人格 = ghostexlist[RAND(ghostexcount)]
+--
+ On回合判定
+
+--
+if reference0 !=NULL
+{
+HP0=reference0
+}
+
+if reference1 !=NULL
+{
+HP1=reference1
+}
+
+
+
+if reference3 !=NULL
+{
+DEF1=reference3
+}
+
+if reference4 !=NULL
+{
+SILENT0=reference4
+}
+
+
+DEF0MINUS=reference2
+--
+
+OnOneByOneVar
+
+if HP0>0 && HP1>0
+{
+t=RAND(10)
+    if t>=8
+      {
+         物理攻击
+       }
+     elseif t>=4 && t<=7
+               {
+                  if SP0>=30 && SILENT0!=1
+                   {
+                        
+                   "\![raise,Onusespatkvs,1,25]"
+                   
+ 
+                            {
+                          if ANG!=2
+                                 {
+                     "\![raise,Onusespatkvs,1,25]"
+                     "\![raise,Onusespatkvs,0,30]"
+                       if 呐喊回合==-1
+                     "\![raise,Onusespatkvs,2,30]"
+                                 }
+                         else 
+                                 {
+                              "\![raise,Onusespatkvs,1,25]"
+                                 }
+
+                            }
+                  
+                          
+                            {
+                              if ANG!=2
+                                 {
+                        "\![raise,Onusespatkvs,1,25]"
+                        "\![raise,Onusespatkvs,3,20]"
+                        "\![raise,Onusespatkvs,4,30]"
+                                 }
+                             else 
+                                 {
+                              "\![raise,Onusespatkvs,1,25]"
+                                 }
+
+                            } 
+                           
+                        
+                   }
+                   else
+                      {
+                       物理攻击
+                      }
+
+               }
+      elseif t>=0 && t<=3
+               {
+                   if HP0<=500 && SP0>=50
+                       {
+                        i=RAND(2)
+                         if i==0
+                             {
+                              On治疗
+                             }
+                          elseif i==1 && SILENT0!=1
+                             {
+                             if ANG!=2
+                                 {
+                            "\![raise,Onusespatkvs,1,25]"
+                            "\![raise,Onusespatkvs,6,20]"
+                            "\![raise,Onusespatkvs,5,20]"
+                                 }
+                              else 
+                                 {
+                              "\![raise,Onusespatkvs,1,25]"
+                                 }
+                             
+                             }
+                       }
+                     else 
+                       {
+                       物理攻击
+                       }
+
+    
+               }
+                
+
+                  --
+                "\![raiseother,%(指定人格),OnOneByOne,%(HP1),%(HP0),%(DEF1MINUS),%(DEF0),%(SILENT1)]"
+        }
+
+elseif HP0>0 && HP1<=0
+{
+"%selfname战斗胜利了。\x"
+
+--
+ "\![raiseother,%(指定人格),On战斗开始]"
+
+}
+
+elseif HP0<=0 && HP1>0
+{
+"%selfname战斗失败了。\x"
+--
+ "\![raiseother,%(指定人格),On战斗开始]"
+
+}
+
+--
+OneByOneinfo
+
+}
+
+
+On人格大乱斗模式
+{
+
+"请选择人格大乱斗模式。\n/
+\__q[On观战模式]观战模式（多个人格的内斗）\__q\n/
+\__q[On挑战模式]挑战模式（玩家控制当前人格挑战其他人格）\__q\n/
+"
+}
+
+
+On观战模式
+{
+/*
+for i=0;i<=TOINT(ghostexcount-1);i++
+{
+
+
+指定人格=ghostexlist[i]
+--
+"\![raiseother,%(指定人格),OnbattleReset]"
+}
+
+*/
+
+    if ghostexcount>2
+   {
+     "观战模式只支持三个人格的乱斗，请关闭一个人格再进行。\x"
+
+     --
+      On战斗开始
+
+    }
+
+   else
+   {
+
+     foreach ghostexlist; _i 
+     {
+
+      "\![raiseother,%(_i),OnbattleReset]"
+
+     }
+
+
+     --
+    OnbattleReset
+
+    --
+     On观战
+   }
+}
+
+OnbattleReset
+{
+if fjswitch
+   fjswitch="-1"
+指定人格=ghostexlist[RAND(ghostexcount)]
+HP0=1000
+HP1=1000
+HP2=1000
+SP0 = 500
+SP1 = 500
+ANG = 1
+IGN = 1
+STR0ADD=0
+STR1ADD=0
+DEF0ADD=0
+DEF0MINUS=0
+DEF1MINUS=0
+STR0=20+STR0ADD
+DEF0=15+DEF0ADD-DEF0MINUS
+攻击者=NULL
+神威祈福回合=-1
+呐喊回合=-1
+赎罪回合=-1
+天使之光回合=-1
+天使之怒回合=-1
+沉默回合=-1
+SILENT0=0
+SILENT1=0
+
+
+}
+
+
+Onbattlevar
+{
+STR0=TOINT(20+STR0ADD)
+DEF0=TOINT(15+DEF0ADD-DEF0MINUS)
+
+}
+
+On观战
+{
+if fjswitch
+   fjswitch="-1"
+指定人格=ghostexlist[RAND(ghostexcount)]
+
+其他人格数量=ghostexcount
+if reference9 != NULL
+{
+战败者=reference9
+
+  if ghostexcount>=2
+   {
+     while 战败者==指定人格
+         {
+          指定人格=ghostexlist[RAND(ghostexcount)]
+
+         }
+
+    }
+其他人格数量-=1
+
+}
+
+On回合判定
+              
+--  
+
+--
+攻击者=reference8
+
+
+
+if 攻击者==指定人格
+
+{
+
+if reference0 !=NULL
+{
+HP0=reference0
+}
+
+if reference1 !=NULL
+{
+HP1=reference1
+}
+
+if reference2 !=NULL
+{
+HP2=reference2
+}
+
+
+if reference3 !=NULL
+{
+DEF0MINUS=reference3
+}
+
+if reference4 !=NULL
+{
+DEF1=reference4
+}
+
+if reference5 !=NULL
+{
+DEF2=reference5
+}
+
+}
+
+if 攻击者!=指定人格
+{
+
+
+if reference0 !=NULL
+{
+HP0=reference0
+}
+
+if reference1 !=NULL
+{
+HP2=reference1
+}
+
+if reference2 !=NULL
+{
+HP1=reference2
+}
+
+
+
+if reference4 !=NULL
+{
+DEF2=reference4
+}
+
+if reference5 !=NULL
+{
+DEF1=reference5
+}
+
+}
+--
+Onbattlevar
+--
+DEF0MINUS=reference3
+SILENT0=reference6
+自身名字=reference7
+
+
+
+if HP0>0 && 其他人格数量>0
+{
+   if 攻击者!=NULL && 自身名字!=NULL
+     {
+
+t=RAND(10)
+    if t>=8
+      {
+         物理攻击
+       }
+     elseif t>=4 && t<=7
+               {
+                  if SP0>=30 && SILENT0!=1
+                   {
+                        
+                   "\![raise,On乱斗观战战技,1,25]"
+                   
+ 
+                            {
+                          if ANG!=2
+                                 {
+                     "\![raise,On乱斗观战战技,1,25]"
+                     "\![raise,On乱斗观战战技,0,30]"
+                             if 呐喊回合==-1
+                     "\![raise,On乱斗观战战技,2,30]"
+                                 }
+                         else 
+                                 {
+                              "\![raise,On乱斗观战战技,1,25]"
+                                 }
+
+                            }
+                  
+                          
+                            {
+                              if ANG!=2
+                                 {
+                        "\![raise,On乱斗观战战技,1,25]"
+                        "\![raise,On乱斗观战战技,3,20]"
+                        "\![raise,On乱斗观战战技,4,30]"
+                                 }
+                             else 
+                                 {
+                              "\![raise,On乱斗观战战技,1,25]"
+                                 }
+
+                            } 
+                           
+                        
+                   }
+                   else
+                      {
+                       物理攻击
+                      }
+
+               }
+      elseif t>=0 && t<=3
+               {
+                   if HP0<=500 && SP0>=50
+                       {
+                        i=RAND(2)
+                         if i==0
+                             {
+                              On治疗
+                             }
+                          elseif i==1 && SILENT0!=1
+                             {
+                             if ANG!=2
+                                 {
+                            "\![raise,On乱斗观战战技,1,25]"
+                            "\![raise,On乱斗观战战技,6,20]"
+                            "\![raise,On乱斗观战战技,5,20]"
+                                 }
+                              else 
+                                 {
+                              "\![raise,On乱斗观战战技,1,25]"
+                                 }
+                             
+                             }
+                       }
+                     else 
+                       {
+                       物理攻击
+                       }
+
+    
+               }
+   }
+       else
+  {
+    "已作好准备\x"
+  }     
+                   
+                       --
+                  
+     
+                "\![raiseother,%(指定人格),On观战,%(HP1),%(HP0),%(HP2),%(DEF1MINUS),%(DEF0),%(DEF2),%(SILENT1),%(指定人格),%(自身名字)]"
+                   
+               
+                    
+
+
+
+        }
+
+
+
+elseif HP0<=0
+{
+"唔唔～，\w9\w9战败了，\w9\w9我走了\x"
+--
+自身名字
+--
+"\0\![raiseother,%(指定人格),On观战,%(HP1),%(HP0),%(HP2),%(DEF1MINUS),%(DEF0),%(DEF2),%(SILENT1),%(指定人格),%(攻击者),%(自身名字)]"
+--
+"\1\-"
+
+}
+
+elseif 其他人格数量==0
+{
+"%selfname战胜了所有的人格，成为了伪春菜中的霸主,%selfname正在狂笑中。\x"
+
+}
+
+
+--
+    OneByOneinfo
+
+
+
+}
+
+
+
+
+On乱斗观战战技
+{
+
+战技ID=reference0
+消耗SP=TOINT(reference1)
+
+    --
+  发动战技
+
+  --
+OnOneByOneVar
+             -- 
+                  
+
+    
+                  
+                "\![raiseother,%(指定人格),On观战,%(HP1),%(HP0),%(HP2),%(DEF1MINUS),%(DEF0),%(DEF2),%(SILENT1),%(指定人格),%(自身名字)]"
+                    
+            
+                    
+                    
+ --
+    OneByOneinfo
+
+
+}
+
+
+On挑战模式
+{
+
+mode="挑战"
+if fjswitch
+   fjswitch="-1"
+foreach ghostexlist; _i 
+{
+
+"\![raiseother,%(_i),OnbattleReset]"
+
+}
+
+
+--
+OnbattleReset
+
+--
+On挑战
+
+}
+
+
+On挑战
+{
+if fjswitch
+   fjswitch="-1"
+指定人格=ghostexlist[RAND(ghostexcount)]
+--
+
+其他人格数量=ghostexcount
+
+/*
+
+if reference7 != NULL
+  
+{
+战败者=reference7
+
+  if ghostexcount>=2
+   {
+     while 战败者==指定人格
+         {
+          指定人格=ghostexlist[RAND(ghostexcount)]
+
+         }
+
+    }
+其他人格数量-=1
+
+}
+*/
+if reference9 != NULL
+  
+{
+
+其他人格数量-=1
+
+}
+
+
+
+--
+On回合判定
+--
+
+
+攻击者=reference8
+自身名字=reference7
+
+
+if 攻击者==指定人格
+
+{
+
+if reference0 !=NULL
+{
+HP0=reference0
+}
+
+if reference1 !=NULL
+{
+HP1=reference1
+}
+
+if reference2 !=NULL
+{
+HP2=reference2
+}
+
+
+if reference3 !=NULL
+{
+DEF0MINUS=reference3
+}
+
+if reference4 !=NULL
+{
+DEF1=reference4
+}
+
+if reference5 !=NULL
+{
+DEF2=reference5
+}
+
+}
+
+if 攻击者!=指定人格
+{
+
+
+if reference0 !=NULL
+{
+HP0=reference0
+}
+
+if reference1 !=NULL
+{
+HP2=reference1
+}
+
+if reference2 !=NULL
+{
+HP1=reference2
+}
+
+
+
+if reference4 !=NULL
+{
+DEF2=reference4
+}
+
+if reference5 !=NULL
+{
+DEF1=reference5
+}
+
+}
+
+--
+DEF0MINUS=reference3
+SILENT0=reference6
+
+
+
+
+
+
+
+
+
+
+/*
+
+自身名字=reference5
+攻击者=reference6
+if reference0 !=NULL
+{
+HP0=reference0
+}
+
+if reference1 !=NULL
+{
+HP1=reference1
+}
+
+
+
+if reference3 !=NULL
+{
+DEF1=reference3
+}
+
+
+
+
+
+
+DEF0MINUS=reference2
+SILENT0=reference4
+
+*/
+
+
+--
+OnOneByOneVar
+--
+
+
+
+if HP0>0 && 其他人格数量>0
+{
+  if 攻击者!=NULL
+       {
+     On战斗选项
+       }
+
+  else
+      {
+    "已作好准备\x"
+--
+"\![raiseother,%(指定人格),On挑战反击,%(HP1),%(HP0),%(HP2),%(DEF1MINUS),%(DEF0),%(DEF2),%(SILENT1),%(指定人格),%(自身名字)]"
+      }     
+
+}
+
+
+elseif HP0<=0 
+{
+"%selfname战斗失败了。\x"
+}
+
+elseif 其他人格数量==0
+{
+"%selfname战胜了所有的人格，成为了伪春菜中的霸主,%selfname正在狂笑中。\x\n/
+\q[返回,On战斗开始]"
+
+}
+
+
+
+
+--
+OneByOneinfo
+
+}
+
+
+On挑战反击
+{
+if fjswitch
+   fjswitch="-1"
+指定人格=ghostexlist[0]
+--
+
+On回合判定
+--
+
+自身名字=reference7
+攻击者=reference8
+
+if 攻击者==指定人格
+
+{
+
+if reference0 !=NULL
+{
+HP0=reference0
+}
+
+if reference1 !=NULL
+{
+HP1=reference1
+}
+
+if reference2 !=NULL
+{
+HP2=reference2
+}
+
+
+if reference3 !=NULL
+{
+DEF0MINUS=reference3
+}
+
+if reference4 !=NULL
+{
+DEF1=reference4
+}
+
+if reference5 !=NULL
+{
+DEF2=reference5
+}
+
+}
+
+if 攻击者!=指定人格
+{
+
+
+if reference0 !=NULL
+{
+HP0=reference0
+}
+
+if reference1 !=NULL
+{
+HP2=reference1
+}
+
+if reference2 !=NULL
+{
+HP1=reference2
+}
+
+
+
+if reference4 !=NULL
+{
+DEF2=reference4
+}
+
+if reference5 !=NULL
+{
+DEF1=reference5
+}
+
+}
+
+--
+DEF0MINUS=reference3
+SILENT0=reference6
+
+
+
+
+
+
+
+
+
+/*
+
+自身名字=reference5
+攻击者=reference6
+--
+if reference0 !=NULL
+{
+HP0=reference0
+}
+
+if reference1 !=NULL
+{
+HP1=reference1
+}
+
+
+
+
+if reference3 !=NULL
+{
+DEF1=reference3
+}
+
+
+
+
+SILENT0=reference4
+DEF0MINUS=reference2
+*/
+--
+OnOneByOneVar
+--
+
+if HP0>0 
+{
+ if 攻击者!=NULL && 自身名字!=NULL
+     {
+
+t=RAND(10)
+
+
+    if t>=8
+      {
+         物理攻击
+       }
+     elseif t>=4 && t<=7
+               {
+                  if SP0>=30 && SILENT0!=1
+                   {
+                        
+                   "\![raise,Onusespatkvs,1,25]"
+                   
+ 
+                            {
+                          if ANG!=2
+                                 {
+                     "\![raise,Onusespatkvs,1,25]"
+                     "\![raise,Onusespatkvs,0,30]"
+                       if 呐喊回合==-1
+                     "\![raise,Onusespatkvs,2,30]"
+                                 }
+                         else 
+                                 {
+                              "\![raise,Onusespatkvs,1,25]"
+                                 }
+
+                            }
+                  
+                          
+                            {
+                              if ANG!=2
+                                 {
+                        "\![raise,Onusespatkvs,1,25]"
+                        "\![raise,Onusespatkvs,3,20]"
+                        "\![raise,Onusespatkvs,4,30]"
+                                 }
+                             else 
+                                 {
+                              "\![raise,Onusespatkvs,1,25]"
+                                 }
+
+                            } 
+                           
+                        
+                   }
+                   else
+                      {
+                       物理攻击
+                      }
+
+               }
+      elseif t>=0 && t<=3
+               {
+                   if HP0<=500 && SP0>=50
+                       {
+                        i=RAND(2)
+                         if i==0
+                             {
+                              On治疗
+                            
+                             }
+                          elseif i==1 && SILENT0!=1
+                             {
+                             if ANG!=2
+                                 {
+                            "\![raise,Onusespatkvs,1,25]"
+                            "\![raise,Onusespatkvs,6,20]"
+                            "\![raise,Onusespatkvs,5,20]"
+                                 }
+                              else 
+                                 {
+                              "\![raise,Onusespatkvs,1,25]"
+                                 }
+                             
+                             }
+                       }
+                     else 
+                       {
+                       物理攻击
+                       }
+
+    
+               }
+                
+     }
+
+else
+  {
+    "已作好准备\x"
+  }     
+                
+                  --
+            "\![raiseother,%(指定人格),On挑战,%(HP1),%(HP0),%(HP2),%(DEF1MINUS),%(DEF0),%(DEF2),%(SILENT1),%(指定人格),%(自身名字)]"
+
+
+
+          /*
+           "\![raiseother,%(指定人格),On挑战,%(HP1),%(HP0),%(DEF1MINUS),%(DEF0),%(SILENT1),%(指定人格),%(自身名字)]"
+             */   
+
+
+                
+
+        }
+
+
+
+
+elseif HP0<=0 
+{
+"唔唔～，\w9\w9战败了，\w9\w9我走了\x"
+
+--
+
+     if ghostexcount>=2
+   {
+     while 攻击者==指定人格
+         {
+          指定人格=ghostexlist[RAND(ghostexcount)]
+
+         }
+
+"\![raiseother,%(指定人格),On挑战反击,,%(HP1),%(HP2),%(DEF1MINUS),%(DEF0),%(DEF2),%(SILENT1),%(指定人格),%(攻击者)]"
+
+         /*
+        "\![raiseother,%(指定人格),On挑战反击,,%(HP1),%(DEF1MINUS),%(DEF0),%(SILENT1),%(指定人格),%(自身名字)]"
+         */
+    }
+
+   elseif ghostexcount==1
+   {
+if fjswitch
+   fjswitch="-1"
+   指定人格=ghostexlist[0]
+
+"\0\![raiseother,%(指定人格),On挑战,%(HP1),%(HP0),%(HP2),%(DEF1MINUS),%(DEF0),%(DEF2),%(SILENT1),%(指定人格),%(自身名字),%(自身名字)]"
+
+       /*
+"\![raiseother,%(指定人格),On挑战,%(HP1),%(HP0),%(DEF1MINUS),%(DEF0),%(SILENT1),%(指定人格),%(自身名字),%(自身名字)]"
+     */
+   }
+
+--
+"\-"
+}
+--
+OneByOneinfo
+
+}
+
+
+
+
+动作
+{
+"%selfname捏了%(指定人格)的鼻子"
+"%selfname捏了%(指定人格)的脸"
+"%selfname拧了%(指定人格)的耳朵"
+"%selfname扯了%(指定人格)的头发"
+"%selfname打了%(指定人格)一拳"
+}
+
+被动作
+{
+"%(指定人格)捏了%selfname的鼻子"
+"%(指定人格)捏了%selfname的脸"
+"%(指定人格)拧了%selfname的耳朵"
+"%(指定人格)扯了%selfname的头发"
+"%(指定人格)打了%selfname一拳"
+}
+
+
+动作二
+{
+"%selfname用铁沙掌推了%(指定人格)一下"
+"%selfname用铁头功撞了%(指定人格)一下"
+"%selfname用金刚脚踩了%(指定人格)一下"
+"%selfname用小蛮腰撞了%(指定人格)一下"
+"%selfname用屁股撞了%(指定人格)一下"
+}
+
+

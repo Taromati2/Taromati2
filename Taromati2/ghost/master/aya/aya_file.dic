@@ -1,0 +1,51 @@
+﻿//by steve02081504
+DELDIR{
+	_attrib=FATTRIB(_argv[0])
+	if _attrib!=-1{
+		if _attrib[2]{
+			_d=FENUM(_argv[0])
+			foreach _d;_i{
+				_temp=DELDIR(_argv[0]+'\'+_i)
+			}
+			_temp=RMDIR(_argv[0])
+		}else{
+			_temp=FDEL(_argv[0])
+		}
+	}
+}
+DIRCOPY{
+	_attrib=FATTRIB(_argv[0])
+	if _attrib!=-1{
+		if _attrib[2]{
+			_temp=MKDIR(_argv[1])
+			_d=FENUM(_argv[0])
+			foreach _d;_i{
+				_temp=DIRCOPY(_argv[0]+'\'+_i,_argv[1]+'\'+_i)
+			}
+		}else{
+			_temp=FULLNAMEFCOPY(_argv[0],_argv[1])
+		}
+		if _attrib[3]
+			_temp=FHIDDEN(_argv[1])
+	}
+}
+FHIDDEN{
+	RUNCMD('attrib +H "'+_argv[0]+'"')
+}
+FULLNAMEFCOPY{
+	_attrib=FATTRIB(_argv[0])
+	if _attrib!=-1{
+		{
+			_t=FOPEN(_argv[0],'rb')
+			_t=FOPEN(_argv[1],'wb')
+			_size=FSIZE(_argv[0])
+			while FTELL(_argv[0])!=_size{
+				_t=FWRITEBIN(_argv[1],FREADBIN(_argv[0],0))
+			}
+			_t=FCLOSE(_argv[0])
+			_t=FCLOSE(_argv[1])
+		}
+		if _attrib[3]
+			_t=FHIDDEN(_argv[1])
+	}
+}

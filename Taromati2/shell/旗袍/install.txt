@@ -1,0 +1,5 @@
+﻿charset,UTF-8
+type,shell
+name,チャイナ
+accept,橘花
+directory,china

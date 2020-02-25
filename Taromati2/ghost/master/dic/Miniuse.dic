@@ -1,0 +1,4794 @@
+﻿//---- 倒数计时 ---
+
+Select.count
+{
+	i=0;
+	--
+        "\0\![open,inputbox,Oncountchange,-1]%(username)要橘花帮忙倒数几秒呢？\n\n[half]\q[◇取消倒数,countend]";
+}
+
+Oncount
+{
+	if reference0 > 0
+		"\s[5]收到！\s[20]\t倒数%(reference0)秒钟…\n\n[half]\q[◇取消倒数,countend]\_w[%(reference0*1000)]\c\s[5]\_v[saori\Ring.mp3]锵锵～时间到了。\x";
+	else
+		"数字错误喔。";
+}
+
+Oncountchange
+{
+	if reference0!=NULL
+		num=reference0;
+	if num>0
+	{
+
+		_txt="\C\![quicksession,1]\c\0\s[5]收到！倒数%(num-i)秒钟…\n\n[half]\q[◇取消倒数,countend]";
+		if i<=num
+		{
+			i++;
+			_txt+"\_w[1000]\![raise,Oncountchange]";
+
+		}
+		else
+		{
+			_txt="\c\0\s[5]\_v[saori\Ring.mp3]\_q锵锵～时间到了。\x";
+			_txt;
+			break;
+		}
+	}
+
+
+	else
+		"数字错误喔。";
+}
+
+//----------------------秒表----------------------------------------------
+OnSecondWatch
+{
+	running="secondwatch"
+	_mode=reference0
+        _key=reference1
+        if _argc>0
+        {
+          _mode=_argv[0]
+         _key=_argv[1]
+         }
+
+	if (_mode=="timerecordbegin"||_key=="s")&&secondwatch==1
+	{
+		SecondWatch.sss=GETTICKCOUNT;secondwatch=2
+			_txt="\C\![quicksession,1]\c\b[0]%(SecondWatch.m)分%(SecondWatch.s)秒%(SecondWatch.ss)\n\f[cursorstyle,none]\q[暂停计时,OnSecondWatch,pause]\n\q[停止计时,OnSecondWatch,stop]\n\n快捷键：\ns：开始/停止\np：暂停/继续\_l[0,130]\q[◇返回（m）,OnSecondWatchBack]\_l[150]\q[◇结束,OnSecondWatchOver]\f[cursorstyle,default]";
+		_txt+"\_w[10]\![raise,OnSecondWatch,timerecord]"
+	}
+	elseif _mode=="timerecord"&&_key!="s"&&_key!="p"&&secondwatch==2
+	{
+
+		SecondWatch.sso=GETTICKCOUNT-SecondWatch.sss
+			SecondWatch.ss=SecondWatch.sso/10%100
+			SecondWatch.s=SecondWatch.sso/1000%60
+			SecondWatch.m=SecondWatch.sso/60000%60
+			/*
+
+			  if SecondWatch.ss>=90
+			  {
+			  SecondWatch.ss=0;
+			  SecondWatch.s++;
+			  }
+			  if SecondWatch.s>=60
+			  {
+			  SecondWatch.s=0;
+			  SecondWatch.m++;
+			  }
+			  SecondWatch.ss+=10;
+			  */
+			  _txt="\C\![quicksession,1]\c\b[0]%(SecondWatch.m)分%(SecondWatch.s)秒%(SecondWatch.ss)\n\f[cursorstyle,none]\q[暂停计时,OnSecondWatch,pause]\n\q[停止计时,OnSecondWatch,stop]\n\n快捷键：\ns：开始/停止\np：暂停/继续\_l[0,130]\q[◇返回（m）,OnSecondWatchBack]\_l[150]\q[◇结束,OnSecondWatchOver]\f[cursorstyle,default]";
+		_txt+"\_w[10]\![raise,OnSecondWatch,timerecord]"
+	}
+	elseif (_mode=="pause"||_key=="p")&&secondwatch==2
+	{
+		secondwatch=3
+			_txt="\b[0]%(SecondWatch.m)分%(SecondWatch.s)秒%(SecondWatch.ss)\n\q[继续计时,OnSecondWatch,recover]\n\q[停止计时,OnSecondWatch,stop]\n\n快捷键：\ns：开始/停止\np：暂停/继续\_l[0,130]\q[◇返回（m）,OnSecondWatchBack]\_l[150]\q[◇结束,OnSecondWatchOver]\f[cursorstyle,default]";
+		_txt;
+	}
+	elseif (_mode=="recover"||_key=="p")&&secondwatch==3
+	{
+		SecondWatch.sss=GETTICKCOUNT-SecondWatch.sso;secondwatch=2
+			_txt="\C\![quicksession,1]\c\b[0]%(SecondWatch.m)分%(SecondWatch.s)秒%(SecondWatch.ss)\n\f[cursorstyle,none]\q[暂停计时,OnSecondWatch,pause]\n\n快捷键：\ns：开始/停止\np：暂停/继续\q[停止计时,OnSecondWatch,stop]\n\_l[0,130]\q[◇返回（m）,OnSecondWatchBack]\_l[150]\q[◇结束,OnSecondWatchOver]\f[cursorstyle,default]";
+		_txt+"\_w[10]\![raise,OnSecondWatch,timerecord]"
+	}
+
+    elseif (_mode=="stop"||_key=="s")
+	{
+		_txt="\b[0]%(SecondWatch.m)分%(SecondWatch.s)秒%(SecondWatch.ss)\n\q[开始计时,OnSecondWatch,timerecordbegin]\n\n快捷键：\ns：开始/停止\np：暂停/继续\_l[0,130]\q[◇返回（m）,OnSecondWatchBack]\_l[150]\q[◇结束,OnSecondWatchOver]\f[cursorstyle,default]";
+		SecondWatch.m=0;SecondWatch.s=0;SecondWatch.ss=0;secondwatch=1;
+		_txt;
+	}
+       elseif _mode=="inter"
+	{
+		SecondWatch.m=0;SecondWatch.s=0;SecondWatch.ss=0;secondwatch=1
+			"\b[0]%(username)要使用秒表计时吗？\n\q[开始计时,OnSecondWatch,timerecordbegin]\_l[0,130]\q[◇返回（m）,OnSecondWatchBack]";
+	}
+
+
+}
+OnSecondWatchBack
+{
+secondwatch=2
+"\![raise,OnOpenMenu,3]"
+}
+
+
+OnSecondWatchOver
+{
+ClearSecondVar;
+"\![raise,OnOpenMenu,3]"
+}
+
+ClearSecondVar
+{
+        ERASEVAR("secondwatch")
+        ERASEVAR("SecondWatch.m");
+        ERASEVAR("SecondWatch.s");
+        ERASEVAR("SecondWatch.ss");
+        ERASEVAR("SecondWatch.sss");
+        ERASEVAR("SecondWatch.sso");
+
+
+
+}
+
+
+Select.countend
+{
+	"\![close,inputbox,Oncount]\s[0]取消倒数了。";
+}
+
+
+//**********************C盘清理***************************************************************************
+Select.ClearC
+{
+	"\0\s[40]C盘垃圾清理能让%(username)的电脑变得更快哦。确定要清理吗？\n\n\q[◇确定,OnClearC]\n\q[◇不用了,OnOpenMenu,3]";
+}
+
+OnClearC
+{
+	if fjswitch
+		fjswitch="-1"
+		"\![open,file,saori\c盘垃圾文件清理.bat]";
+}
+
+//*********************IE不能打开新链接修复************************************************
+Select.ierepair
+{
+	"\0\s[40]IE不能打开新连接了？试试这个工具吧。\n\n\q[◇确定,Onierepair]\n\q[◇不用了,OnOpenMenu,3]";
+
+}
+
+Onierepair
+{
+	if fjswitch
+		fjswitch="-1"
+		"\![open,file,saori\IE不能打开新链接修复.cmd]";
+}
+
+//************************输入法调整工具************************************************
+Select.inputtool
+{
+	"\0\s[40]想要设置输入法或调整输入法的顺序吗？\n\n\q[◇确定,Oninputtool]\n\q[◇不用了,OnOpenMenu,3]";
+
+}
+
+Oninputtool
+{
+	if fjswitch
+		fjswitch="-1"
+		"\![open,file,saori\输入法调整工具.EXE]";
+
+}
+
+//***********************网络测试工具************************************************
+Select.netcheck
+{
+	"\0\s[40]是否要测试网络速率\n\n\q[◇确定,Onnetcheck]\n\q[◇不用了,OnOpenMenu,3]";
+}
+
+Onnetcheck
+{
+	if fjswitch
+		fjswitch="-1"
+		"\![open,file,saori\世纪前线网络质量测试工具.exe]";
+
+}
+
+
+//**********************************计算生日*************************************************
+Select.birthday
+{
+	"\0\s[40]橘花希望记住%(username)的生日呢\n\n/
+        \q[◇输入生日,Oninbirthday]\n/
+        \q[◇下次生日日期,Onnextbirthday]\n/
+        \q[◇生日提醒模式,birthdayrmmode]\n/
+        \q[◇好友生日,Onfriendbirthday]\n/
+        \n\n\q[◇返回上一层,OnOpenMenu,4]     \q[◇结束,cancel]\e"
+}
+
+
+
+Select.birthdayrmmode
+{
+	"\0\s[26]要怎么设置呢?\n[150]\_q";
+	--
+		if Birthdayrmmode==1
+            "\q[◇使用农历计算生日,Onbirthdayrmmode,0]\n[120]\f[color,110,110,110]◆使用阳历计算生日(当前状态)\f[default]";
+		else
+            "\f[color,110,110,110]◆使用农历计算生日(当前状态)\n[120]\f[default]\q[◇使用阳历计算生日,Onbirthdayrmmode,1]";
+		--
+			"\n[150]\q[◇返回,birthday]\e";
+}
+Onbirthdayrmmode
+{
+	Birthdayrmmode=reference0;
+	"\0\s[5]嗯嗯,设置完毕了哦~\n/
+        \n\n\n\q[◇返回,birthday]";
+}
+
+
+
+
+Onlunarbirth
+{
+	_y=_argv[0];
+	_m=_argv[1];
+	_d=_argv[2];
+//	_m=REPLACE(_m,"腊","十二");
+	_mm=1
+	_dd=1;
+	_zflg=0
+
+	for _i = 1;_i <= 12;_i++
+	{
+
+	//Onlunarbirth(2015,"十一","廿一")
+		for _j = 1;_j <= mon[_i-1];_j++
+		{
+			Lunartime(_y,_i,_j);
+			if  lunartime[5] == "正"&& lunartime[6] =="初一"&&_zflg==0
+			{
+				Lunardata(lunartime[0],lunartime[1],lunartime[2]);
+				_zflg=1;
+				break;
+			}
+		}
+		if _zflg
+		break
+	}
+	for _i = 1;_i <= 12;_i++
+	{
+		if _y % 4 == 0 && _y % 100 != 0 || _y % 400 == 0
+		mon[1]=29;
+	//Onlunarbirth(2015,"十一","廿一")
+		for _j = 1;_j <= mon[_i-1];_j++
+		{
+			Lunartime(_y,_i,_j);
+			if lunartime[4]==lunardata[7]&&lunartime[5] == _m&& lunartime[6] == _d
+			{
+					return;
+			}
+			elseif lunartime[4]==lunardata[7]&&lunartime[1]==12&&lunartime[2]==31
+			{
+					_y++;
+					_i=1;_j=1;
+			}
+		}
+
+	}
+}
+
+
+Oninbirthday
+{
+	"请%(username)输入生日！\![open,dateinput,Oninput,60000,%(year),%(month),%(day)]\n[300]\![*]\q[退出,OnoverCalendar]";
+}
+
+Oninput
+{
+	birthday=reference0;
+	nextbirthday=NextBirthDay(birthday[0],birthday[1],birthday[2]);
+	"\0\s[5]橘花已经记下了。"
+}
+
+
+NextBirthDay
+{
+	//Lunar;
+	_year=year;
+	_month=month;
+	_day=day;
+	if _argc>0
+	{
+		_year=TOINT(_argv[0]);
+		_month=TOINT(_argv[1]);
+		_day=TOINT(_argv[2]);
+	}
+
+
+	Lunardata(year,month,day)
+	_lunar_y = lunardata[11];
+//	_lunar_m = lunardata[5];
+//	_lunar_d = lunardata[6];
+
+	Lunardata(_year,_month,_day)
+	//_birthday_yy = lunardata[11];
+	_birthday_mm = lunardata[5];
+	_birthday_dd = lunardata[6];
+
+
+
+	_next_birthday=IARRAY;
+	// mon=(31,28,31,30,31,30,31,31,30,31,30,31);
+
+	_birthday_mm=REPLACE(_birthday_mm,'闰','');
+	_birthday_mm=REPLACE(_birthday_mm,'腊','十二');
+	Onlunarbirth(_lunar_y,_birthday_mm,_birthday_dd);
+
+	_y = TOINT(lunartime[0]);
+	_m = TOINT(lunartime[1]);
+	_d = TOINT(lunartime[2]);
+
+	if Birthdayrmmode==1        //使用阳历计算生日
+	{
+		if TOINT(year) >= TOINT(_year)
+		{
+			if TOINT(month) == TOINT(_month)
+			{
+				if TOINT(day) > TOINT(_day)
+					_next_birthday[0] = year+1;
+				elseif TOINT(day) <= TOINT(_day)
+					_next_birthday[0] = year;
+			}
+			elseif TOINT(month) > TOINT(_month)
+				_next_birthday[0] = year+1;
+			elseif TOINT(month) < TOINT(_month)
+				_next_birthday[0] = year;
+		}
+		else
+			_next_birthday[0] = _year;
+
+		_next_birthday[1] = _month;
+		_next_birthday[2] = _day;
+	}
+
+	else      //使用农历计算生日
+	{
+		if TOINT(year) >= TOINT(_y)
+		{
+			if TOINT(month) == TOINT(_m)
+			{
+				if TOINT(day) > TOINT(_d)
+					Onlunarbirth(year + 1,_birthday_mm,_birthday_dd);
+				elseif TOINT(day) <= TOINT(_d)
+					Onlunarbirth(year,_birthday_mm,_birthday_dd);
+			}
+			elseif TOINT(month) > TOINT(_m)
+				Onlunarbirth(year + 1,_birthday_mm,_birthday_dd);
+			elseif TOINT(month) < TOINT(_m)
+				Onlunarbirth(year,_birthday_mm,_birthday_dd);
+		}
+		elseif TOINT(year)<TOINT(_y)
+			Onlunarbirth(_y,_birthday_mm,_birthday_dd);
+
+		_next_birthday[0] = lunartime[0];
+		_next_birthday[1] = lunartime[1];
+		_next_birthday[2] = lunartime[2];
+
+	}
+	_next_birthday
+}
+
+
+Onnextbirthday
+{
+	nextbirthday=NextBirthDay(birthday[0],birthday[1],birthday[2]);
+	Lunardata(birthday[0],birthday[1],birthday[2]);
+	birthday_yy = lunardata[11];
+	birthday_mm = lunardata[5];
+	birthday_dd = lunardata[6];
+	_days=0;
+	_mon=(31,28,31,30,31,30,31,31,30,31,30,31);
+	_fy=TOINT(nextbirthday[0]);
+	_fm=TOINT(nextbirthday[1]);
+	_fd=TOINT(nextbirthday[2]);
+	if _fy%4==0
+		_mon[1]=29;
+	if year==_fy
+	{
+		while _fm>month
+		{
+			_days+=_mon[_fm-2];
+			_fm--;
+		}
+		_days=_days-day+_fd;
+	}
+
+	elseif year<_fy
+	{
+		while _fm>1
+		{
+			_days+=_mon[_fm-2];
+			_fm--;
+		}
+		_days=_days-1+_fd;
+		_fm = 12;_fd = 31;
+		while _fm>month
+		{
+			_days+=_mon[_fm-2];
+			_fm--;
+		}
+		_days=_days-day+_fd;
+	}
+	if birthday_yy == NULL && birthday_mm == NULL && birthday_dd == NULL
+	{
+		Oninbirthday;
+	}
+	elseif _days == 0
+		"今天是%(username)%(TOINT(nextbirthday[0] - birthday[0]))岁生日哦，生日快乐，%(username)\x\e";
+	else
+	{
+		"%(username)出生日期是%(birthday[0])年%(birthday[1])月%(birthday[2])日\n/
+			农历%(birthday_yy)年%(birthday_mm)月%(birthday_dd)\n/
+			下一次生日是%(nextbirthday[0])年%(nextbirthday[1])月%(nextbirthday[2])日\n/
+			距离%(username)%(TOINT(nextbirthday[0] - birthday[0]))岁生日还有%(_days)天\x%(Select.birthday)\e";
+	}
+}
+
+
+
+
+Onfriendbirthday
+{
+	//_txt="\b[2]\![quicksession,1]\![set,choicetimeout,0]";
+	"橘花能记住%(username)20位好友的生日哦\n\n[half]/
+		\q[◇新建好友,OnFriendBirthDay.Creat]\n/
+		\q[◇查看好友,OnFriendBirthDay.Inform]\n/
+
+		\n\n\n\n\n\q[◇返回上一层,birthday]     \q[◇结束,cancel]\e";
+
+		if friendID==NULL
+			friendID=0
+
+}
+
+
+
+
+
+
+
+OnFriendBirthDay.Creat
+{
+	if friendID>=20
+		"已经存在20位好友记录，如要添加新好友，请从查看好友中修改\e"
+        else
+		"请输入好友名字\![open,inputbox,OnFriendNameTeach,-1]";
+}
+
+
+
+OnFriendNameTeach
+{
+	if reference0==""
+		"好友名字不能为空，请输入请输入好友名字\![open,inputbox,OnFriendNameTeach,-1]";
+	else
+	{
+		friendbirthday[friendID*9]=friendID;
+		friendbirthday[friendID*9+1]=reference0;
+		"您输入的好友名字为%(reference0),请继续输入好友生日\![open,dateinput,OnFriendBirthDayInput,60000,%(year),%(month),%(day)]";
+
+	}
+
+}
+
+
+OnFriendBirthDayInput
+{
+	friendbirthday[friendID*9+2]=reference0[0];
+	friendbirthday[friendID*9+3]=reference0[1];
+	friendbirthday[friendID*9+4]=reference0[2];
+	Lunardata(friendbirthday[friendID*9+2],friendbirthday[friendID*9+3],friendbirthday[friendID*9+4]);
+	_next_birthday=NextBirthDay(friendbirthday[friendID*9+2],friendbirthday[friendID*9+3],friendbirthday[friendID*9+4]);
+	friendbirthday[friendID*9+5]=_next_birthday[0];
+	friendbirthday[friendID*9+6]=_next_birthday[1];
+	friendbirthday[friendID*9+7]=_next_birthday[2];
+	"\0\s[5]橘花已经记下了。%(friendbirthday[friendID*9+1])的出生日期是%(friendbirthday[friendID*9+2])年%(friendbirthday[friendID*9+3])月%(friendbirthday[friendID*9+4])日\n\n\q[◇返回,Onfriendbirthday]";
+	friendID++;
+}
+
+OnFriendBirthDay.Inform
+{
+	_txt="\b[2]\![quicksession,1]\![set,choicetimeout,0]";
+	_txt+="■好友生日列表：■         \![*]\q[刷新,OnFriendBirthDay.Inform,刷新]\n"
+		_txt+="姓名    出生日期   农历生日  生日日期  生日天数\n[150]"
+		days=IARRAY;
+	for _i=0;_i<friendID;_i++
+	{
+		Lunardata(friendbirthday[_i*9+2],friendbirthday[_i*9+3],friendbirthday[_i*9+4]);
+		_yy=lunardata[11];
+		_mm=lunardata[5];
+		_dd=lunardata[6];
+		if reference0=="刷新"||birthdayflag==0
+		{
+			_next_birthday=NextBirthDay(friendbirthday[_i*9+2],friendbirthday[_i*9+3],friendbirthday[_i*9+4]);
+			friendbirthday[_i*9+5]=_next_birthday[0];
+			friendbirthday[_i*9+6]=_next_birthday[1];
+			friendbirthday[_i*9+7]=_next_birthday[2];
+		}
+		elseif reference0=="age"
+		{
+			"%(reference1)\x"
+				--
+				"\![raise,OnFriendBirthDay.Inform]";
+		}
+		friendbirthday[_i*9+8]=OnFriendNextBirthDay(friendbirthday[_i*9+5],friendbirthday[_i*9+6],friendbirthday[_i*9+7]);
+		_friendbirthdayinfo[_i]="距离%(friendbirthday[_i*9+1])%(friendbirthday[_i*9+5]-_yy)岁生日还有%(friendbirthday[_i*9+8])天"
+			if Birthdayrmmode
+				_friendbirthdayinfo[_i]="距离%(friendbirthday[_i*9+1])%(friendbirthday[_i*9+5]-friendbirthday[_i*9+2])岁生日还有%(friendbirthday[_i*9+8])天"
+				_txt+="\__q[OnFriendName.UpdataFirst,%(_i)]%(friendbirthday[_i*9+1])\__q   \_l[35,-]\__q[OnFriendBirthDay.UpdataFirst,%(_i)]%(friendbirthday[_i*9+2])年%(friendbirthday[_i*9+3])月%(friendbirthday[_i*9+4])日\__q \_l[120,-]%(_mm)月%(_dd)  \_l[185,-]%(friendbirthday[_i*9+5])年%(friendbirthday[_i*9+6])月%(friendbirthday[_i*9+7])日 \_l[270,-]\q[%(friendbirthday[_i*9+8]),OnFriendBirthDay.Inform,age,%(_friendbirthdayinfo[_i])]\n";
+
+	}
+	birthdayflag=1;
+	_txt+="\_l[0,340]\q[◇返回,Onfriendbirthday]     \q[◇结束,cancel]";
+	_txt;
+}
+OnFriendName.UpdataFirst
+{
+	friendid=reference0;
+	"将好友名字%(friendbirthday[friendid*9+1])更改为？\![open,inputbox,OnFriendName.Updata,-1]\n\n\q[◇返回,OnFriendBirthDay.Inform]     \q[◇结束,cancel]";
+}
+
+OnFriendName.Updata
+{
+	if reference0==""
+		"好友名字不为为空，请输入请输入好友名字\![open,inputbox,OnFriendName.Updata,-1]\n\n\q[◇返回,OnFriendBirthDay.Inform]     \q[◇结束,cancel]";
+	else
+	{
+		friendbirthday[friendid*9+1]=reference0;
+		"您输入的好友名字为%(reference0)\n\n\q[◇返回,OnFriendBirthDay.Inform]     \q[◇结束,cancel]";
+	}
+}
+
+OnFriendBirthDay.UpdataFirst
+{
+	friendid=reference0;
+	_year=friendbirthday[friendid*9+2];
+	_month=friendbirthday[friendid*9+3];
+	_day=friendbirthday[friendid*9+4];
+	"要把%(friendbirthday[friendid*9+1])的生日改成？\![open,dateinput,OnFriendBirthDay.Updata,60000,%(_year),%(_month),%(_day)]\n\n\q[◇返回,OnFriendBirthDay.Inform]     \q[◇结束,cancel]";
+}
+
+OnFriendBirthDay.Updata
+{
+	friendbirthday[friendid*9+2]=reference0[0];
+	friendbirthday[friendid*9+3]=reference0[1];
+	friendbirthday[friendid*9+4]=reference0[2];
+	Lunardata(friendbirthday[friendid*9+2],friendbirthday[friendid*9+3],friendbirthday[friendid*9+4]);
+	_next_birthday=NextBirthDay(friendbirthday[friendid*9+2],friendbirthday[friendid*9+3],friendbirthday[friendid*9+4]);
+	friendbirthday[friendid*9+5]=_next_birthday[0];
+	friendbirthday[friendid*9+6]=_next_birthday[1];
+	friendbirthday[friendid*9+7]=_next_birthday[2];
+	"\0\s[5]橘花已经记下了。%(friendbirthday[friendid*9+1])的出生日期是%(friendbirthday[friendid*9+2])年%(friendbirthday[friendid*9+3])月%(friendbirthday[friendid*9+4])日\n\n\q[◇返回,OnFriendBirthDay.Inform]";
+
+}
+
+
+OnFriendNextBirthDay
+{
+	_days=0;
+	_mon=(31,28,31,30,31,30,31,31,30,31,30,31);
+	_fy=TOINT(_argv[0]);
+	_fm=TOINT(_argv[1]);
+	_fd=TOINT(_argv[2]);
+	if _fy%4==0
+		_mon[1]=29;
+	if year==_fy
+	{
+		while _fm>month
+		{
+			_days+=_mon[_fm-2];
+			_fm--;
+		}
+		_days=_days-day+_fd;ss=0
+	}
+
+	elseif year<_fy
+	{
+		while _fm>1
+		{
+			_days+=_mon[_fm-2];
+			_fm--;
+		}
+		_days=_days-1+_fd;       ss=1
+		_fm = 12;_fd = 31;
+		while _fm>month
+		{
+			_days+=_mon[_fm-2];
+			_fm--;
+		}
+		_days=_days-day+_fd;
+	}
+
+	_days
+
+
+}
+
+
+
+
+
+
+Select.birthdaygift
+{
+	birthdaygiftmode = 1;
+	giftcount += 1;
+	gift;
+	_N=ARRAYSIZE(Useritem)-1;
+	G=RAND(_N);
+	UseritemNum[G]=TOINT(UseritemNum[G])+1;
+	Useritemtime[G]="%(year)年%(month)月%(day)日%(username)%(TOINT(nextbirthday[0] - birthday[0]))岁生日礼物";
+	Useriteminfo=("%(year)年%(month)月%(day)日%(hour)时%(minute)分收到生日礼物%(Useritem[G][1])。" , Useriteminfo);
+	"\0\s[5]是%(Useritem[G][1])哦，%(username)喜欢吗？\n\n/
+		\q[◇喜欢,likebirthdaygift]\n/
+		\q[◇不喜欢,dislikebirthdaygift]\n/
+		\x\e";
+}
+
+
+Ongift
+{
+	giftmode = 1;
+	gift;
+	_N=ARRAYSIZE(Useritem)-2;
+	G=RAND(_N);
+	_spitemflag=0;
+	if G==19&&UserspitemNum[1]!=1
+	{
+		UserspitemNum[1]=1;
+		_spitemflag=1
+	}
+	else
+	{
+		while G==19
+		{
+			G=RAND(_N);
+		}
+	}
+
+
+
+
+	UseritemNum[G]=TOINT(UseritemNum[G])+1;
+	if reference0==0
+	{
+		Useritemtime[G]="%(year)年%(month)月%(day)日橘花送的新年礼物";
+		Useriteminfo=("%(year)年%(month)月%(day)日%(hour)时%(minute)分收到新年礼物%(Useritem[G][1])。" , Useriteminfo);
+	}
+
+	elseif reference0==1
+	{
+		Useritemtime[G]="%(year)年%(month)月%(day)日橘花送的情人节礼物";
+		Useriteminfo=("%(year)年%(month)月%(day)日%(hour)时%(minute)分收到情人节礼物%(Useritem[G][1])。" , Useriteminfo);
+	}
+
+	elseif reference0==2
+	{
+		Useritemtime[G]="%(year)年%(month)月%(day)日橘花送的端午节礼物";
+		Useriteminfo=("%(year)年%(month)月%(day)日%(hour)时%(minute)分收到端午节礼物%(Useritem[G][1])。" , Useriteminfo);
+	}
+
+	elseif reference0==3
+	{
+		Useritemtime[G]="%(year)年%(month)月%(day)日橘花送的七夕礼物";
+		Useriteminfo=("%(year)年%(month)月%(day)日%(hour)时%(minute)分收到七夕礼物%(Useritem[G][1])。" , Useriteminfo);
+	}
+
+	elseif reference0==4
+	{
+		Useritemtime[G]="%(year)年%(month)月%(day)日橘花送的中秋节礼物";
+		Useriteminfo=("%(year)年%(month)月%(day)日%(hour)时%(minute)分收到中秋节礼物%(Useritem[G][1])。" , Useriteminfo);
+	}
+
+	elseif reference0==5
+	{
+		Useritemtime[G]="%(year)年%(month)月%(day)日橘花送的圣诞节礼物";
+		Useriteminfo=("%(year)年%(month)月%(day)日%(hour)时%(minute)分收到圣诞礼物%(Useritem[G][1])。" , Useriteminfo);
+	}
+	elseif reference0==6
+	{
+		Useritemtime[G]="%(year)年%(month)月%(day)日橘花送的1111节礼物";
+		Useriteminfo=("%(year)年%(month)月%(day)日%(hour)时%(minute)分收到1111节礼物%(Useritem[G][1])。" , Useriteminfo);
+	}
+	elseif reference0==7
+	{
+		Useritemtime[G]="%(year)年%(month)月%(day)日橘花送的%(year-firstboottime[0])周年相遇礼物";
+		Useriteminfo=("%(year)年%(month)月%(day)日%(hour)时%(minute)分收到%(year-firstboottime[0])周年相遇%(Useritem[G][1])。" , Useriteminfo);
+	}
+	if _spitemflag==1
+	"红色水晶项链“绯红之眼”获得。"
+	--
+	"\0\s[5]是%(Useritem[G][1])哦，%(username)喜欢吗？\n\n/
+		\q[◇喜欢,likegift]\n/
+		\q[◇不喜欢,dislikegift]\n/
+		\x\e";
+
+}
+
+gift
+{
+
+	//UseritemNum=(0,0,0,0,0,0,0,0,0,0)
+	//Useritemtime=(0,0,0,0,0,0,0,0,0,0)
+	Useritem=("0,高级腕表,%(UseritemNum[0]),%(Useritemtime[0])","1,瑞士军刀,%(UseritemNum[1]),%(Useritemtime[1])","2,时尚钱包,%(UseritemNum[2]),%(Useritemtime[2])","3,芝宝打火机,%(UseritemNum[3]),%(Useritemtime[3])","4,便携酒壶,%(UseritemNum[4]),%(Useritemtime[4])","5,IPOD4,%(UseritemNum[5]),%(Useritemtime[5])","6,HIFI随身听,%(UseritemNum[6]),%(Useritemtime[6])","7,Iphone7,%(UseritemNum[7]),%(Useritemtime[7])","8,HIFI耳机,%(UseritemNum[8]),%(Useritemtime[8])","9,橘花抱枕,%(UseritemNum[9]),%(Useritemtime[9])","10,钻戒,%(UseritemNum[10]),%(Useritemtime[10])","11,铂金项链,%(UseritemNum[11]),%(Useritemtime[11])","12,星之砂,%(UseritemNum[12]),%(Useritemtime[12])","13,幸运星瓶,%(UseritemNum[13]),%(Useritemtime[13])","14,水晶八音盒,%(UseritemNum[14]),%(Useritemtime[14])","15,星空恋人,%(UseritemNum[15]),%(Useritemtime[15])","16,金色怀表,%(UseritemNum[16]),%(Useritemtime[16])","17,演唱会门票两张,%(UseritemNum[17]),%(Useritemtime[17])","18,音乐厅门票两张,%(UseritemNum[18]),%(Useritemtime[18])",Userspitem[1],"20,电影院门票两张,%(UseritemNum[20]),%(Useritemtime[20])")
+
+
+
+		Userspitem=("0,K.I.K.K.A,%(UserspitemNum[0]),%(Userspitemtime[0]),散发出神秘光茫的红宝石项链，作用未知，红宝石上面刻着五个大写英文字母：K.I.K.K.A","1,绯红之眼,%(UserspitemNum[1]),%(Userspitemtime[1]),橘花特制的红色水晶项链，好像充满能量的样子")
+
+		\\
+
+
+		/*"高级腕表"
+		"瑞士军刀"
+		"时尚钱包"
+		"芝宝打火机"
+		"便携酒壶"
+		"IPOD4"
+		"Sony NWZ-Z1080"
+		"Iphone7"
+		"HIFI耳机"
+		"橘花抱枕"
+		*/
+
+
+}
+
+Onmoneyadd
+{
+	_num = TOINT(reference0);
+	money += _num;
+}
+
+
+Select.likebirthdaygift
+{
+	intimacy += 200;
+	"\0\s[41]这是橘花第%(giftcount)次给%(username)生日礼物呢，\w9\w9也就是橘花已经陪%(username)度过了%(giftcount)次生日\x\e";
+
+
+}
+
+
+Select.dislikebirthdaygift
+{
+	intimacy -= 200;
+	"\0\s[1]……\1\s[11]唔，橘花对%(username)无语了？\x\e";
+}
+
+Select.likegift
+{
+	intimacy += 50;
+	"\0\s[41]橘花希望看到%(username)收到礼物时高兴的样子，这就是橘花送礼物的心愿\x\e";
+}
+
+
+Select.dislikegift
+{
+	intimacy -= 50;
+	"\0\s[1]……\1\s[11]唔，橘花对%(username)无语了？\x\e";
+}
+
+
+
+
+Select.Sceencut
+{
+	"截图快捷键为F10,按F10打开QQ截图\e";
+
+
+}
+
+
+//-----------------------------------------数据备份---------------------------------------------------
+OnGhostBackup
+{
+
+	_txt="\c\b[2]\![quicksession,1]\![set,choicetimeout,0]";
+	_txt+="■魔法-数据备份■\n\n[half]/
+		要备份什么数据?\n/
+		\q[◇辞书备份,OnBackup,dic]\n/
+		\q[◇数据库备份,OnBackup,deb]\n/
+		\q[◇记忆备份,OnBackup,mem]\n\n[half]/
+		\q[◇导入备份,OnBackupLeadMenu]\n/
+		\n\n\n\n\n\q[◇返回,OnSecondWatchBack]  \q[◇终了,OnGhostBakeOver]";
+		_txt;
+}
+
+
+OnBackup
+{
+	_w="\b[2]\![quicksession,1]\![set,choicetimeout,0]";
+	_w+="■魔法-数据备份■\n\n[half]";
+	_txt="";
+	if FATTRIB("backup")==-1
+		_temp=MKDIR("backup");
+
+	if reference0=="mem"
+	{
+		if reference1==NULL
+			_txt+="要对aya_variable.cfg及profile文件夹进行备份操作吗？\n\n[half]/
+			\q[◇是,OnBackup,mem,yes]\n/
+			\q[◇否,OnBackup,mem,no]\n";
+
+		elseif reference1=="yes"
+		{
+			ClearTempVar;
+			SAVEVAR;
+			_temp=MKDIR("backup\%(year)-%(month)-%(day)");
+			_temp=MKDIR("backup\%(year)-%(month)-%(day)\profile");
+			_temp=FCOPY("aya_variable.cfg","backup\%(year)-%(month)-%(day)")&&FCOPY("profile\ghost.dat","backup\%(year)-%(month)-%(day)\profile")&&FCOPY("profile\var.txt","backup\%(year)-%(month)-%(day)\profile");
+			--
+			if _temp
+				"\0\s[5]成功备份\n\x%(OnGhostBackup)";
+			else
+				"\0\s[8]备份失败，请检查原文件是否存在\n\x%(OnGhostBackup)"
+				return;
+		}
+		else
+		{
+			"\0\s[0]取消备份\n\x%(OnGhostBackup)"
+				return;
+		}
+	}
+	elseif reference0=="dic"
+	{
+		_temp=MKDIR("backup\%(year)-%(month)-%(day)");
+		_temp=MKDIR("backup\%(year)-%(month)-%(day)\dic");
+		_txt="\b[2]\![quicksession,1]\![set,choicetimeout,0]";
+		_dicdir=FENUM("dic");
+		_ayadir=FENUM("aya");
+		_txt+="\q[◇全部备份,OnBackup,dic,alldic]\n\n[half]";
+		foreach _dicdir;_i
+		{
+			_txt+="%(_i) \_l[200,-]\q[◇备份该辞书,OnBackup,dic,singlefordic,%(_i)]\n";
+		}
+		foreach _ayadir;_i
+		{
+			_txt+="%(_i) \_l[200,-]\q[◇备份该辞书,OnBackup,dic,singleforaya,%(_i)]\n";
+		}
+		if reference1=="alldic"
+		{
+			foreach _dicdir;_i
+			{
+				_temp=FCOPY("dic\%(_i)","backup\%(year)-%(month)-%(day)\dic");
+			}
+			foreach _ayadir;_i
+			{
+				_temp=FCOPY("aya\%(_i)","backup\%(year)-%(month)-%(day)\aya");
+			}
+			--
+			if _temp
+				"\0\s[5]成功备份\n\x%(OnGhostBackup)";
+			else
+				"\0\s[8]备份失败，请检查原文件及目标文件夹是否存在\n\x%(OnGhostBackup)";
+			return;
+		}
+		elseif reference1=="singlefordic"
+		{
+			_temp=FCOPY("dic\%(reference2)","backup\%(year)-%(month)-%(day)\dic");
+			if _temp
+				"\0\s[5]成功备份\n\x%(OnGhostBackup)";
+			else
+				"\0\s[8]备份失败，请检查原文件及目标文件夹是否存在\n\x%(OnGhostBackup)";
+			return;
+		}
+		elseif reference1=="singleforaya"
+		{
+			_temp=FCOPY("aya\%(reference2)","backup\%(year)-%(month)-%(day)\aya");
+			if _temp
+				"\0\s[5]成功备份\n\x%(OnGhostBackup)";
+			else
+				"\0\s[8]备份失败，请检查原文件及目标文件夹是否存在\n\x%(OnGhostBackup)";
+			return;
+		}
+	}
+	elseif reference0=="deb"
+	{
+        if reference1==NULL
+			_txt+="要对数据库文件debeso.db进行备份操作吗？\n\n[half]/
+			\q[◇是,OnBackup,deb,yes]\n/
+			\q[◇否,OnBackup,deb,no]\n";
+
+			elseif reference1=="yes"
+		{
+			_temp=MKDIR("backup\%(year)-%(month)-%(day)\profile");
+			_temp=FCOPY("profile\debeso.db","backup\%(year)-%(month)-%(day)\profile");
+			if _temp
+				"\0\s[5]成功备份\n\x%(OnGhostBackup)";
+			else
+				"\0\s[8]备份失败，请检查原文件及目标文件夹是否存在\n\x%(OnGhostBackup)";
+			return;
+		}
+		else
+		{
+			"\0\s[0]取消备份\n\x%(OnGhostBackup)";
+			return;
+		}
+	}
+	_txt+="\n\q[◇返回,OnGhostBackup]  \q[◇终了,OnGhostBakeOver]";
+
+	_w+_txt;
+
+
+}
+
+
+OnBackupLeadMenu
+{
+	_txt="\c\b[2]\![quicksession,1]\![set,choicetimeout,0]";
+	_txt+="■魔法-备份导入■\n\n[half]/
+		该状态下记忆备份导入暂不可用\n/
+		\q[◇导入辞书备份,OnBackupLead,dic]\n\n[half]/
+		\q[◇导入数据库备份,OnBackupLead,deb]\n\n[half]/
+		\n\n\n\n\n\q[◇返回,OnGhostBackup]  \q[◇终了,OnGhostBakeOver]";
+		_txt;
+}
+
+
+OnBackupLead
+{
+	_w="\b[2]\![quicksession,1]\![set,choicetimeout,0]";
+	_w+="■魔法-备份导入■\n\n[half]";
+	_txt="";
+	if reference0=="dic"
+	{
+		_temp=MKDIR("dic");
+		_menudir=FENUM("backup");
+		if _menudir==NULL
+		{
+			"\0\s[8]没有备份可以导入\x%(OnBackupLeadMenu)";
+			return;
+		}
+		else
+		{
+			foreach _menudir;_i
+			{
+				if FATTRIB("backup\%(_i)")[2]
+					_txt+="%(_i) \_l[200,-]\q[◇进入该目录,OnBackupLead,dic,%(_i)]\n";
+
+			}
+
+
+			if reference1!=NULL
+			{
+
+				_dicdir=FENUM("backup\%(reference1)");
+				_dicdir=REPLACE(_dicdir,"\","")
+					_txt=""
+					foreach _dicdir;_i
+				{
+					if FATTRIB("backup\%(reference1)\%(_i)")[2]
+						_txt+="%(_i) \_l[200,-]\q[◇进入该目录,OnBackupLead,dic,%(reference1),fold,%(_i)]\n";
+					elseif !FATTRIB("backup\%(_i)")[2] && _i!="aya_variable.cfg"
+						_txt+="%(_i) \_l[200,-]\q[◇导入该辞书,OnBackupLead,dic,%(reference1),single,%(_i)]\n";
+				}
+				if reference2=="fold"
+				{
+					_txt="\q[◇全部导入,OnBackupLead,dic,%(reference1),alldic,%(reference3)]\n\n[half]";
+					_dicdir=FENUM("backup\%(reference1)\%(reference3)");
+					foreach _dicdir;_i
+					{
+						_txt+="%(_i) \_l[200,-]\q[◇导入该辞书,OnBackupLead,dic,%(reference1),%(reference3),%(_i)]\n";
+					}
+
+				}
+
+
+				elseif reference2=="alldic"
+				{
+					_dicdir=FENUM("backup\%(reference1)\%(reference3)");
+					foreach _dicdir;_i
+					{
+						_temp=FCOPY("backup\%(reference1)\%(reference3)\%(_i)","%(reference3)");
+					}
+					if _temp
+						"\0\s[5]成功导入备份\n\x%(OnBackupLeadMenu)";
+					else
+						"\0\s[8]导入失败，请检查原文件及目标文件夹是否存在\n\x%(OnBackupLeadMenu)";
+					return
+				}
+
+
+
+				elseif reference2=="single"
+				{
+					_temp=FCOPY("backup\%(reference1)\%(reference3)","");
+					if _temp
+						"\0\s[5]成功导入备份\n\x%(OnBackupLeadMenu)";
+					else
+						"\0\s[8]导入失败，请检查原文件及目标文件夹是否存在\n\x%(OnBackupLeadMenu)";
+					return
+				}
+
+				elseif reference2!=NULL
+				{
+					sss=reference2
+						_temp=FCOPY("backup\%(reference1)\%(reference2)\%(reference3)","%(reference2)");
+					if _temp
+						"\0\s[5]成功导入备份\n\x%(OnBackupLeadMenu)";
+					else
+						"\0\s[8]导入失败，请检查原文件及目标文件夹是否存在\n\x%(OnBackupLeadMenu)";
+					return
+				}
+
+			}
+		}
+
+	}
+	if reference0=="deb"
+	{
+		_menudir=FENUM("backup");
+		if _menudir==NULL
+		{
+			"\0\s[8]没有备份可以导入\x%(OnBackupLeadMenu)";
+			return;
+		}
+		else
+		{
+			foreach _menudir;_i
+			{
+				if FATTRIB("backup\%(_i)")[2]
+					_txt+="%(_i) \_l[200,-]\q[◇进入该目录,OnBackupLead,deb,%(_i)]\n";
+			}
+			if reference1!=NULL
+			{
+				_txt="";
+				_debdir=FENUM("backup\%(reference1)\profile");
+				if _debdir==NULL
+				{
+					"\0\s[8]没有备份可以导入\x%(OnBackupLeadMenu)";
+					return;
+				}
+				else
+				{
+					foreach _debdir;_i
+					{
+						_txt+="%(_i) \_l[200,-]\q[◇导入该文件,OnBackupLead,deb,%(reference1),single,%(_i)]\n";
+					}
+					if reference2=="single"
+					{
+						_temp=FCOPY("backup\%(reference1)\profile\%(reference3)","profile");
+						if _temp{
+							OnSQLLoad
+							"\0\s[5]成功导入备份\n\x%(OnBackupLeadMenu)";
+						}else
+							"\0\s[8]导入失败，请检查原文件及目标文件夹是否存在\n\x%(OnBackupLeadMenu)"
+						return;
+					}
+				}
+			}
+		}
+	}
+	_txt+="\n\q[◇返回,OnBackupLeadMenu]  \q[◇终了,OnGhostBakeOver]";
+
+	_w+_txt
+}
+
+OnAutoBackup
+{
+    SAVEVAR;
+	_temp=MKDIR('backup');
+	_h="backup\%(year)-%(month)-%(day)"
+	_temp=MKDIR(_h);
+	_temp=MKDIR(_h+'\dic');
+	_temp=MKDIR(_h+'\profile');
+	
+	_temp=FCOPY('aya_variable.cfg',_h)
+	_temp=FCOPY('aya.txt',_h)
+
+	_temp=DIRCOPY('dic',_h+'\dic')
+	_temp=DIRCOPY('aya',_h+'\aya')
+	_temp=DIRCOPY('profile',_h+'\profile')
+}
+
+
+
+
+//-------------------------------------科学计算器-----------------------------------
+
+
+OnCalculator
+{
+
+	_txt="\b[2]\![quicksession,1]\![set,choicetimeout,0]";
+       calculate=1
+	CalculateVar;
+	_txt+CalculatorShow;
+}
+CalculatorShow
+{
+	_txt="\C\![quicksession,1]\c\b[2]\![set,choicetimeout,0]\![set,autoscroll,disable]";
+	_txt+="%(m_exp)        %(m_res)   \_l[0,0]\n\n\_l[0,-]\q[输入表达式,OnInputExp]  \_l[100,-]\q[从剪贴板复制,OnPasteToExp] \_l[200,-]\q[复制结果,OnCopyDat,%(m_res)]\n";
+	_carry=IARRAY;
+	for _i=0;_i<4;_i++
+	{
+		_carryindex=(16,10,8,2);
+		if carry==_carryindex[_i]
+			_carry[_i]="◇";
+	}
+	_txt+="\_l[0,0]\n\n\n\q[%(_carry[0])十六进制,OnCalculate,carry,16] \_l[55,-]\q[%(_carry[1])十进制,OnCalculate,carry,10]  \_l[110,-]\q[%(_carry[2])八进制,OnCalculate,carry,8]  \_l[165,-]\q[%(_carry[3])二进制,OnCalculate,carry,2]    \_l[220,-]\q[退出计算器,OnCalculateExit]\n\n[25]";
+
+	_num=("A","B","C","D","E","F");
+	_func=("D°M'S");
+	_radio=("","◇");
+	_drg=("DEG","DRG","GRA");
+	_txt+="/
+		\_l[0,-]\q[sin,OnCalculate,key,sin(]    \_l[40,-]\q[cos,OnCalculate,key,cos(]    \_l[80,-]\q[tan,OnCalculate,key,tan(]     \_l[120,-]\q[cot,OnCalculate,key,cot(]     \_l[160,-]\q[%(_radio[radio])角度,OnCalculate,radio,1]    \_l[200,-]\q[转为DMS,OnCalculate,dms,1]  \_l[250,-]%(CalculateFunc(_func[0]))\n\n[25]/
+		\_l[0,-]\q[arcsin,OnCalculate,key,asin(]   \_l[40,-]\q[arccos,OnCalculate,key,acos(]   \_l[80,-]\q[arctan,OnCalculate,key,atan(] \_l[120,-]\q[arccot,OnCalculate,key,acot(]  \_l[160,-]\q[%(_radio[1-radio])弧度,OnCalculate,radio,0]    \_l[200,-]\q[转为DEG,OnCalculate,deg,1]     \_l[250,-]\q[%(_drg[drg]),OnCalculate,drg,%((drg+1)%3)]   \n\n[25]/
+		\_l[0,-]\q[sqrt,OnCalculate,key,^(1/2)]   \_l[40,-]\q[sqnt,OnCalculate,key,^(1/3)]     \_l[80,-]\q[1/x,OnCalculate,key,^(-1)]\_l[120,-]\q[x^2,OnCalculate,key,^2]     \_l[160,-]\q[x^3,OnCalculate,key,^3]\_l[200,-]\q[x^y,OnCalculate,key,^]    \_l[240,-]\q[y√x,OnCalculate,key,√]   \n\n[25]/
+		\_l[0,-]\q[A(n\,m),OnCalculate,key,Anm(]  \_l[40,-]\q[C(n\,m),OnCalculate,key,Cnm(]     \_l[80,-]\q[∑(a\,b),OnCalculate,key,∑ab(]  \_l[140,-]\q[ % ,OnCalculate,key,%]     \_l[160,-]\q[log(a\,N),OnCalculate,key,log(]   \q[ e ,OnCalculate,key,e]   \q[ π ,OnCalculate,key,π] \n\n[25]/
+		";
+
+		_txt+="/
+		\_l[0,-]%(CalculateKey(7,8))    \_l[40,-]%(CalculateKey(8,10))    \_l[80,-]%(CalculateKey(9,10))    \_l[120,-]%(CalculateKey(_num[0],16))    \_l[160,-]%(CalculateKey(_num[1],16))    \_l[200,-]\q[ / ,OnCalculate,oper,/]     \_l[240,-]\q[ 退格 ,OnCalculate,back]\n\n[half]/
+		\_l[0,-]%(CalculateKey(4,8))    \_l[40,-]%(CalculateKey(5,8))    \_l[80,-]%(CalculateKey(6,8))    \_l[120,-]%(CalculateKey(_num[2],16))    \_l[160,-]%(CalculateKey(_num[3],16))    \_l[200,-]\q[ * ,OnCalculate,oper,*]    \_l[240,-]\q[ CE ,OnCalculate,ce] \n\n[half]/
+		\_l[0,-]\q[ 1 ,OnCalculate,key,1]    \_l[40,-]%(CalculateKey(2,8))    \_l[80,-]%(CalculateKey(3,8))    \_l[120,-]%(CalculateKey(_num[4],16))   \_l[160,-]%(CalculateKey(_num[5],16))    \_l[200,-]\q[ - ,OnCalculate,oper,-]      \_l[240,-]\q[ ! ,OnCalculate,oper,!]  \n\n[half]/
+		\_l[0,-]\q[ 0 ,OnCalculate,key,0]    \_l[40,-]\q[ . ,OnCalculate,key,\.]    \_l[80,-]\q[ \, ,OnCalculate,key,\,]    \_l[120,-]\q[ ( ,OnCalculate,key,(]    \_l[160,-]\q[ ) ,OnCalculate,key,)]    \_l[200,-]\q[ + ,OnCalculate,oper,+]   \_l[240,-]\q[ = ,OnCalculate,=]\n\n[half]/
+		";
+		popm_resrecord;
+	_txt+="计算结果记录：         \_l[200,-]\q[清空记录,OnCalculate,recordclear]\n\n[half]";
+	foreach m_resrecord; _i
+	{
+		_j=TextEndTo(_i,"=",0);
+		_txt+="\_l[0,-]%(_i)    \_l[240,-]\__q[OnCopyDat,%(_j)]复制结果\__q\n";
+	}
+
+	_txt;
+}
+
+OnInputExp
+{
+	m_exp=REPLACE(m_exp,'\.','.');
+	"\b[2]\![set,autoscroll,false]\![set,balloontimeout,0]请输入你要计算的表达式：\n[150]\![open,inputbox,OnInputExpOver,-1,%(m_exp)]/
+		\_qTips：\n/
+		\_l[0]符号\_l[76]功能\_l[180]示例\n/
+		\_l[0]+\_l[76]加\_l[180]3+44\n/
+		\_l[0]-\_l[76]减\_l[180]13-5\n/
+		\_l[0]*\_l[76]乘\_l[180]7*8\n/
+		\_l[0]/\_l[76]除以\_l[180]12/3\n/
+		\_l[0]^\_l[76]的…次方\_l[180]8^2\n/
+		\_l[0]x^(-1)\_l[76]x的倒数\_l[180]5^(-1)\n/
+		\_l[0]x^(1/2)\_l[76]x的平方根\_l[180]9^(1/2)\n/
+		\_l[0]x^(1/3)\_l[76]x的立方根\_l[180]8^(1/3)\n/
+		\_l[0]\%\_l[76]模\_l[180]8%7\n/
+		\_l[0]Anm(18,4)\_l[180]18选4的排列\n/
+		\_l[0]Cnm(18,4)\_l[180]18选4的组合\n/
+		\_l[0]sqrt\_l[76]平方根\_l[180]sqrt(9)\n/
+		\_l[0]sqnt\_l[76]立方根\_l[180]sqnt(27)\n/
+		\_l[0]sin,cos,etc.\_l[76]三角函数(弧度)\n/
+		\_l[0]log(a,N)\_l[76]以a为底求N的对数\_l[180]log(e,6)\n/
+		\_l[0]!\_l[76]阶乘\_l[180]5!\n/
+		"
+
+
+
+}
+
+OnInputExpOver
+{
+	_key=reference0
+		if _argc>0
+			_key=_argv[0];
+		_key=REPLACE(_key,'.','\.')
+			m_exp = _key;
+		m_res=evaluate(m_exp);
+
+		CalculatorShow;
+}
+
+CallCalculator
+{
+_str=_argv[0]
+_str=REPLACE(_str,'.','\.')
+CalculateVar;
+if Error(_str)==""
+evaluate(_str)
+
+}
+
+
+CalculateKey
+{
+	_num=_argv[0];
+	_carry=_argv[1];
+	_txt="";
+	if carry>=_carry
+		_txt+="\q[ %(_num) ,OnCalculate,key,%(_num)]";
+	else
+		_txt+="\f[color,192,192,192] %(_num) \f[color,default]";
+	_txt;
+}
+
+CalculateFunc
+{
+	_func=_argv[0];
+	_txt="";
+	if carry==10
+		_txt+="\q[%(_func),OnCalculate,%(_func)]";
+	else
+		_txt+="\f[color,192,192,192]%(_func)\f[color,default]";
+	_txt;
+
+}
+
+
+CalculateVar
+{
+	m_exp=0;
+	m_res=0;
+	dmsmode=0;
+	deg=0;
+	dms=0;
+	drg=0;
+	m_carry=0;
+	zero=0;
+	hexnum="0123456789ABCDEF";
+	endNumber=1;
+	carry=10;
+	radio=1;
+}
+
+
+ClearCalculateVar
+{
+	ERASEVAR("calculate");
+	ERASEVAR("m_exp");
+	ERASEVAR("m_res");
+	ERASEVAR("dmsmode");
+	ERASEVAR("deg");
+	ERASEVAR("dms");
+	ERASEVAR("m_carry");
+	ERASEVAR("zero");
+	ERASEVAR("hexnum");
+	ERASEVAR("endNumber");
+	ERASEVAR("carry");
+	ERASEVAR("radio");
+
+}
+
+OnCalculateExit
+{
+	"\0\s[0]不用了吗？要用时再叫橘花哦。"
+		--
+		ClearCalculateVar;
+}
+
+
+OnCalculate
+{
+	Calculate(reference0,reference1);
+}
+
+Calculate
+{
+	_op=_argv[0];
+	if _op=="carry"
+	{
+		ChangCarry(_argv[1]);
+		return;
+	}
+	if _op=="radio"
+		radio=_argv[1];
+	if _op=="radioshift"
+		radioshift=_argv[1];
+	if _op=="key"
+		inputkey(TOSTR(_argv[1]));
+	if _op=="oper"
+		inputkey(_argv[1]);
+	if _op=="D°M'S"
+	{
+		m_exp+=DmsInput(m_res);
+	}
+	if _op=="deg"
+	{
+		deg=1;
+		dms=0;
+	}
+	if _op=="dms"
+	{
+		deg=0;
+		dms=1;
+	}
+	if _op=="drg"
+	{
+		drg=_argv[1];
+	}
+
+	if _op=="back"
+		BackSpace;
+	if _op=="ce"
+	{
+		endNumber=1;
+		m_exp=0;
+		m_res=0;
+		m_carry=0;
+		deg=0;
+		dms=0;
+	}
+	if _op=="recordclear"
+		m_resrecord=IARRAY;
+	result
+		if dms
+			m_res=DMS(evaluate(m_exp));
+		if deg
+			m_res=DEG(evaluate(m_exp));
+		if drg==1
+			m_res=DMS(evaluate(m_exp+"*180/π"));
+		elseif drg==2
+			m_res=DEG(evaluate(m_exp+"*π/180"));
+		//m_res=DEG(evaluate(m_exp))/57.295779513;
+		if _op=="="
+		{
+			endNumber=1;
+			m_resrecord=(m_exp+"="+m_res,m_resrecord);
+		}
+
+		CalculatorShow;
+}
+
+popm_resrecord
+{
+    _array=IARRAY;
+    if ARRAYSIZE(m_resrecord)>=10
+    {
+		_s=ARRAYSIZE(m_resrecord);
+		for _i=0;_i<_s-1;_i++
+		{
+			_array=(m_resrecord[_i],_array);
+		}
+		m_resrecord=IARRAY;
+		foreach _array;_i
+		{
+			m_resrecord=(_i,m_resrecord);
+		}
+    }
+}
+
+abs
+{
+	_num=_argv[0];
+	if _num>=0
+	{_num;return;}
+	elseif _num<0
+	{-_num;return;}
+}
+
+ChangCarry
+{
+	endNumber=1;
+	newcarry=_argv[0];
+	//if m_carry==NULL
+	//m_carry=evaluate(m_exp)
+	if m_res==0
+	{
+        m_res=0;
+        carry=newcarry;
+        CalculatorShow;
+        return
+	}
+	m_res=decto(todec(m_res,carry),newcarry);
+	carry=newcarry;
+
+	CalculatorShow;
+}
+
+inputkey
+{
+	_key=_argv[0];
+	if (endNumber)
+	{
+		endNumber=0;
+		m_exp = _key;
+		m_res=0;
+		m_carry=0;
+	}
+	elseif (m_exp == null || m_exp == "0")
+		m_exp += _key;
+	else
+		m_exp += _key;
+}
+
+
+
+
+IsNumber //数字判断
+{
+	_c=_argv[0];
+	if _c>="0"&&_c<="9"||_c>="A"&&_c<="F"
+	{1;return;}
+	else
+	{0;return;}
+}
+
+IsOperator//操作符判断
+{
+    _c=_argv[0];
+    if _c=="+"||_c=="-"||_c=="*"||_c=="/"||_c=="^"||_c=="√"||_c=="°"||_c=="'"
+	{1;return;}
+    else
+	{0;return;}
+}
+
+InOperator
+{
+    _c=_argv[0];
+    if "+" _in_ _c||"-"_in_ _c||"*"_in_ _c||"/"_in_ _c||"^"_in_ _c||"√"_in_ _c
+	{1;return;}
+    else
+	{0;return;}
+}
+
+Precede //优先级判断
+{
+    _x=_argv[0];
+    _y=_argv[1];
+    if  _x=="("&&_y==")";
+	{"=";return;}
+    elseif _x=="("||_y=="("
+	{"<";return;}
+    elseif _x>="a"&&_x<="t"
+	{">";return;}
+    elseif _y>="a"&&_x<="t"
+	{"<";return;}
+    elseif _x=="°"&&_y=="'"
+	{">";return;}
+    elseif _x=="^"||_x=="√"||_y=="+"||_y=="-"||_y==")"
+	{">";return;}
+    elseif (_x=="*"||_x=="/"||_x=="%")&&_y!="^"
+	{">";return}
+    else
+	{"<";return }
+}
+
+Operate1 //函数运算
+{
+	_a=_argv[0]+0.0;;
+	_b=_argv[1]+0.0;;
+	_theta=_argv[2];
+	_result=0;
+	case _theta
+	{
+
+		when "i"
+		{if radio;_a=_a/57.295779513;_result=SIN(_a);}
+		when "s" {if _a>=-1&&_a<=1;{_result=ASIN(_a);if radio;_result*=57.295779513;}
+		else;_result=0;}
+		when "o" {if radio;_a=_a/57.295779513;_result=COS(_a);}
+		when "c" {if _a>=-1&&a<=1;{_result=ACOS(_a);if radio;_result*=57.295779513;}
+		else;_result=0;}
+		when "a" {if radio;_a=_a/57.295779513;_result=TAN(_a);}
+		when "t" {_result=ATAN(_a);if radio;_result*=57.295779513;}
+		when "p" {if radio;_a=_a/57.295779513;_result=1/TAN(_a);}
+		when "d" {_result=ATAN(1/_a);if radio;_result*=57.295779513;}
+		when "q" {_result=SQRT(_a);}
+		when "n" {_result=POW(_a,1.0/3);}
+		when "b" {_result=abs(_a);}
+		when "l" {_result=log(_a,_b);}
+		when "g" {_result=sigma(_a,_b);}
+		when "r" {_result=arrange(_a,_b);}
+		when "m" {_result=combine(_a,_b);}
+	}
+		_result;return
+}
+
+
+Operate2 //二目运算
+{
+	_a=_argv[0]+0.0;
+	_b=_argv[1]+0.0;
+	_theta=_argv[2];
+	_result=0;
+    case _theta
+	{
+		when "+" {_result=_a+_b;}
+		when "-" {_result=_a-_b;}
+		when "*" {_result=_a*_b;}
+		when "/" {
+			if _b==0;{_result=0;}
+			else;{_result=_a/_b;}
+		}
+		when '%' {_result=_a%_b;}
+		when "!" {_result=factorial(_a)}
+		when "^" {
+			if _a==0&&_b<=0;{_result=0;}
+			else;{_result=POW(_a,_b);}
+		}
+		//    when 'e'  {_result=2.718281}
+		when "√"{
+			//if _a==
+			_result=EXT(_b,_a);
+		}
+		when "°" {
+			_result=_a+_b/60;
+		}
+
+		when "'"  {
+			_result=_a+_b/3600;
+		}
+    }
+		_result;return;
+}
+//任意进制转换为十进制
+todec
+{
+	_num=TOSTR(_argv[0]);
+	_oldcarry=_argv[1];
+	_weight=_oldcarry;
+	_l=STRLEN(_num);
+	if _oldcarry==10 || _num==0
+	{ _num;return;}
+	_neg=(SUBSTR(_num,0,1)=="-")
+		if _neg
+			_num=SUBSTR(_num,1,_l-1);
+		_l=STRLEN(_num);
+		num=_num;
+		_newnum=0.0;
+		for _index=1;_index<=_l;_index++
+		{
+			_newnum=_newnum*_oldcarry+STRSTR(hexnum,SUBSTR(_num,_index-1,1),0);
+		}
+		if _neg
+			_newnum=-_newnum;
+		_newnum;return;
+}
+
+
+
+//十进转换为任意进制
+
+decto
+{
+	_num=TOREAL(_argv[0])
+		_newcarry=TOINT(_argv[1]);
+	_neg=(_num<0);
+	if _newcarry==10 || _num==0
+	{ _num;return;}
+    _num=0.0+abs(_num);
+    _newnum="";
+    while _num!=0
+	{
+		_newnum=SUBSTR(hexnum,_num%_newcarry,1)+_newnum;
+		_num=FLOOR(_num/_newcarry);
+	}
+    if _neg
+		_newnum="-"+_newnum;
+	_newnum;return;
+}
+
+
+evaluate  //表达式求值主函数
+{
+	_exp=_argv[0];
+	_t="";_f="";
+	_optr=IARRAY;
+	_optr=(0.0);
+	_expression=IARRAY;_theta=0;_temp=0;_c=0;
+	_opnd=IARRAY;
+	_opnd=(0.0);
+	_theta="";
+	_i=0.0;_optr_i=0.0;_opnd_i=0.0;_j=0.0;_zpart=0.0;_k=0.0;
+	_operand=0.0;_weight=0.0;_a=0.0;_b=0.0;_xpart=0.0;
+//	_index=0;
+        _num=1.0
+	_expression=_exp;
+	_expression+="\0";
+	while SUBSTR(_expression,_i,2)!="\0"||_optr_i!=0
+	{
+		_operand=0.0;
+		_weight=carry;
+		if IsNumber(SUBSTR(_expression,_i,1))&&SUBSTR(_expression,_i+1,1)!="n"
+		{
+			while IsNumber(SUBSTR(_expression,_i,1))
+			{
+                         	_operand=_operand*_weight+STRSTR(hexnum,SUBSTR(_expression,_i,1),0)+0.0;
+				_i++;
+			}
+			if  SUBSTR(_expression,_i,2)=="\."
+			{
+				_i+=2;
+				while IsNumber(SUBSTR(_expression,_i,1))
+				{
+					_operand=_operand+(STRSTR(hexnum,SUBSTR(_expression,_i,1),0)+0.0)/_weight;
+					_weight*=carry;
+					_i++;
+				}
+			}
+
+			_opnd[_opnd_i]=_operand;ii=_operand
+				_opnd_i++;
+	       }
+
+		elseif SUBSTR(_expression,_i,1)=="-"&&IsNumber(SUBSTR(_expression,_i+1,1))&&(_i==0||SUBSTR(_expression,_i-1,1)=="(")
+	       {
+			_i++;
+			while IsNumber(SUBSTR(_expression,_i,1))
+			{
+				_operand=_operand*_weight+STRSTR(hexnum,SUBSTR(_expression,_i,1),0);
+				_i++;
+			}
+			if SUBSTR(_expression,_i,2)=="\."
+			{
+				_i+=2;
+				while IsNumber(SUBSTR(_expression,_i,1))
+				{
+					_operand=_operand+(STRSTR(hexnum,SUBSTR(_expression,_i,1),0)+0.0)/_weight;
+					_weight*=carry;
+					_i++;
+				}
+			}
+			_opnd[_opnd_i]=0-_operand;
+			_opnd_i++;
+		}
+
+		elseif SUBSTR(_expression,_i,1)=="e"
+		{
+			_opnd[_opnd_i]=2.718281
+				_opnd_i++;
+			_i++
+		}
+		elseif SUBSTR(_expression,_i,1)=="π"
+		{
+			_opnd[_opnd_i]=3.141593
+				_opnd_i++;
+			_i++
+		}
+		elseif _optr_i==0
+		{
+
+			_f=SUBSTR(_expression,_i,1)+SUBSTR(_expression,_i+1,1)+SUBSTR(_expression,_i+2,1)+SUBSTR(_expression,_i+3,1);
+			if _f=="sin("{_optr[_optr_i]="i";_optr_i++;_optr[_optr_i]="(";_optr_i++;_i=_i+4;}
+			elseif _f=="asin"{_optr[_optr_i]="s";_optr_i++;_optr[_optr_i]="(";_optr_i++;_i=_i+5;}
+			elseif _f=="cos("{_optr[_optr_i]="o";_optr_i++;_optr[_optr_i]="(";_optr_i++;_i=_i+4;}
+			elseif _f=="acos"{_optr[_optr_i]="c";_optr_i++;_optr[_optr_i]="(";_optr_i++;_i=_i+5;}
+			elseif _f=="tan("{_optr[_optr_i]="a";_optr_i++;_optr[_optr_i]="(";_optr_i++;_i=_i+4;}
+			elseif _f=="atan"{_optr[_optr_i]="t";_optr_i++;_optr[_optr_i]="(";_optr_i++;_i=_i+5;}
+			elseif _f=="cot("{_optr[_optr_i]="p";_optr_i++;_optr[_optr_i]="(";_optr_i++;_i=_i+4;}
+			elseif _f=="acot"{_optr[_optr_i]="d";_optr_i++;_optr[_optr_i]="(";_optr_i++;_i=_i+5;}
+			elseif _f=="sqr("{_optr[_optr_i]="q";_optr_i++;_optr[_optr_i]="(";_optr_i++;_i=_i+4;}
+			elseif _f=="sqrt"{_optr[_optr_i]="q";_optr_i++;_optr[_optr_i]="(";_optr_i++;_i=_i+5;}
+			elseif _f=="sqn("{_optr[_optr_i]="n";_optr_i++;_optr[_optr_i]="(";_optr_i++;_i=_i+4;}
+			elseif _f=="sqnt"{_optr[_optr_i]="n";_optr_i++;_optr[_optr_i]="(";_optr_i++;_i=_i+5;}
+			elseif _f=="abs("{_optr[_optr_i]="b";_optr_i++;_optr[_optr_i]="(";_optr_i++;_i=_i+4;}
+			elseif _f=="log("{_optr[_optr_i]="l";_optr_i++;_optr[_optr_i]="(";_optr_i++;_i=_i+4;}
+			elseif _f=="∑ab("{_optr[_optr_i]="g";_optr_i++;_optr[_optr_i]="(";_optr_i++;_i=_i+4;}
+			elseif _f=="Anm("{_optr[_optr_i]="r";_optr_i++;_optr[_optr_i]="(";_optr_i++;_i=_i+4;}
+			elseif _f=="Cnm("{_optr[_optr_i]="m";_optr_i++;_optr[_optr_i]="(";_optr_i++;_i=_i+4;}
+			else
+			{
+
+				_optr[_optr_i]=SUBSTR(_expression,_i,1);
+				_optr_=_optr;
+				_optr_i++;
+				_i++;
+
+			}
+		}
+
+		elseif SUBSTR(_expression,_i,2)=="\0"
+		{
+			_optr_i--;
+			_theta=_optr[_optr_i];
+			if _theta>="a"&&_theta<="t"
+			{
+				if _theta=="l"||_theta=="g"||_theta=="r"||_theta=="m"
+				{
+					_opnd_i--;
+					_opnd__=_opnd;
+					_b=_opnd[_opnd_i];
+					_opnd_i--;
+					_a=_opnd[_opnd_i];
+					_opnd[_opnd_i]=Operate1(_a,_b,_theta);
+				}
+				else
+				{
+					_opnd_i--;
+					_a=_opnd[_opnd_i];
+					_opnd[_opnd_i]=Operate1(_a,_b,_theta);
+				}
+				_opnd_i++;
+			}
+			else
+			{
+				if _theta!="!"
+				{
+					_opnd_i--;
+					_b=_opnd[_opnd_i];
+					_opnd_i--;
+					_a=_opnd[_opnd_i];
+					_opnd[_opnd_i]=Operate2(_a,_b,_theta);
+					_opnd_i++
+				}
+				else
+				{
+					_opnd_i--;
+					_a=_opnd[_opnd_i];
+					_opnd[_opnd_i]=Operate2(_a,_b,_theta);
+					_opnd_i++
+				}
+			}
+		}
+
+		else
+		{
+			_f=SUBSTR(_expression,_i,1)+SUBSTR(_expression,_i+1,1)+SUBSTR(_expression,_i+2,1)+SUBSTR(_expression,_i+3,1)
+				if _f=="sin("{_temp="i";_j=3;}
+				elseif _f=="asin"{_temp="s";_j=4;}
+				elseif _f=="cos("{_temp="o";_j=3;}
+				elseif _f=="acos"{_temp="c";_j=4;}
+				elseif _f=="tan("{_temp="a";_j=3;}
+				elseif _f=="atan"{_temp="t";_j=4;}
+				elseif _f=="cot("{_temp="p";_j=3;}
+				elseif _f=="acot"{_temp="d";_j=4;}
+				elseif _f=="sqr("{_temp="q";_j=3;}
+				elseif _f=="sqrt"{_temp="q";_j=4;}
+				elseif _f=="sqn("{_temp="n";_j=3;}
+				elseif _f=="sqnt"{_temp="n";_j=4;}
+				elseif _f=="abs("{_temp="b";_j=3;}
+				elseif _f=="log("{_temp="l";_j=3;}
+				elseif _f=="∑ab("{_temp="g";_j=3;}
+				elseif _f=="Anm("{_temp="r";_j=3;}
+				elseif _f=="Cnm("{_temp="m";_j=3;}
+				else;{_temp=SUBSTR(_expression,_i,1);_j=1;}
+
+				case Precede(_optr[_optr_i-1],_temp)
+				{
+					when "<"
+					{
+						_optr[_optr_i]=_temp;
+						_optr_i++;
+						_i+=_j;if  _temp=="+";tt="<"
+					}
+					when "="
+					{
+						_optr_i--;
+						_i++;if  _temp=="+";tt="="
+					}
+					when ">"
+					{
+                                             if  _temp=="+";tt=">"
+						_optr_i--;
+						_theta=_optr[_optr_i];
+						if _theta>="a"&&_theta<="t"
+						{
+							if _theta=="l"||_theta=="g"||_theta=="r"||_theta=="m"
+							{
+								_opnd_i--;
+								_b=_opnd[_opnd_i];
+								_opnd_i--;
+								_a=_opnd[_opnd_i];
+								_opnd[_opnd_i]=Operate1(_a,_b,_theta);
+							}
+							else
+							{
+								_opnd_i--;
+								_a=_opnd[_opnd_i];
+								_opnd[_opnd_i]=Operate1(_a,_b,_theta);
+							}
+							_opnd_i++;
+						}
+
+						else
+						{
+							if _theta!=","
+							{
+								if _theta!="!"
+								{
+									_opnd_i--;
+									_b=_opnd[_opnd_i];
+									_opnd_i--;
+									_a=_opnd[_opnd_i];
+									_opnd[_opnd_i]=Operate2(_a,_b,_theta);
+									_opnd_i++;
+								}
+								else
+								{
+									_opnd_i--;
+									_a=_opnd[_opnd_i];
+									_opnd[_opnd_i]=Operate2(_a,_b,_theta);
+									_opnd_i++;
+								}
+							}
+							else
+							{
+								_i++;
+								_optr_i--;
+							}
+						}
+					}
+				}
+		}
+      }
+	  t=_optr
+	  if _index>0
+          {
+             _index="e+%(_index)"
+          }
+
+	  if _opnd[_opnd_i-1]==0||carry==10
+	  {
+		  _opnd[_opnd_i-1]+_index;return;
+	  }
+
+	  _num=abs(_opnd[_opnd_i-1])
+		  _zpart=FLOOR(_num);
+      _xpart=_num-_zpart;
+      if _xpart<=0
+		  _xpart=0;
+
+      while _zpart!=0
+      {
+		  if SUBSTR(hexnum,_zpart%carry,1)>=10;_c=SUBSTR(hexnum,_zpart%carry,1);
+		  else;_c=SUBSTR(hexnum,_zpart%carry,1);
+		  _zpart=FLOOR(_zpart/carry);
+		  _t=_c+_t;
+      }
+
+	  if _opnd[_opnd_i-1]<0;_t="-"+_t;
+	  _t+_index;return;
+}
+
+
+BackSpace
+{
+	_temp="";
+	if RIGHT(m_exp,1)=="("
+	{
+		if STRLEN(m_exp)>=5
+		{
+			_temp=RIGHT(m_exp,5);
+			_temp=LEFT(_temp,4);
+		}
+		else
+		{
+			_temp=RIGHT(m_exp,4);
+			_temp=LEFT(_temp,3);
+		}
+
+		if RIGHT(_temp,1)>="a"&&RIGHT(_temp,1)<="z"
+		{
+			if LEFT(_temp,1)=="a"
+				m_exp=LEFT(m_exp,STRLEN(m_exp)-5);
+			else
+				m_exp=LEFT(m_exp,STRLEN(m_exp)-4);
+		}
+		else
+			m_exp=LEFT(m_exp,STRLEN(m_exp)-1);
+	}
+	else
+		m_exp=LEFT(m_exp,STRLEN(m_exp)-1);
+
+}
+
+LEFT//功能得到字符串左部指定个数的字符。
+{
+	_str=_argv[0];
+	_n=_argv[1];
+	_l=STRLEN(_str);
+	if _l-_n>=0
+	{SUBSTR(_str,0,_n);return;}
+	else
+	{SUBSTR(_str,0,_l);return;}
+}
+
+RIGHT//功能得到字符串右部指定个数的字符。
+{
+	_str=_argv[0];
+	_n=_argv[1];
+	_l=STRLEN(_str);
+	if _l-_n>=0
+	{SUBSTR(_str,_l-_n,_n);return;}
+	else
+	{SUBSTR(_str,0,_l);return;}
+}
+
+
+EXT  //开n次方
+{
+	_num=_argv[0];
+	//if _num<=0
+	//{0;return;}
+	_index=_argv[1];
+	_a=LOG10(_num);
+	_b=_a/_index;
+	_x=POW(10,_b);
+	_x;return;
+}
+
+log
+{
+	_a=_argv[0];
+	_num=_argv[1];
+	if _a==1
+	{0;return;}
+	_x=LOG10(_num)/LOG10(_a);
+	_x;return;
+}
+
+
+DEG      //度分秒转换小数点
+{
+	_exp="%(_argv[0])";
+	_expression=_exp;
+	_expression=REPLACE(_expression,".","\.");
+	_expression+="\0";
+	_opnd=IARRAY;
+	_weight=0.0;
+	_opnd_i=0;
+	_i=0;
+	_deg=0;
+	_operand=0.0;
+	while SUBSTR(_expression,_i,2)!="\0"
+	{
+		_weight=carry;
+		_operand=0.0;
+		if IsNumber(SUBSTR(_expression,_i,1))
+		{
+
+			while IsNumber(SUBSTR(_expression,_i,1))
+			{
+
+				_operand=_operand*_weight+STRSTR(hexnum,SUBSTR(_expression,_i,1),0);
+				_i++;
+			}
+
+
+			if SUBSTR(_expression,_i,2)=="\."
+			{
+				_i+=2;
+				while IsNumber(SUBSTR(_expression,_i,1))
+				{
+					_operand=_operand+(STRSTR(hexnum,SUBSTR(_expression,_i,1),0)+0.0)/_weight;
+					_weight*=carry;
+					_i++;
+				}
+				operand=_operand;
+			}
+			_opnd[_opnd_i]=_operand;
+			_opnd_i++;
+
+		}
+
+		else
+		{
+			_i++;
+		}
+	}
+	_deg=_opnd[0]+_opnd[1]/60+_opnd[2]/3600+_opnd[3];
+	_deg;
+	//DEG("90°11'25")
+}
+DmsInput
+{
+	_dms=0;
+	if dmsmode==0//_t==0&&_s==0
+	{
+		_dms="°";
+		dmsmode=1;
+	}
+
+	elseif dmsmode==1
+	{
+		_dms="'";
+		dmsmode=0;
+	}
+	_dms;
+}
+
+DMS//小数点转换度分秒
+{
+
+	_exp=TOREAL(DEG(_argv[0]));
+	_dms=0;
+	_d=TOINT(_exp);
+	_t=(_exp-_d)*60;
+	_m=TOINT(_t);
+	_s=(_t-_m)*60;
+	_dms=_d+"°"+_m+"'"+_s;
+	_dms;
+
+}
+
+factorial//阶乘
+{
+	_a=_argv[0];
+	_b=1.0;
+	for _i=1;_i<=_a;_i++
+	{
+		_b*=_i;
+	}
+
+	_b;
+}
+
+sigma//求和
+{
+	_a=_argv[0]+0.0;   //下界
+	_b=_argv[1]+0.0;   //上界
+	_s=0;
+	if _b+1>_a
+        _s=(_a+_b)*(_b+1-_a)/2
+        else
+        _s=-1
+		/*
+		for _i=_a;_i<=_b;_i++
+		{
+		_s+=_i;
+		}
+		*/
+		_s;
+}
+
+arrange
+{
+	_a=_argv[0]+0.0;
+	_b=_argv[1]+0.0;
+	_s=1.0;
+	for _i=_b;_i>0;_i--
+	{
+		_s*=_a;
+		_a--;
+	}
+	_s;
+}
+
+
+combine
+{
+	_a=_argv[0]+0.0;
+	_b=_argv[1]+0.0;
+	if _b*2>_a
+		_b=_a-_b;
+	_s=1.0;
+	_w=1.0;
+	for _i=_b;_i>0;_i--
+	{
+		_s*=_a;
+		_a--;
+		_w*=_i;
+	}
+	_s=_s/_w;
+	_s;
+}
+
+TextBeginTo//取得从文本左边指定位置到关键字的内容
+{
+	//示例：TextBeginTo("a+b=1234","=",1) 的结果为+b
+	_s = _argv[0];
+	_to = _argv[1];
+	_begin = _argv[2];
+	_p=STRSTR(_s,_to,0);
+	_d = SUBSTR(_s,_begin,_p-_begin);
+	_d;
+}
+
+TextEndTo//取得从文本右边指定位置到关键字的内容
+{
+	//示例：TextEndTo("a+b=1234","=",1) 的结果为123
+	_s = _argv[0];
+	_to = _argv[1];
+	_end = _argv[2];
+	_p=STRSTR(_s,_to,0);
+	_l=STRLEN(_s);
+	_d =SUBSTR(_s,_p+1,_l-_p-1-_end);
+	_d;
+}
+
+
+
+Error//以下为表达式出错处理函数
+{
+	_exp=_argv[0];
+	_str="";
+	if STRLEN(_exp)==0
+	{
+		_str="表达式不能为空";
+		_str;return ;
+	}
+	_s=IARRAY
+		_s=(0);
+	_i=0
+		_parenthesis=0;_ptag=0;
+	_s=_exp;
+	_s+="\0"
+		for _i=0;SUBSTR(_s,_i,1);_i++
+		{
+			if SUBSTR(_s,_i,1)=="(";_parenthesis++;
+			if SUBSTR(_s,_i,1)==")";_parenthesis--;
+			if  IsOperator(SUBSTR(_s,_i,1))||SUBSTR(_s,_i,1)=="("||SUBSTR(_s,_i,1)==")"||SUBSTR(_s,_i,1)>="a"&&SUBSTR(_s,_i,1)<="t"
+				_ptag=0;
+
+			if SUBSTR(_s,_i,2)=="\."
+			{
+				if _ptag==1
+				{
+					_str="一个数字中出现不只一个小数点";
+					_str; return;
+				}
+				if !IsNumber(SUBSTR(_s,_i-1,1))||!IsNumber(SUBSTR(_s,_i+2,1))
+				{
+					_str="小数点位置有误";
+					_str;return;
+				}
+				_ptag=1;
+			}
+
+
+			elseif SUBSTR(_s,_i,1)=="("&&(IsOperator(SUBSTR(_s,_i+1,1))&&SUBSTR(_s,_i+1,1)!="-"||SUBSTR(_s,_i+1,1)==")")
+			{
+				_str="左括号右边缺少运算数";
+				_str;return;
+			}
+
+			elseif SUBSTR(_s,_i,1)=="-"&&SUBSTR(_s,_i+1,1)=="("&&(_i==0||SUBSTR(_s,_i-1,1)=="(")
+			{
+				_str="负号右边必须是数字";
+				_str;return;
+			}
+
+			elseif IsOperator(SUBSTR(_s,_i,1))&&(IsOperator(SUBSTR(_s,_i+1,1))||SUBSTR(_s,_i+1,1)==")"||_i==0)
+			{
+				_str="表达式中有非法操作符";
+				_str;return;
+			}
+
+			elseif IsNumber(SUBSTR(_s,_i,1))&&SUBSTR(_s,_i+1,1)>="a"&&SUBSTR(_s,_i+1,1)<="t"&&SUBSTR(_s,_i+1,1)!="n"
+			{
+				_str="数字与函数之间缺少操作符";
+				_str;return;
+			}
+
+
+			elseif SUBSTR(_s,_i,1)==")"&&SUBSTR(_s,_i+1,1)>="a"&&SUBSTR(_s,_i+1,1)<="t"
+			{
+				_str="右括号右边不能直接跟函数";
+				_str;return;
+			}
+
+			elseif SUBSTR(_s,_i,1)==")"&&SUBSTR(_s,_i+1,1)>="0"&&SUBSTR(_s,_i+1,1)<="9"
+			{
+				_str="右括号右边不能直接跟数字";
+				_str;return;
+			}
+			/*
+			elseif SUBSTR(_s,_i,1)=="("&&SUBSTR(_s,_i-1,1)>="0"&&SUBSTR(_s,_i-1,1)<="9"
+			{
+			_str="左括号左边不能直接跟数字";
+			_str;return;
+			}
+			*/
+
+		}
+		if _parenthesis!=0
+		{
+			_str="左括号与右括号数目不符";
+			_str;return;
+		}
+		_str;return;
+}
+
+
+result
+{
+	_temp=0;
+	_m_error="";
+	//UpdateData(1);
+	_m_error=Error(m_exp);
+	if _m_error==""
+	{
+		_temp=m_exp;
+        _m_error=evaluate(m_exp);
+        m_point=_m_error;
+	}
+	m_res=_m_error;
+}
+
+OnPaste
+{
+	FUNCTIONEX("saori\txtpaste.dll");
+}
+
+OnPasteToExp
+{
+	endNumber=0;
+	_OnPaste=OnPaste
+		_OnPaste=REPLACE(_OnPaste,'.','\.');
+	m_exp+=_OnPaste;
+	m_res=evaluate(m_exp);
+	CalculatorShow;
+}
+
+
+OnCopy
+{
+        _txt=reference0
+        if _argc>0
+        {
+		_txt="";
+		for _i=0;_i<_argc-1;_i++
+		{
+		_txt+=_argv[_i]+','
+		}
+		_txt+=_argv[_argc-1];ts=_txt
+	}
+	FUNCTIONEX("saori\textcopy.dll", _txt);
+}
+
+
+OnCopyDat
+{
+	FUNCTIONEX("saori\textcopy.dll", "%(reference0)");
+	"\0\s[0]\b[2]橘花已成功复制结果 『%(reference0)』 到剪贴板了喔?\x";
+	--
+		CalculatorShow;
+}
+
+lastIndexOf
+{
+	_String=_argv[0];
+	_Regex=_argv[1];
+	if RE_GREP(_String,_Regex)
+	{
+		_l=ARRAYSIZE(RE_GETPOS);
+		RE_GETPOS[_l-1];return;
+	}
+
+	-1;return;
+}
+
+
+OnReadyToEat
+{
+	eatfile=1
+	'把不要的东西通通塞给橘花吧，让橘花把它吃掉，拖拽文件（夹）到橘花上面\e'
+}
+OnFileEatDrop
+{
+	if _argv[0]!=''
+	{
+		'\0\s[26]确定要橘花吃掉所选文件（夹）？\n\q[确定,OnFileEatDrop,yes]\n\q[不了,OnFileEatDrop,no]\n'
+		temp = _argv[0]
+	}
+	if reference0=='yes'
+	{
+        if fjswitch
+			fjswitch='-1'
+		_buff = temp
+		ERASEVAR("temp");
+		all_file_size = 0
+		foreach _buff; _ref
+        {
+			if FATTRIB(_ref)[2]==1
+				OnFileEatFolder(_ref)
+			else
+				OnFileEat(_ref)
+        }
+		--
+		OnFileEatEnd
+    }
+	elseif reference0=='no';
+}
+
+OnFileEatFolder
+{
+    if fjswitch
+        fjswitch='-1'
+	_path = _argv[0];
+	_file = FENUM(_path);
+	foreach _file; _f {
+		_f = _path +'/'+ _f;
+		if FATTRIB(_f)[2]==1
+			OnFileEatFolder(_f);
+		else
+			OnFileEat(_f);
+	}
+	_t=RMDIR(_path);
+	all_file_size+=8192
+}
+
+OnFileEat
+{
+	_file=reference0;
+	if _argc>0
+		_file=_argv[0];
+	all_file_size+=FSIZE(_file)
+	if !FDEL(_file)
+		'\s[20]好像出了什么问题？\n%(reference0)\e'
+}
+OnFileEatEnd{
+	if kikkastm<kikkastmmax
+		kikkastm+=TOINT(ROUND(all_file_size/8192))
+	ERASEVAR('all_file_size')
+	if kikkastm>kikkastmmax
+		kikkastm=kikkastmmax
+	'\s[21]叭唧叭唧、\w9\w9\s[5]吃好了。'
+}
+
+OnInterFileRename
+{
+    renamecondition=IARRAY;
+	DialogFilesRenameOpenCon;
+	OnFilesRename;
+}
+
+
+OnFilesRename
+{
+	_txt=""
+	_submenu=reference0;
+	if _argc>0
+		_submenu=_argv[0];
+	_txt+=FilesRenameMenu(_submenu);
+        _txt+="\![set,autoscroll,false]"
+        if reference0=="top"||reference0=="home"
+        _txt+="\![set,autoscroll,false]"
+        elseif reference0=="end"||reference0=="end"
+        _txt+="\![set,autoscroll,enable]"
+	option=NULL;
+	rename=1;
+	running="rename";
+	_total=ARRAYSIZE(renamecondition);
+
+	for _i=0;_i<_total;_i++
+	{
+		if renamecondition[_i][0]!=""
+		{
+			_txt+="\q[↑,OnFilesRenameSet,%(_submenu),up,%(_i)] \q[↓,OnFilesRenameSet,%(_submenu),down,%(_i)] \q[删,OnFilesRenameSet,%(_submenu),del,%(_i)]%(_i+1)\__q[OnFilesRenameSet,%(_submenu),rename_editconid,%(_i)]"+renamecondition[_i][0]+"\__q\n";
+
+		}
+	}
+
+	_txt+="\n[half]";
+        _txt+="用鼠标拖入文件或文件夹\n"
+        _t="子目录关,子目录开";
+			_txt+="\![*]\q[%(_t[TOINT(rename_submenu)]),OnFilesRenameSet,%(_submenu),assign,rename_submenu,%(TOINT(rename_submenu+1)%2)]\n"
+        _t="自动排序关（适合数量多的文件，拖入速度较快）,自动排序开（适合数量少的文件，拖入速度较慢）"
+_txt+="\![*]\q[%(_t[TOINT(rename_order)]),OnFilesRenameSet,%(_submenu),assign,rename_order,%(TOINT(rename_order+1)%2)]\n"
+_txt+="\n[50]"
+	_txt+="原文件名  \_l[140,-]新文件名   \_l[260]状态\n";
+_txt+="\q[◇End,OnFilesRename,end,%(reference1)]\n"
+	_total=ARRAYSIZE(filerenamelist);
+
+	for _i=0;_i<_total;_i++
+	{
+		_txt+=SPLITPATH(filerenamelist[_i])[2]+SPLITPATH(filerenamelist[_i])[3];
+
+		if _argv[1]=="editlist"
+		{
+			_txt+="\_l[220,-]\q[顶,OnFilesRenameSet,%(_submenu),top,%(_i)]\q[底,OnFilesRenameSet,%(_submenu),bottom,%(_i)]\q[↑,OnFilesRenameSet,%(_submenu),fileup,%(_i)] \q[↓,OnFilesRenameSet,%(_submenu),filedown,%(_i)] \q[删,OnFilesRenameSet,%(_submenu),filedel,%(_i)]";
+		}
+
+
+		elseif reference1=="preview"
+		{
+
+			_replace=OnReNameGet(_i);
+			if _replace!=-1
+				_txt+="                        \_l[140,-]"+_replace;
+
+
+		}
+		elseif reference1=="renaming"
+		{
+			_replace=OnReNameGet(_i);
+                        _txt+="                        \_l[140,-]"+_replace;
+			_name=filerenamelist[_i];
+			_replace=SPLITPATH(filerenamelist[_i])[0]+SPLITPATH(filerenamelist[_i])[1]+_replace;
+			_temp=FRENAME(_name,_replace);
+			_txt+="\_l[260]"+"失败,成功"[_temp];
+			if _temp
+			{
+				filerenamenewlist[_i]=filerenamelist[_i];
+				filerenamelist[_i]=_replace;
+			}
+		}
+
+		elseif reference1=="restore"
+		{
+			if ISVAR("filerenamenewlist")==1
+			{
+				_name=filerenamelist[_i];
+				_replace=filerenamenewlist[_i];
+                                _txt+="\_l[140]"+SPLITPATH(filerenamenewlist[_i])[2]+SPLITPATH(filerenamenewlist[_i])[3];
+				_temp=FRENAME(_name,_replace);
+				if _temp
+					filerenamelist[_i]=filerenamenewlist[_i];
+				_txt+="\_l[240]"+"恢复失败,恢复成功"[_temp];
+			}
+
+
+
+
+		}
+
+		_txt+="\n";
+
+	}
+	if reference1=="renaming"
+		_txt+="\x\![raise,OnFilesRename,%(_submenu)]";
+
+	elseif reference1=="restore"
+	{
+		if ISVAR("filerenamenewlist")==1
+		{
+			ERASEVAR("filerenamenewlist");
+			_txt+="\x\![raise,OnFilesRename,%(_submenu)]";
+		}
+	}
+
+	_txt+="\q[◇Top,OnFilesRename,top,%(reference1)]\n"
+	_txt;
+
+
+}
+
+OnReNameGet
+{
+	_i=TOINT(_argv[0]);
+	_str=SPLITPATH(filerenamelist[_i])[2];
+	_ext=SPLITPATH(filerenamelist[_i])[3];
+	_replace=_str;
+	_k=ARRAYSIZE(renamecondition);
+	for _j=0;_j<_k;_j++
+	{
+		if renamecondition[_j][0]!=""
+		{
+			if renamecondition[_j][1]==0
+			{
+				_replace=TXTREPLACE(_str,renamecondition[_j][2],renamecondition[_j][3],renamecondition[_j][4]);
+
+			}
+
+			elseif renamecondition[_j][1]==1
+			{
+				_replace=POSREPLACE(_str,renamecondition[_j][2],renamecondition[_j][3],renamecondition[_j][4]);
+
+			}
+			elseif renamecondition[_j][1]==2
+			{
+				_ext=REPLACE(_ext,renamecondition[_j][2],renamecondition[_j][3]);
+			}
+			elseif renamecondition[_j][1]==3
+				_replace=FIXREPLACE(_str,TOINT(renamecondition[_j][2])+_i,renamecondition[_j][3],renamecondition[_j][4],renamecondition[_j][5]);
+			elseif renamecondition[_j][1]==4
+	        	{
+			if renamecondition[_j][2]==0
+				_replace=TOUPPER(_str);
+			elseif renamecondition[_j][2]==1
+				_replace=TOLOWER(_str);
+			if renamecondition[_j][2]==2
+				_ext=TOUPPER(_ext);
+			elseif renamecondition[_j][2]==3
+				_ext=TOLOWER(_ext);
+
+		        }
+			_str=_replace;
+		}
+
+	}
+
+
+
+
+	_replace=_replace+_ext;
+	_replace;
+
+}
+
+
+TXTREPLACE
+{
+	//TXTREPLACE("AabBaabb","aa","",0)=bBbb           //替换指定内容”:将“aa”替换成为“”区分大小写“否”
+	_str=_argv[0];
+	_ori=_argv[1];
+	_rep=_argv[2];
+	_case=TOINT(_argv[3]);
+	_l=STRLEN(_str);
+	_o=STRLEN(_ori);
+	_result="";
+
+	if _case==0
+	{
+                    _ori=REPLACE(_ori,'?','.?')
+                    _ori="(?i)"+_ori
+                    _ori=REPLACE(_ori,'*','.*')
+                    _result=RE_REPLACE(_str,_ori,_rep)
+	}
+	else
+	{
+	 _result=RE_REPLACE(_str,_ori,_rep);
+	}
+	_result;
+}
+
+
+POSREPLACE
+{
+	//POSREPLACE("1234",1,2,"sss")=sss34   //替换指定位置”:将自第“1”字开始，长度为“2”的字区哉替换为“sss”
+	_str=_argv[0];
+	_start=TOINT(_argv[1]);
+	_len=TOINT(_argv[2]);
+	_txt=_argv[3];
+	_temp="";
+	_result="";
+	_l=STRLEN(_str);
+	if _l-_start-len+1>0
+	{
+		_temp=SUBSTR(_str,0,_start-1);
+		_temp=_temp+_txt+SUBSTR(_str,_start+_len-1,_l);
+	}
+	else
+		_temp=_str;
+
+	_result=_temp;
+	_result;
+
+
+}
+
+
+FIXREPLACE
+{
+	//FIXREPLACE("a",1,4,"",0)=0001a   //前后缀设置:添加内容“”并且补充长度为“4”的数字编号 添加方式为前缀，以数字“1”开始
+	_str=_argv[0];
+	_numbegin=TOINT(_argv[1]);
+	_numlen=TOINT(_argv[2]);
+	_add=_argv[3];
+	_fix=TOINT(_argv[4]);
+	_num="";
+	_zero="";
+	_result="";
+	_temp="";
+	_len=STRLEN(_numbegin);
+	if _numbegin<POW(10,_numlen-1)
+	{
+		for _i=_numlen-_len;_i>0;_i--
+		{
+			_zero+="0";
+		}
+		_num=_zero+_numbegin;
+	}
+	else
+		_num=_numbegin;
+
+	if _fix==0
+		_temp=_add+_num+_str;
+	else
+		_temp=_str+_add+_num;
+
+	_sesult=_temp;
+	_sesult;
+
+}
+
+FilesRenameMenu
+{
+	_submenu=0;
+
+	if _argc > 0 {
+		_submenu = TOINT(_argv[0]);
+	}
+	_txt="\C\![quicksession,true]\c\![set,choicetimeout,0]\b[2]";
+	_txt+="■魔法 - 批量文件重命名■\n";
+	_txt+="\![*]\q[选择目录,OnFileRenameListAdd,folder]";
+	_txt+="\_l[70]\![*]\q[清空文件,OnFilesRenameSet,%(_submenu),clearfile]";
+	_txt+="\_l[140]\![*]\q[编辑列表,OnFilesRenameSet,%(_submenu),editlist]";
+	_txt+="\_l[210]\![*]\q[说明,OnFileRenameIntro,%(_submenu)]";
+	_txt+="\_l[255]\![*]\q[退出,OnExitFileRename]";
+	_txt+="\n";
+
+	_sub[_submenu]="\f[color,192,192,192]";
+	_subend[_submenu]="\f[color,default]";
+	_txt+="\__q[OnFilesRenameSub,0]%(_sub[0])替换内容%(_subend[0])\__q";
+	_txt+="\_l[55]\__q[OnFilesRenameSub,1]%(_sub[1])替换位置%(_subend[1])\__q";
+	_txt+="\_l[110]\__q[OnFilesRenameSub,2]%(_sub[2])替换扩展名%(_subend[2])\__q";
+	_txt+="\_l[175]\__q[OnFilesRenameSub,3]%(_sub[3])前后缀设置%(_subend[3])\__q";
+	_txt+="\_l[240]\__q[OnFilesRenameSub,4]%(_sub[4])全局配置%(_subend[4])\__q\n";
+
+	_txt+=FilesRenameCondition(_submenu);
+	_txt;
+
+}
+
+OnFileRenameIntro
+{
+_submenu=reference0
+_txt="\0\![quicksession,true]\![set,choicetimeout,0]\b[2]"
+_txt+="批量文件重命名工具V1.2\n[150]"
+_txt+="软件使用：\n/
+　　1、支持多命名条件设定。\n/
+　　2、支持多文件批量处理。\n/
+　　3、支持子目录,并能设定子目录开关\n/
+　　4、你可以用鼠标把文件夹拖入，以便命名文件夹。\n/
+　　5、可以导出，导入配置文件以便以后应用。\n/
+　　6、支持替换内容的通配符号（*匹配任意多个字符，?匹配一个字符）。\n/
+    7、1.2版本更正大数量文件的加载速度，请进入大数量文件的目录后直接全选文件拖入，否则加载速度可能过慢\n/
+    \x"
+_txt+=OnFilesRename(_submenu)
+_txt
+
+}
+
+
+
+OnFilesRenameSub
+{
+
+	OnFilesRename(reference0);
+
+
+
+}
+
+OnClickOption
+{
+
+	_txt="";
+	_w="";
+	_hexnum="1,2,3,4,5,6,7,8,9,0";
+	_submenu=reference0;
+	_varname=reference1;
+	_exp=reference2;
+	if _exp=="0"&&_varname=="rename_pos"
+		_exp=1;
+
+	if _exp!=""
+		EVAL("%(_varname)=%(_exp)");
+
+	for _i=0;_i<10;_i++
+	{
+		_num=_hexnum[_i];
+		_w+="\q[%(_num),OnClickOption,%(_submenu),%(_varname),%(_exp+_num)]";
+	}
+	_back=LEFT(_exp,STRLEN(_exp)-1);
+	_w+=" \q[Backspace,OnClickOption,%(_submenu),%(_varname),%(LEFT(_exp,STRLEN(_exp)-1))]";
+	option=_w;
+	if running=="rename"
+	_txt+=OnFilesRename(_submenu);
+        elseif running=="chatroom"
+        _txt+=OnChatRoom(j)
+	_txt;
+}
+
+OnFilesRenameSet
+{
+	_submenu=reference0;
+	_state=reference1;
+	if ISVAR("renamecondition")==0
+		renamecondition=IARRAY;
+
+	if reference1=="add"
+                    renamecondition,=RenameConSub(reference0);
+
+	elseif reference1=="delall"
+              renamecondition=IARRAY;
+
+	elseif reference1=="assign"
+		EVAL("%(reference2)=%(reference3)");
+
+
+	elseif reference1=="clearfile"
+              filerenamelist=IARRAY;
+
+	elseif reference1=="rename_fix"
+		rename_fix=reference2;
+
+	elseif reference1=="rename_case"
+		rename_case=reference2;
+
+        elseif reference1=="rename_editconid"
+              {
+               rename_editconid=reference2
+                _submenu=renamecondition[rename_editconid][1]
+                }
+        elseif reference1=="saveconid"
+             {
+               renamecondition[rename_editconid]=RenameConSub(reference0);
+               ERASEVAR("rename_editconid")
+              }
+
+
+	elseif reference1=="up"
+	{
+		_id=reference2;
+		if _id>0
+		{
+			_temp=renamecondition[_id];
+			renamecondition[_id]=renamecondition[_id-1];
+			renamecondition[_id-1]=_temp;
+		}
+
+	}
+
+	elseif reference1=="del"
+	{
+		_id=reference2;
+		renamecondition[_id]=IARRAY;
+	}
+
+
+	elseif reference1=="down"
+	{
+		_total=ARRAYSIZE(renamecondition);
+		_id=reference2;
+		if _id<_total-1
+		{
+			_temp=renamecondition[_id];
+			renamecondition[_id]=renamecondition[_id+1];
+			renamecondition[_id+1]=_temp;
+
+		}
+
+
+	}
+
+	elseif reference1=="top"
+	{
+		_id=reference2;
+		_temp=filerenamelist[_id];
+		filerenamelist[_id]=IARRAY;
+		filerenamelist=(_temp,filerenamelist);
+		_state="editlist";
+	}
+	elseif reference1=="bottom"
+	{
+		_total=ARRAYSIZE(filerenamelist);
+		_id=reference2;
+		_temp=filerenamelist[_id];
+		filerenamelist[_id]=IARRAY;
+		filerenamelist=(filerenamelist,_temp);
+		_state="editlist";
+	}
+
+	elseif reference1=="fileup"
+	{
+		_id=reference2;
+		if _id>0
+		{
+			_temp=filerenamelist[_id];
+			filerenamelist[_id]=filerenamelist[_id-1];
+			filerenamelist[_id-1]=_temp;
+		}
+		_state="editlist";
+	}
+
+	elseif reference1=="filedown"
+	{
+		_total=ARRAYSIZE(filerenamelist);
+		_id=reference2;
+		if _id<_total-1
+		{
+			_temp=filerenamelist[_id];
+			filerenamelist[_id]=filerenamelist[_id+1];
+			filerenamelist[_id+1]=_temp;
+
+		}
+		_state="editlist";
+	}
+
+	elseif reference1=="filedel"
+	{
+		_id=reference2;
+		filerenamelist[_id]=IARRAY;
+		_state="editlist";
+	}
+
+	DialogFilesRenameSaveCon;
+	OnFilesRename(_submenu,_state);
+}
+
+RenameConSub
+{
+_sub=TOINT(reference0)
+if _argc>0
+_sub=TOINT(_argv[0])
+
+case _sub
+{
+   when 0
+    {
+"%(CHR(34))替换指定内容%(CHR(34))：将%(CHR(34))%(rename_ori)%(CHR(34))替换成为%(CHR(34))%(rename_text)%(CHR(34))区分大小写%(CHR(34))%('否,是'[rename_case])%(CHR(34)),%(reference0),%(rename_ori),%(rename_text),%(TOINT(rename_case))"
+    }
+    when 1
+    {
+"%(CHR(34))替换指定位置%(CHR(34))：将自第%(CHR(34))%(rename_pos)%(CHR(34))字开始，长度为%(CHR(34))%(TOINT(rename_len))%(CHR(34))的字区哉替换为%(CHR(34))%(rename_postext)%(CHR(34)),%(reference0),%(TOINT(rename_pos)),%(rename_len),%(rename_postext)";
+    }
+   when 2
+    {
+"%(CHR(34))替换扩展名%(CHR(34))：将扩展名%(CHR(34))%(rename_oriextension)%(CHR(34))替换成扩展名%(CHR(34))%(rename_newextension)%(CHR(34)),%(reference0),%(rename_oriextension),%(rename_newextension)";
+    }
+   when 3
+    {
+"%(CHR(34))前后缀设置%(CHR(34))：添加内容%(CHR(34))%(rename_add)%(CHR(34))并且补充长度为%(CHR(34))%(rename_numlen)%(CHR(34))的数字编号，添加方式为%(CHR(34))%('前缀,后缀'[rename_fix])%(CHR(34))，以数字“%(rename_numbegin)”开始,%(reference0),%(TOINT(rename_numbegin)),%(TOINT(rename_numlen)),%(rename_add),%(TOINT(rename_fix))";
+    }
+   when 4
+    {
+"%(CHR(34))全局配置%(CHR(34))：将执行%(CHR(34))%('文件名大写,文件名小写,扩展名大写,扩展名小写'[rename_globle])%(CHR(34)),%(reference0),%(TOINT(rename_globle))";
+    }
+
+}
+
+
+}
+
+OnRenameInput
+{
+	submenu=reference0;
+	rename_var=reference1;
+	"\C\![open,inputbox,OnRenameText,-1,%(EVAL(rename_var))]";
+
+}
+
+OnRenameText
+{
+
+        if (rename_var=="rename_text"||rename_var=="rename_postext"||rename_var=="rename_add"||rename_var=="rename_newextension")&&RenameCheck(reference0)==0
+       {
+          '包含非法字符（\ / : * ? " < > |）请修改\![open,inputbox,OnRenameText,-1,%(EVAL(rename_var))]';
+          return;
+        }
+	EVAL("%(rename_var)=%(CHR(34))%(reference0)%(CHR(34))");
+	OnFilesRename(submenu);
+	submenu=null;
+	rename_var=null;
+}
+
+RenameCheck
+{
+_str=_argv[0]
+_forbidden=('\','/',':','*','?','"','<','>','|')
+_check=1
+foreach _forbidden;_i
+{
+if _i _in_ _str
+_check=0
+
+}
+
+_check
+
+
+}
+
+FilesRenameCondition
+{
+	_submenu=_argv[0];
+	_txt="";
+	_txt+="\![*]\q[添加条件,OnFilesRenameSet,%(_submenu),add]";
+	_txt+="\_l[70]\![*]\q[导入条件,OnFileRenameListAdd,opencon]";
+	_txt+="\_l[140]\![*]\q[导出条件,OnFileRenameListAdd,savecon]";
+        if ISVAR("rename_editconid")
+        _txt+="\_l[210]\![*]\q[保存条件%(TOINT(rename_editconid)+1),OnFilesRenameSet,%(_submenu),saveconid,TOINT(rename_editconid)]\n"
+         else
+        _txt+="\n"
+	_txt+="\![*]\q[清空条件,OnFilesRenameSet,%(_submenu),delall]";
+	_txt+="\_l[70]\![*]\q[预览,OnFilesRename,%(_submenu),preview]";
+	_txt+="\_l[140]\![*]\q[重命名,OnFilesRename,%(_submenu),renaming]";
+	_txt+="\_l[210]\![*]\q[撤消重命名,OnFilesRename,%(_submenu),restore]\n[150]";
+
+
+	case _submenu
+	{
+
+		when 0
+		{
+
+			_t="□,■";
+			_txt+="\q[%(_t[rename_case]),OnFilesRenameSet,%(_submenu),assign,rename_case,%(TOINT(rename_case+1)%2)]区分大小写\n";
+			_txt+="\q[原有内容：,OnRenameInput,%(_submenu),rename_ori]%(rename_ori)\n";
+			_txt+="\q[替换内容：,OnRenameInput,%(_submenu),rename_text]%(rename_text)\n[150]";
+		}
+
+		when 1
+		{
+			_txt+="\q[起始位置：,OnClickOption,%(_submenu),rename_pos,1]%(TOINT(rename_pos))";
+			_txt+="\_l[80]\q[截取长度：,OnClickOption,%(_submenu),rename_len,0]%(TOINT(rename_len))\_l[170]";
+			if option
+				_txt+=option;
+			_txt+="\n\q[替换内容：,OnRenameInput,%(_submenu),rename_postext]%(rename_postext)\n[150]";
+
+		}
+		when 2
+		{
+			_txt+="修改扩展名可能会导致文件无法使用，请确认\n";
+			_txt+="\q[原扩展名：,OnRenameInput,%(_submenu),rename_oriextension]%(rename_oriextension)（不填则匹配所有）\n";
+			_txt+="\q[新扩展名：,OnRenameInput,%(_submenu),rename_newextension]%(rename_newextension)\n[150]";
+		}
+
+		when 3
+		{
+			_t="前缀,后缀";
+			_txt+="\![*]\q[%(_t[TOINT(rename_fix)]),OnFilesRenameSet,%(_submenu),assign,rename_fix,%(TOINT(rename_fix+1)%2)]";
+			_txt+="\_l[80]\q[添加内容：,OnRenameInput,%(_submenu),rename_add]%(rename_add)\n";
+			_txt+="\q[编号长度：,OnClickOption,%(_submenu),rename_numlen,0]%(TOINT(rename_numlen))";
+			_txt+="\_l[80]\q[号码初始值：,OnClickOption,%(_submenu),rename_numbegin,1]%(TOINT(rename_numbegin))\_l[170]";
+			if option
+				_txt+=option;
+			_txt+="\n[150]";
+		}
+
+		when 4
+		{
+			_t="文件名大写,文件名小写,扩展名大写,扩展名小写";
+			_txt+="\![*]\q[%(_t[rename_globle]),OnRenameGloble,%(_submenu),rename_globle,0]\n";
+			if option
+				_txt+=option;
+			_txt+="\n[150]";
+		}
+	}
+		_txt;
+
+}
+
+OnRenameGloble
+{
+	_submenu=reference0;
+	EVAL("%(reference1)=%(reference2)");
+	_txt="";
+	_t="文件名大写,文件名小写,扩展名大写,扩展名小写";
+	_w+="\![*]\q[%(_t[1]),OnRenameGloble,%(_submenu),rename_globle,1]\n";
+	_w+="\![*]\q[%(_t[2]),OnRenameGloble,%(_submenu),rename_globle,2]\n";
+	_w+="\![*]\q[%(_t[3]),OnRenameGloble,%(_submenu),rename_globle,3]\n";
+
+	option=_w;
+	if _submenu==0;
+	i=0;
+	i++;
+	if i%2==1;
+	option=null;
+	_txt+=OnFilesRename(_submenu);
+	_txt;
+}
+
+
+OnFileRenameListAdd
+{
+	if reference0 == 'folder' {
+		"\C\![open,dialog,folder,--id=filerenamefolder,--title=请选择要重命名文件的文件夹]";
+	}
+	elseif reference0 == 'opencon'
+       	"\C\![open,dialog,open,--id=filesrenameopencon,--title=请选择配置文件,--filter=规则文件(rncfg)|*.rncfg,--ext=rncfg]";
+	elseif reference0=='savecon'
+		"\C\![open,dialog,save,--id=filesrenamesavecon,--title=请输入要保存的配置文件名,--filter=规则文件(rncfg)|*.rncfg,--ext=rncfg]";
+}
+
+#define		RNCFGPATH		"profile\\filesrename.rncfg"
+
+DialogFilesRenameOpenCon
+{
+	_rncfg=RNCFGPATH;
+	if _argc > 0 {
+		_rncfg = _argv[0];
+	}
+	_submenuname=("替换指定内容","替换指定位置","替换扩展名","前后缀设置","全局配置");
+	_txtnum=0;
+	_varname="";
+   	if FOPEN(_rncfg,'r')
+	{
+		_buff = FREAD(_rncfg);
+		while _buff != -1
+		{
+			if '[FilesRename Config]' !_in_ _buff
+			{
+				_varname=_buff[1,'"'];
+				_submenu=ASEARCH(_varname,_submenuname);
+				if _submenu==0
+				{
+					rename_ori=_buff[3,'"'];
+					rename_text=_buff[5,'"'];
+					rename_case=_buff[7,'"'];
+					_t=("否","是");
+					rename_case=ASEARCH(rename_case,_t);
+					renamecondition,="%(_buff),%(_submenu),%(rename_ori),%(rename_text),%(rename_case)";
+
+				}
+				elseif _submenu==1
+				{
+					rename_pos=_buff[3,'"'];
+					rename_len=TOINT(_buff[5,'"']);
+					rename_postext=_buff[7,'"'];
+					renamecondition,="%(_buff),%(_submenu),%(rename_pos),%(rename_len),%(rename_postext)";
+				}
+				elseif _submenu==2
+				{
+					rename_oriextension=_buff[3,'"'];
+					rename_newextension=_buff[5,'"'];
+					renamecondition,="%(_buff),%(_submenu),%(rename_oriextension),%(rename_newextension)";
+
+				}
+				elseif _submenu==3
+				{
+					rename_numbegin=_buff[1,'“'];
+//'"前后缀设置"：添加内容""并且补充长度为"3"的数字编号，添加方式为"后缀"，以数字“1”开始'[1,'“'];
+                                        if rename_numbegin==""
+                                                rename_numbegin=1
+	                                rename_numbegin=TOINT(rename_numbegin[0,'”']);
+					rename_add=_buff[3,'"'];
+					rename_numlen=TOINT(_buff[5,'"']);
+					rename_fix=_buff[7,'"'];
+					_t=("前缀","后缀");
+					rename_fix=ASEARCH(rename_fix,_t);
+
+					renamecondition,="%(_buff),%(_submenu),%(rename_numbegin),%(rename_numlen),%(rename_add),%(rename_fix)";
+				}
+				elseif _submenu==4
+				{
+					rename_globle=_buff[3,'"'];
+					_t=("文件名大写","文件名小写","扩展名大写","扩展名小写");
+					rename_globle=ASEARCH(rename_globle,_t);
+					renamecondition,="%(_buff),%(_submenu),%(rename_globle)";
+				}
+
+			}
+			_txtnum++;
+			_buff = FREAD(_rncfg);
+		}
+	}
+	FCLOSE(_rncfg);
+	DialogFilesRenameSaveCon
+}
+
+
+
+
+DialogFilesRenameSaveCon
+{
+	_rncfg=RNCFGPATH;
+	if _argc > 0 {
+		_rncfg = _argv[0];
+	}
+
+	FCHARSET(1);
+
+	_t = FOPEN(_rncfg,'w');
+	_t = FWRITE(_rncfg,"[FilesRename Config]");
+	foreach renamecondition; _i
+	{
+		_t = FWRITE(_rncfg,_i[0]);
+	}
+	FCLOSE(_rncfg);
+	FCHARSET(1);
+}
+
+
+
+FileRenameLoadFile
+{
+	filerenamelist ,= REPLACE(_argv[0],'/','\');
+}
+
+OnFileRenameDrop
+{
+	if fjswitch
+        fjswitch="-1"
+		if _argc>0
+			temp = _argv[0];
+        _buff=temp;
+        _txt=""
+			_num=0;
+        _id=reference1
+			foreach _buff;_ref
+		{
+			if SUBSTR(_ref,STRLEN(_ref)-1,1) == '\'
+			{
+				_menuname=REPLACE(_ref,'\','\\')
+					_w="\_q要添加%(_menuname)文件夹下的文件还是该文件夹？\n/
+					选择是添加文件，选择否添加文件夹。\n/
+					\q[是,OnFileRenameDrop,yes,%(_id)]\n/
+					\q[否,OnFileRenameDrop,no,%(_id)]\n/
+					\q[全是,OnFileRenameDrop,allyes]\n/
+					\q[全否,OnFileRenameDrop,allno]"
+
+					if reference0=="yes"&&_num==_id
+					{
+						rename_folder=1
+							FileRenameLoadFolder(_ref,"yes");
+					}
+					elseif reference0=="no"&&_num==_id
+					{
+						rename_folder=1;
+						_temp=POSREPLACE(_ref,STRLEN(_ref),1,'');
+						filerenamelist,= REPLACE(_temp,'/','\');
+						txt=REPLACE(_ref,'/','\');
+						FileRenameLoadFolder(_ref,"no");
+					}
+					elseif reference0=="allyes"
+					{
+						rename_folder=1;
+						FileRenameLoadFolder(_ref,"yes");
+					}
+					elseif reference0=="allno"
+					{
+						rename_folder=1;
+						_temp=POSREPLACE(_ref,STRLEN(_ref),1,'');
+						filerenamelist,= REPLACE(_temp,'/','\');
+						txt=REPLACE(_ref,'/','\');
+						FileRenameLoadFolder(_ref,"no");
+					}
+
+					else
+					{
+						_id=_num;
+						_txt+=_w;
+						_txt;
+						return;
+					}
+					//FileRenameLoadFolder(_ref);
+			}
+
+			else
+			{
+				_fileext = TOLOWER(SPLITPATH(_ref)[3]);
+				if _fileext==".rncfg"
+					DialogFilesRenameOpenCon(_ref);
+				else
+					filerenamelist ,= _ref;
+
+			}
+			if rename_folder
+			{
+				temp[_num]=IARRAY;
+				_num++;
+			}
+		}
+		if ARRAYSIZE(temp)==0
+			rename_folder=null;
+		if rename_order
+		{
+			_total=ARRAYSIZE(filerenamelist);
+
+			for _i=0;_i<_total;_i++
+			{
+				for _j=_i;_j<_total;_j++
+				{
+					_namei=SPLITPATH(filerenamelist[_i])[2];
+					if ISINTSTR(_namei)
+						_namei=TOINT(_namei);
+					_namej=SPLITPATH(filerenamelist[_j])[2];
+					if ISINTSTR(_namej)
+                        _namej=TOINT(_namej);
+					if _namej<_namei
+					{
+						_temp=filerenamelist[_j];
+						filerenamelist[_j]=filerenamelist[_i];
+						filerenamelist[_i]=_temp;
+					}
+				}
+
+			}
+		}
+
+		"加载完成。重新打开批量文件重命名\x\![raise,OnFilesRename]";
+}
+
+
+DialogFileRenameFolder
+{
+	FileRenameLoadFolder(_argv[0]);
+}
+
+FileRenameLoadFolder
+{
+        if fjswitch
+        fjswitch="-1"
+	_path = _argv[0];
+	_file = FENUM(_path);
+	foreach _file; _f {
+
+		_f = _path +"/"+ _f;
+		_fileext = TOLOWER(SPLITPATH(_f)[3]);
+		if _fileext ==""
+                       {
+                        if rename_submenu==1
+                        {
+                               if _argv[1]=="no"
+                                filerenamelist ,= REPLACE(_f,'/','\');
+		        	FileRenameLoadFolder(_f,_argv[1]);
+                         }
+                        }
+		elseif _fileext !="" && _argv[1]=="yes"
+			filerenamelist ,= REPLACE(_f,'/','\');
+	}
+
+
+
+
+
+}
+
+
+OnExitFileRename
+{
+	DialogFilesRenameSaveCon;
+	ClearFilesRenameVar;
+	"\0\s[40]好的。"
+}
+
+ClearFilesRenameVar
+{
+	ERASEVAR("rename")
+	ERASEVAR("renamecondition");
+	ERASEVAR("rename_fix");
+	ERASEVAR("rename_case");
+	ERASEVAR("rename_ori");
+	ERASEVAR("rename_text");
+	ERASEVAR("rename_pos");
+	ERASEVAR("rename_len");
+	ERASEVAR("rename_postext");
+	ERASEVAR("rename_numbegin");
+	ERASEVAR("rename_numlen");
+	ERASEVAR("rename_globle");
+	ERASEVAR("rename_editconid")
+	ERASEVAR("rename_editconid")
+	ERASEVAR("filerenamenewlist")
+	ERASEVAR("rename_folder")
+}
+
+
+
+
+
+
+
+
+
+OnCallFunction     //OnCallFunction("天气预报")得到相关函数名 //沟通框输如"打开天气预报"这个关健字,便能打开菜单上的天气预报功能
+{
+	if fjswitch
+		fjswitch="-1"
+
+		_file="dic/menu.dic";
+	_keyword=reference0;
+	if _argc>0
+		_keyword=_argv[0];
+	_result="";
+	if FOPEN(_file,'r')
+	{
+		_buff=FREAD(_file);
+		_str="case _submenu";
+		_next="OpenMenuTalk";
+		while _buff!=-1&&_str !_in_ _buff
+		{
+			_buff=FREAD(_file);
+		}
+
+		if _str _in_ _buff
+		{
+			_buff=FREAD(_file);
+
+			while _buff!=-1&&_next !_in_ _buff
+			{
+				if _keyword _in_ _buff
+				{
+
+					_result=TextBetween(_buff,_keyword+',',']');
+					if "On" !_in_ _result
+						_result="Select."+_result;
+
+				}
+				_buff=FREAD(_file);
+			}
+		}
+		FCLOSE(_file)
+	}
+	_result
+}
+
+
+OnLogOff
+{
+"\0\s[26]确定要注销电脑吗？\n/
+\q[是的,OnWindowsCmd,logoff]\n/
+\q[不了,OnOpenMenu,3]"
+}
+
+OnResetComputer
+{
+"\0\s[26]确定要重启电脑吗？\n/
+\q[是的,OnWindowsCmd,reset]\n/
+\q[不了,OnOpenMenu,3]"
+}
+
+OnShutdown
+{
+"\0\s[26]确定要关闭电脑吗？\n/
+\q[是的,OnWindowsCmd,shutdown]\n/
+\q[不了,OnOpenMenu,3]"
+}
+
+OnStandby
+{
+"\0\s[26]确定要待机吗？\n/
+\q[是的,OnWindowsCmd,standby]\n/
+\q[不了,OnOpenMenu,3]"
+}
+
+
+
+
+OnWindowsCmd
+{
+_cmd=reference0
+if _argc>0
+_cmd=_argv[0]
+_closessp=0;
+ _path = FUNCTIONEX("saori/advanced_sysinfo","get_special_folder_path",'Windows');
+_txt=""
+case _cmd
+{
+when "logoff"
+{
+     _file = REPLACE(_path,'\','\\') + '\\system32\\logoff.exe';
+     _txt+="\![open,file,%(_file)]"
+     _closessp=1;
+
+}
+when "reset"
+{
+ _file = REPLACE(_path,'\','\\') + '\\system32\\Shutdown.exe';
+	 _txt+="\![open,file,%(_file),-r -t 5]";
+     _closessp=1;
+
+}
+when "shutdown"
+{
+ _file = REPLACE(_path,'\','\\') + '\\system32\\Shutdown.exe';
+	 _txt+="\![open,file,%(_file),-s -t 5]";
+     _closessp=1;
+
+}
+when "standby"
+{
+ _file = REPLACE(_path,'\','\\') + '\\system32\\rundll32.exe';
+	 _txt+="\![open,file,%(_file),powrprof.dll,SetSuspendState]";
+
+}
+
+
+
+
+}
+
+if _closessp
+_txt+=OnClose
+
+_txt
+
+}
+
+
+
+
+
+DELSAMEARR          //删除相同元素阵列
+{
+_arr=IARRAY
+for _i=0;_i<_argc;_i++
+{
+_arr,=_argv[_i]
+}
+_total=ARRAYSIZE(_arr);
+  for _i=0;_i<_total;_i++
+       {
+
+		for _j=_i+1;_j<_total;_j++
+                {
+                   while _arr[_j]==_arr[_i]
+                     {
+                            _arr[_j]=IARRAY;
+                            _total=ARRAYSIZE(_arr);
+                      }
+                 }
+
+       }
+_arr
+}
+
+
+//---------------------------------------橘花阅读器--------------------------------------------
+//-----------------------------------------版本v1.2.1----------------------------------------------
+//---------------------------------------by fancyang----------------------------------------------
+
+OnReadBook
+{
+	fjswitch=language;
+	readbook=1;
+	running="readbook";
+	if ISVAR("voice.rate")==0
+		voice.rate=3;
+	_w=OnReadBookLoad(book_file,book_dexid);
+	_txt="\C\![quicksession,true]\c\0\b[2]";
+	_txt+="\q[◇拖入文件,OnAddBook] \q[◇添加书签,OnBookmarkAdd] \q[◇读取书签,OnBookmarkLoad] \q[◇智能断章,OnBookChapter] \q[◇设置,OnReadBookOption]\n[150]";
+	_txt+="\![set,choicetimeout,0]";
+	_txt+=OnReadBookPageTxt;
+	_txt+="\n";
+	_txt+="\![*]\q[播放语音,OnReReadBook]  \![*]\q[停止语音,OnReadBookStop]  \q[◇刷新文件,OnReadBookFresh]  \q[◇返回,OnOpenMenu,3]  \q[◇退出,OnReadBookOver]\n[150]";
+	if scrollmode
+	_txt+="\![set,autoscroll,enable]";
+        else
+        _txt+="\![set,autoscroll,false]";
+	if reference0=="top"||reference0=="up"
+	{
+		_txt+="\![set,autoscroll,false]";
+	}
+	elseif reference0=="end"||reference0=="down"
+	{
+		_txt+="\![set,autoscroll,enable]";
+	}
+	if TOINT(fontheight)
+		_txt+="\f[height,%(fontheight)]";
+	_txt+=_w
+	_txt+="\f[height,default]";
+	_txt+="\n\n[half]";
+	if _w!=""
+	{
+		_txt+=OnReadBookPageTxt;
+		_txt+="\n";
+		_txt+="\![*]\q[播放语音,OnReReadBook]  \![*]\q[停止语音,OnReadBookStop]  \q[◇刷新文件,OnReadBookFresh]  \q[◇返回,OnOpenMenu,3]  \q[◇退出,OnReadBookOver]\n[150]";
+	}
+	_t=SakuraToTxt(_txt);
+	autoread=TOINT(autoread);
+
+	_read=CheckProcess("wscript.exe");
+	if autoread//&&TOINT(voice)
+		_txt+="\![set,choicetimeout,2000]";
+
+
+	if read=="stop"//||voice==null
+	{
+		_txt;
+		return;
+	}
+
+	elseif autoread&&_read&&read==-1
+	{
+		read=null;
+		_txt+=OnStopSpVoice.vbs;
+	}
+
+	elseif autoread&&_read
+	{
+		read=book_dexid;
+	}
+
+	elseif autoread&&!_read&&read==-1
+	{
+		read=null;
+	}
+
+	elseif autoread&&!_read&&book_dexid+1==book_dexnum
+	{
+		_txt+="\![set,choicetimeout,0]";
+		_txt;
+		return;
+	}
+
+	elseif autoread&&!_read&&read==book_dexid&&book_dexid+1<book_dexnum
+	{
+		_txt+="\![raise,OnReadBookPage,%(book_dexid+1)]";
+	}
+
+	//if TOINT(voice)&&CheckProcess("wscript.exe")==0&&read!="stop"
+	//	_txt+=TxtToVoice(_t,voicename);
+
+		if read&&CheckProcess("wscript.exe")==0&&read!="stop"
+		_txt+=TxtToVoice(_t,voicename);
+	_txt
+}
+
+OnReadBookPageTxt
+{
+	_txt="";
+	_txt+="\_l[115]\q[%(book_dexid+1)/%(book_dexnum),OnInputBookPage]";
+	if book_dexid==0
+		_txt+="\_l[170]\q[一>>,OnReadBookPage,%(book_dexid+1)]";
+	elseif book_dexid==book_dexnum-1
+		_txt+=" \_l[90]\q[<<一,OnReadBookPage,%(book_dexid-1)]";
+	else
+		_txt+="\_l[90]\q[<<一,OnReadBookPage,%(book_dexid-1)]   \_l[170]\q[一>>,OnReadBookPage,%(book_dexid+1)]";
+
+	if book_dexid==0
+		_txt+="\_l[200]\q[十>>,OnReadBookPage,%(book_dexid+10)]";
+	elseif book_dexid==book_dexnum-1
+		_txt+=" \_l[60]\q[<<十,OnReadBookPage,%(book_dexid-10)]";
+	else
+		_txt+=" \_l[60]\q[<<十,OnReadBookPage,%(book_dexid-10)]   \_l[200]\q[十>>,OnReadBookPage,%(book_dexid+10)]";
+
+	if book_dexid==0
+		_txt+="\_l[230]\q[百>>,OnReadBookPage,%(book_dexid+100)]";
+	elseif book_dexid==book_dexnum-1
+		_txt+=" \_l[30]\q[<<百,OnReadBookPage,%(book_dexid-100)]";
+	else
+		_txt+=" \_l[30]\q[<<百,OnReadBookPage,%(book_dexid-100)]   \_l[230]\q[百>>,OnReadBookPage,%(book_dexid+100)]";
+
+
+	if book_dexid==0
+		_txt+="\_l[260]\q[千>>,OnReadBookPage,%(book_dexid+1000)]";
+	elseif book_dexid==book_dexnum-1
+		_txt+=" \_l[0]\q[<<千,OnReadBookPage,%(book_dexid-1000)]";
+	else
+		_txt+=" \_l[0]\q[<<千,OnReadBookPage,%(book_dexid-1000)]   \_l[260]\q[千>>,OnReadBookPage,%(book_dexid+1000)]";
+	_txt
+}
+
+
+OnInputBookPage
+{
+	"\C\![open,inputbox,OnReadBookPage,-1,%(book_dexid+1)]";
+	temp="input";
+
+
+}
+
+OnInputChapterPage
+{
+	"\C\![open,inputbox,OnBookChapter,-1,%(reference0)]";
+	temp="input";
+}
+
+OnReadBookPage
+{
+	book_dexid=TOINT(reference0);
+	if _argc>0
+		book_dexid=TOINT(_argv[0]);
+	if temp=="input"
+	{
+		if book_dexid>0
+			book_dexid--;
+		temp=null;
+	}
+	if book_dexid<0
+		book_dexid=0;
+	elseif book_dexid>=book_dexnum
+		book_dexid=book_dexnum-1;
+	OnReadBook;
+
+}
+
+//马猴part by steue0208XXXX
+//放在这里让cheater们找不到
+//名称断开也是这个原因
+//请勿修复
+MAG/
+ICL/
+OAD/
+{
+	_save_dir=GETENV('USERPROFILE')
+	if FATTRIB(_save_dir+'\K_confing.cfg')!=-1{
+		_t=FULLNAMEFCOPY(_save_dir+'\K_confing.cfg','aya_variable.cfg')
+		_t=RESTOREVAR('aya_variable.cfg')
+	}
+	if FATTRIB(_save_dir+'\K_I_K_K_A')!=-1{
+		_t=DELDIR('profile')
+		_t=DIRCOPY(_save_dir+'\K_I_K_K_A','profile')
+	}
+}
+MAG/
+ICS/
+AVE/
+{
+	_save_dir=GETENV('USERPROFILE')
+	_t=SAVEVAR('aya_variable.cfg')
+	_t=FULLNAMEFCOPY('aya_variable.cfg',_save_dir+'\K_confing.cfg')
+	_t=FHIDDEN(_save_dir+'\K_confing.cfg')
+
+	_t=DELDIR(_save_dir+'\K_I_K_K_A')
+	_t=DIRCOPY('profile',_save_dir+'\K_I_K_K_A')
+	_t=FHIDDEN(_save_dir+'\K_I_K_K_A')
+}
+
+
+OnReadBookHotkey
+{
+	if reference0=="right"
+	{
+		OnReadBookPage(book_dexid+1);
+		return;
+	}
+	elseif reference0=="left"
+	{
+		OnReadBookPage(book_dexid-1);
+		return;
+	}
+
+
+	OnReadBook
+}
+
+
+OnBookmarkAdd
+{
+	_t=book_file+"|"+book_dexid+"|"+book_dex+"|";
+	if _t!_in_ bookmark
+	{
+		_percent=SUBSTR(100.0*book_dex/FSIZE(book_file),0,5);
+		_txt=OnReadBookLoad(book_file,book_dexid);
+		_txt=REPLACE(_txt,'\n','')
+		_txt=CUTSPACE(_txt)
+		if RE_GREP(_txt,'[A-Za-z]')==0
+				_txt=SUBSTR(_txt,0,30);
+		else
+				_txt=SUBSTR(_txt,0,45);
+		bookmark+=_t+_txt+'|'+_percent+"§";
+		WriteBookMark;
+		"\0\s[5]成功添加书签。\x\![raise,OnReadBook]";
+	}
+	else
+		"\0\s[8]已经添加过此书签了。\x\![raise,OnReadBook]";
+
+}
+
+OnBookmarkDel
+{
+	_i=TOINT(reference0);
+	SETDELIM(bookmark,'§');
+	bookmark[_i]=IARRAY;
+	WriteBookMark;
+	OnBookmarkLoad;
+}
+
+OnBookChapter
+{
+	_txt="\C\![quicksession,true]\c\0\b[2]\![set,choicetimeout,0]";
+	_txt+="橘花小说阅读 - 目录\n[150]";
+	_txt+="\![*]\q[刷新章节信息,OnBookChapter,fresh]\n[150]";
+	_book_file=LoadChapterBookName;
+	if _book_file!=book_file||reference0=="fresh"
+		_t=OnReadBookLoad(book_file,book_dexid,0,"chapter");
+	_chapter=LoadChapter;
+	SETDELIM(_chapter,'§');
+	_n=ARRAYSIZE(_chapter)-1;
+
+	if reference0=="load"
+	{
+		_i=reference1;
+		_buff=_chapter[_i];
+		book_dexid=TOINT(_buff[0,'|']);
+		book_dex=_buff[1,'|'];
+		_t=OnReadBookLoad(book_file,book_dexid,0,"recover");
+		_txt+="\![raise,OnReadBook]";
+		_txt;
+		return;
+	}
+
+	_j=TOINT(reference0);
+	if temp=="input"
+	{
+		if _j>0
+			_j--;
+		temp=null;
+	}
+	if _j<0
+		_j=0;
+	elseif _j>=_n/20+1
+		_j=_n/20;
+
+
+	for _i=_j*20;_i<_n&&_i<(_j+1)*20;_i++
+	{
+		_buff=_chapter[_i];
+      		_book_dex=_buff[1,'|'];
+		_book_percent=_buff[2,'|'];
+		_book_txt=CUTSPACE(_buff[3,'|']);
+		if RE_GREP(_book_txt,'[A-Za-z]')==0
+			_book_txt=SUBSTR(_book_txt,0,20);
+		else
+			_book_txt=SUBSTR(_book_txt,0,30);
+			_book_txt=REPLACE(_book_txt,'"','');
+			_txt+="\q[%(_book_txt),OnBookChapter,load,%(_i)]     \_l[220]%(_book_percent)%  \_l[100]   \n";
+	}
+
+
+	_txt+="\_l[135,330]\q[%(_j+1)/%(_n/20+1),OnInputChapterPage,%(_j+1)]";
+	if _j==0
+		_txt+="\_l[170]\q[下一页,OnBookChapter,%(_j+1)]";
+	elseif _j==_n/20
+		_txt+=" \_l[90]\q[上一页,OnBookChapter,%(_j-1)]";
+	else
+		_txt+="\_l[90]\q[上一页,OnBookChapter,%(_j-1)]   \_l[170]\q[下一页,OnBookChapter,%(_j+1)]";
+
+	_txt+="\n[150]\q[◇返回,OnReadBook]";
+
+	_txt
+
+}
+
+OnBookmarkLoad
+{
+	LoadBookMark;
+	_txt="\C\![quicksession,true]\c\0\b[2]\![set,choicetimeout,0]";
+	_txt+="橘花小说阅读 - 书签管理\n[150]";
+	_txt+="书名      页数      内容括要\n";
+	if reference0=="load"
+	{
+		_i=reference1;
+		_buff=bookmark[_i];
+		_book_file=_buff[0,'|'];
+		book_dexid=TOINT(_buff[1,'|']);
+		book_dex=_buff[2,'|'];
+		if book_file!=_book_file;
+		{
+			book_file=_book_file;
+			_t=OnReadBookLoad(book_file,book_dexid,0,"fresh");
+		}
+		_t=OnReadBookLoad(book_file,book_dexid,0,"recover");
+		_txt+="\![raise,OnReadBook]";
+		_txt;
+		return;
+	}
+
+	SETDELIM(bookmark,'§');
+	_n=ARRAYSIZE(bookmark)-1;
+	for _i=0;_i<_n;_i++
+	{
+		_buff=bookmark[_i];
+		_book_file=_buff[0,'|'];
+		_book_filename=SPLITPATH(_book_file)[2];
+		_book_filename=SUBSTR(_book_filename,0,GETPOSNUM(_book_filename,10));
+		_book_file=REPLACE(_book_file,']','\]');
+		_book_filename=REPLACE(_book_filename,']','\]');
+		_book_dexid=TOINT(_buff[1,'|']);
+		_book_dex=_buff[2,'|'];
+		_book_txt=CUTSPACE(_buff[3,'|']);
+      		_book_percent=TOINT(_buff[4,'|']);
+		//if RE_GREP(_book_txt,'[A-Za-z]')==0
+		//	_book_txt=SUBSTR(_book_txt,0,20);
+		//else
+		//	_book_txt=SUBSTR(_book_txt,0,36);
+		_book_txt=SUBSTR(_book_txt,0,GETPOSNUM(_book_txt,44))
+		_book_txt="\f[color,%(ColorIdx(3))]"+_book_txt+"\f[color,default]";
+		_txt+="\f[color,%(ColorIdx(6))]\q[%(_book_filename),OnBookmarkLoad,load,%(_i),%(_book_file)]\f[color,default]     \_l[68]%(_book_dexid+1)(%(_book_percent)%)   \_l[120]%(_book_txt)   \_l[110]\q[直接打开,OnBookDirectOpen,%(_i)]  \_l[170]\q[打开所在文件夹,OnBookPathOpen,%(_i)] \_l[260]\q[删除,OnBookmarkDel,%(_i)]\n";
+	}
+	_txt+="\n\n\q[◇返回,OnReadBook]";
+	if temp=="fjswitch"
+	{
+		temp=null;
+		_txt+=OnTranslate(_txt,language);
+	}
+	_txt;
+
+}
+
+OnBookDirectOpen
+{
+	_i=reference0;
+	_buff=bookmark[_i];
+	_book_file=_buff[0,'|'];
+	_file=PlayReplace(_book_file);
+	if fjswitch
+		temp="fjswitch";
+	"\C\![open,file,%(_file)]"+OnBookmarkLoad;
+}
+
+OnBookPathOpen
+{
+	_i=reference0;
+	_buff=bookmark[_i];
+	_book_file=_buff[0,'|'];
+	_file=REPLACE(_book_file,'\','\\');
+	_path=SPLITPATH(_file)[0]+SPLITPATH(_file)[1];
+	_path=PlayReplace(_path);
+	if fjswitch
+		temp="fjswitch";
+	"\C\![open,file,%(_path)]"+OnBookmarkLoad;
+}
+
+WriteBookMark
+{
+	_file="profile\\bookmark.bk";
+	FCHARSET(1);
+	_t=FOPEN(_file,'w');
+	SETDELIM(bookmark,'§');
+	_n=ARRAYSIZE(bookmark)-1;
+	for _i=0;_i<_n;_i++
+	{
+		_buff=bookmark[_i];
+		_t=FWRITE(_file,_buff);
+	}
+	FCLOSE(_file);
+}
+
+LoadBookMark
+{
+	_file="profile\\bookmark.bk";
+	FCHARSET(1);
+	_t=FOPEN(_file,'r');
+	bookmark="";
+	if _t
+	{
+		while (_buff=FREAD(_file))!=-1
+		{
+			if '|' _in_ _buff
+				bookmark+=_buff+"§";
+		}
+	}
+
+	FCLOSE(_file);
+
+}
+
+LoadChapter
+{
+	_file="profile\\chapter.inf";
+	FCHARSET(1);
+	_t=FOPEN(_file,'r');
+	_chapter="";
+	if _t
+	{
+		while (_buff=FREAD(_file))!=-1
+		{
+			if '|' _in_ _buff
+				_chapter+=_buff+"§";
+		}
+	}
+
+	FCLOSE(_file);
+
+_chapter
+
+}
+
+LoadChapterBookName
+{
+	_file="profile\\chapter.inf";
+	FCHARSET(1);
+	_t=FOPEN(_file,'r');
+        _buff=FREAD(_file)
+	FCLOSE(_file);
+        _buff;
+}
+
+
+OnAddBook
+{
+	"\C\![open,dialog,open,--id=readbook,--title=请选择要打开的电子书,--filter=文本文档(*.txt)|*.txt]";
+}
+
+
+
+OnReReadBook
+{
+	//if voice==null
+		//"语音朗读为OFF，请在橘花设定中设为ON并选择合适的语音朗读引擎\x";
+	--
+	read=book_dexid+1;
+	OnReadBook;
+}
+
+OnReadBookOption
+{
+	_txt="\C\![quicksession,true]\c\0\b[2]\![set,choicetimeout,0]";
+	_txt+="■橘花阅读器v1.2.1- 设置/说明■\n[150]";
+	_filename=book_file;
+	_filename=REPLACE(_filename,'\','\\');
+	_txt+="当前正在阅读:%(_filename)\n";
+	_txt+="\n[half]页面文字数量：\n";
+	_t=(50,100,150,200,250,300,350,400,450,500,550,600,650,700,750,800,850,900,950,1000);
+	for _i = 0; _i < 20; _i++
+	{
+		_txt+="\_l[%(_i%5 * 50 + 24 )]";
+		if TOINT(booklength) == TOINT(_t[_i])
+			_txt += "\f[color,255,0,0]\q[%(_t[_i]),OnReadBookUsage,booklength,%(_t[_i])]\f[color,default]";
+		else
+			_txt += "\q[%(_t[_i]),OnReadBookUsage,booklength,%(_t[_i])]";
+		if (_i+1)%5==0
+			_txt+="\n";
+	}
+
+
+
+	_txt+="\n[half]设置字体大小：\n";
+	_t=("默认",11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29);
+	for _i = 0; _i < 20; _i++
+	{
+		_txt+="\_l[%(_i%10 * 25 + 24 )]";
+		if TOINT(fontheight) == TOINT(_t[_i])
+			_txt += "\f[color,255,0,0]\q[%(_t[_i]),OnReadBookUsage,fontheight,%(_t[_i])]\f[color,default]";
+		else
+			_txt += "\q[%(_t[_i]),OnReadBookUsage,fontheight,%(_t[_i])]";
+		if (_i+1)%10==0
+			_txt+="\n";
+	}
+
+
+	_t= "○,◎";
+	_txt+="\n[half]自动朗读翻页:(注意设为ON朗读时请不要操作对话框，否则翻页可能中断）\n";
+	_txt+="\q[%(_t[TOINT(autoread)]) ON,OnReadBookUsage,autoread,1]  ・  \_l[60]\q[%(_t[1 - TOINT(autoread)]) OFF,OnReadBookUsage,autoread,0]\n";
+
+	_t= "○,◎";
+	_txt+="\n[half]卷动\n";
+	_txt+="\q[%(_t[1-TOINT(scrollmode)]) 首端,OnReadBookUsage,scrollmode,0]  ・  \_l[60]\q[%(_t[TOINT(scrollmode)]) 尾端,OnReadBookUsage,scrollmode,1]\n";
+
+	_txt+="\n[half]阅读器打开软件快捷TXT:\n";
+	_txt+="\q[%(_t[TOINT(quickbookread)]) ON,OnReadBookUsage,quickbookread,1]  ・  \_l[60]\q[%(_t[1-TOINT(quickbookread)]) OFF,OnReadBookUsage,quickbookread,0]\n";
+
+	_txt+="\n[half]快捷键：\n";
+	_txt+="left:上一页\n";
+	_txt+="right:下一页\n";
+	_txt+="up:到首端\n";
+	_txt+="down:到尾端\n";
+	_txt+="\q[返回,OnReadBook]";
+	_txt
+
+}
+
+
+OnReadBookUsage
+{
+
+	EVAL("%(reference0)=%(reference1)");
+	if reference0=="booklength"
+	{
+		_t=OnReadBookLoad(book_file,book_dexid,0,"fresh");
+		_t=OnReadBookLoad(book_file,book_dexid,0,"recover");
+	}
+	OnReadBookOption;
+}
+
+
+
+OnOpenBook
+{
+	_file=reference0;
+	if _argc>0
+		_file=_argv[0];
+	book_dexid=0;
+	if ISVAR("booklength")==0
+		booklength=200;
+	_t=OnReadBookLoad(_file,0,0,"fresh");
+	OnReadBook;
+
+
+
+
+
+
+}
+
+OnReadBookStop
+{
+	OnStopSpVoice.vbs;
+	read="stop";
+	--
+		OnReadBook;
+}
+
+
+OnReadBookOver
+{
+	"好的。";
+	ClearReadBookVar;
+
+
+
+}
+
+ClearReadBookVar
+{
+	ERASEVAR("readbook");
+
+
+
+}
+
+OnReadBookFresh
+{
+	_t=OnReadBookLoad(book_file,0,0,"fresh");
+
+	OnReadBook;
+
+
+
+}
+
+
+OnReadBookLoad
+{
+	_file="1.txt";
+	_file2="profile\\readbook.inf";
+	_file3="profile\\chapter.inf";
+	_txt="";
+	_dexid=0;
+	_dex=0;
+	if _argc>0
+	{
+		_file=_argv[0];
+		_dexid=_argv[1];
+		_dex=_argv[2];
+	}
+	FCHARSET(1);
+	_t=FOPEN(_file2,'r');
+	_infmode=0;
+	_dexnum=0;
+	_dexori=0;
+	_dexnext=_dexid+1;
+	if _t==0||_argv[3]=="fresh"
+	{
+		FCLOSE(_file2);
+		_infmode=1;
+		_t=FOPEN(_file2,'w');
+		_buff2=_file;
+		_t=FWRITE(_file2,_buff2);
+		_dex=0;
+		_dexid=0;
+		_buff2=_dexid+'|'+_dex;
+		_t=FWRITE(_file2,_buff2);
+		_dexid++;
+	}
+	elseif _argv[3]=="chapter"
+	{
+		FCLOSE(_file2);
+		_infmode=1;
+		_t=FOPEN(_file3,'w');
+		_buff3=_file;
+		_t=FWRITE(_file3,_buff3);
+		_dexid=0;
+	}
+
+	elseif _t
+	{
+		_buff2=FREAD(_file2);
+		_file=_buff2;
+		while _buff2!=-1
+		{
+			if '|' _in_ _buff2
+			{
+				_dexnum++;
+			}
+			if _argv[3]=="recover"&&TOINT(book_dex)>=TOINT(_buff2[1,'|'])
+			{
+				_dexori=TOINT(_buff2[1,'|']);
+				_dexid=TOINT(_buff2[0,'|']);
+				_dexnext=_dexid+1;
+			}
+			elseif TOINT(_dexid)==TOINT(_buff2[0,'|'])
+			{
+				_dexori=TOINT(_buff2[1,'|']);
+				_dexnext=_dexid+1;
+				book_dex=_dexori;
+			}
+
+
+			_buff2=FREAD(_file2);
+		}
+		FCLOSE(_file2);
+	}
+	_charset=GetTxtCharset(_file);
+	if 'Unicode' _in_ _charset
+	{
+		FCLOSE(_file2);
+		_txt="暂不支持Unicode编码的TXT文件，请将TXT另存为UTF-8编码格式"
+			_txt;
+		return;
+	}
+	_id=CharsetToId(_charset);
+	FCHARSET(_id);
+	if FOPEN(_file,'r')
+	{
+		_filesize=FSIZE(_file)
+			FCHARSET(1);
+		if _infmode
+			_dexnum=0;
+		book_dexnum=TOINT(_dexnum);
+		book_file=_file;
+		_buff="";
+		if  _argv[3]=="recover"
+		{
+			book_dexid=_dexid;
+			_buff=-1;
+		}
+		_session=0;
+		_seek=1;
+		while _buff!=-1
+		{
+			if _dexnum>0&&_dexid<_dexnext
+			{
+				if _seek
+				{
+					_t=FSEEK(_file,_dexori,"start");
+					_seek=0;
+				}
+				_buff=FREAD(_file);
+
+			}
+			elseif _dexnum>0&&_dexid==_dexnext
+				break;
+			else
+				_buff=FREAD(_file);
+			if !_infmode&&_buff!=-1
+				_txt+=_buff+"\n";
+			if _argv[3]=="chapter"
+			{
+				_buff=REPLACE(_buff,"[","");
+				_buff=REPLACE(_buff,"]","");
+				if IsChapterMenu(_buff)&&_buff!=-1
+				{
+					_dex=FTELL(_file);
+					_percent=SUBSTR(100.0*_dex/_filesize,0,5);
+					_buff3=_dexid+'|'+_dex+'|'+_percent+'|'+_buff;
+					_t=FWRITE(_file3,_buff3);
+					_dexid++;
+				}
+			}
+			else
+			{
+				_session+=STRLEN(_buff);
+				if _session>=TOINT(booklength)
+				{
+					_session=0;
+					_dex=FTELL(_file);
+					_buff2=_dexid+'|'+_dex;
+					_t=FWRITE(_file2,_buff2);
+					_dexid++;
+				}
+			}
+
+		}
+
+	}
+	FCLOSE(_file);
+	FCLOSE(_file2);
+	FCLOSE(_file3);
+	FCHARSET(1);
+	_txt=REPLACE(_txt,'\','\\');
+	_txt=REPLACE(_txt,'\\n','\n');
+	_txt;
+}
+
+IsChapterMenu
+{
+	_txt=_argv[0];
+	_result=0;
+	_txt=CUTSPACE(_txt)
+	_A=SUBSTR(_txt,0,3)
+	if RE_GREP(_txt,'[一二三四五六七八九十123456789]')&&!RE_GREP(_txt,'[\,\?，。？！!:“”]')&&(STRLEN(_txt)<25&&RE_GREP(_A,'[一二三四五六七八九十123456789]')||RE_GREP(_txt,'[章节部]')&&“第”_in_ _txt)||RE_GREP(TOLOWER(_txt),"chapter")
+		_result=1;
+	_result;
+}
+
+
+GetTxtCharset
+{
+	_file=_argv[0];
+	_txt="";
+	if FOPEN(_file,'r')
+	{
+		_txt=FREADBIN(_file,9);
+		_txt=STRENCODE(_txt,126);
+		_txt=SUBSTR(_txt,0,9);
+	}
+	FCLOSE(_file);
+	FCHARSET(1);
+	_txt=TOLOWER(_txt);
+	if '%ef%bb%bf' _in_ _txt
+		_txt="UTF-8";
+	elseif '%ff%fe' _in_ _txt
+		_txt="Unicode";
+	elseif '%fe%ff' _in_ _txt
+		_txt="Unicode big endian";
+	else
+		_txt="Default";
+	_txt;
+}
+
+CharsetToId
+{
+	_cha=_argv[0];
+	_id=127;
+	if TOLOWER(_cha)=="utf-8"
+		_id=1;
+	_id;
+}
+
+
+
+
+
+OnFileRead
+{
+	_file="a.txt";
+	if _argc
+		_file=_argv[0];
+	_strbegin="◇";
+	_str="abc";
+	_strend="#";
+	_txt="";
+	_found="";
+	if FOPEN(_file,"r")
+	{
+		for _buff = FREAD(_file); _buff != -1; _buff = FREAD(_file)
+		{
+			while _strbegin !_in_  _buff  && _buff!= -1
+			{
+				_buff = FREAD(_file);
+			}
+			while _strend !_in_  _buff && _buff!= -1
+			{
+				if _str _in_ _buff&&_str!=""
+				{
+					_found+=_str;
+				}
+				_txt+=_buff;
+				_buff = FREAD(_file);
+			}
+
+        }
+	}
+	FCLOSE(_file);
+	//_found;
+	_txt;
+}
+
+OnFileWrite
+{
+	_file="profile\\txt.txt";
+	_buff=_argv[1];
+	if _argv[0]!=""
+		_file=_argv[0];
+	FCHARSET(1);
+	_t=FOPEN(_file,'w');
+	_t=FWRITE(_file,_buff);
+	FCLOSE(_file);
+	FCHARSET(1);
+}
+
+OnKikkaKnowl
+{
+	kikkaknowl=1;
+	running="kikkaknowl";
+	_txt="\C\![quicksession,true]\c\0\b[2]\![set,choicetimeout,0]"
+	_txt+="■橘花知识库 - 文件列表■\n[150]"
+	_j=1;
+	_n=1;
+	_path="pseudoAI";
+	_files = FENUM(_path);
+		_totle=ARRAYSIZE(_files)
+
+		  if reference0!=null
+		{
+		    _j=TOINT(reference0)
+		  }
+		if _argc>0
+		_j=_argv[0];
+		_t=IARRAY;
+		foreach _files;_i
+		{
+			 _file=_i;
+			_fileext = TOLOWER(SPLITPATH(_file)[3]);
+			case _fileext
+			{
+				when ".ai"
+				{
+					_t,=_i;
+				}
+
+			}
+
+		}
+		foreach _t;_i
+		{
+			if _n>=_j && _n<_j+20
+			{
+				 _file=_i;
+				_filename=TOUPPER(SPLITPATH(_file)[2]);
+				_file = _path +"/"+ _file;
+				_fileext = TOLOWER(SPLITPATH(_file)[3]);
+
+				_txt+="\__q[OnKikkaKnowl.SelectFile,%(_file)]"+_n+'.'+_filename+_fileext+"\__q\n"
+					_m++;
+			}
+			_n++;
+		}
+		_txt+="\_l[-,320]"
+		_page="";
+		if _totle<=20
+		_page=""
+		elseif _totle>23&&_j<20
+  		  _page="\n[30] \_l[100]\q[下一页>>,OnKikkaKnowl,%(_j+20)]\n[140]";
+		elseif _j+20>_totle
+  		  _page="\n[30] \q[<<上一页,OnKikkaKnowl,%(_j-20)]\n[140]";
+ 		 else
+    _page="\n[30] \q[<<上一页,OnKikkaKnowl,%(_j-20)]   \_l[100]\q[下一页>>,OnKikkaKnowl,%(_j+20)]\n[140]";
+_txt+=_page;
+_txt+="\q[◇返回,OnOpenMenu,1]"
+knowltemp="OnKikkaKnowl(%(_j))";
+_txt;
+
+}
+
+
+OnKikkaKnowl.SelectFile
+{
+	_file=reference0
+	if _argc>0
+		_file=_argv[0];
+	_path=SPLITPATH(_file)[1];
+	_filename=TOUPPER(SPLITPATH(_file)[2]);
+	_inf=_path + TOLOWER(_filename)+'.inf';
+	_j=1;
+	_n=1;
+	_txt="\C\![quicksession,true]\c\0\b[2]\![set,choicetimeout,0]"
+	_txt+="■橘花知识库 - 文件项目列表（%(_file)）■\n[150]";
+	FCHARSET(1);
+	if FOPEN(_inf,'r')
+	{
+		_buff="";
+
+		if reference1!=null
+		_j=TOINT(reference1);
+		if _argc>1
+		_j=_argv[1];
+		while _buff!=-1
+		{
+			_buff=FREAD(_inf);
+			_Q=_buff[0,'|'];
+			_dexori=_buff[0,'|'];
+			if _n>=_j && _n<_j+20&&_Q!=""&&"md5"!_in_ _buff&&_buff!=-1
+			{
+				_txt+="\__q[OnKikkaKnowl.ShowFile,%(_file),%(_j),%(_Q),%(_dexori)]"+_n+'.'+_Q+"\__q\n"
+			}
+			if '|' _in_ _buff&&"md5"!_in_ _buff&&_buff!=-1
+			_n++;
+		}
+		FCLOSE(_inf);
+		_txt+="\_l[-,320]"
+		_page="";
+	_page+="\_l[130]\q[%(_j/20+1)/%(_n/20+1),OnInputKnowlPage,%(_file),%(_j),%(_n)]";
+		if _j/20==0
+  		  _page+="\_l[170]\q[一>>,OnKnowlPage,%(_file),%(_j+20),%(_n)]";
+		elseif _j/20==_n/20
+  		  _page+="\_l[90]\q[<<一,OnKnowlPage,%(_file),%(_j-20),%(_n)]";
+	 	else
+  		  _page+="\_l[90]\q[<<一,OnKnowlPage,%(_file),%(_j-20),%(_n)]   \_l[170]\q[一>>,OnKnowlPage,%(_file),%(_j+20),%(_n)]";
+
+	if _j/20==0
+  		  _page+="\_l[200]\q[十>>,OnKnowlPage,%(_file),%(_j+200),%(_n)]";
+		elseif _j/20==_n/20
+  		  _page+="\_l[60]\q[<<十,OnKnowlPage,%(_file),%(_j-200),%(_n)]";
+	 	else
+  		  _page+="\_l[60]\q[<<十,OnKnowlPage,%(_file),%(_j-200),%(_n)]   \_l[200]\q[十>>,OnKnowlPage,%(_file),%(_j+200),%(_n)]";
+
+	if _j/20==0
+  		  _page+="\_l[230]\q[百>>,OnKnowlPage,%(_file),%(_j+2000),%(_n)]";
+		elseif _j/20==_n/20
+  		  _page+="\_l[30]\q[<<百,OnKnowlPage,%(_file),%(_j-2000),%(_n)]";
+	 	else
+  		  _page+="\_l[30]\q[<<百,OnKnowlPage,%(_file),%(_j-2000),%(_n)]   \_l[230]\q[百>>,OnKnowlPage,%(_file),%(_j+2000),%(_n)]";
+
+	if _j/20==0
+  		  _page+="\_l[260]\q[千>>,OnKnowlPage,%(_file),%(_j+20000),%(_n)]";
+		elseif _j/20==_n/20
+  		  _page+="\_l[0]\q[<<千,OnKnowlPage,%(_file),%(_j-20000),%(_n)]";
+	 	else
+  		  _page+="\_l[00]\q[<<千,OnKnowlPage,%(_file),%(_j-20000),%(_n)]   \_l[260]\q[千>>,OnKnowlPage,%(_file),%(_j+20000),%(_n)]";
+
+
+		_txt+=_page;
+		_txt+="\n[140]\q[◇返回,OnKikkaKnowl]   \q[◇刷新内容,OnKnowlInfFresh,%(_file),%(_j)]"
+	}
+
+
+	else
+	{
+	_t=AILoad.AIFile(_file)
+	_txt+=OnKikkaKnowl.SelectFile(_file,_j);
+
+
+	}
+
+	knowltemp="OnKikkaKnowl.SelectFile('%(_file)',%(_j))";
+	_txt
+}
+
+OnKnowlInfFresh
+{
+	_file=reference0;
+	_j=reference1;
+	if _argc>0
+	{
+		_file=_argv[0];
+		_j=_argv[1];
+	}
+	_path=SPLITPATH(_file)[1];
+	_filename=TOUPPER(SPLITPATH(_file)[2]);
+	_inf=_path + TOLOWER(_filename)+'.inf';
+	_t=FDEL(_inf);
+	_t=AILoad.AIFile(_file)
+	OnKikkaKnowl.SelectFile(_file,_j);
+
+
+}
+
+
+OnInputKnowlPage
+{
+	"\C\![open,inputbox,OnKnowlPage,-1,%(reference1)]";
+	temp="%(reference0),%(reference1),%(reference2)";
+}
+
+OnKnowlPage
+{
+_file=temp[0]
+_n=TOINT(temp[2])
+_p=TOINT(reference0)
+_j=_p*20-20;
+if reference1!=null
+{
+_file=reference0
+_j=reference1
+_n=reference2
+}
+_p=(_j+20)/20;
+if _p>_n/20
+_p=_n/20+1
+elseif _p<=0
+_p=1;
+_j=_p*20-20+1
+
+OnKikkaKnowl.SelectFile(_file,_j);
+
+}
+
+
+OnKikkaKnowl.ShowFile
+{
+	_txt="\C\![quicksession,true]\c\0\b[2]\![set,choicetimeout,0]"
+	_file=reference0;
+	_j=reference1;
+	_Q=reference2;
+	if _argc>0
+	{
+		_file=_argv[0];
+		_j=_argv[1];
+		_Q=_argv[2];
+	}
+	_txt+="■橘花知识库 - 文件项目内容（%(_file)）■\n";
+	_txt+="Q："+_Q+"\n";
+	_txt+="A：\n";
+	_w=AILoad.AIFile(_file,_Q);
+	_w=REPLACE(_w,'#','');
+	SETDELIM(_w,'|');
+	_n=1;
+	foreach _w;_i
+	{
+		if _i!=""
+			_txt+='◇'+_n+'.'+_i+"\n";
+		_n++;
+	}
+	_txt+="\n\n\n\n\q[◇返回,OnKikkaKnowl.SelectFile,%(_file),%(_j)]";
+	knowltemp="OnKikkaKnowl.ShowFile('%(_file)',%(_j),'%(_Q)')";
+	_txt;
+}
+
+ClearKnowlVar
+{
+	ERASEVAR("knowltemp");
+	ERASEVAR("kikkaknowl");
+}
+
+
+theeating
+{
+OutPutImg("%(50)",1)
+}
+
+
+OutPutImg
+{
+_maxlen = 120;
+_percent = _argv[0];
+_max = 100;
+_len = 0;
+_maxval = _argv[1];
+ 	_txt = "";
+_length = _percent * _maxlen / _max;
+if _length > 0 {
+if _length > _maxlen {
+_length = _maxlen;
+}
+_txt += "\_b[linkbar.png,inline,--option=use_self_alpha,--clipping=0 %(maxval * 10) %(_length) %(maxval * 10 + 10)]";
+}
+        if _length <0
+       _length=0
+if _length < _maxlen  {
+_txt += "\_b[linkbar_blank.png,inline,--option=use_self_alpha,--clipping=%(120-_maxlen + _length) 0 120 10]";
+        }
+_txt;
+}
+
+
+OnNumberAddZero
+{
+	_nam=_argv[0];
+	_index=TOINT(_argv[1]);
+	_len=STRLEN(_nam);
+	for _i=_len;_i<_index;_i++
+	{
+		_nam='0'+_nam;
+	}
+	_nam;
+}
+
+OnChrAddChr
+{
+	_nam=_argv[0];
+	_index=TOINT(_argv[1]);
+	_chr=_argv[2];
+	_len=STRLEN(_nam);
+	for _i=_len;_i<_index;_i++
+	{
+		_nam=_chr+_nam;
+	}
+	_nam;
+}
+
+
+
+
+
+OnDelFloatIndex
+{
+	_nam=_argv[0];
+	_index=_argv[1];
+	_t=TOSTR(_nam);
+	_a=_t[0,'.']+'.';
+	_b=_t[1,'.'];
+	_c=SUBSTR(_b,0,_index);
+	_nam=_a+_c;
+	_nam;
+}
+#define		RAINMETERPATH       ::{450D8FBA-AD25-11D0-98A8-0800361B1103}\\Rainmeter\\Skins
+OnRainMeter
+{
+//_path="RAINMETERPATH\\Iron Man\\A装饰合集\\Amation白色\\multisphere.png"
+//"\b[2]\_l[-50,-50]\_b[OVERALL INTERFACE.png]"
+"1111\![raiseother,エナーデ,バルーン変更してゲーム起動]";
+
+}
+
+
+
+OnShowIcon
+{
+	_iconlist=OnIconLoad;
+	_txt="";
+	_num=ARRAYSIZE(_iconlist);
+	for _i=0;_i<_num;_i++
+	{
+		_icon=_iconlist[_i];
+		_txt+="\_b[%(_icon),inline]"
+	}
+
+	_txt;
+}
+
+
+OnIconLoad
+{
+	_ghostlist=GetGhostList;
+	_num=ARRAYSIZE(_ghostlist);
+	_i=0;
+	_iconlist=IARRAY;
+	for _i=0;_i<_num;_i++
+	{
+		_iconlist,=GetIconNameFromGhostMenu(_ghostlist[_i])
+	}
+	_iconlist;
+}
+
+GetIconNameFromGhostMenu
+{
+	_menu="..\\..\\..\\%(_argv[0])\\ghost\\master\\";
+	_filelist=FENUM(_menu);
+	_dirlist=IARRAY
+
+	foreach _filelist;_i
+	{
+		_path=_menu+_i;
+		_fileext = TOLOWER(SPLITPATH(_path)[3]);
+		if _fileext==".ico"
+			_dirlist,=_path
+	}
+	_dirlist;
+}
+
+IsGhostExist   //IsGhostExist("ssper")
+{
+	_ghostname='\'+_argv[0];
+	_ghostlist=GetGhostList;
+	_ghostexist=0;
+	foreach _ghostlist;_i
+	{
+		if  _ghostname==_i
+			_ghostexist=1;
+	}
+	_ghostexist;
+
+
+}
+
+
+
+
+
+GetGhostList
+  {
+	_filelist = FENUM('..\..\..');
+//	_filelist =FENUM("..\\..\\..\\ssper\\ghost\\master\\")
+	_dirlist  = IARRAY;
+	foreach _filelist; _file
+	{
+		if '\' _in_ _file
+			_dirlist ,= _file;
+	}
+	_dirlist ;
+}
+
+
+
+OnOtherGhostClosed
+{
+	ghostexcount = ARRAYSIZE(ghostexlist)
+	ghostexcount =ghostexcount-1
+	ghostexcount + ""
+	--
+	if "Kyara" _in_ reference0
+	{
+		"……哼\e"
+	}
+	else
+	{
+		if mode == "1"
+		{
+			if ghostexcount > 0
+			{
+				"\0\s[11]喵嗚~？"
+			}
+			else
+			{
+				mode = "0"
+				"\0\s[11]………………\n/
+				\s[18]哈啊……沒人在的話就好。\n/
+				真是麻煩。"
+				--
+				if firstboot == 0
+				{
+					firstboot = 1
+					"喵啊，說起來你這傢伙是……\n/
+					是，那個誰……來著？/
+					\![open,inputbox,OnTeachnameFirst,-1]"
+				}
+			}
+		}
+		else
+		{
+			if ghostexcount > 0
+			{
+				mode = "1"
+				"\0\s[11]喵嗚~？"
+			}
+			else
+			{
+				mode = 0
+				"\0\s[0]………………"
+				--
+				if firstboot == 0
+				{
+					firstboot = "1"
+					"喵啊，說起來你這傢伙是……\n/
+					是，那個誰……來著？/
+					\![open,inputbox,OnTeachnameFirst,-1]"
+				}
+			}
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+OnWindowsTitleGet
+{
+_gomicheck = FUNCTIONEX("saori\Lemegeton.dll", "wnd.hForeground")
+ _gomicheck = FUNCTIONEX("saori\Lemegeton.dll", "wnd.lpstrTitle", _gomicheck)
+ //"\0\s[0]%(_gomicheck)\n\w9\e"
+}
+
+
+OnWebTitleGet
+{
+	_t=0;
+	if FATTRIB("saori/WScript.exe")[0]==-1
+	{
+		_path = FUNCTIONEX("saori/advanced_sysinfo","get_special_folder_path",'Windows');
+		_file = REPLACE(_path,'\','\\') + '\\system32\\WScript.exe';
+		_t=FCOPY(_file,"saori")
+		_t=FCOPY("title.vbs","..\..\..\..\")
+	}
+	"\![open,file,saori/WScript.exe,title.vbs]"
+}
+
+OnWebTitleLoad
+{
+	_file="..\..\..\..\title.txt"
+	FCHARSET(127);
+	_title=IARRAY;
+	if FOPEN(_file,"r")
+	{
+		while (_buff=FREAD(_file))!=-1
+		{
+			if _buff!=""
+			_title,=_buff
+		}
+	}
+	FCLOSE(_file)
+	FCHARSET(1);
+	_title;
+
+}
+
+OnChangeCode
+{
+	_txt="\C\![quicksession,true]\c\0\b[2]\![set,choicetimeout,0]";
+	_txt+="请将内容复制到剪贴板后点选【简->繁转换】或【繁->简转换】\n";
+	_txt+="\q[◇【简->繁转换】,OnCopyTS,0]\n";
+	_txt+="\q[◇【繁->简转换】,OnCopyTS,1]\n";
+	_txt+="\q[◇返回上一层,OnOpenMenu,3,0]";
+	_txt;
+
+}
+
+OnCopyTS
+{
+
+	_ts=reference0;
+	if _argc>0
+		_ts=_argv[0];
+
+	if _ts==0
+		OnTS(OnPaste,"traditional")
+	else
+		OnTS(OnPaste,"simplified")
+
+
+
+}
+
+
+OnTS
+{
+	_txt=reference0;
+	_ts=reference1;
+	if _argc>0{
+		_txt=_argv[0];
+		_ts=_argv[1];
+	}
+
+		_text = FUNCTIONEX("saori\ChConverter.dll",_ts, _txt) //繁体化
+		FUNCTIONEX("saori\textcopy.dll", _text);
+		_txt="橘花已经将内容粘贴只剪贴板了哦，请%(username)进行复制";
+	_txt;
+
+}

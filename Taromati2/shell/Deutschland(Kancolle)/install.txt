@@ -1,0 +1,5 @@
+charset,Shift_JIS
+type,shell
+name,ドイツ艦（艦これ）
+accept,橘花
+directory,Deutschland(Kancolle)

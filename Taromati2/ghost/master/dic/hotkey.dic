@@ -1,0 +1,359 @@
+﻿OnKeyPress
+{
+	if  reference0 == 229 {//steve02081504：我也不知道为什么是这个值，试出来的
+	    "\0\s[8]使用熱鍵的話，要關掉輸入法哦？\e"
+	}
+	elseif reference0 == "f1" {
+		//---- 開啟readme.txt
+		"\![open,readme]"
+	}
+	elseif reference0 == "f2" {
+		//---- 開始溝通
+		"\![open,communicatebox]"
+	}
+    elseif reference0 == "f3" {
+		//---- 聊天室
+		OnChatRoom(j);
+	}
+	elseif reference0 == "f4" {
+		//---- 变量值获取
+		"\![open,inputbox,OnGetVarValue]"
+	}
+	elseif reference0 == "f5" {
+		//---- 人格重新載入
+		"\0\s[0]重新讀取SHORI……\![reload,shiori]"
+	}
+	elseif reference0 == "f6" {
+	    OnTest
+    }
+	elseif reference0 == "f7" {
+		//---- 表达式执行
+		"\![open,inputbox,OnCalculateVar]"
+	}
+	elseif reference0 == "f9" {
+    "\![set,trayballoon,--timeout=10,--title=橘花报时,--text=%(对话框报时)♪]"
+	}
+
+	elseif reference0 == "f10"{
+		"\![open,file,saori\rundll32.exe,CameraDll.dll,CameraSubArea]"  
+	}
+   
+	elseif reference0 == "f12" {
+		//截屏功能。感謝Pygmalionさん與Royさん！
+		_result=FUNCTIONEX("saori\screencatch.dll");
+	}
+	elseif  reference0 == "m" {
+		showkikka=1;
+		"\![raise,OnOpenMenu]"
+	}
+    
+	elseif  reference0 == "w" {
+		OnWeatherFoundAuto;
+	}
+	elseif  reference0 == "a" {
+		OnAstroFoundAuto;
+	}
+          
+	elseif  reference0 == "u" {
+		UnoUserInit;
+	}     
+
+	elseif  (reference0 == "p" || reference0 == "s"||reference0 == "n" || reference0 == "l" )&&(musicplayer)|| (reference0 == "home" || reference0 == "end")&&musicplayerlist{
+		MusicHotKey(reference0);
+	}
+	elseif (_t=Multitask(reference0))!="" {
+		_t
+	}
+	elseif secondwatch{
+		OnSecondWatch(2)
+	}
+
+
+
+    elseif playLinkWnd{
+		case playLinkWnd{
+			when 1
+			{       
+				OnDrawLinkWnd
+			}
+			when 2
+			{
+				OnLinkWndOption("LinkBall",reference0)
+			}
+			when 3
+			{
+				LinkMapEditorShow
+			}
+		}
+	}
+	elseif playingbox {
+		PlayBox;
+	}
+	elseif playingtetris {
+		if ck!=2
+			FormKeyDown
+	}
+	elseif playingGobang {
+		OnGobangShow;
+	}
+
+	elseif playsnake {
+		SnakeKey
+	}
+	elseif playHuanRongDao{
+	  OnKeyMovement
+	}
+
+    elseif rpggame{
+		if battlemode==0
+		{
+			OpenRpgGameMenu;
+		}
+		elseif battlemode==1
+		{
+			if kikka==1 && towa==0
+				Onbattleselect0;
+			elseif kikka==0 && towa==1
+				Onbattleselect1;
+		}
+		elseif battlemode==2
+			Onbattle;
+    }
+	elseif playBombGoldFlower{
+		BombGoldFlowerInit
+	}
+	elseif playhanoi{
+		OnHanoikey
+	}
+	elseif calculate{
+		CalculatorShow
+	}
+	elseif kikkastock{
+		if kikkastock==1
+			OnKikkaStockMenu
+		elseif kikkastock==2
+			OnKikkaStockSelect;
+		elseif kikkastock==3
+			OnKikkaStockFound;
+	}
+	elseif japwordquestion
+		OnJapWordQuestion(japwordtemp);
+	elseif examtest{
+		if examtest==1
+			OnExamTestMenu
+		elseif examtest==2
+			OnExamTestSelect(examtesttemp[0],examtesttemp[1],examtesttemp[2])
+	}
+	else {
+		"\0\s[0]你按了%(reference0)。編碼是%(reference1)。目前尚未被設定為熱鍵。"
+	}
+}
+
+Select.Multitask
+{
+
+Multitask;
+
+
+}
+OnOpenTaskmgr{
+"\0\s[6]如果想关掉我的话，请直接和我说。\![open,file,Taskmgr.exe]\e";
+
+}
+
+Multitask
+{
+if running!=""
+{
+OnMultitask(running)
+return
+
+}
+_task="playLinkWnd|连连看|ClearLinkWndVar,secondwatch|秒表|ClearSecondVar,playingbox|推箱子|ClearBoxVar,playingtetris|俄罗斯方块|CleartetrisVar,playingGobang|五子棋|ClearFiveVar,playsnake|贪食蛇|ClearSnakeVar,playHuanRongDao|华容道|ClearHuanRongDaoVar,rpggame|外出冒险|ClearRpgGameVar,playBombGoldFlower|扎金花|ClearBombGoldFlowerVar,playhanoi|数字汉诺塔|ClearHanoiVar,calculate|计算器|calculate=0,chatroom|聊天室|ClearAIVar,rename|批量文件重命名|ClearFilesRenameVar,readbook|小说阅读|ClearReadBookVar,kikkaknowl|橘花知识库|ClearKnowlVar,agenda|日历日程|ClearAgendaVar,kikkastock|橘花行情|ClearKikkaStockVar,japwordquestion|单词测试|ClearJapwordQuestionVar,examtest|橘花题库测试|ClearTestVar"
+_tasknum=0
+_txt="\0\![quicksession,true]\![set,choicetimeout,0]\b[2]"
+_txt+="当前含以下任务，要打开下面哪个？\t\q[◇打开任务管理器,OnOpenTaskmgr]\n[150]"
+foreach _task;_i
+{
+_taskvar=_i[0,'|']
+_taskname=_i[1,'|']
+_taskclose=_i[2,'|']
+if EVAL(_taskvar)
+{
+_tasknum++;
+_txt+="\q[◇%(_taskname),OnMultitask,%(_argv[0]),%(_taskvar)]\_l[240]\q[关闭,OnMultitask,close,%(_taskvar),%(_taskclose)]\n"
+}
+
+}
+if _argv[0]=="getnum"
+_tasknum
+elseif _tasknum>0
+_txt
+else
+"\0\s[0]没有任务哦……\n\q[◇打开任务管理器,OnOpenTaskmgr]\e"
+}
+OnRuntime
+{
+_running=reference0
+if _argc>0
+_running=_argv[0]
+    case _running
+    {
+         when "playingtetris"
+        OnTimer1Timer
+       when " playsnake"
+          OnSnakeTimer
+   }
+
+}
+
+OnMultitask
+{
+_running=reference1
+if _argc>0
+_running=_argv[0]
+if reference0=="close"
+{
+EVAL("%(reference2)");
+EVAL(Multitask);
+return
+}
+running=_running
+
+   case _running
+     {
+       when "secondwatch"{
+        OnSecondWatch("timerecord",reference0)
+        }
+       when "playLinkWnd"{
+             case playLinkWnd
+             {
+                  when 1
+                  {       
+                  OnDrawLinkWnd
+                  }
+
+                  when 2
+                  {
+                  OnLinkWndOption("LinkBall",reference0)
+                  }
+                 
+                  when 3
+                  {
+                   LinkMapEditorShow
+                   }
+             }
+
+
+        }
+	when "playingbox" {
+              DrawMap(mapstatenum)+BoxMenu+ "\_l[0,0] \n\_l[0,0] \n\_l[0,0] \n"+BoxStatus
+		--
+		PlayBox("back");
+	}
+        when "playingtetris" {
+             if ck!=2
+                FormKeyDown
+             else
+                OnTimer1Timer
+        }
+        when "playingGobang" {
+               OnGobangShow;
+        }
+
+         when "playsnake" {
+
+            SnakeKey
+        }
+         when "playHuanRongDao"{
+          OnKeyMovement
+        }
+  
+        when "rpggame"{
+	if battlemode==0
+	{
+		OpenRpgGameMenu;
+	}
+	elseif battlemode==1
+	{
+		if kikka==1 && towa==0
+			Onbattleselect0;
+		elseif kikka==0 && towa==1
+			Onbattleselect1;
+	}
+	 elseif battlemode==2
+		Onbattle;
+        }
+         when "playBombGoldFlower"{
+         BombGoldFlowerInit
+        }
+         when "playhanoi"{
+         OnHanoikey
+        }
+         when "calculate"{
+         CalculatorShow
+        }
+        when "chatroom" {
+        OnChatRoom
+        }
+        when "rename" {
+        OnFilesRename
+        }
+        when "readbook" {
+        OnReadBookHotkey
+        }
+	
+	when "kikkaknowl" {
+	EVAL(knowltemp);
+	}
+
+	when "agenda"{
+	EVAL(agenda[1]);
+	}
+
+	when "kikkastock"{
+		if kikkastock==1
+			OnKikkaStockMenu
+		elseif kikkastock==2
+			OnKikkaStockSelect;
+		elseif kikkastock==3
+			OnKikkaStockFound;
+	}
+	when "japwordquestion"{
+	OnJapWordQuestion(japwordtemp);
+	}
+	when "examtest"{
+		if examtest==1
+			OnExamTestMenu
+		elseif examtest==2
+			OnExamTestSelect(examtesttemp[0],examtesttemp[1],examtesttemp[2])
+	}
+}
+
+
+}
+
+
+
+OnCalculateVar
+{
+	"表达式『%(reference0)』的执行结果为：\n"
+	--
+	REPLACE(TOSTR(EVAL(reference0)),'\','\\');
+	OnCopy(reference0);
+}
+
+OnGetVarValue
+{
+	_var = reference0[0,'='];
+	_var = _var[0,'['];
+	_func = reference0[0,'('];
+	if ISVAR(_var) == 0 && ISFUNC(_func) == 0 {
+		"没有这个变量或函数……";
+	}else{
+		"表达式『%(reference0)』的执行结果为：\n"
+		--
+		REPLACE(TOSTR(EVAL(reference0)),'\','\\')
+	}
+}
+

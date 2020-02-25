@@ -1,0 +1,5 @@
+charset,Shift_JIS
+type,shell
+name,“~•ž
+accept,‹k‰Ô
+directory,winter

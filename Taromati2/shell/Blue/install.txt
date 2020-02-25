@@ -1,0 +1,5 @@
+charset,GB2312
+type,shell
+name,master Blue Shift
+accept,éÙ»¨
+directory,Blue

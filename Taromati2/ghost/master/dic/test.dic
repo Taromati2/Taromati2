@@ -1,0 +1,1278 @@
+﻿
+#define SELECTNUM 20
+OnExamTest
+{
+	if QuickStartVersion{
+		NeedUpdate
+		return
+	}
+	_testdir=FENUM("data/test");
+	_txt="\b[2]\![quicksession,1]\![set,choicetimeout,0]";
+	foreach _testdir;_i
+	{
+		_t="data/test/"+_i
+		_txt+=" \q[◇%(_i),OnExamTestMenu,0,%(_t)]\n";
+	}
+	_txt+="\q[◇终了,OnOpenMenu,1]"
+	_txt;
+
+}
+
+OnOrderArr
+{
+	_buff=_argv[0];
+	_n=ARRAYSIZE(_buff)-1;
+	for _i=0;_i<_n;_i++
+	{
+		for _j=_i+1;_j<=_n;_j++
+		{    
+			if _buff[_i]>_buff[_j]
+			{
+				_temp=_buff[_j]
+				_buff[_j]=_buff[_i]
+				_buff[_i]=_temp;
+			}
+	
+		}
+	}
+
+	_buff;
+
+
+}
+
+
+
+OnExamTestSelect
+{
+	 examtest=2
+        _testid=reference0
+	_num=TOINT(reference1)
+	_id=TOINT(reference2)
+	if _argc>2{  
+	 _testid=_argv[0];_num=_argv[1];_id=_argv[2]
+	}
+	elseif reference3!=""
+	{
+		examresult=0;
+		if reference3=="del"
+		selectanswer[_id]=""
+		elseif _id>40&&_id<61||STRLEN(trueanswer[_id])>1
+		{
+			selectanswer[_id]=selectanswer[_id]+','+reference3
+			selectanswer[_id]=OnDelRepeatArray(selectanswer[_id],',');
+			selectanswer[_id]=OnOrderArr(selectanswer[_id]);
+			selectanswer[_id]=TOSTR(selectanswer[_id]);
+		}
+		else
+			selectanswer[_id]=reference3
+	}
+
+	_num=TOINT(_num);
+	_testid=TOINT(_testid);
+	_str="◆"
+	_temp=""
+	if testtemp==""
+	 testtemp=LoadExamTest(_testid,_str,testpaper)//LoadExamTest(2,"◆",testpaper)
+	_temp=testtemp;
+	_n=1;
+//	_answer=_temp[1,'（'][0,'）'];
+//	if _answer==""
+//	_answer=_temp[1,'答案：'][0,'\n']
+	_txt = "\C\![quicksession,true]\c\![set,choicetimeout,0]\0\b[2]";
+	_result=0;
+	_A=0;
+	//_temp=TOUPPER(_temp)
+	_s=0
+
+	_temp=REPLACE(_temp,' ','  ')
+	_temp=REPLACE(_temp,' ','　')
+	while _temp[_s,'　　']!=""
+	{
+		_temp=REPLACE(_temp,'　　','　')
+		_s++;
+	}
+//	_temp=RE_REPLACE(_temp,'\n\d{1,4} ',' ')
+
+
+	_temp=REPLACE(_temp,'。\n第','\n第');
+	_temp=RE_REPLACE(_temp,'^(\d)、','\n第'+RE_GETSTR(0)+'题:');
+	_temp=REPLACE(_temp,"正解:1　","答案：A");
+	_temp=REPLACE(_temp,"正解:2　","答案：B");
+	_temp=REPLACE(_temp,"正解:3　","答案：C");
+	_temp=REPLACE(_temp,"正解:4　","答案：D");
+	_temp=REPLACE(_temp,"正解:1","答案：A");
+	_temp=REPLACE(_temp,"正解:2","答案：B");
+	_temp=REPLACE(_temp,"正解:3","答案：C");
+	_temp=REPLACE(_temp,"正解:4","答案：D");
+	_temp=REPLACE(_temp,"1)","A:");
+	_temp=REPLACE(_temp,"2)","B:");
+	_temp=REPLACE(_temp,"3)","C:");
+	_temp=REPLACE(_temp,"4)","D:");
+
+	_temp=REPLACE(_temp,'A:','A:	');
+	_temp=REPLACE(_temp,'B:','B:	');
+	_temp=REPLACE(_temp,'C:','C:	');
+	_temp=REPLACE(_temp,'D:','D:	');
+	_temp=REPLACE(_temp,'E:','E:	');
+
+	_temp=REPLACE(_temp,'a:','A:	');
+	_temp=REPLACE(_temp,'b:','B:	');
+	_temp=REPLACE(_temp,'c:','C:	');
+	_temp=REPLACE(_temp,'d:','D:	');
+	_temp=REPLACE(_temp,'e:','E:	');
+	_temp=REPLACE(_temp,'(　','（');
+	_temp=REPLACE(_temp,'　)','）');
+	_temp=REPLACE(_temp,'(','（');
+	_temp=REPLACE(_temp,')','）');
+	_temp=REPLACE(_temp,'（　','（');
+	_temp=REPLACE(_temp,'　）','）');
+	_temp=REPLACE(_temp,'。\n（A）','。\nA:	');
+	_temp=REPLACE(_temp,'；　（B）','B:	');
+	_temp=REPLACE(_temp,'；　（C）','C:	');
+	_temp=REPLACE(_temp,'；　（D）','D:	');
+	_temp=REPLACE(_temp,'；　（E）','E:	');
+	_temp=REPLACE(_temp,'；（B）','B:	');
+	_temp=REPLACE(_temp,'；（C）','C:	');
+	_temp=REPLACE(_temp,'；（D）','D:	');
+	_temp=REPLACE(_temp,'；（E）','E:	');
+	_temp=REPLACE(_temp,';（B）','B:	');
+	_temp=REPLACE(_temp,';（C）','C:	');
+	_temp=REPLACE(_temp,';（D）','D:	');
+	_temp=REPLACE(_temp,';（E）','E:	');
+	_temp=REPLACE(_temp,'；（A）','E:	');
+	_temp=REPLACE(_temp,';（B）','B:	');
+	_temp=REPLACE(_temp,';（C）','C:	');
+	_temp=REPLACE(_temp,';（D）','D:	');
+	_temp=REPLACE(_temp,';（E）','E:	');
+	_temp=REPLACE(_temp,'。\n（a）','。\nA:	');
+	_temp=REPLACE(_temp,'；　（b）','B:	');
+	_temp=REPLACE(_temp,'；　（c）','C:	');
+	_temp=REPLACE(_temp,'；　（d）','D:	');
+	_temp=REPLACE(_temp,'；　（e）','E:	');
+	_temp=REPLACE(_temp,'；（b）','B:	');
+	_temp=REPLACE(_temp,'；（c）','C:	');
+	_temp=REPLACE(_temp,'；（d）','D:	');
+	_temp=REPLACE(_temp,'；（e）','E:	');
+	_temp=REPLACE(_temp,';（b）','B:	');
+	_temp=REPLACE(_temp,';（c）','C:	');
+	_temp=REPLACE(_temp,';（d）','D:	');
+	_temp=REPLACE(_temp,';（e）','E:	');			
+	_temp=REPLACE(_temp,'\nA、','\nA:	');
+	_temp=REPLACE(_temp,'；　B、','B:	');
+	_temp=REPLACE(_temp,'；　C、','C:	');
+	_temp=REPLACE(_temp,'；　D、','D:	');
+	_temp=REPLACE(_temp,'；　E、','E:	');
+	_temp=REPLACE(_temp,'；B、','B:	');
+	_temp=REPLACE(_temp,'；C、','C:	');
+	_temp=REPLACE(_temp,'；D、','D:	');
+	_temp=REPLACE(_temp,'；E、','E:	');
+
+	_temp=REPLACE(_temp,'\na、','\nA:	');
+	_temp=REPLACE(_temp,'；　b、','B:	');
+	_temp=REPLACE(_temp,'；　c、','C:	');
+	_temp=REPLACE(_temp,'；　d、','D:	');
+	_temp=REPLACE(_temp,'；　e、','E:	');
+	_temp=REPLACE(_temp,'；b、','B:	');
+	_temp=REPLACE(_temp,'；c、','C:	');
+	_temp=REPLACE(_temp,'；d、','D:	');
+	_temp=REPLACE(_temp,'；e、','E:	');
+
+
+
+
+	_temp=REPLACE(_temp,'A．','A:	');
+	_temp=REPLACE(_temp,'B．','B:	');
+	_temp=REPLACE(_temp,'C．','C:	');
+	_temp=REPLACE(_temp,'D．','D:	');
+	_temp=REPLACE(_temp,'E．','E:	');
+	_temp=REPLACE(_temp,'a．','A:	');
+	_temp=REPLACE(_temp,'b．','B:	');
+	_temp=REPLACE(_temp,'c．','C:	');
+	_temp=REPLACE(_temp,'d．','D:	');
+	_temp=REPLACE(_temp,'e．','E:	');
+	_temp=REPLACE(_temp,'()','（　）');
+	_temp=REPLACE(_temp,'( )','（　）');
+	_temp=REPLACE(_temp,'()','（　）');
+	_temp=REPLACE(_temp,'(　)','（　）');
+	_temp=REPLACE(_temp,'(　　)','（　）');
+	_temp=REPLACE(_temp,'（）','（　）');
+	_temp=REPLACE(_temp,'题：','题:	')
+	_temp=REPLACE(_temp,'答案：','答案:')
+	_temp=REPLACE(_temp,'：','；')
+	_temp=REPLACE(_temp,'题:	','题：')
+	_temp=REPLACE(_temp,'答案:	','答案：')
+
+	_n=0
+	while _temp[_n, '题：']!=""
+	{
+		_n++
+	}
+	_n--
+	if _n<=2
+	{
+		_n=0
+		while _temp[_n, '答案：']!=""
+		{
+			_n++
+		}
+		_n--
+	}
+
+
+	
+/*
+	while _temp[_A, 'A:']!=""
+	{
+		_A++;
+	}
+*/
+	if _n<=_0
+	_n=testitemnum;
+
+	_A=_n
+	_l=0;
+	if _num>_n
+	_num=_n-1
+	elseif _num<=0
+	_num=1
+    	if _num+3<_n
+        	_l=_num+3;
+     	 else
+		_l=_n;
+	
+	_testanswer=_temp
+//	_testanswer=REPLACE(_testanswer,' ','')
+	_right=TOINT(examscore*100/(ARRAYSIZE(trueanswer)-1))
+		if examresult
+			_txt+="成绩出来了，%(username)的分数为%(examscore)，正解率为%(_right)%\n"
+	_judgenum=0;
+	for _i=_num;_i<_l;_i++
+	{
+			if _str _in_ _testanswer[_i-1,'\n']
+		_txt+=_testanswer[_i-1,'\n'][0,_str]+_str+"\n"
+
+		_temp=_testanswer[_i, '：'];
+		_temp=REPLACE(_temp,'（　）','（）')	
+		_temp=REPLACE(_temp,'　','|')
+		_judgemode=0;
+		if RE_GREP(_temp,'[√∨×]')||RE_GREP(_testanswer[_i,'\n'],'答案')&&RE_GREP(_testanswer[_i,'\n'],'正确')||RE_GREP(_testanswer[_i,'\n'],'答案')&&RE_GREP(_testanswer[_i,'\n'],'错误')
+		{
+			_judgenum++
+			_judgemode=1
+		}
+		_temp=REPLACE(_temp,'√','A');
+		_temp=REPLACE(_temp,'∨','A');
+		_temp=REPLACE(_temp,'×','B');
+		_t=TextBetween(_temp,"（","）")
+	//	_temp=REPLACE(_temp,'（）','（）');
+		if _t!="|"
+			trueanswer[_i]=_t;
+		_answermode=0
+		if _t==""
+		{
+			_answermode=1;
+			_s=0
+			_temp=REPLACE(_temp,'答案：','答案:	')
+			while _temp[_s, ':	']!=""
+			{
+				_s++;
+			}
+			
+			_t=_temp[_s-1,':	'][0,'\n第']
+
+		if RE_GREP(_t,'[√∨×]')||RE_GREP(_t,'答案:正确')||RE_GREP(_t,'答案:错误')
+		{
+			_judgenum++
+			_judgemode=1
+		}
+
+
+			_t=_t[1,'答案:'];
+			_t=_t[0,'\n']
+			if _t!="|"
+			trueanswer[_i]=_t
+			_tr=REPLACE(trueanswer[_i],'|','')
+			_temp=REPLACE(_temp,"（）","（%(_tr)）")
+		}
+		if _argv[2]=='result'&&_t!="|"
+			trueanswer[_i]=_t;
+		trueanswer[_i]=REPLACE(trueanswer[_i],'|','')
+		
+		 _true="（"+trueanswer[_i]+"）";
+		_quest=REPLACE(_temp,_true,'（  ）');
+		_selectanswer=selectanswer[_i];
+			if _selectanswer!=""
+_selectanswer="\__q[OnExamTestSelect,%(_testid),%(_num),%(_i),del]"+REPLACE(_selectanswer,',','')+"\__q";
+		if selectanswer[_i]==trueanswer[_i]&&examresult
+	_selectanswer=ColorText(_selectanswer,"bold,height=12,color=%(ColorIdx(1))");
+			elseif examresult
+	_selectanswer=ColorText(_selectanswer,"bold,height=12,color=%(ColorIdx(6))");
+						
+				_quest=REPLACE(_temp,_true,"（ %(_selectanswer) ）");
+			_a="一、,二、,三、"
+			for _k=0;_k<3;_k++
+			{
+				_string= _testanswer[_i,'第'][1,_a[_k]]
+				_string=_string[0,'\n']
+				if _string!=""
+				_txt+=_string+"\n"
+			}
+			_quest=_quest[0,'\n']
+			if _quest!=""&&_str!_in_ _quest
+			_txt+="第%(_i)题：" +_quest+"\n";
+		if _i<61&&_judgenum<=3&&!_judgemode//||_i<_A&&!judgenum
+		{
+			_s=0;
+			while _temp[_s, ':	']!=""
+			{
+				_s++;
+			}		
+			_option="A,B,C,D,E"
+			for _j=0;_j<_s;_j++
+			{
+				//_answer=REPLACE(_temp,_option[_j+1],'')
+				_t=REPLACE(_temp[_j+1,':	'],'；','')
+				_answer=_t+':	'
+
+				_answer=_answer[0,_option[_j+1]+':	'];
+				_answer=_answer[0,'\n'];
+				_answer=REPLACE(_answer,':	','')
+			//	_answer=_temp
+
+			//	_answer=_t[_j+1,':	'][0,'\n第']
+			//	_answer=_answer[0,'\n']
+				if _answer!=""
+				_txt += "\__q[OnExamTestSelect,%(_testid),%(_num),%(_i),%(_option[_j])]"+_option[_j]+":"+_answer+"\__q\n";
+			}
+		}
+		elseif _i<_n||_i<_judgenum&&_judgenum>3||_judgemode
+		{
+			_option="A,B"
+			for _j=0;_j<2;_j++
+			{
+			_answer="正确,错误"	
+_txt+="\__q[OnExamTestSelect,%(_testid),%(_num),%(_i),%(_option[_j])]"+_option[_j]+":"+_answer[_j]+"\n\__q";
+			}
+		}
+		_txt+="\n"	
+	}
+
+	_Page="";
+	//if "试题" _in_ testpaper
+	//_n=SELECTNUM
+	_Page+="\_l[130]%(_num/3+1)/%(_n/3+1)";
+	if _n<=3
+		_Page="";
+	elseif _num==1 && _n>3
+		_Page+="\_l[170]\q[一>>,OnExamTestSelect,%(_testid),%(_num+3)]";
+	elseif _num>1 &&_num+3>_n
+		_Page+="\_l[90]\q[一<<,OnExamTestSelect,%(_testid),%(_num-3)]";
+	else
+		 _Page+="\_l[90]\q[<<一,OnExamTestSelect,%(_testid),%(_num-3)]  \_l[170]\q[一>>,OnExamTestSelect,%(_testid),%(_num+3)]";  
+
+	if _n<=3
+		_Page="";
+	elseif _num==1 && _n>3
+		_Page+="\_l[200]\q[五>>,OnExamTestSelect,%(_testid),%(_num+15)]";
+	elseif _num>1 &&_num+3>_n
+		_Page+="\_l[60]\q[五<<,OnExamTestSelect,%(_testid),%(_num-15)]";
+	else
+		 _Page+="\_l[60]\q[<<五,OnExamTestSelect,%(_testid),%(_num-15)]  \_l[200]\q[五>>,OnExamTestSelect,%(_testid),%(_num+15)]";  
+
+
+
+	if _n<=3
+		_Page="";
+	elseif _num==1 && _n>3
+		_Page+="\_l[230]\q[十>>,OnExamTestSelect,%(_testid),%(_num+30)]";
+	elseif _num>1 &&_num+3>_n
+		_Page+="\_l[30]\q[十<<,OnExamTestSelect,%(_testid),%(_num-30)]";
+	else
+		 _Page+="\_l[30]\q[<<十,OnExamTestSelect,%(_testid),%(_num-30)]  \_l[230]\q[十>>,OnExamTestSelect,%(_testid),%(_num+30)]";  
+
+        _txt+=_Page;
+
+
+	if examnum<=0
+	_txt += "\n\q[◇返回上一层,OnExamTest]    \q[◇提交结果,OnExamTestResult,%(_testid),%(_num)]     \q[◇结束,OnOpenMenu,1]";
+	else
+	_txt += "\n\q[◇返回上一层,OnExamTestMenu,0,%(testpaper)]    \q[◇提交结果,OnExamTestResult,%(_testid),%(_num)]      \q[◇结束,OnOpenMenu,1]";
+	_txt=REPLACE(_txt,'|',' ');
+	_txt;
+	examtesttemp=(_testid,_num,_id)
+}
+
+OnExamTestResult
+{
+	 _testid=reference0;
+	_num=TOINT(reference1);
+	examscore=ExamTestResult;
+	examresult=1;
+	OnExamTestSelect(_testid,_num,'result')
+
+}
+
+ExamTestResult
+{
+	_n=ARRAYSIZE(trueanswer)
+	_score=0;
+	for _i=1;_i<_n;_i++
+	{
+		if _i<41
+		{
+			if selectanswer[_i]==trueanswer[_i]&&selectanswer[_i]!=""
+				_score++
+			else
+			wronganswer[_i]=selectanswer[_i]
+		}
+		elseif _i<61
+		{
+			if selectanswer[_i]==trueanswer[_i]&&selectanswer[_i]!=""
+				_score+=2
+			elseif selectanswer[_i] _in_ trueanswer[_i]&&selectanswer[_i]!=""
+				_score++
+			else
+			wronganswer[_i]=selectanswer[_i]
+		}
+		elseif _i<_n
+		{
+			trueanswer[_i]=REPLACE(trueanswer[_i],"对","A")
+			trueanswer[_i]=REPLACE(trueanswer[_i],"错","B")
+			trueanswer[_i]=REPLACE(trueanswer[_i],"√","A")
+			trueanswer[_i]=REPLACE(trueanswer[_i],"∨","A")
+			trueanswer[_i]=REPLACE(trueanswer[_i],"×","B")
+			 if selectanswer[_i]==trueanswer[_i]&&selectanswer[_i]!=""
+				_score++
+			else
+				wronganswer[_i]=selectanswer[_i]
+		}
+	}
+	_score
+}
+
+
+
+
+
+
+
+
+
+OnExamTestMenu
+{
+	_k=TOINT(reference0);
+	testpaper=reference1
+	_j=1;
+	_l=0;
+	examtest=1;
+	running="examtest";
+	trueanswer=IARRAY;
+	selectanswer=IARRAY;
+	examresult=0;
+	examscore=0;
+	examnum=0
+	testnum=0
+	testbuffnum=0;
+	testbuff=""
+ 	testtemp=""
+	judgenum=0;
+	testitemnum=0;
+	allmodenum=0;
+	_test=LoadExamTestNum(testpaper);
+	_str="◆";
+	/*
+	while _test[_j, _str] != ""
+	{
+		_j++
+	}
+*/
+	_j=testnum
+	_txt="\b[2]\_q";
+     	if _k+20<=_j
+        	_l=_k+20;
+     	 else
+                		_l=_j;
+	for _i =_k; _i<_l; _i++ {
+		_txt += "\q[◇"+ _test[_i,_str]+_str+",OnExamTestSelect,%(_i),1]\n";
+	}
+	_Page="";
+	if _j<=20
+		_Page="";
+	elseif _k==1 && _j>20
+		_Page="\_l[60,320]\q[下一页>>,OnExamTestMenu,%(_k+20),%(testpaper)]\n";
+	elseif _k>1 && _k+20>_j
+		_Page="\_l[0,320]\q[上一页<<,OnExamTestMenu,%(_k-20),%(testpaper)]\n";
+	else
+		 _Page="\_l[0,320]\q[<<上一页,OnExamTestMenu,%(_k-20),%(testpaper)]  \_l[60,320]\q[下一页>>,OnExamTestMenu,%(_k+20),%(testpaper)]\n";  
+        _txt+=_Page;
+        _txt+="\q[◇返回上一层,OnExamTest]";
+	if testnum==0
+		_txt+=OnExamTestSelect(1,1)
+	_txt += "\![set,choicetimeout,0]\e";
+_txt
+}
+
+LoadExamTestNum
+{
+	_file = "data\test\会计题库.txt";
+	_str="套";
+	if _argc>0
+		_file=_argv[0];
+
+	_testnum = 0;
+        _test=""
+	_buff = "";
+	FCHARSET(1);
+	if FOPEN(_file,"r") 
+	{
+		_buff = FREAD(_file);
+		while _buff != -1  
+		{
+                		   if  (_str _in_ _buff||RE_GREP(_buff,'[判断选择填空]题'))&&STRLEN(_buff)<=6&&'、'!_in_ _buff||RE_GREP(_buff,'[判断选择填空]题')&&'、'_in_ _buff&&STRLEN(_buff)<=10
+	             	   {
+	             		      _testnum++
+	              		     _test+=_buff+"◆";
+	              	   }
+			_buff = FREAD(_file);
+		}
+	}
+	_test+="-1◆"
+	FCLOSE(_file);
+	testnum=_testnum
+	FCHARSET(1);
+        _test;
+
+}
+
+
+LoadExamNum
+{
+	_file = "data\test\会计题库.txt";
+	_str="套";
+	_strend=""
+	if _argc>0
+	{
+		_file=_argv[0];
+		_str=_argv[1];
+		_strend=_argv[2];
+	}
+	_num=0;
+	if FOPEN(_file,"r") 
+	{
+		_buff="";
+		while _buff!=-1
+		{
+			while _str !_in_ _buff &&_buff!=-1
+			{
+				_buff=FREAD(_file);
+			}
+			while _buff != -1 &&_strend !_in_ _buff
+			{
+				if "题：" _in_ _buff||RE_GREP( _buff,'\d{1,3}、')
+				_num++
+				_buff=FREAD(_file);
+			}
+			_buff=FREAD(_file);
+		}
+	}
+		FCLOSE(_file);
+	examnum=_num
+	_num;
+}
+
+LoadExamNumEx
+{
+	_file = "data\test\会计题库.txt";
+	_str="套";
+	_strbegin="";
+	_strend=""
+	if _argc>0
+	{
+		_file=_argv[0];
+		_str=_argv[1];
+		_strbegin=_argv[2]
+		_strend=_argv[3];
+	}
+	_num=0;
+	FCHARSET(1);
+	if FOPEN(_file,"r") 
+	{
+		_buff="";
+			if _argc==2
+			{
+				while _buff!=-1
+				{
+					_buff=FREAD(_file);
+					if RE_GREP( _buff,_str)
+					_num++
+			
+				}
+			}
+			else
+			{
+			while _strbegin !_in_ _buff &&_buff!=-1
+				{
+					_buff=FREAD(_file);
+				}
+				while _buff != -1 &&_strend !_in_ _buff
+				{
+					if RE_GREP( _buff,_str)
+					_num++
+					_buff=FREAD(_file);
+				}
+		}
+	}
+		FCLOSE(_file);
+		FCHARSET(1);
+	_num;
+}
+
+
+
+LoadExamTest
+{
+	_file = "data\test\会计题库.txt";
+	_testid =reference0;
+	_str=reference1;
+        if _argc>0
+        {
+		_testid=_argv[0];
+		_str=_argv[1];
+		_file=_argv[2];
+	}
+	_strbuff='\d{1,4}题：'
+	_testid=TOINT(_testid);
+	if testbuff==""
+	testbuff=LoadExamTestNum(_file);
+	_test="";
+       	 _testbegin=testbuff[_testid,_str]
+	_testend=testbuff[_testid+1,_str]
+	_buff = "";
+	_answerbuff="答案：";
+	testitemnum=0;
+	if testbuffnum==0
+	testbuffnum=LoadExamNum(_file,_testbegin,_testend)
+	_allmode=0;
+	if testbuff=="-1◆"
+	{
+		_allmode=1;
+		_testbegin="第1题"
+		_testend="第%(testbuffnum)题"
+		if testbuffnum==0
+		testbuffnum=LoadExamNumEx(_file,_strbuff)
+		/*if testbuffnum==0
+		{
+			_strbuff='^\d{1,4}'
+			testbuffnum=LoadExamNumEx(_file,_strbuff)
+
+		}*/
+		if testbuffnum<=40
+			_allmode=2
+		if LoadExamNumEx(_file,'正解:')>2
+		{
+			_strbuff='^\d{1,4} '
+			testbuffnum=LoadExamNumEx(_file,_strbuff)
+			_allmode=1
+			_testbegin="1 "
+			_testend="%(testbuffnum) "
+		}
+	elseif (_t=LoadExamNumEx(_file,_answerbuff))>2
+		{
+			if (_t=LoadExamNumEx(_file,'\d{1,4} '))>20&&testbuffnum==0
+			{
+				_allmode=1
+				_strbuff='\d{1,4} '
+				testbuffnum=_t
+				_testbegin="1 "
+				_testend=-1
+			}
+		}
+		elseif (_t=LoadExamNumEx(_file,_strbuff))>2
+		{
+			_allmode=3
+			testbuffnum=_t
+			_testbegin="第1题："
+			_testend="第%(testbuffnum)题："
+		}
+	
+		else
+		{
+			_allmode=""
+			_strbuff='\d{1,4}.'
+			testbuffnum=LoadExamNumEx(_file,_strbuff)
+	      		_testbegin="1."
+			_testend=-1
+		}
+	}
+	else
+	{
+		if (_t=LoadExamNumEx(_file,_strbuff,_testbegin,_testend))>2
+		{
+			_allmode=4
+			testbuffnum=_t
+		}
+
+		 if testbuffnum<=40&& '套' !_in_ testbuff
+		_allmode=2
+		elseif '套' _in_ testbuff
+		_allmode=2
+
+	//	_testbegin="第1题："
+		//	_testend="第%(testbuffnum)题："
+	}
+	t=_allmode
+	_n=0
+	_m=0
+	FCHARSET(1);
+	if FOPEN(_file,"r") 
+	{
+		_temp=0   ;
+		_txt=""
+		_buff = "";
+		_num=1
+		if  1//"试题" _in_ _file
+		{
+				if _allmode==0
+			{
+				while _testbegin !_in_ _buff &&_buff!=-1
+				{
+					_buff=FREAD(_file);
+				}
+				while _buff != -1 &&_testend !_in_ _buff&&_n/2<SELECTNUM &&_n/2<testbuffnum
+				{
+				if '×'_in_ _buff||'√' _in_ _buff||'∨' _in_ _buff
+				judgenum++
+					_txt=""
+					_r=0
+					_mode=0
+					
+					while _buff != -1&& "第%(_num)题" !_in_ _buff&&_n/2<SELECTNUM 
+					{
+						_r=RAND(testbuffnum/SELECTNUM )
+						if _temp/SELECTNUM ==_r||_mode
+						{
+							_test += _buff + "\n";
+								_n++
+								_mode=1
+						}
+						_buff=FREAD(_file);	_temp++
+					}
+					while _buff != -1&&"第%(_num+1)题" !_in_ _buff&&_n/2<SELECTNUM &&_n/2<testbuffnum 
+					{
+						if _mode
+							_test += _buff + "\n"
+						_buff=FREAD(_file);	_temp++
+					}
+					if _mode
+						_m++;
+					_num++
+					_buff=FREAD(_file);	_temp++
+				}				
+			}
+
+
+		
+
+			
+			elseif _allmode==1//随机选题答案题末
+			{
+
+					while _testbegin !_in_ _buff &&_buff!=-1
+				{
+					_buff=FREAD(_file);
+				}
+				while _buff != -1 &&_testend !_in_ _buff&&_n/2<SELECTNUM &&_n<testbuffnum
+				{
+				//if '×'_in_ _buff||'√' _in_ _buff||'∨' _in_ _buff
+				//judgenum++
+					_txt=""
+					_r=0
+					_mode=0
+					while _buff != -1&& !RE_GREP(_buff,_strbuff)&&_n/2<SELECTNUM 
+					{
+							_txt += _buff + "\n";
+						_buff=FREAD(_file);	//_temp++
+					}
+					if RE_GREP(_buff,_strbuff)
+					{
+						if "题：" !_in_ _buff
+						{
+							_t=RE_GETSTR[0];
+							_s="第"+_n+"题："; 
+							_buff=RE_REPLACE(_buff,_t,_s);
+						}
+						while _buff != -1&&"答案：" !_in_ _buff&&"正解:" !_in_ _buff&&_n/2<SELECTNUM &&_n<testbuffnum 
+						{
+								_txt+=_buff+ "\n";
+								_r=RAND(testbuffnum/SELECTNUM )
+								 if _temp/SELECTNUM ==_r
+								_mode=1;
+							_buff=FREAD(_file);	//_temp++
+						}
+						if "答案："_in_ _buff||"正解:" _in_ _buff
+						{
+							_txt+=_buff+ "\n";
+						}
+						_num++
+					if _mode
+						{
+							_test+=_txt;
+							_n++;
+						}
+	
+					}
+				
+					_buff=FREAD(_file);	_temp++
+				}	
+			}
+			elseif _allmode==2//全部加载
+			{
+				while _testbegin !_in_ _buff &&_buff!=-1
+				{
+					_buff=FREAD(_file);
+				}
+				while _buff != -1 &&_testend !_in_ _buff
+				{
+					if RE_GREP(_buff,'^\d{1,3}\.')
+					{
+						_temp=RE_GETSTR[0];
+						_id=TOINT(RE_GETSTR[0][0,'.']);
+						if '题：'!_in_ _buff
+						{
+							_buff=RE_REPLACE(_buff,'[？：]','（）')
+							_buff=REPLACE(_buff,_temp,"第%(_id)题：");	
+						}
+					}
+					if RE_GREP(_buff,'[ABCDabcd]\.')
+					{
+						_n=ARRAYSIZE(RE_GETSTR)
+						for _i=0;_i<_n;_i++
+						{
+							_temp=RE_GETSTR[_i];
+							_id=RE_GETSTR[_i][0,'.'];
+							_buff=REPLACE(_buff,_temp,"%(_id):");
+							_buff=REPLACE(_buff,' ','')
+						}
+
+					}
+					if  _buff != ""
+						_test += _buff + "\n";
+			                          _buff = FREAD(_file);
+				}	
+			}
+				elseif _allmode==3
+			{
+				while _testbegin !_in_ _buff &&_buff!=-1
+				{
+					_buff=FREAD(_file);
+				}
+				while _buff != -1 &&_testend !_in_ _buff&&_n/2<SELECTNUM &&_n/2<testbuffnum
+				{
+				if '×'_in_ _buff||'√' _in_ _buff||'∨' _in_ _buff
+				judgenum++
+					_txt=""
+					_r=0
+					_mode=0
+					while _buff != -1&& "题：" !_in_ _buff&&_n/2<SELECTNUM 
+					{
+													
+					//	if _mode
+				//	{
+							_txt+= _buff + "\n";
+							//if '题：'  _in_ _buff
+							//_n++	
+				//	}
+
+						_buff=FREAD(_file);//_temp++
+					}
+					while _buff != -1&&"D:" !_in_ _buff&&_n/2<SELECTNUM &&_n<testbuffnum 
+					{
+					//	if _mode
+							_txt += _buff + "\n"
+_r=RAND(testbuffnum/SELECTNUM )
+						if _temp/SELECTNUM ==_r
+						{
+								_mode=1;
+							if '题：' _in_ _buff
+							{	_n++;}
+						}
+						_buff=FREAD(_file);	_temp++
+					}
+					
+					
+					if "D:" _in_ _buff
+					{
+						_i=0;
+						_txt += _buff+"\n"
+						while _buff[_i,':']!=""
+						{	
+							_i++;
+							_r=RAND(testbuffnum/SELECTNUM );
+							if _temp/SELECTNUM ==_r
+							{
+								_mode=1;
+							}
+							_temp++
+						}
+					}
+					if _mode
+					{	;_m++;_test+=_txt}
+					_num++
+					_buff=FREAD(_file);	_temp++
+				}				
+			}
+
+		
+			elseif _allmode==4
+			{
+				while _testbegin !_in_ _buff &&_buff!=-1
+				{
+					_buff=FREAD(_file);
+				}
+
+				while _buff != -1 &&_testend !_in_ _buff&&_n/2<SELECTNUM &&_n<testbuffnum
+				{
+				if '×'_in_ _buff||'√' _in_ _buff||'∨' _in_ _buff
+				judgenum++
+					_txt=""
+					_r=0
+					_mode=0
+					while _buff != -1&& "题：" !_in_ _buff&&_n/2<SELECTNUM 
+					{
+						//_txt += _buff + "\n";
+						_buff=FREAD(_file);
+					}
+					if "题：" _in_ _buff
+					{
+						_txt += _buff + "\n";
+						_r=RAND(testbuffnum/SELECTNUM )
+						if _temp/SELECTNUM ==_r
+						{
+							
+							_mode=1
+						}
+						_temp++
+						_buff=FREAD(_file);
+						//_txt += _buff + "\n";
+						while _buff != -1&& "题：" !_in_ _buff&&_n/2<SELECTNUM 
+						{
+							_txt += _buff + "\n";
+							_buff=FREAD(_file);
+						}
+					}
+				
+					if _mode
+						{_n++;_test += _txt;	_m++;	}
+					_buff=FREAD(_file);//	_temp++
+				}				
+			}
+
+
+		
+
+
+
+			else//选择一定数量的加载
+			{
+
+				while _testbegin !_in_ _buff &&_buff!=-1
+				{
+					_buff=FREAD(_file);
+				}
+				while _buff != -1 &&_testend !_in_ _buff&&_n<SELECTNUM &&_n<testbuffnum 
+				{
+					if  _buff != ""
+						_test += _buff + "\n";
+					if RE_GREP(_buff,'^\d{1,3}[\.]')
+						_n++;
+			                          _buff = FREAD(_file);
+				}		
+			}
+
+
+		}
+		else
+		{
+		while _buff != -1 && _testbegin !_in_ _buff  {
+				_buff = FREAD(_file);
+			}
+			while _buff != -1 &&_testend !_in_ _buff{
+			if  _buff != ""
+				_test += _buff + "\n";_
+	                          _buff = FREAD(_file);
+				}
+		}
+	
+	}
+	FCLOSE(_file);
+	FCHARSET(1);
+	testitemnum=_n
+	allmodenum=_m
+	_test;
+
+}
+
+ReplaceTestString
+{
+	_buff=_argv[0];
+	_temp=_buff;
+	_temp=REPLACE(_temp,'  ',' ')
+	_temp=REPLACE(_temp,' ','　')
+	_temp=REPLACE(_temp,'。\n第','\n第');
+
+	_temp=REPLACE(_temp,'A:','A:	');
+	_temp=REPLACE(_temp,'B:','B:	');
+	_temp=REPLACE(_temp,'C:','C:	');
+	_temp=REPLACE(_temp,'D:','D:	');
+
+	_temp=REPLACE(_temp,'A.','A:	');
+	_temp=REPLACE(_temp,'B.','B:	');
+	_temp=REPLACE(_temp,'C.','C:	');
+	_temp=REPLACE(_temp,'D.','D:	');
+
+	_temp=REPLACE(_temp,'。\n（A）','。\nA:	');
+	_temp=REPLACE(_temp,'；　（B）','B:	');
+	_temp=REPLACE(_temp,'；　（C）','C:	');
+	_temp=REPLACE(_temp,'；　（D）','D:	');
+	_temp=REPLACE(_temp,'；（B）','B:	');
+	_temp=REPLACE(_temp,'；（C）','C:	');
+	_temp=REPLACE(_temp,'；（D）','D:	');
+	_temp=REPLACE(_temp,';（B）','B:	');
+	_temp=REPLACE(_temp,';（C）','C:	');
+	_temp=REPLACE(_temp,';（D）','D:	');
+
+	_temp=REPLACE(_temp,'。\n（a）','。\nA:	');
+	_temp=REPLACE(_temp,'；　（b）','B:	');
+	_temp=REPLACE(_temp,'；　（c）','C:	');
+	_temp=REPLACE(_temp,'；　（d）','D:	');
+	_temp=REPLACE(_temp,'；（b）','B:	');
+	_temp=REPLACE(_temp,'；（c）','C:	');
+	_temp=REPLACE(_temp,'；（d）','D:	');
+	_temp=REPLACE(_temp,';（b）','B:	');
+	_temp=REPLACE(_temp,';（c）','C:	');
+	_temp=REPLACE(_temp,';（d）','D:	');
+			
+	_temp=REPLACE(_temp,'。\nA、','。\nA:	');
+	_temp=REPLACE(_temp,'；　B、','B:	');
+	_temp=REPLACE(_temp,'；　C、','C:	');
+	_temp=REPLACE(_temp,'；　D、','D:	');
+	_temp=REPLACE(_temp,'；B、','B:	');
+	_temp=REPLACE(_temp,'；C、','C:	');
+	_temp=REPLACE(_temp,'；D、','D:	');
+
+
+	_temp=REPLACE(_temp,'。\na、','。\nA:	');
+	_temp=REPLACE(_temp,'；　b、','B:	');
+	_temp=REPLACE(_temp,'；　c、','C:	');
+	_temp=REPLACE(_temp,'；　d、','D:	');
+	_temp=REPLACE(_temp,'；b、','B:	');
+	_temp=REPLACE(_temp,'；c、','C:	');
+	_temp=REPLACE(_temp,'；d、','D:	');
+
+	_temp=REPLACE(_temp,'A．','A:	');
+	_temp=REPLACE(_temp,'B．','B:	');
+	_temp=REPLACE(_temp,'C．','C:	');
+	_temp=REPLACE(_temp,'D．','D:	');
+
+	_temp=REPLACE(_temp,'a．','A:	');
+	_temp=REPLACE(_temp,'b．','B:	');
+	_temp=REPLACE(_temp,'c．','C:	');
+	_temp=REPLACE(_temp,'d．','D:	');
+	_temp=REPLACE(_temp,'()','（　）');
+	_temp=REPLACE(_temp,'( )','（　）');
+	_temp=REPLACE(_temp,'()','（　）');
+	_temp=REPLACE(_temp,'(　)','（　）');
+	_temp=REPLACE(_temp,'(　　)','（　）');
+	_temp=REPLACE(_temp,'题：','题:	')
+	_temp=REPLACE(_temp,'答案：','答案:')
+	_temp=REPLACE(_temp,'：','；')
+	_temp=REPLACE(_temp,'题:	','题：')
+	_temp=REPLACE(_temp,'答案:	','答案：')
+
+}
+
+
+TransformTest     //自定义项
+{
+	_file="03词汇综合选择答案.txt"
+/*	_answerstr="单项选择题"
+	_answerend="　【解析】"
+//	_re_answerstr='^\d{1,3}．[A,B,C,D,E,a,b,c,d,e]'
+	_re_answerstr='^\d{1,3}．[A,B,C,D,a,b,c,d]'
+	_str="最符合题意"
+	_strend="1个错项";
+	_re_str='^\d{1,3}．'*/
+
+/*
+	_answerstr="多项选择题"
+	_answerend="	【解析】"
+	_re_answerstr='^\d{1,3}．[A,B,C,D,E,a,b,c,d,e]'
+	_str="1个错项"
+	_strend="单项选择题";
+	_re_str='^\d{1,3}．'
+*/
+
+	_answerstr="key"
+	_answerend="-1"
+	_re_answerstr='^\d{1,3}\.[A,B,C,D,E,a,b,c,d,e]'
+	_str="第七章    词汇综合选择及答案"
+	_strend="key";
+	_re_str='^\d{1,3}\.'
+
+	_mode=1
+	if _argc>0
+	{
+		_file=_argv[0];
+		_str=_argv[1];
+		_strend=_argv[2]
+	}
+	_charset=GetTxtCharset(_file);
+	_id=CharsetToId(_charset);
+	FCHARSET(_id);
+	_buff="";
+	_tbuff="";
+	_txt="";
+	_answer=IARRAY;
+
+	_n=0
+	if FOPEN(_file,"r") 
+	{
+		while _buff!=-1
+		{
+			while _answerstr !_in_ _buff &&_buff!=-1
+			{
+				_buff=FREAD(_file);
+			//	_txt+=_buff;
+			}
+			while _answerend !_in_ _buff &&_buff!=-1
+			{
+//^\d{1,3}.*([A,B,C,D]1).*参考译文
+				if RE_GREP( _buff,_re_answerstr)
+				{
+						
+				//@RE_REPLACE("3. D 参考译文1111111","^\d{1,3}.*[A,B,C,D].*(参考译文)","")				
+						//_t=RE_GREP( _buff,'^\d{1,3}.*参考译文')
+						//_temp=RE_GETSTR[0];
+						//_temp=RE_REPLACE(_temp,'^\d{1,3}\.','')
+						_temp=RE_REPLACE(_buff,_re_str,'')
+						_id=TOINT(RE_GETSTR[0][0,'.']);
+						//_id=RE_REPLACE(_id,_re_answerstr,'')
+						_temp=REPLACE(_temp,'参考译文','')
+						_temp=REPLACE(_temp,'．','')
+						_temp=REPLACE(_temp,' ','')
+						_temp=REPLACE(_temp,'、','')
+						_temp=REPLACE(_temp,'：','')
+						//_id=TOINT(_id)
+						_answer[_id]="%(_temp),%(_id)";
+						_n++
+				}
+				_buff=FREAD(_file);
+			}
+		}
+		_buff=FREAD(_file);
+		
+	}
+	FCLOSE(_file);
+//	ARRAYSIZE(_answer);return;
+//_answer;return;	
+	_buff="";
+	_num=0;
+//	_re_str='_.*_'
+//	_re_str='\(\)'
+//	_re_str='^\d{1,3}．'
+	_tfile=SPLITPATH(_file)[2]+"_new.txt"
+	if FOPEN(_file,"r") 
+	{
+			FCHARSET(1)
+			_t=FOPEN(_tfile,'w');
+			while _buff!=-1
+			{
+				while _str !_in_ _buff &&_buff!=-1
+				{
+					_buff=FREAD(_file);
+					//_txt+=_buff;
+				}
+				while _buff != -1 &&_strend !_in_ _buff
+				{
+					_tr=""
+					if RE_GREP( _buff,_re_str)
+					{
+							
+							_temp=RE_GETSTR[0];
+							_id=TOINT(RE_GETSTR[0][0,'.']);
+							_temp=REPLACE(_buff,_temp,"第%(_num+1)题：");
+							_temp=RE_REPLACE(_temp,'\(\)','（）');
+							_tr=_answer[_id][0];
+							_tr=REPLACE(_tr,' ' ,'')
+							_tanswer='（'+_tr+'）'
+							_i=0;
+							while _temp[_i,'__']!=""
+							{
+								_temp=REPLACE(_temp,'__','_');	
+								_i++;
+							}
+							_temp=REPLACE(_temp,'_','（）');
+							_temp=REPLACE(_temp,'（）',_tanswer);
+							_txt+=_temp;
+							if _id==TOINT(_answer[_id][1])&&_tr!=""
+							{	
+								_t=FWRITE(_tfile,_temp);
+								_num++
+							}
+							_buff=FREAD(_file);
+							_tbuff+=_temp+"*";
+							//_num++
+					}
+					else
+					{
+						_buff=REPLACE(_buff,') ',':')
+						_buff=REPLACE(_buff,'.',':')
+						_buff=REPLACE(_buff,'．',':')
+						_txt+=_buff;	
+						_id=TOINT(RE_GETSTR[0][0,'.']);
+						_tr=_answer[_id][0];
+						_tr=REPLACE(_tr,' ' ,'')
+						if _id==TOINT(_answer[_id][1])//&&_tr!=""
+							_t=FWRITE(_tfile,_buff);
+						_buff=FREAD(_file);
+					}
+				}
+			}
+		FCLOSE(_tfile);
+		FCHARSET(1);
+	}
+	FCLOSE(_file);
+
+
+
+
+
+	FCHARSET(1);
+	_txt;
+}
+
+
+ClearTestVar
+{
+	ERASEVAR("kikkaknowl");	
+	ERASEVAR("testpaper");
+	ERASEVAR("examtest");
+	ERASEVAR("trueanswer");
+	ERASEVAR("selectanswer");
+	ERASEVAR("examresult");
+	ERASEVAR("examscore");
+	ERASEVAR("examnum");
+	ERASEVAR("testnum");
+	ERASEVAR("testbuffnum");
+	ERASEVAR("testbuff");
+ 	ERASEVAR("testtemp");
+	ERASEVAR("judgenum");
+	ERASEVAR("testitemnum");
+	ERASEVAR("allmodenum");
+}
+
+
+
+
+

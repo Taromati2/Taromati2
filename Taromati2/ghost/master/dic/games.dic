@@ -1,0 +1,4108 @@
+﻿///////////////////////////////////////////
+////////// 游戏辞书
+////////// 
+///////////////////////////////////////////
+
+
+
+
+//OX游戏，by Pygmalion
+//-------------------------------------------
+
+OnPlayOX
+{
+	arrOX = IARRAY;
+	for _i = 0; _i < 9; _i++ 
+	{
+		arrOX = (arrOX, 0);
+	}
+	"\0\s[40]来吧!\w9我可不会输的喔！\w9\w9\c";
+	--
+		PlayOXshow(0);
+}
+
+PlayOXshow
+{
+	_tempstr = "";
+	for _i = 0; _i < 3; _i++ 
+	{
+		for _j = 0; _j < 3; _j++ 
+		{
+			_temp = _i * 3 + _j;
+			if arrOX[_temp] == -1
+				_tempstr = _tempstr + "Ｘ";
+			elseif arrOX[_temp] == 1
+				_tempstr = _tempstr + "○";
+			elseif _argv[0] == 0
+				_tempstr = _tempstr + "\q[　,PlayOXrun("+_temp+")]";
+			else
+				_tempstr = _tempstr + "　";
+			if _j != 2
+				_tempstr = _tempstr + "│";
+		}
+		_tempstr = _tempstr + "\n[90]";
+		if _i != 2
+		{
+			_tempstr = _tempstr + "─┼─┼─";
+		}
+		_tempstr = _tempstr + "\n[90]";
+	}
+	switch _argv[0]
+	{
+		"\_q\0\s[40]请%(username)走棋\n%(_tempstr)\n\q[◇不想玩了,OnOpenMenu,2]\e";
+		{
+			"\_q\0\s[34]\n%(_tempstr)\n[half]\_q橘花输了。\n\w9\w9\1\s[13]危险的物品收起来\w8%(username)只是在跟你玩而已\w9\w9\0\s[0]\c喔……\w9\w9\n[150]\q[◇再来一盘,OnPlayOX]\n\q[◇游戏结束,OnOpenMenu,2]\e";
+			"\_q\0\s[7]\n%(_tempstr)\n[half]\_q\w9\w9%(username)……该不是作弊了吧……\w8\w8\w8\n[150]\q[◇再来一盘,OnPlayOX]\n\q[◇游戏结束,OnOpenMenu,2]\e";
+			"\_q\0\s[35]\n%(_tempstr)\n[half]\_q\n橘花不会气馁的！\w9\w9\s[41]\w9\w9\n[150]\q[◇再来一盘,OnPlayOX]\n\q[◇游戏结束,OnOpenMenu,2]\e";
+		}
+		{
+			"\_q\0\s[6]\n%(_tempstr)\n[half]\_q\w9\w9平手,还玩吗？\n[150]\q[◇再来一盘,OnPlayOX]\n\q[◇游戏结束,OnOpenMenu,2]\e";
+			"\_q\0\s[23]\n%(_tempstr)\n[half]\_q\w9\w9和局,接下来以实力拼胜负吧……\n[150]\q[◇再来一盘,OnPlayOX]\n\q[◇游戏结束,OnOpenMenu,2]\e";
+			"\_q\0\s[3]\n%(_tempstr)\n[half]\_q\w9\w9不相上下呢……%(username)果然赢不了橘花。\n[150]\q[◇再来一盘,OnPlayOX]\n\q[◇游戏结束,OnOpenMenu,2]\e";
+		}
+		{
+			"\_q\0\s[5]\n%(_tempstr)\n[half]\_q\w9太好了,橘花赢了！博弈论的大胜利呢！\n[150]\q[◇再来一盘,OnPlayOX]\n\q[◇游戏结束,OnOpenMenu,2]\e";
+			"\_q\0\s[8]\n%(_tempstr)\n[half]\_q\w9\w9橘花赢了,%(username)的实力只有这样而已吗？\n[150]\q[◇再来一盘,OnPlayOX]\n\q[◇游戏结束,OnOpenMenu,2]\e";
+		}
+	}
+}
+
+Select.PlayOXrun
+{
+	arrOX[_argv[0]] = -1;
+	if PlayOXover(_argv[0]) != 1
+	{
+		_tempid = -1;
+		_rightmax = -24;
+		_tempright = 0;
+		for _i = 0; _i < 9; _i++ {
+			if arrOX[_i] == 0
+			{
+				arrOX[_i] = 1;
+				if PlayOXover(_i) == 1
+				{
+					arrOX[_i] = 0;
+					_tempid = _i;
+					break;
+				}
+				_rightmin = 24;
+				for _j = 0; _j < 9; _j++ {
+					if arrOX[_j] == 0;
+					{
+						arrOX[_j] = -1;
+						_tempright = 0;
+						_temparry = IARRAY;
+						_temparry = (_temparry,arrOX[0] + arrOX[1] + arrOX[2]);
+						_temparry = (_temparry,arrOX[3] + arrOX[4] + arrOX[5]);
+						_temparry = (_temparry,arrOX[6] + arrOX[7] + arrOX[8]);
+						_temparry = (_temparry,arrOX[0] + arrOX[3] + arrOX[6]);
+						_temparry = (_temparry,arrOX[1] + arrOX[4] + arrOX[7]);
+						_temparry = (_temparry,arrOX[2] + arrOX[5] + arrOX[8]);
+						_temparry = (_temparry,arrOX[0] + arrOX[4] + arrOX[8]);
+						_temparry = (_temparry,arrOX[2] + arrOX[4] + arrOX[6]);
+						_oxnum = 0;
+						foreach _temparry; _k {
+							_tempright += _k;
+							if _k == -3
+								_oxnum = 24;
+							if _k == -2
+								_oxnum++;
+							if _k == 2
+								_oxnum--;
+						}
+						if _oxnum > 1
+							_tempright = -24;
+						if _tempright < _rightmin
+						{
+							_rightmin = _tempright;
+						}
+						arrOX[_j] = 0;
+					}
+				}
+				if _rightmin > _rightmax;
+				{
+					_rightmax = _rightmin;
+					_tempid = _i;
+				}
+				arrOX[_i] = 0;
+			}
+		}
+		if _tempid == -1
+			PlayOXshow(2);
+		else
+		{
+			arrOX[_tempid] = 1
+				if PlayOXover(_tempid) == 1
+				{
+					PlayOXshow(3);
+				}
+				else
+				{
+					PlayOXshow(0);
+				}
+		}
+	}
+	else
+		PlayOXshow(1);
+}
+
+PlayOXover
+{
+	_nowrow = _argv[0] / 3;
+	_nowcolumn = _argv[0] % 3;
+	if arrOX[_nowrow*3] == arrOX[_nowrow*3+1] && arrOX[_nowrow*3+1] == arrOX[_nowrow*3+2] && arrOX[_nowrow*3] != 0 /
+		|| arrOX[_nowcolumn] == arrOX[3+_nowcolumn] && arrOX[3+_nowcolumn] == arrOX[6+_nowcolumn] && arrOX[_nowcolumn] != 0 /
+		|| arrOX[0] == arrOX[4] && arrOX[4] == arrOX[8] && arrOX[8] != 0 /
+		|| arrOX[2] == arrOX[4] && arrOX[4] == arrOX[6] && arrOX[6] != 0
+	{
+		1;
+	}
+	else
+		0;
+}
+
+
+
+
+
+
+
+
+
+
+
+//OX游戏，by Pygmalion
+//-------------------------------------------
+
+OnPlayMiniFive
+{
+	arrOX = IARRAY;
+	for _i = 0; _i < 25; _i++ {
+		arrOX = (arrOX, 0);
+	}
+	"\0\s[40]\b[2]来吧!\w9我可不会输的喔！\w9\w9\c";
+	--
+		PlayMiniFiveshow(0);
+}
+
+PlayMiniFiveshow
+{
+	"\C\![quicksession,true]\c\b[2]";
+	--
+		_tempstr = "";
+	for _i = 0; _i < 5; _i++ {
+		for _j = 0; _j < 5; _j++ {
+			_temp = _i * 5 + _j;
+			if arrOX[_temp] == -1
+				_tempstr = _tempstr + "Ｘ"
+				elseif arrOX[_temp] == 1;
+			_tempstr = _tempstr + "○"
+				elseif _argv[0] == 0;
+			_tempstr = _tempstr + "\q[　,PlayMiniFiverun("+_temp+")]";
+			else
+				_tempstr = _tempstr + "　";
+			if _j != 4
+				_tempstr = _tempstr + ";│"
+		}
+		_tempstr = _tempstr + "\n[90]";
+		if _i != 4
+		{
+			_tempstr = _tempstr + "─┼─┼─┼─┼─";
+		}
+		_tempstr = _tempstr + "\n[90]";
+	}
+	switch _argv[0]
+	{
+		"\0\s[40]请%(username)走棋\n%(_tempstr)\n\q[◇不想玩了,OnOpenMenu,2]\e";
+		{
+			"\0\s[34]\n%(_tempstr)\n[half]\_q橘花输了。\n\w9\w9\1\s[13]危险的物品收起来\w8%(username)只是在跟你玩而已\w9\w9\0\s[0]\c喔……\w9\w9\n[150]\q[◇再来一盘,OnPlayMiniFive]\n\q[◇游戏结束,OnOpenMenu,2]\e";
+			"\0\s[7]\n%(_tempstr)\n[half]\_q\w9\w9%(username)……该不是作弊了吧……\w8\w8\w8\n[150]\q[◇再来一盘,OnPlayMiniFive]\n\q[◇游戏结束,OnOpenMenu,2]\e";
+			"\0\s[35]\n%(_tempstr)\n[half]\_q\n橘花不会气馁的！\w9\w9\s[41]\w9\w9\n[150]\q[◇再来一盘,OnPlayMiniFive]\n\q[◇游戏结束,OnOpenMenu,2]\e";
+		}
+		{
+			"\0\s[6]\n%(_tempstr)\n[half]\_q\w9\w9平手,还玩吗？\n[150]\q[◇再来一盘,OnPlayMiniFive]\n\q[◇游戏结束,OnOpenMenu,2]\e";
+			"\0\s[23]\n%(_tempstr)\n[half]\_q\w9\w9和局,接下来以实力拼胜负吧……\n[150]\q[◇再来一盘,OnPlayMiniFive]\n\q[◇游戏结束,OnOpenMenu,2]\e";
+			"\_q\0\s[3]\n%(_tempstr)\n[half]\_q\w9\w9不相上下呢……%(username)果然赢不了橘花。\n[150]\q[◇再来一盘,OnPlayMiniFive]\n\q[◇游戏结束,OnOpenMenu,2]\e";
+		}
+		{
+			"\0\s[5]\n%(_tempstr)\n[half]\_q\w9太好了,橘花赢了！博弈论的大胜利呢！\n[150]\q[◇再来一盘,OnPlayMiniFive]\n\q[◇游戏结束,OnOpenMenu,2]\e";
+			"\0\s[8]\n%(_tempstr)\n[half]\_q\w9\w9橘花赢了,%(username)的实力只有这样而已吗？\n[150]\q[◇再来一盘,OnPlayMiniFive]\n\q[◇游戏结束,OnOpenMenu,2]\e";
+		}
+	}
+}
+
+Select.PlayMiniFiverun
+{
+	arrOX[_argv[0]] = -1;
+	if PlayMiniFiveover(_argv[0]) != 1
+	{
+		_tempid = -1;
+		_rightmax = -60;
+		_tempright = 0;
+		for _i = 0; _i < 25; _i++ {
+			if arrOX[_i] == 0
+			{
+				arrOX[_i] = 1;
+				if PlayMiniFiveover(_i) == 1
+				{
+					arrOX[_i] = 0;
+					_tempid = _i;
+					break;
+				}
+				_rightmin = 60;
+				for _j = 0; _j < 25; _j++ {
+					if arrOX[_j] == 0;
+					{
+						arrOX[_j] = -1;
+						_tempright = 0;
+						_temparry = IARRAY;
+						_temparry = (_temparry,arrOX[0] + arrOX[1] + arrOX[2]+ arrOX[3]+ arrOX[4]);
+						_temparry = (_temparry,arrOX[5] + arrOX[6] + arrOX[7]+ arrOX[8]+ arrOX[9]);
+						_temparry = (_temparry,arrOX[10] + arrOX[11] + arrOX[12]+ arrOX[13]+ arrOX[14]);
+						_temparry = (_temparry,arrOX[15] + arrOX[16] + arrOX[17]+ arrOX[18]+ arrOX[19]);
+						_temparry = (_temparry,arrOX[20] + arrOX[21] + arrOX[22]+ arrOX[23]+ arrOX[24]);
+						_temparry = (_temparry,arrOX[0] + arrOX[5] + arrOX[10]+ arrOX[15]+ arrOX[20]);
+						_temparry = (_temparry,arrOX[1] + arrOX[6] + arrOX[11]+ arrOX[16]+ arrOX[21]);
+						_temparry = (_temparry,arrOX[2] + arrOX[7] + arrOX[12]+ arrOX[17]+ arrOX[22]);
+						_temparry = (_temparry,arrOX[3] + arrOX[8] + arrOX[13]+ arrOX[18]+ arrOX[23]);
+						_temparry = (_temparry,arrOX[4] + arrOX[9] + arrOX[14]+ arrOX[19]+ arrOX[24]);
+						_temparry = (_temparry,arrOX[0] + arrOX[6] + arrOX[12]+ arrOX[18]+ arrOX[24]);
+						_temparry = (_temparry,arrOX[4] + arrOX[8] + arrOX[12]+ arrOX[16]+ arrOX[20]);
+						_oxnum = 0;
+						foreach _temparry; _k {
+							_tempright += _k;
+							if _k == -5
+								_oxnum = 60;
+							if _k == -4
+								_oxnum++;
+							if _k == 4
+								_oxnum--;
+						}
+						if _oxnum > 1
+							_tempright = -60;
+						if _tempright < _rightmin
+						{
+							_rightmin = _tempright;
+						}
+						arrOX[_j] = 0;
+					}
+				}
+				if _rightmin > _rightmax
+				{
+					_rightmax = _rightmin;
+					_tempid = _i;
+				}
+				arrOX[_i] = 0;
+			}
+		}
+		if _tempid == -1
+			PlayMiniFiveshow(2);
+		else
+		{
+			arrOX[_tempid] = 1
+				if PlayMiniFiveover(_tempid) == 1
+				{
+					PlayMiniFiveshow(3);
+				}
+				else
+				{
+					PlayMiniFiveshow(0);
+				}
+		}
+	}
+	else
+		PlayMiniFiveshow(1);
+}
+
+PlayMiniFiveover
+{
+	_nowrow = _argv[0] / 5;
+	_nowcolumn = _argv[0] % 5;
+	if arrOX[_nowrow*5] == arrOX[_nowrow*5+1] && arrOX[_nowrow*5+1] == arrOX[_nowrow*5+2] && arrOX[_nowrow*5+2] == arrOX[_nowrow*5+3] && arrOX[_nowrow*5+3] == arrOX[_nowrow*5+4] &&arrOX[_nowrow*5] != 0 /
+		|| arrOX[_nowcolumn] == arrOX[5+_nowcolumn] && arrOX[5+_nowcolumn] == arrOX[10+_nowcolumn] && arrOX[10+_nowcolumn] == arrOX[15+_nowcolumn] && arrOX[15+_nowcolumn] == arrOX[20+_nowcolumn] && arrOX[_nowcolumn] != 0 /
+		|| arrOX[0] == arrOX[6] && arrOX[6] == arrOX[12] && arrOX[12] == arrOX[18] && arrOX[18] == arrOX[24] && arrOX[24] != 0 /
+		|| arrOX[4] == arrOX[8] && arrOX[8] == arrOX[12] && arrOX[12] == arrOX[16] && arrOX[16] == arrOX[20] && arrOX[20] != 0
+	{
+		1;
+	}
+	else
+		0;
+}
+
+
+
+
+
+
+
+
+
+
+
+// 扑克游戏
+//--------------------------------------------------------------------------
+
+Poker.Init
+{
+	poker = IARRAY;
+	_poker0 =("0,黑桃,♠,A","1,黑桃,♠,2","2,黑桃,♠,3","3,黑桃,♠,4","4,黑桃,♠,5","5,黑桃,♠,6","6,黑桃,♠,7","7,黑桃,♠,8","8,黑桃,♠,9","9,黑桃,♠,10","10,黑桃,♠,J","11,黑桃,♠,Q","12,黑桃,♠,K",/
+			"13,红心,♥,A","14,红心,♥,2","15,红心,♥,3","16,红心,♥,4","17,红心,♥,5","18,红心,♥,6","19,红心,♥,7","20,红心,♥,8","21,红心,♥,9","22,红心,♥,10","23,红心,♥,J","24,红心,♥,Q","25,红心,♥,K",/
+			"26,梅花,♣,A","27,梅花,♣,2","28,梅花,♣,3","29,梅花,♣,4","30,梅花,♣,5","31,梅花,♣,6","32,梅花,♣,7","33,梅花,♣,8","34,梅花,♣,9","35,梅花,♣,10","36,梅花,♣,J","37,梅花,♣,Q","38,梅花,♣,K",/
+			"39,方块,♦,A","40,方块,♦,2","41,方块,♦,3","42,方块,♦,4","43,方块,♦,5","44,方块,♦,6","45,方块,♦,7","46,方块,♦,8","47,方块,♦,9","48,方块,♦,10","49,方块,♦,J","50,方块,♦,Q","51,方块,♦,K",/
+		"52,鬼牌,,小王","53,鬼牌,,大王");
+	_begin = 0;
+	_end = 0;
+	case _argv[0] {
+		when "52" {
+			_end = 52;
+		}
+		when "54" {
+			_end = 54;
+		}
+		when "黑桃" {
+			_end = 13;
+		}
+		when "红心" {
+			_begin = 13;
+			_end = 26;
+		}
+		when "梅花" {
+			_begin = 26;
+			_end = 39;
+		}
+		when "方块" {
+			_begin = 39;
+			_end = 52;
+		}
+	}
+		case _argv[1] {
+			when "rand","random" {
+				for _i = 0; _i < _end - _begin; _i ++ {
+					_rand = RAND(_end - _begin - _i) + _begin;
+					poker[_i] = _poker0[_rand];
+					_poker0[_rand] = IARRAY;
+				}
+			}
+			others {
+				for _i = 0; _i < _end - _begin; _i ++ {
+					poker[_i] = _poker0[_i + _begin];
+				}
+			}
+		}
+}
+
+Poker.Show
+{
+	_poker = _argv[0];
+	_mode = _argv[1];
+	_txt = "";
+	case _mode {
+		when 0,1,2,3 {
+			_txt = _poker[_mode];
+		}
+		when "s","cs","sc" {
+			_txt = _poker[2] + " " + _poker[3];
+		}
+		others {
+			_txt = _poker[1] + " " + _poker[3];
+		}
+	}
+		if "c" _in_ _mode {
+			_idx = TOINT(_poker[0]);
+			if _idx / 13 == 1 || _idx / 13 == 3 || _idx == 53 {
+				_txt = "\f[color,238,50,95]" + _txt + "\f[color,default]";
+			}
+			else {
+				_txt = "\f[color,32,32,32]" + _txt + "\f[color,default]";
+			}
+		}
+		_txt;
+}
+
+Poker.Clear
+{
+	ERASEVAR("poker");
+}
+
+OnBlackjack0
+{
+	"规则都知道吧"
+		"这个游戏不押赌注就不好玩了，\w9每一局￥50怎样？\w9拿到BlackJack2倍，五龙3倍喔！\w9"
+		"那么，\w9由橘花坐庄，\w9现在开始吧"
+		--
+		"\w9\w9\c"
+		--
+		OnBlackjack;
+}
+
+OnBlackjack
+{
+	Poker.Init("52","random");
+	Blackjack;
+}
+
+OnBlackjackRule
+{
+	_rule = "游戏规则就是一般的21点，\w5A表示1或11点，\w5J、Q和K则表示10点，/ 
+		游戏的目的就是尽量让手中的牌凑到21点，\w5但超过21点就变成爆牌，\w5\s[5]会直接出局喔。 \n/ 
+		\s[0]一开始先由斗和发一张暗牌给我们，\w5这张暗牌一直到游戏结束前都不会被对方看到。 \w5/ 
+		确认过暗牌后先由%(username)决定是否要继续抽牌，\w5一旦决定不抽牌之后也不能再抽喔！ \n/ 
+		如果我们都决定不抽牌就必须互相翻开暗牌计算彼此的点数，\w5\s[5]当然是点数较高又没爆牌的人获胜！ \n/ 
+		\s[0]除了爆牌或不抽牌会结束游戏之外，\w5如果我们其中一人的牌的点数加起来刚好是21点，\w5那就直接获胜了！ \n/ 
+		又或者其中一个人连续抽了五张牌都没有爆牌，\w5则称为五龙，\w5\s[5]一样是直接获胜喔！";
+		_menu = "\n\n\q[◇新游戏,OnBlackjack,0]\n[150]\q[◇返回上一层,OnOpenMenu,2]\n\q[◇终了,OnBlackjackEnd]";
+	_rule + _menu;
+}
+
+Blackjack
+{
+	kikkascard = (2,1,0,0,0,poker[0],poker[1]);
+	yourcard = (2,0,0,0,0,poker[2],poker[3]);
+	BlackjackCal;
+	BlackjackShow;
+}
+
+BlackjackShow
+{
+	_txt = "\_q";
+	_txt += "橘花的牌：(%(kikkascard[3])点)\n";
+	for _i = 0; _i < kikkascard[0]; _i ++ {
+		if kikkascard[1] == 1 && _i == 0 {
+			_txt += "暗牌   ";
+		}
+		else {
+			_txt += "\_l[%(_i * 36)]" + Poker.Show(kikkascard[_i + 5],'cs');
+		}
+	}
+	_txt += "\n[150]你的牌：(%(yourcard[3])点)\n";
+	for _i = 0; _i < yourcard[0]; _i ++ {
+		if yourcard[1] == 1 && _i == 0 {
+			_txt += "暗牌   ";
+		}
+		else {
+			_txt += "\_l[%(_i * 36)]" + Poker.Show(yourcard[_i + 5],'cs');
+		}
+	}
+	_txt += BlackjackJudge;
+	_txt += "\n[150]\q[◇新游戏,OnBlackjack]    \q[◇游戏规则,OnBlackjackRule]\n\q[◇返回上一层,OnOpenMenu,2]\n\q[◇终了,OnBlackjackEnd]";
+	_txt += ShowMoney(120,0);
+	_txt;
+}
+
+BlackjackJudge
+{
+	"\_l[0,77]"
+		--
+		if kikkascard[1] > 0 {
+			if yourcard[2] <= 21 && yourcard[0] == 5 {
+				money += 3 * 50;
+				"\0\s[9]五龙！%(username)获胜了。"
+			}
+			elseif yourcard[2] == 21 && yourcard[0] == 2 {
+				money += 2 * 50;
+				"\0\s[9]讨厌，%(username)抽到BlackJack获胜了。"
+			}
+			elseif yourcard[2] == 21 && yourcard[4] == 0 || kikkascard[2] == 21 {
+				"\q[◇停手,OnBlackjackStand]"
+			}
+			elseif yourcard[2] > 21 {
+				money -= 50;
+				"\0\s[5]%(username)爆牌了呢！"
+			}
+			else {
+				"\q[◇加牌,OnBlackjackAdd]    \q[◇停手,OnBlackjackStand]"
+			}
+		}
+		else {
+			if kikkascard[2] <= 21 && kikkascard[0] == 5 {
+				money -= 3 * 50;
+				"\0\s[40]耶！橘花五龙了！！"
+			}
+			elseif kikkascard[2] == 21 && kikkascard[0] == 2 {
+				money -= 2 * 50;
+				"\0\s[40]BlackJack！橘花获胜了！"
+			}
+			elseif kikkascard[2] > 21 {
+				money += 50;
+				"\0\s[3]555……橘花爆牌了。"
+			}
+			elseif kikkascard[2] == yourcard[2] {
+				"\0\s[5]看来我们的点数都一样大呢！"
+			}
+			elseif kikkascard[2] == 21 {
+				money -= 50;
+				"\0\s[41]咦？我刚好21点！"
+			}
+			elseif yourcard[2] == 21 {
+				money += 50;
+				"\0\s[7]啊！%(username)刚好21点！"
+			}
+			elseif kikkascard[2] > yourcard[2] {
+				money -= 50;
+				"\0\s[20]好像是我的点数比较大呢！"
+			}
+			elseif kikkascard[2] < yourcard[2] {
+				money += 50;
+				"\0\s[30]%(username)的点数比较大呢……"
+			}
+		}
+}
+
+BlackjackCal
+{
+	kikkascard[2] = 0;
+	yourcard[2] = 0;
+	kikkascard[4] = 0;
+	yourcard[4] = 0;
+	for _i = kikkascard[0] - 1; _i >= 0; _i -- {
+		_card = kikkascard[_i + 5];
+		case _card[3] {
+			when '2','3','4','5','6','7','8','9','10' {
+				kikkascard[2] += TOINT(_card[3]);
+			}
+			when 'J','Q','K' {
+				kikkascard[2] += 10;
+			}
+			when 'A' {
+				kikkascard[4] ++;
+				kikkascard[2] += 11;
+			}
+		}
+			while kikkascard[2] > 21 && kikkascard[4] > 0 {
+				kikkascard[4] --;
+				kikkascard[2] -= 10;
+			}
+			if _i >= kikkascard[1] {
+				kikkascard[3] = kikkascard[2];
+			}
+	}
+	for _i = yourcard[0] - 1; _i >= 0; _i -- {
+		_card = yourcard[_i + 5];
+		case _card[3] {
+			when '2','3','4','5','6','7','8','9','10' {
+				yourcard[2] += TOINT(_card[3]);
+			}
+			when 'J','Q','K' {
+				yourcard[2] += 10;
+			}
+			when 'A' {
+				yourcard[4] ++;
+				yourcard[2] += 11;
+			}
+		}
+			while yourcard[2] > 21 && yourcard[4] > 0 {
+				yourcard[4] --;
+				yourcard[2] -= 10;
+			}
+			if _i >= yourcard[1] {
+				yourcard[3] = yourcard[2];
+			}
+	}
+}
+
+OnBlackjackAdd
+{
+	yourcard[0] ++;
+	_cnt = yourcard[0];
+	yourcard ,= poker[_cnt + 1];
+	BlackjackCal;
+	BlackjackShow;	
+}
+
+OnBlackjackStand
+{
+	kikkascard[1] = 0;
+	BlackjackCal;
+	while kikkascard[2] < 17 {
+		kikkascard[0] ++;
+		_cnt = kikkascard[0];
+		kikkascard ,= poker[_cnt + 4];
+		BlackjackCal;
+	}
+	BlackjackShow;	
+}
+
+ShowMoney
+{
+	_x = _argv[0];
+	_y = _argv[1];
+	
+	"\_l[%(_x),%(_y)]"
+		--
+		ColorText("金钱：￥%(money)","bold,color=244,190,0");
+	--
+}
+
+OnBlackjackEnd
+{
+	ERASEVAR("poker");
+	ERASEVAR("kikkascard");
+	ERASEVAR("yourcard");
+	
+	"\s[26]不玩了吗？"
+}
+
+
+// 猜拳 by 朔№九尾
+//--------------------------------------------------------------------------
+
+
+OnHandGame
+{
+	"\0\s[40]%(username)要跟橘花玩猜拳?\w9\w9...好啊!\w9\w9\c\w9\w9出拳吧!\n\n/
+		\q[◇剪刀,ShowHand(0)]\n/
+		\q[◇石头,ShowHand(1)]\n/
+		\q[◇布,ShowHand(2)]\n\e"
+}
+
+Select.ShowHand
+{
+	_i=RAND(3);
+	"\0\s[0]橘花出.\w8.\w8.\w8.";
+	--
+        switch _i
+	{
+		"剪刀\n\w9";
+		"石头\n\w9";
+		"布\n\w9";
+	}
+	--
+        switch (3 + _i - _argv[0])%3
+	{
+		{      
+			"\0\s[33]%(username)跟我一样呢\w9\w9\1\s[11]是%(username)让你的\w9\w9\0\s[26]\n是吗?\w9\w9";
+			"\0\s[33]%(username)跟我一样呢\w9\w9\1\s[11]是%(username)让你的\w9\w9\0\s[29]\n就算是这样我也很高兴呢\w9\w9";
+			"\1\s[10]你们真有默契\w9\w9\w9\0\s[1].....哪...哪有\w9\w9只是碰巧的,对不对%(username)\w9\w9";
+			"\1\平手";
+		}
+		{     
+			"\0\s[5]橘花赢了!好高兴喔~\w9\w9\1\s[12]今天运气不好喔!\0\s[6]\n谢谢你%(username)\w9\w9";
+			"\1\s[10]....\w8....\w8....\w8...\0\s[40]加油!\w8\w8下一次%(username)会赢我喔!\w8\w8\1\s[11]这是败北宣言吗?\w8\w8\0\s[9]\c\n才不是呢\w9\w9";
+			"\0\s[41]橘花赢了!\w9\s[41]%(username)要加油喔!\w9\w9\1\s[10]该不会是作...\0\s[32]\c作什麽?\w9\w9\n\1\s[13]\c没...没事\w9\w9";
+			"\0\%(username)输了\n\1\s[10]展现你的实力给我看吧!\w9\w9\0\q[◇继续玩,P1]\n\q[◇不用了,P2]\e";
+		}
+		{     
+			"\0\s[34]橘花输了\w9\w9\1\s[13]危险的物品收起来\w8%(username)只是在跟你玩而已\w9\w9\0\s[0]\c喔....\w9\w9";
+			"\1\s[11]%(username)果然很强啊\w9\w9\0\s[1]嗯..\w8..\w8\w8\w8";
+			"\0\s[26]%(username)很强呢\w9\w9\1\s[12]这才是%(username)的实力\w9\w9\0\s[8]\n是这样吗\w9\w9";
+			"\0\s[35]橘花不会气馁的\w9\w9\s[41]\w9\w9";
+		}
+	}
+	--
+        "\n\0\s[40]再玩一次吧%(username)\n[150]\q[◇好,P1]\n\q[◇返回上一层,OnOpenMenu,2]\n\q[◇终了,P2]\e";
+}
+
+Select.P1
+{
+	"\0\s[0]\w9\w9出拳吧!\n\n/
+		\q[◇剪刀,ShowHand(0)]\n/
+		\q[◇石头,ShowHand(1)]\n/
+		\q[◇布,ShowHand(2)]\n/
+		\q[◇不用了,P2]\e"
+}
+
+Select.P2
+{
+	"\0\s[26]%(username)不想玩了?\w9\w9\e"
+		"\1\s[10]不想玩了\w9 嘎! \w9\w9\e"
+		"\0\s[0]游戏结束\w9\e"
+		"\1\s[11]游戏结束\w9\e"
+}
+
+
+
+// 猜数字
+//--------------------------------------------------------------------------
+
+OnGuessNumber
+{
+	gn = IARRAY;
+	gn[0] = 0;
+	while (gn[1] = GuessNumberCheck(TOSTR(RAND(10000)))) == 0 {
+	}
+	"\b[2]\s[0]嗯\w9…\w9…\w9橘花已经想好要猜的数了。\w9那么，\w9"
+		--
+		GuessNumber;
+}
+
+GuessNumberCheck
+{
+	_n = _argv[0];
+	if STRLEN(_n) == 3 {
+		_n = '0' + _n;
+	}
+	_r = _n;
+	if STRLEN(_n) != 4 {
+		_r = 0;
+	}
+	else {
+		for _i = 0; _i < 3; _i ++ {
+			for _j = _i + 1; _j < 4; _j ++ {
+				if SUBSTR(_n,_i,1) == SUBSTR(_n,_j,1) {
+					_r = 0;
+					break;
+				}
+			}
+		}
+	}
+	_r;
+}
+
+GuessNumberShow
+{
+	_txt = "";
+	_n = gn[0];
+	for _i = 2; _i < _n + 2; _i ++ {
+		_tmp = gn[_i];
+		_txt += _tmp[0] + "         " + _tmp[1] + "\n";
+	}
+	if _n > 0 {
+		_txt = "\_q猜数记录    结果\n" + _txt + "\n[150]\_q";
+	}
+	_txt;
+}
+
+GuessNumberCal
+{
+	_n = gn[0] + 1;
+	_a = 0;
+	_b = 0;
+	for _i = 0; _i < 4; _i ++ {
+		if SUBSTR(gn[1],_i,1) == SUBSTR(gn[_n],_i,1) {
+			_a ++;
+		}
+		elseif SUBSTR(gn[_n],_i,1) _in_ SUBSTR(gn[1],0,4) {
+			_b ++;
+		}
+	}
+	_r = _a + 'A' + _b + 'B';
+	_tmp = gn[_n] + ',' + _r;
+	gn[_n] = _tmp;
+	_r;
+}
+
+GuessNumber
+{
+	GuessNumberShow;
+	--
+		"请输入你猜测的四位数：\n\n[150]\q[◇返回上一层,OnOpenMenu,2]\n\q[◇终了,OnGuessNumberEnd]\![open,inputbox,OnGuessNumberInput,0]\x";
+}
+
+OnGuessNumberInput
+{
+	_tmp = 0;
+	_menu = "\_q\n\n[150]\q[◇继续玩,OnGuessNumber]\n[150]\q[◇返回上一层,OnOpenMenu,2]\n\q[◇终了,OnGuessNumberEnd]\_q";
+	if (_tmp = GuessNumberCheck(reference0)) == 0 
+	{
+		"输入的数据无效…\w9…\w9\c"
+			--
+			GuessNumber;
+	}
+	else
+	{
+		gn[0] ++;
+		_n = gn[0] + 1;
+		gn ,= _tmp;
+		if GuessNumberCal == "4A0B" 
+		{
+			case gn[0] 
+			{
+				when 1 
+				{
+					"\s[2]哇！一猜就中，\w9%(username)和我心有灵犀呢！！\w9\1\s[12]运气而已……\w9\0"
+						--
+						_menu;
+				}
+				when 2,3,4,5,6 
+				{
+					"\s[5]Bingo！只用了%(gn[0])次就猜中了呢，\w9%(username)好厉害！！\w9"
+						--
+						_menu;
+				}
+				others 
+				{
+					"\s[5]猜中了！"
+						--
+						_menu;
+				}
+			}
+		}
+		else 
+		{
+			GuessNumber;
+		}
+	}
+}
+
+OnGuessNumberEnd
+{
+	ERASEVAR("gn");
+	"\s[0]不玩了吗？";
+}
+
+//------------------------双色球 by fancyang------------------------------------------------
+
+
+OnDoubleColorBall
+{
+	if QuickStartVersion{
+		NeedUpdate
+		return
+	}
+	_txt=""
+	_txt+="\0\b[2]\s[2]\![set,choicetimeout,0]\_q什么，%(username)有玩双色球，那么让我们测试一下双色球的中奖情况吧，双色球玩法%(username)知道吧，双色球由红球和蓝球两部份组成，从33个红球号码(01~33)中选择6个，再从16个蓝球号码(01~16)中选择1个。开奖时，在红色球中随机摇出六个红号，在蓝色球中随机摇出一个蓝号。这游戏分为测试与正式投注，测试投注时不会产生金钱增减。正试投注一次花费2金钱。要选择哪种？\n/
+	\q[◇测试投注,OnBallMode,0]\n/
+	\q[◇正试投注,OnBallMode,1]\n/
+	\n\n\n\q[◇返回上一层,OnOpenMenu,1]     \q[◇结束,OnEndDoubleColorBall]"
+	_txt
+}
+
+OnBallMode
+{
+	BallMode=reference0
+		ball=IARRAY
+		bball=IARRAY
+		_txt=""
+		_txt+="要自选还是机选？\n/
+		\q[◇自选,SelfSelect]\n/
+		\q[◇机选,ComSelect]\n/
+		\n\n\n\q[◇返回上一层,OnDoubleColorBall]     \q[◇结束,OnEndDoubleColorBall]"
+		
+		
+		_txt
+		
+		
+}
+
+
+Select.SelfSelect
+{
+	
+	Selectmode=0
+		OnDeluxeBall
+}
+
+Select.ComSelect
+{
+	
+	Selectmode=1
+		OnDeluxeBall
+}
+
+OnEndDoubleColorBall
+{
+	"\0\s[26]不玩了吗，要玩时再叫橘花哦。"
+		
+}
+
+OnDeluxeBall
+{
+	_txt="\C\_q\c\0\s[26]\![set,choicetimeout,0]\b[2]";
+	_txt+="\q[◇自选,SelfSelect]/
+		\_l[100,-]\q[◇机选,ComSelect]\n";
+		_redball=(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33);
+	_blueball=(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+	_comball=IARRAY;
+	_a = "";
+	_rs=0;
+	_bs=0;
+	_p=0;
+	_a=0;
+	A=5000000;
+	B=1500000;
+	b="";
+	if ball==NULL;
+	ball=IARRAY;
+	_rednum=0;
+	_bluenum=0;
+	_reward=0;
+	
+	_redball_=_redball;
+	for _i=0;_i<6;_i++
+	{   
+		_k=ARRAYSIZE(_redball_);
+		_k=RAND(_k);
+		_comball[_i]=_redball_[_k];
+		_redball_[_k]=IARRAY;
+	}
+	
+	_k=RAND(16);
+				_comball[6]=_blueball[_k];
+				
+				if Selectmode==0
+				{
+					_txt+="请选择复式号码\n";
+					_txt+="红球\n";
+					for _i = 0 ; _i < 33; _i ++ {
+						_a = _redball[_i];
+						_txt += "\f[cursorstyle,none]\_l[%(_i%9*30 + 21 )]\__q[OnDeluxeBall,AR,%(_a)]\_b[data\BallRed16.png,inline]\_l[%(_i%9*30 + 23 )]%(_a)\__q\f[cursorstyle,default]";
+						if (_i+1) % 9 == 0 {
+							_txt += "\n[130]";
+						}
+					}
+					_txt+="\n蓝球\n";
+					for _i = 0 ; _i < 16; _i ++ {
+						_a = _blueball[_i];
+						_txt += "\f[cursorstyle,none]\_l[%(_i%9*30 + 21 )]\__q[OnDeluxeBall,AB,%(_a)]\_b[data\BallBlue16.png,inline]\_l[%(_i%9*30 + 23 )]%(_a)\__q\f[cursorstyle,default]";
+						if (_i+1) % 9 == 0 {
+							_txt += "\n[130]";
+						}
+					}
+					
+				}
+				else
+				{
+					_txt+="请选择号码数量\n";
+					
+					_txt+="红球数量\n";
+					for _i = 5 ; _i < 20; _i ++ {
+						_a = _redball[_i];
+						_txt += "\f[cursorstyle,none]\_l[%(_i%9*30 + 21 )]\__q[OnDeluxeBall,CR,%(_a)]\_b[data\BallRed16.png,inline]\_l[%(_i%9*30 + 23 )]%(_a)\__q\f[cursorstyle,default]";
+						if (_i+1) % 9 == 0 {
+							_txt += "\n[130]";
+						}
+					}
+					_txt+="\n蓝球数量\n";
+					for _i = 0 ; _i < 16; _i ++ {
+						_a = _blueball[_i];
+						_txt += "\f[cursorstyle,none]\_l[%(_i%9*30 + 21 )]\__q[OnDeluxeBall,CB,%(_a)]\_b[data\BallBlue16.png,inline]\_l[%(_i%9*30 + 23 )]%(_a)\__q\f[cursorstyle,default]";
+						if (_i+1) % 9 == 0 {
+							_txt += "\n[130]";
+						}
+					}
+					
+					
+				}
+				
+				
+				
+				
+				if reference0=="AR"
+				{
+					_rs=ARRAYSIZE(ball);
+					if _rs<20
+						ball,=TOINT(reference1);
+					ball_=ball;
+					_rs=ARRAYSIZE(ball);
+					
+					
+					for _i=0;_i<_rs;_i++
+					{
+						
+						for _j=_i+1;_j<=_rs;_j++
+						{    
+							if TOINT(ball[_i])==TOINT(ball[_j])
+							{
+								ball[_j]=IARRAY;
+								_rs=ARRAYSIZE(ball);
+							}
+							
+						}
+					}
+				}
+				
+				
+				if reference0=="AB"
+				{
+					bball,=reference1;
+					_bs=ARRAYSIZE(bball)
+						for _i=0;_i<_bs;_i++
+						{      
+							for _j=_i+1;_j<=_bs;_j++
+							{
+								if TOINT(bball[_i])==TOINT(bball[_j])
+								{ 
+									bball[_j]=IARRAY;
+									_bs=ARRAYSIZE(bball);
+								}
+								
+							}
+						}
+				}
+				
+				_rs=ARRAYSIZE(ball);
+				_bs=ARRAYSIZE(bball);
+				
+				
+				
+				if reference0=="DR"
+				{
+					for _i=0;_i<_rs;_i++
+					{
+						
+						if TOINT(ball[_i])==TOINT(reference1);
+						{
+							ball[_i]=IARRAY;
+						}
+						
+						
+						
+					}
+				}
+				
+				if reference0=="DB"
+				{
+					
+					for _i=0;_i<_bs;_i++
+					{           
+						if TOINT(bball[_i])==TOINT(reference1)
+						{ 
+							bball[_i]=IARRAY;       
+						}
+					}
+					
+					
+				}
+				
+				
+				if reference0=="CR"
+				{
+					ball=IARRAY;
+					_redball_=_redball;
+					for _i=0;_i<reference1;_i++
+					{   
+						_k=ARRAYSIZE(_redball_);
+						_k=RAND(_k);
+						ball[_i]=_redball_[_k];
+						_redball_[_k]=IARRAY;
+					}
+					
+					
+				}
+				
+				
+				if reference0=="CB"
+				{
+					bball=IARRAY;
+					_blueball_=_blueball;
+					for _i=0;_i<reference1;_i++
+					{   
+						_k=ARRAYSIZE(_blueball_);
+						_k=RAND(_k);
+						bball[_i]=_blueball_[_k];
+						_blueball_[_k]=IARRAY;
+					}
+					
+					
+				}
+				
+				_rs=ARRAYSIZE(ball);
+				_bs=ARRAYSIZE(bball);
+				
+				
+				for _i=0;_i<_rs;_i++
+				{
+					
+					
+					
+					for _j=0;_j<6;_j++
+					{
+						
+						if TOINT(ball[_i])==TOINT(_comball[_j])
+							_rednum+=1;
+					}
+					
+					
+				}    
+				
+				for _i=0;_i<_bs;_i++
+				{
+					
+					if TOINT(bball[_i])==TOINT(_comball[6])
+					{
+						_bluenum=1;
+					}
+				}
+				
+				
+				
+				
+				
+				
+				if _rs<6||_bs<1
+					_a=0;
+				else
+					_a=Arrang(_rs,_rs-6);
+				_p=_a*_bs;
+				
+				_txt+="\n红球数：%(_rs) 个    蓝球数：%(_bs) 个  方案注数：%(TOINT(_p))  方案金额：%(TOINT(2*_p)) 元";
+				
+				_txt+="\n已选红球：[点击号码可取消选择]\n";
+				for _i=0;_i<_rs;_i++
+				{
+					if ball[_i]!=NULL
+					{
+						_txt += "\f[cursorstyle,none]\_l[%(_i%9*30 + 21 )]\__q[OnDeluxeBall,DR,%(ball[_i])]\_b[data\BallRed16.png,inline]\_l[%(_i%9*30 + 23 )]%(ball[_i])\__q\f[cursorstyle,default]";
+						if (_i+1) % 9 == 0 
+							_txt += "\n[130]";
+					}
+				}
+				_txt+="\n已选蓝球：[点击号码可取消选择]\n";
+				for _i=0;_i<_bs;_i++
+				{
+					if bball[_i]!=NULL
+					{
+						_txt += "\f[cursorstyle,none]\_l[%(_i%9*30 + 21 )]\__q[OnDeluxeBall,DB,%(bball[_i])]\_b[data\BallBlue16.png,inline]\_l[%(_i%9*30 + 23 )]%(bball[_i])\__q\f[cursorstyle,default]";
+						if (_i+1) % 9 == 0 
+							_txt += "\n[130]";
+					}
+				}
+				
+				
+				if _rs>=6 && _bs>=1
+					_txt+="\n下面是中奖情况。\n/
+					\_l[0,-]中6+1：1A+%(_bs-1)B+%(SumUp(_rs-6,18000,21000,3200,275,105,35,5)+SumUp(_rs-6,1200,1350,150)*(_bs-1)) \n     \_l[100,-](%(_bs*Arrang(_rs,6))种可能性，概率约为1/%(Arrang(33,6)*16/(_bs*Arrang(_rs,6)))\n/      
+					\_l[0,-]中6+0：%(_bs)B+%(SumUp(_rs-6,1200,1350,150)*_bs)\n  \_l[100,-](%((16-_bs)*Arrang(_rs,6))种可能性，概率约为1/%(Arrang(33,6)*16/((16-_bs)*Arrang(_rs,6)))\n/
+					\_l[0,-]中5+1：%(SumUp(_rs-5,2800,3750,1050,150,75,30,5)+SumUp(_rs-5,200,250,50)*_bs)  \_l[100,-](%(_bs*Arrang(_rs,5)*Arrang(33-_rs,1))种可能性，概率约为1/%(Arrang(33,6)*16/(_bs*Arrang(_rs,5)*Arrang(33-_rs,1)))\n/
+					\_l[0,-]中5+0：%(SumUp(_rs-5,200,250,50)*_bs)  \_l[100,-](%((16-_bs)*Arrang(_rs,5)*Arrang(33-_rs,1))种可能性，概率约为1/%(Arrang(33,6)*16/((16-_bs)*Arrang(_rs,5)*Arrang(33-_rs,1)))\n/
+					\_l[0,-]中4+1：%(SumUp(_rs-5,190,420,300,120,75,30,5)+SumUp(_rs-5,10,20,10)*_bs)  \_l[100,-](%(_bs*Arrang(_rs,4)*Arrang(33-_rs,2))种可能性，概率约为1/%(Arrang(33,6)*16/(_bs*Arrang(_rs,4)*Arrang(33-_rs,2)))\n/
+					\_l[0,-]中4+0：%(SumUp(_rs-5,10,20,10)*_bs)    \_l[100,-](%((16-_bs)*Arrang(_rs,4)*Arrang(33-_rs,2))种可能性，概率约为1/%(Arrang(33,6)*16/((16-_bs)*Arrang(_rs,4)*Arrang(33-_rs,2)))\n/
+					\_l[0,-]中3+1：%(TOINT(_a*5+SumUp(_rs-5,5,10,15,5)))  \_l[100,-](%(_bs*Arrang(_rs,3)*Arrang(33-_rs,3))种可能性，概率约为1/%(Arrang(33,6)*16/(_bs*Arrang(_rs,3)*Arrang(33-_rs,3)))\n/
+					\_l[0,-]中2/1/0+1：%(TOINT(_a*5))   \_l[100,-](%(_bs*Arrang(_rs,0)*Arrang(33-_rs,6)+_bs*Arrang(_rs,1)*Arrang(33-_rs,5)+_bs*Arrang(_rs,2)*Arrang(33-_rs,4))种可能性，概率约为1/%(Arrang(33,6)*16/(_bs*Arrang(_rs,0)*Arrang(33-_rs,6)+_bs*Arrang(_rs,1)*Arrang(33-_rs,5)+_bs*Arrang(_rs,2)*Arrang(33-_rs,4)))\n/
+					//\_l[0,-]总中奖：\n/
+					"
+					
+					
+					if reference0=="购买"
+					{
+						if BallMode==1
+						{
+							if money>=2*_p
+							{
+								money-=2*_p;
+								
+								
+								
+								
+							}
+							else
+							{
+								_txt+="金钱不足，不能购买\e";
+							}
+						}
+						_txt+="花费%(2*_p)金钱购买双色球\n";
+						_txt+="开奖红球号码是%(_comball[0])；%(_comball[1])；%(_comball[2])；%(_comball[3])；%(_comball[4])；%(_comball[5])；蓝球号码是：%(_comball[6])\n";
+						
+						
+						_txt+="让橘花看看，红球命中%(_rednum)个，蓝球命中%(_bluenum)个\n";
+						if _rednum==6 && _bluenum==1
+						{
+							_reward=A+(_bs-1)*B+SumUp(_rs-6,18000,21000,3200,275,105,35,5)+SumUp(_rs-6,1200,1350,150)*(_bs-1)
+								_txt+="\s[2]天啊，%(username)中了一等奖，奖金%(_reward)！！有这运气%(username)怎么不去买彩票呢\n";
+						}
+						elseif _rednum==6 
+						{
+							_reward=_bs*B+SumUp(_rs-6,1200,1350,150)*_bs
+								_txt+="\s[2]啊，%(username)中了二等奖，奖金%(_reward),人品爆发了吗？\n";
+						}
+						
+						elseif _rednum==5 && _bluenum==1
+						{
+							_reward=SumUp(_rs-5,2800,3750,1050,150,75,30,5)+SumUp(_rs-5,200,250,50)*_bs 
+								_txt+="\s[5]啊，%(username)中了三等奖，奖金%(_reward)，人品非常不错啊。\n";
+						}
+						elseif _rednum==5
+						{
+							_reward=SumUp(_rs-5,200,250,50)*_bs
+								_txt+="\s[5]恭喜%(username)中了四等奖，奖金%(_reward)，人品不错啊。\n";
+						}
+						elseif _rednum==4 && _bluenum==1
+						{
+							_reward=SumUp(_rs-5,190,420,300,120,75,30,5)+SumUp(_rs-5,10,20,10)*_bs
+								_txt+="\s[5]恭喜%(username)中了四等奖，奖金%(_reward)，人品不错啊。\n";
+						}
+						elseif _rednum==4
+						{
+							_reward=SumUp(_rs-5,10,20,10)*_bs
+								_txt+="\s[5]%(username)中了五等奖，奖金%(_reward)，人品还行啊。\n";
+						}
+						elseif _rednum==3 && _bluenum==1
+						{
+							_reward=_a*5+SumUp(_rs-5,5,10,15,5);
+							_txt+="\s[5]%(username)中了五等奖，奖金%(_reward)，人品还行啊。\n";
+						}
+						elseif  _bluenum==1
+						{
+							_reward=_a*5;
+							_txt+="\s[5]%(username)中了六等奖，奖金%(_reward)，再接再励吧。\n";
+						}
+						else
+							_txt+="\n\s[8]很遗憾，%(username)没有中奖，当作是为人民作贡献吧\n";
+						if BallMode==1 &&  money>=2*_p
+							money+=_reward;
+					}
+					
+					_txt+="\n\q[◇购买,OnDeluxeBall,购买,%(2*_p)]";
+					_txt+="\n\q[◇返回上一层,OnBallMode]     \q[◇结束,OnEndDoubleColorBall]";
+					_txt;
+					
+					
+}
+
+
+Arrang
+{
+	_a=1;
+	_b=1;
+	_c=0;
+	_j=_argv[0];
+	_t=_argv[1];
+	if _t*2>=_j
+		_t=_j-_t;
+	_k=_t;
+	for _i=_t;_i>0;_i--
+	{
+		_a=_a*_j;
+		_j--;
+		_b=_b*_k;
+		_k--;
+	}
+	_c=_a/_b;
+				_c;
+				
+				
+				
+				
+}
+
+SumUp
+{
+	_n=TOINT(_argv[0]);
+	_ss=TOINT(_argv[1]);
+	_s=TOINT(_argv[2]);
+	_v=TOINT(_argv[3]);
+	_a=TOINT(_argv[4]);
+	_aa=TOINT(_argv[5]);
+	_aaa=TOINT(_argv[6]);
+	_aaaa=TOINT(_argv[7]);
+	_aaaaa=TOINT(_argv[8]);
+	_v=NULL;
+	_s=NULL;
+	
+	
+	for _i=0;_i<_n-1;_i++
+	{
+		_ss=_ss+_s;                      
+		_s=_s+_v;              
+		_v=_v+_a;
+		_a=_a+_aa;
+		_aa=_aa+_aaa;
+		_aaa=_aaa+_aaaa;
+		_aaaa=_aaaa+_aaaaa;
+	}
+	if _n==0
+		_ss=0;
+	_ss;
+	
+}
+
+//数字汉诺塔游戏，by fancyang
+//-------------------------------------------
+
+OnHanoi
+{
+	if reference0!=""
+		hanoi_level=TOINT(reference0);
+	if _argc>0
+		hanoi_level=TOINT(_argv[0]);
+	if hanoi_level<3
+		hanoi_level=3;
+	hanoi_win=0;
+	hanoi=IARRAY;
+	hanoi_move=-1;
+	playhanoi=1;
+	running="playhanoi";
+	hanoi_top=(0,-1,-1);
+	hanoi_select=(-1,0);
+	hanoi_g=3;
+	hanoi_step=0;
+	hanoi_timebegin=0;
+	mess="";
+	for _i=0;_i<hanoi_level;_i++
+	{
+		
+		hanoi[_i*hanoi_g+0]=_i+1;
+		hanoi[_i*hanoi_g+1]=0;
+		hanoi[_i*hanoi_g+2]=hanoi_level-_i;
+	}
+	OnHanoiShow;
+}
+
+OnHanoiShow
+{
+	_txt="\C\![quicksession,true]\c\![set,choicetimeout,0]\b[2]";
+	_txt+="■数字汉诺塔■                    \q[◇说明,OnHanoihelp]\n";
+	
+	_hanoi_x=100;
+	_hanoi_y=220;
+	for _i=0;_i<hanoi_level;_i++
+	{
+		for _j=0;_j<3;_j++
+		{
+			if TOINT(hanoi[_i*hanoi_g+1])==TOINT(_j)
+			{
+				if TOINT(hanoi_select[0]+1)==TOINT(hanoi[_i*hanoi_g+0])
+					_txt+="\_l[%(_j*50+_hanoi_x),%(_hanoi_y-hanoi[_i*hanoi_g+2]*20)][%(hanoi[_i*hanoi_g+0])]";
+				else
+					_txt+="\_l[%(_j*50+_hanoi_x),%(_hanoi_y-hanoi[_i*hanoi_g+2]*20)]%(hanoi[_i*hanoi_g+0])";
+				
+				
+			}
+			
+			if hanoi_select[1]==TOINT(_j)
+				_txt+="\_l[%(_j*50+_hanoi_x-9),%(_hanoi_y)]\__q[OnHanoikey,button,%(_j)][■]\__q";
+			else
+				_txt+="\_l[%(_j*50+_hanoi_x-9),%(_hanoi_y)]\__q[OnHanoikey,button,%(_j)] ■ \__q";
+			
+		}
+		
+	}
+	
+	_time=0;
+	if hanoi_timebegin>0
+		_time=(GETTICKCOUNT-hanoi_timebegin)/1000+"."+(GETTICKCOUNT-hanoi_timebegin+0.0)/10%100;
+	_txt+="\n\_l[132]第%(hanoi_level-2)关\n";
+	_txt+="\_l[115]第%(hanoi_step)步,第%(_time)秒\n";
+	_txt+=mess;
+	_txt+="第%(hanoi_level-2)关最高记录：%(hanoi_best[2*(hanoi_level-3)])步,用时%(hanoi_best[2*(hanoi_level-3)+1])秒";
+	_txt+="\n\q[◇新游戏,OnHanoi]\n";
+	_txt+="\q[◇选关,OnHanoiNewGame]\n";
+	_txt+="\q[◇上一关,OnHanoi,%(hanoi_level-1)]    \q[◇下一关,OnHanoi,%(hanoi_level+1)]\n";
+	_txt+="\q[◇查看记录,OnHanoiRecord]\n";
+	_txt+="\q[◇返回,OnOpenMenu,0]     \q[◇结束,OnHanoiOver]";
+	
+	_txt;
+	
+}
+
+OnHanoikey
+{
+	_level=IARRAY;
+	
+	for _i=hanoi_level-1;_i>=0;_i--
+	{
+		for _j=0;_j<3;_j++
+		{
+			if TOINT(hanoi[_i*hanoi_g+1])==TOINT(_j)
+			{
+				hanoi_top[_j]=_i;
+				_level[_j]=TOINT(_level[_j])+1;
+				
+				
+			}
+		}
+	}
+	
+	for _j=0;_j<3;_j++
+	{
+		if TOINT(_level[_j])==0
+		{
+			hanoi_top[_j]=-1;
+		}
+	}
+	
+	
+	
+	
+	if reference0 =="left" 
+	{  
+		if (hanoi_top[hanoi_select[1]]<hanoi_top[hanoi_select[1]-1]||hanoi_top[hanoi_select[1]-1]==-1)&&hanoi_select[1]>0&&hanoi_select[0]!=-1
+		{
+			hanoi_select[1]--;
+			hanoi[hanoi_select[0]*hanoi_g+1]=hanoi_select[1];
+			hanoi[hanoi_select[0]*hanoi_g+2]=_level[hanoi_select[1]]+1;
+			hanoi_move=1; 
+			
+		}
+		if (hanoi_top[hanoi_select[1]]<hanoi_top[hanoi_select[1]-2]||hanoi_top[hanoi_select[1]-2]==-1)&&hanoi_select[1]-1>0&&hanoi_select[0]!=-1
+		{
+			hanoi_select[1]-=2;
+			hanoi[hanoi_select[0]*hanoi_g+1]=hanoi_select[1];
+			hanoi[hanoi_select[0]*hanoi_g+2]=_level[hanoi_select[1]]+1;
+			hanoi_move=1;
+			
+			
+		}
+		elseif hanoi_select[0]==-1&&hanoi_select[1]>0
+		{
+			hanoi_select[1]--;
+		}
+	}
+	elseif reference0 =="right" { 
+		
+		if (hanoi_top[hanoi_select[1]]<hanoi_top[hanoi_select[1]+1]||hanoi_top[hanoi_select[1]+1]==-1)&&hanoi_select[1]<2&&hanoi_select[0]!=-1
+		{
+			hanoi_select[1]++;
+			hanoi[hanoi_select[0]*hanoi_g+1]=hanoi_select[1];
+			hanoi[hanoi_select[0]*hanoi_g+2]=_level[hanoi_select[1]]+1;
+			hanoi_move=1;
+			
+		}
+		if (hanoi_top[hanoi_select[1]]<hanoi_top[hanoi_select[1]+2]||hanoi_top[hanoi_select[1]+2]==-1)&&hanoi_select[1]+1<2&&hanoi_select[0]!=-1
+		{
+			hanoi_select[1]+=2;
+			hanoi[hanoi_select[0]*hanoi_g+1]=hanoi_select[1];
+			hanoi[hanoi_select[0]*hanoi_g+2]=_level[hanoi_select[1]]+1;
+			hanoi_move=1;
+			
+		}
+		elseif hanoi_select[0]==-1&&hanoi_select[1]<2
+		{
+			hanoi_select[1]++;
+		}
+		
+	}
+	elseif reference0 == "up"    
+	{
+		if hanoi_top[hanoi_select[1]]!=hanoi_level
+			hanoi_select[0]=hanoi_top[hanoi_select[1]];
+	}
+	elseif reference0 == "down"    
+	{
+		hanoi_select[0]=-1;
+		if hanoi_move==1
+		{
+			hanoi_step++;
+			hanoi_move=-1;
+		}
+	}
+	elseif reference0=="button"
+	{
+		if (hanoi_top[hanoi_select[1]]<hanoi_top[reference1]||hanoi_top[reference1]==-1)&&hanoi_select[0]!=-1
+		{
+			hanoi_select[1]=reference1;
+			hanoi[hanoi_select[0]*hanoi_g+1]=hanoi_select[1];
+			hanoi[hanoi_select[0]*hanoi_g+2]=_level[hanoi_select[1]]+1;
+			hanoi_move=1;
+		}
+		
+		elseif hanoi_select[0]==-1  
+		{
+			if hanoi_top[reference1]!=hanoi_level
+			{
+				hanoi_select[1]=reference1;
+				hanoi_select[0]=hanoi_top[reference1];
+			}
+		}
+		elseif hanoi_select[0]!=-1 && hanoi_select[1]==reference1
+		{
+			hanoi_select[0]=-1;
+			if hanoi_move==1
+			{
+				hanoi_step++;
+				hanoi_move=-1;
+			}
+		}
+		
+	}
+	
+	
+	if _level[2]==hanoi_level&&hanoi_win==0&&hanoi_select[0]==-1
+	{
+		_time=(GETTICKCOUNT-hanoi_timebegin)/1000+"."+(GETTICKCOUNT-hanoi_timebegin+0.0)/10%100;
+		mess="\0\s[5]好棒，%(username)胜利完成了。步骤：%(hanoi_step)步，用时%(_time)秒。";
+		hanoi_win=1;
+		if TOINT(hanoi_step)<TOINT(hanoi_best[2*(hanoi_level-3)])||TOINT(hanoi_best[2*(hanoi_level-3)])==0
+		{
+			hanoi_best[2*(hanoi_level-3)]=TOINT(hanoi_step);
+			hanoi_best[2*(hanoi_level-3)+1]=_time;
+			mess+="破记录了呢。";
+		}
+		elseif TOINT(hanoi_step)==TOINT(hanoi_best[2*(hanoi_level-3)])&&TOREAL(_time)<TOREAL(hanoi_best[2*(hanoi_level-3)+1])
+		{
+			hanoi_best[2*(hanoi_level-3)+1]=_time;
+			mess+="破记录了呢。";
+		}
+	}
+	if hanoi_timebegin==0&&hanoi_move==1
+		hanoi_timebegin=GETTICKCOUNT;
+	
+	OnHanoiShow;
+	
+}
+
+OnHanoiNewGame
+{
+	"\0\s[40]请问你要选择的层数？\![open,inputbox,OnHanoiNewGameSuccess]\e";
+}
+
+OnHanoiNewGameSuccess
+{
+	OnHanoi(reference0);
+}
+
+OnHanoiRecord
+{
+	_txt="\b[2]\![quicksession,true]\![set,choicetimeout,0]";
+	_txt+="■数字汉诺塔 - 记录■\n[150]";
+	_txt+="\q[◇清空记录,OnHanoiRecordClear]\n";
+	_txt+="\q[◇返回,OnHanoiShow]\n";
+	_txt+="关数        \_l[60]塔层数      \_l[120]最少步骤    \_l[180]用时 \_l[230]是否最优解\n";
+	_num=ARRAYSIZE(hanoi_best);
+	_a="否,是";
+	for _i=0;_i<_num/2;_i++
+	{
+		_best=TOINT(POW(2,_i+3)-1);
+		_t=_best==TOINT(hanoi_best[2*_i]);
+		
+		_txt+="第%(_i+1)关   \_l[60]%(_i+3)层   \_l[120]%(hanoi_best[2*_i])步  \_l[180]%(hanoi_best[2*_i+1])秒\_l[230]%(_a[_t])（%(_best)步）\n";
+	}
+	
+	_txt;
+}
+
+OnHanoihelp
+{
+	_txt="\b[2]\![quicksession,true]";
+	_txt+="■简易数字汉诺塔 - 使用说明■\n";
+	_txt+="汉诺塔（又称河内塔）问题是源于印度一个古老传说的益智玩具。大梵天创造世界的时候做了三根金刚石柱子，在一根柱子上从下往上按照大小顺序摞着64片黄金圆盘。大梵天命令婆罗门把圆盘从下面开始按大小顺序重新摆放在另一根柱子上。并且规定，在小圆盘上不能放大圆盘，在三根柱子之间一次只能移动一个圆盘。\n";
+	_txt+="本汉诺塔盘面用数字表示，底盘越大，数字越大，顶盘越小，数字越小，数字小的盘只能放在数字大的上面，所有数字全部从第一根移到第三根则游戏胜利，一个n层塔最少移动步骤可用公式f(n)=2^n-1算出。\n";
+	_txt+="操作：\n";
+	_txt+="1.鼠标操作：点击底部的方块选择顶层数字表示提起圆盘，数字表示为[]，再点击一次可放下圆盘，数示[]消失，此时点击其他方块可在方块上的顶层数字间切换。\n";
+	_txt+="2.键盘操作：待底部方块出现[]时按up键提起数字，数字出现[]，此时按left或right键可选择要移动到的方向上面，再按down键放下数字，数字[]消失，再按left或right键选择其他底部方块\n";
+	_txt+="\x";
+	_txt+=OnHanoiShow;
+	_txt;
+}
+
+
+
+OnHanoiRecordClear
+{
+	if reference0=="yes"
+	{
+		hanoi_best=null;
+		"\0\s[5]清空完毕\x";
+		--
+			OnHanoiRecord;
+	}
+	elseif reference0=="no"
+	{
+		"取消了\x";
+		--
+			OnHanoiRecord;
+	}
+	else
+		"\0\s[26]确定要清空记录吗？\n\q[是的,OnHanoiRecordClear,yes]\n\q[不了,OnHanoiRecordClear,no]";
+	
+	
+}
+
+OnHanoiOver
+{
+	"\0\s[40]好的。";
+	ClearHanoiVar;
+}
+
+ClearHanoiVar
+{
+	
+	ERASEVAR("hanoi_level");
+	ERASEVAR("hanoi");
+	ERASEVAR("playhanoi");
+	ERASEVAR("hanoi_top");
+	ERASEVAR("hanoi_select");
+	ERASEVAR("hanoi_g");
+	ERASEVAR("hanoi_step");
+	ERASEVAR("hanoi_timebegin");
+	ERASEVAR("hanoi_move");
+	ERASEVAR("mess");
+	ERASEVAR("hanoi_win");
+}
+
+
+//橘花大乱斗，by fancyang
+//-------------------------------------------
+OnKikkaBattle
+{
+	"%(username)要和橘花进行战斗吗，接下来应该进行怎样的战斗？\n/
+		\q[猜拳大作战,OnKikkaHandGameBegin]\n/
+		\q[一对一单挑,OnKikkaOneByOneBegin]\n/
+		\q[三人大乱斗,OnKikkaBattleBegin]\n/
+		\q[人格大乱斗,OnKikkaUvcBegin]\n/
+		\q[不用了,OnOpenMenu,2]\n/
+		"
+		
+}
+
+OnKikkaHandGameBegin
+{
+	
+	HP0=1000;
+	HP1=1000;
+	atk=0;
+	kikkabattlemode=""
+		OnKikkaHandGame;
+}
+
+OnKikkaHandGame
+{
+	
+	
+	_damage=TOINT(reference0);
+	
+	
+	if _damage>0
+	{ 
+		
+		HP1-=_damage;
+		"\0%(DamageMove(0))，%(username)损血100\x";
+		
+	}
+	
+	--
+		
+		
+		
+		
+		
+		if HP0>0 && HP1>0
+		{
+			
+			"%(username)出\n/
+				\q[◇剪刀,OnKikkaShowHandVS,1]\n/
+				\q[◇石头,OnKikkaShowHandVS,2]\n/
+				\q[◇布,OnKikkaShowHandVS,3]\n/
+				\q[◇不用了,OnKikkaBattle]";
+				
+		}
+		
+		elseif HP0<=0 && HP1>0
+		{
+			KikkaLose;
+			
+			--
+				"\q[◇再战,OnKikkaHandGame]\n/
+				\q[◇返回,OnKikkaBattle]";
+		}
+		
+		elseif HP0>0 && HP1<=0
+		{
+			KikkaWin;
+			--
+				"\q[◇再战,OnKikkaHandGame]\n/
+				\q[◇返回,OnKikkaBattle]";
+		}
+		
+		--
+			KikkaHandGameInfo;
+		
+		
+}
+KikkaHandGameInfo
+{
+	
+	"\_q\1\![set,choicetimeout,0]橘花HP：%(HP0)\n/
+		%(username)HP：%(HP1)\_q";
+		
+}
+
+KikkaWin
+{
+	"\0\s[21]%(username)果然不是橘花的对手啊\x";
+	"\0\s[5]橘花赢了\x";
+	"\0\s[8]这就是%(username)的实力吗\x";
+}
+
+KikkaLose
+{
+	"\s[9]橘花输了\x";
+				"\s[33]讨厌，%(username)欺负人。\x";
+				"\s[34]橘花输了。。。\x";
+				"\s[22]橘花一定会赢的\x";
+				"\s[22]橘花下次不会输的\x";
+				"\s[26]橘花还没拿出真正实力呢\x";
+}
+
+
+OnKikkaShowHandVS
+{
+	
+	if HP0>0 && HP1>0
+	{
+		
+		_i=RAND(3)+1;
+		--
+			
+			
+			"\0\s[0]橘花出.\w8";
+		--
+			switch _i
+        {
+			"";
+			"剪刀\n\w9\x";
+			"石头\n\w9\x";
+			"布\n\w9\x";
+			
+        }
+		
+		--
+			if (3 + _i - reference0)%3==0
+                
+			{
+				atk=0;
+				"\0\s[8]平手,HP不变\x";
+				--         
+					"\![raise,OnKikkaHandGame]";
+				
+			}  
+			elseif (3 + _i - reference0)%3==1
+			{
+				atk=100;
+				"\0\s[5]橘花赢了,轮到橘花发动攻击\x";
+				--            
+					"\![raise,OnKikkaHandGame,%(atk)]";
+				
+			}
+			elseif (3 + _i - reference0)%3==2
+			{
+				atk=0;
+				HP0 -= 100;
+				"\0\s[9]橘花输了\x";
+				--               
+					"%(DamageMove(1))，橘花损血100\x";
+				--
+					"\![raise,OnKikkaHandGame]";
+				
+			}
+			
+            
+	}
+	
+	else
+	{
+		
+		"\![raise,OnKikkaHandGame]";
+		
+		
+	}
+	
+	--
+		KikkaHandGameInfo;
+	
+}
+
+
+
+OnKikkaOneByOneBegin
+{
+	
+	kikkabattlemode="onebyone";
+        battleflag=0
+	OnKikkaOneByOneReset;
+	OnKikkaOneByOne;
+	
+}
+
+OnKikkaOneByOneReset
+{
+	HP=(1000,1000);
+	SP =(500,500);
+	ANG = (1,1);
+	IGN = (1,1);
+	STRADD=(0,0);
+	DEFADD=(0,0);
+	DEFMINUS=(0,0);
+	STR=(20+STRADD[0],20+STR1ADD[1]);
+	DEFBASE=(1,1);
+	DEF=(15+DEFADD[0]-DEFMINUS[0],15+DEFADD[1]-DEF1MINUS[1]);
+	防御回合=(-1,-1);
+	神威祈福回合=(-1,-1);
+	呐喊回合=(-1,-1);
+	赎罪回合=(-1,-1);
+	天使之光回合=(-1,-1);
+	天使之怒回合=(-1,-1);
+	沉默回合=(-1,-1);
+	SILENT=(0,0);
+}
+
+OnKikkaOneByOneVar
+{
+	STR[0]=TOINT(20+STRADD[0]);
+	STR[1]=TOINT(20+STRADD[1]);
+	DEF[0]=TOINT(DEFBASE[0]*(15+DEFADD[0]-DEFMINUS[0]));
+	DEF[1]=TOINT(DEFBASE[1]*(15+DEFADD[1]-DEFMINUS[1]));
+}
+
+OnKikkaOneByOne
+{
+	OnKikkaTurnJudge(1);
+	
+	--
+		OnKikkaOneByOneVar;
+	
+	if HP[0]>0 && HP[1]>0
+	{
+		OnBattleOption;
+		
+	}
+	
+	
+	elseif HP[0]>0 && HP[1]<=0
+	{
+		KikkaWin;
+		
+		--
+			"\q[◇再战,OnKikkaOneByOneBegin]\n/
+			\q[◇返回,OnKikkaBattle]";
+			
+	}
+	
+	elseif HP[0]<=0 && HP[1]>0
+	{
+		KikkaLose;
+		--
+			"\q[◇再战,OnKikkaOneByOneBegin]\n/
+			\q[◇返回,OnKikkaBattle]";
+			
+	}
+	
+	
+	
+	--
+		KikkaOneByOneInfo;
+	
+}
+
+OnBattleOption
+{
+	
+	"\0\![set,choicetimeout,0]%(username)请选择攻击方式\n\n[half]/
+		\q[物理攻击,OnKikka物理攻击]\n";
+		--
+		_SILENT=SILENT[1];
+	if kikkabattlemode=="挑战"
+		_SILENT=SILENT[2];
+	elseif kikkabattlemode=="inneronebyone"||kikkabattlemode=="inner挑战"
+		_SILENT=SILENT[0];
+	if _SILENT==1
+		"\f[color,192,192,192]使用战技\f[color,default]\n" ;
+	else
+		"\q[使用战技,OnKikka使用战技]\n";
+	--
+		"\q[治疗,OnKikka治疗选择]\n/
+		\q[防御,OnKikka防御]\n/
+		\q[不用了,OnKikkaBattle]\n/
+		"
+}
+
+
+OnKikka物理攻击
+{
+	
+    if kikkabattlemode=="onebyone"
+    {
+		Kikka物理攻击(1);
+		--
+			"\![raise,OnKikka反击]"
+    }
+	
+    elseif kikkabattlemode=="挑战"
+    {
+		_p=RAND(2);
+		
+		foreach LOSE;_i
+		{
+			while _p==_i
+			{
+				_p=RAND(2);
+			}
+		}
+		Kikka物理攻击(2,_p);
+		--
+			"\![raise,OnKikka挑战反击,%(_p)]";
+    }
+	
+	elseif kikkabattlemode=="inneronebyone"
+	{
+		Kikka物理攻击(0);
+		--
+			"\![raise,OnInner反击]";
+		
+	}
+	elseif kikkabattlemode=="inner挑战"
+	{
+		_p=RAND(ghostexcount)+1;
+		
+		foreach LOSE;_i
+		{
+			while _p==_i
+			{
+				_p=RAND(ghostexcount)+1;
+			}
+		}
+		Kikka物理攻击(0,_p);
+		--
+			"\![raise,OnInner挑战反击,%(_p)]";
+		
+	}
+	
+}
+
+
+Kikka物理攻击
+{
+	_id=0;
+	if _argc>0
+		_id=TOINT(_argv[0]);
+	_p=1-_id;
+	_character="橘花,%(username)";
+	if kikkabattlemode=="挑战"
+	{
+		_character="橘花,斗和,%(username)";
+		_p=TOINT(_argv[1]);
+	}
+	elseif kikkabattlemode=="inneronebyone"
+	{
+		_character="橘花,%(指定人格)";
+	}
+	elseif kikkabattlemode=="inner观战"
+	{
+		_character=GetBattleGhostName;
+		_p=TOINT(_argv[1]);
+	}
+	elseif kikkabattlemode=="inner挑战"
+	{
+		_character=GetBattleGhostName;
+		_p=TOINT(_argv[1]);
+	}
+	
+	_i = RAND(100);
+	if _i<60
+	{
+		
+		_物理伤害=TOINT(ANG[_id]*(4*STR[_id]-2*DEF[_p]*IGN[_id]));
+		HP[_p]-=_物理伤害;
+			"%(DamageMove(_id,_p)),%(_character[_p])损血%(_物理伤害)\x";
+	}
+	
+	else
+	{
+		_物理伤害=TOINT(ANG[_id]*1.5*(4*STR[_id]-2*DEF[_p]*IGN[_id]));
+		HP[_p]-=_物理伤害;
+			"%(DamageMove2(_id,_p)),%(_character[_p])受伤了，损血%(_物理伤害)\x";
+	}
+	
+}
+
+OnKikka使用战技
+{
+	
+	"\b[2]\![set,choicetimeout,0]\![quicksession,true]\__q[OnKikkausespatk,0,20]神威祈福：自身物攻提升10，有效三回合，消耗SP20\__q\n/
+		\__q[OnKikkausespatk,1,10]双连击：攻击两次，消耗SP10\__q\n/
+		\__q[OnKikkausespatk,2,10]呐喊：自身防御提升10，有效三回合，消耗SP10\__q\n/
+		\__q[OnKikkausespatk,3,10]赎罪：下一次攻击时，无视对方防御力，消耗SP10\__q\n/
+		\__q[OnKikkausespatk,4,15]天使之光：对方防御减10，有效三回合，消耗SP15\__q\n/
+		\__q[OnKikkausespatk,5,10]天使之怒：攻击时给予对方的伤害翻倍，效果只在使用之后第一次攻击后消失，消耗SP15\__q\n/
+		\__q[OnKikkausespatk,6,10]沉默：对方无法使用技能攻击，有效三回合，消耗SP10\__q\n/
+		\n\n\n\q[返回,OnBattleOption]\n/
+		"
+		
+}
+
+
+
+
+
+OnKikkausespatk
+{
+	
+	战技ID=reference0;
+	消耗SP=TOINT(reference1);
+    if kikkabattlemode=="onebyone"
+    {
+		Kikka发动战技(1);
+		--
+			OnKikkaOneByOneVar;
+		--
+			KikkaOneByOneInfo
+			--
+			"\![raise,OnKikka反击]";
+    }
+	
+    elseif kikkabattlemode=="挑战"
+    {
+		_p=RAND(2);
+		foreach LOSE;_i
+		{
+			while _p==_i
+			{
+				_p=RAND(2);
+			}
+		}
+		Kikka发动战技(2,_p);
+		--
+			OnKikkaBattleVar;
+		--
+			KikkaBattleInfo;
+		--
+			"\![raise,OnKikka挑战反击,%(_p)]";
+    }
+	
+	elseif kikkabattlemode=="inneronebyone"
+	{
+		Kikka发动战技(0);
+		--
+			OnKikkaOneByOneVar;
+		--
+			InnerGameinfo;
+		--
+			"\![raise,OnInner反击]";
+	}
+	elseif kikkabattlemode=="inner挑战"
+	{
+		
+	}
+	
+}
+
+OnKikkausespatkvs
+{
+	战技ID=reference0;
+	消耗SP=TOINT(reference1);
+	
+    if kikkabattlemode=="onebyone"
+    {
+              case 战技ID
+              {
+                 when 0,3,4
+                  {
+                    battleflag=1;
+                   }
+               }
+
+
+
+		Kikka发动战技(0);
+		--
+			OnKikkaOneByOneVar;
+		--
+			
+			"\![raise,OnKikkaOneByOne]";
+    }
+	
+	
+	elseif kikkabattlemode=="挑战"
+	{
+		_p=TOINT(reference2);
+		Kikka发动战技(TURN,_p);
+		--
+			OnKikkaBattleVar;
+		--
+			KikkaBattleInfo;
+		--
+			if _p==2
+				"\![raise,OnKikka挑战]";
+			else
+			{
+				"\![raise,OnKikka挑战反击,%(_p)]";
+			}
+			
+	}
+	
+	elseif kikkabattlemode=="inneronebyone"
+    {
+		Kikka发动战技(1);
+		--
+			OnKikkaOneByOneVar;
+		--
+			
+			"\![raise,OnInnerOneByOne]";
+    }
+	
+	elseif kikkabattlemode=="inner观战"
+	{
+		_p=TOINT(reference2);
+		Kikka发动战技(TURN,_p);
+		--
+			OnInnerBattleVar;
+		--
+			InnerBattleInfo;
+		--
+			
+			"\![raise,OnInner观战,%(_p)]";
+		
+		
+	}
+	
+	
+	
+	elseif kikkabattlemode=="inner挑战"
+	{
+		_p=TOINT(reference2);
+		Kikka发动战技(TURN,_p);
+		--
+			OnInnerBattleVar;
+		--
+			InnerBattleInfo;
+		--
+			if _p==0
+				"\![raise,OnInner挑战]";
+			else
+			{
+				"\![raise,OnInner挑战反击,%(_p)]";
+			}
+			
+	}
+	
+	
+}
+
+
+
+Kikka发动战技
+{
+	_id=0;
+	if _argc>0
+		_id=TOINT(_argv[0]);
+	_p=1-_id;
+	_character="橘花,%(username)";
+	if kikkabattlemode=="挑战"
+	{
+		_character="橘花,斗和,%(username)";
+		_p=TOINT(_argv[1]);
+	}
+	elseif kikkabattlemode=="inneronebyone"
+	{
+		_character="橘花,%(指定人格)";
+	}
+	elseif kikkabattlemode=="inner观战"|| kikkabattlemode=="inner挑战"
+	{
+		_character=GetBattleGhostName;
+		_p=TOINT(_argv[1]);
+	}
+	if SP[_id]>=消耗SP && SILENT[_id]!=1
+	{
+		if 战技ID==0
+		{
+			STRADD[_id]=10;
+			神威祈福回合[_id]=3;
+			"%(_character[_id])使用了神威祈福，STR提升10。\x";
+			
+		}
+		elseif 战技ID==1
+		{
+            _战技伤害=TOINT(ANG[_id]*2*(4*STR[_id]-2*DEF[_p]*IGN[_id]));
+            _w=""
+            if RAND(100)>60
+               {
+           _战技伤害=TOINT(ANG[_id]*2*1.5*(4*STR[_id]-2*DEF[_p]*IGN[_id]));
+           _w="%(_character[_p])受伤了，"
+               }
+            HP[_p]-=_战技伤害;
+				"%(_character[_id])对%(_character[_p])使用了双连击，%(_w),%(_character[_p])损血%(_战技伤害)\x";
+		}
+		elseif 战技ID==2   
+		{
+			DEFADD[_id]=10;
+			呐喊回合[_id]=3;
+			"%(_character[_id])使用了呐喊，DEF提升10。\x";
+		}
+		elseif 战技ID==3
+		{
+			IGN[_id]=0;
+			赎罪回合[_id]=1;
+			"%(_character[_id])使用了赎罪，%(_character[_p])DEF被无视了。\x";
+		}
+		elseif 战技ID==4
+		{
+			DEFMINUS[_p]=10;
+			天使之光回合[_p]=3;
+			"%(_character[_id])使用了天使之光，%(_character[_p])DEF降低10。\x";
+		}
+		elseif 战技ID==5
+		{
+			ANG[_id]=2;
+			天使之怒回合[_id]=1;
+			"%(_character[_id])使用了天使之怒\x";
+		}
+		elseif 战技ID==6
+		{
+			沉默回合[_p]=3;
+			SILENT[_p]=1;
+			"%(_character[_id])使用了沉默，%(_character[_p])被封技了\x";
+		}
+		
+		--
+			SP[_id]-=消耗SP;
+			
+    }
+	
+	else
+    {
+		"SP不足\x";
+		--
+			OnBattleOption;
+		
+    }
+	
+	
+	
+	
+}
+
+
+OnKikka治疗选择
+{
+	
+	"消耗50SP以回复300的HP，是否要治疗？\n/
+		\q[是,OnKikka治疗自己]\n/
+		\q[否,OnBattleOption]\n/
+		"
+		
+		
+		
+}
+
+OnKikka治疗自己
+{
+	
+	
+	
+	
+	if kikkabattlemode=="onebyone"
+    {
+		OnKikka治疗(1);
+		--
+			"\![raise,OnKikka反击]";
+    }
+	
+    elseif kikkabattlemode=="挑战"
+    {
+		OnKikka治疗(2);
+		--
+			"\![raise,OnKikka挑战反击]";
+    }
+    elseif kikkabattlemode=="inneronebyone"
+	{
+		OnKikka治疗(0);
+		--
+			"\![raise,OnInner反击]"
+	}
+    elseif kikkabattlemode=="inner挑战"
+	{
+		OnKikka治疗(0);
+		--
+			"\![raise,OnInner挑战反击]";
+	}
+	
+	
+	
+}
+
+OnKikka治疗
+{
+	_id=0;
+	if _argc>0
+		_id=TOINT(_argv[0]);
+	_character="橘花,%(username)";
+	if kikkabattlemode=="挑战"
+		_character="橘花,斗和,%(username)";
+	elseif kikkabattlemode=="inneronebyone"
+	{
+		_character="橘花,%(指定人格)";
+	}
+	elseif kikkabattlemode=="inner观战"||kikkabattlemode=="inner挑战"
+	{
+		_character=GetBattleGhostName;
+	}
+	if SP[_id]>=50
+	{
+		if HP[_id]<=700
+        {
+			HP[_id]+=300;
+			SP[_id]-=50;
+			"%(_character[_id])使用了治疗术，HP回复300\x";
+        }
+		elseif HP[_id]>700
+        {
+			"%(_character[_id])使用了治疗术，HP回复%(1000-HP[_id])\x";
+			HP[_id]=1000;
+			SP[_id]-=50;
+			
+        }
+		
+		
+	}
+	
+	
+	else
+	{
+		"SP不足，不能治疗\x";
+		
+	}
+}
+
+
+OnKikka防御
+{
+	
+	"准备好防御以应对下一次攻击\x";
+	
+	
+	--
+		if kikkabattlemode=="onebyone"
+		{
+			防御回合[1]=0;
+			DEFBASE[1]=2;
+			"\![raise,OnKikka反击]";
+		}
+		
+		elseif kikkabattlemode=="挑战"
+		{
+			防御回合[2]=0;
+			DEFBASE[2]=2;
+			"\![raise,OnKikka挑战反击]";
+		}
+		elseif kikkabattlemode=="inneronebyone"
+		{
+			防御回合[0]=0;
+			DEFBASE[0]=2;
+			"\![raise,OnInner反击]";
+		}
+		elseif kikkabattlemode=="inner挑战"
+		{
+			防御回合[0]=0;
+			DEFBASE[0]=2;
+			"\![raise,OnInner挑战反击]";
+		}
+		
+		
+}
+
+OnKikka反击
+{
+	OnKikkaTurnJudge(0);
+	--
+		OnKikkaOneByOneVar;
+	--
+		if HP[0]>0 && HP[1]>0
+		{
+			_t=RAND(10);
+                        if HP[0]<=240 && SP[0]>=50
+                        {
+                          	OnKikka治疗(0);
+                         }
+	         	elseif _t>=4
+			{
+				OnKikkaAI 
+			}
+
+			elseif _t>=0 &&_t<=1
+			{
+				if HP[0]<=500 && SP[0]>=50
+				{
+				
+					 if SILENT[0]!=1
+					{
+						if ANG[0]!=2
+						{
+                                                if battleflag==1
+                                                     "\![raise,OnKikkausespatkvs,1,10]";
+                                                    if 沉默回合[1]==-1&&RAND(10)==1&&神威祈福回合[0]==-1
+                                                       "\![raise,OnKikkausespatkvs,6,10]";
+                                                     if 神威祈福回合[0]!=-1
+                                                       "\![raise,OnKikkausespatkvs,5,10]";
+                                                         else
+       	                                                {
+                                                          Kikka物理攻击(0);
+                                                        }
+						}
+						    else 
+						     {     
+							"\![raise,OnKikkausespatkvs,1,10]";
+					         	}
+						
+					    }
+	                                   else
+			            	{
+					Kikka物理攻击(0);
+			           	}
+				
+
+				}
+				else 
+				{
+					Kikka物理攻击(0);
+				}
+				
+				
+			}
+                      
+
+			else
+			{
+				if SP[0]>=30 && SILENT[0]!=1
+				{	
+
+                                       if 神威祈福回合[0]==-1&&赎罪回合[0]==-1&&天使之光回合[1]==-1
+                                           battleflag=0;
+		                       if battleflag==1
+                                       {
+                                        "\![raise,OnKikkausespatkvs,1,10]";
+                                       }
+
+
+					if 神威祈福回合[0]==-1&&battleflag==0
+					{    
+                                 	if ANG[0]!=2
+						{
+                                               "\![raise,OnKikkausespatkvs,0,20]";
+                                              }
+                                          else
+                                            "\![raise,OnKikkausespatkvs,1,10]";
+					}
+
+
+                                      {
+					if 赎罪回合[0]==-1&&battleflag==0&&RAND(5)==0
+					{                                 
+                                        	if ANG[0]!=2
+                                               {
+                                             "\![raise,OnKikkausespatkvs,3,10]"
+                                	if 呐喊回合[0]==-1
+					"\![raise,OnKikkausespatkvs,2,10]";
+                                               }
+                                          else
+                                            "\![raise,OnKikkausespatkvs,1,10]";
+					} 
+
+					if 赎罪回合[0]==-1&&神威祈福回合[0]!=-1&&RAND(10)==0
+					{                                 
+                                        	if ANG[0]!=2
+                                               {
+                                             "\![raise,OnKikkausespatkvs,3,10]"
+                                	if 呐喊回合[0]==-1
+					"\![raise,OnKikkausespatkvs,2,10]";
+                                               }
+                                          else
+                                            "\![raise,OnKikkausespatkvs,1,10]";
+					} 
+                                     if 天使之光回合[1]==-1&&battleflag==0&&RAND(4)==0
+                                       {
+                                    	if ANG[0]!=2
+                                         {
+                                         "\![raise,OnKikkausespatkvs,4,15]";
+                                	if 呐喊回合[0]==-1
+					"\![raise,OnKikkausespatkvs,2,10]";
+                                         }
+                                           else
+                                             "\![raise,OnKikkausespatkvs,1,10]";
+                                        }
+
+                                   }
+                                       
+
+
+                           
+
+                          
+			          }
+                             	
+				else
+				{
+					Kikka物理攻击(0);
+				}
+				
+			}
+
+			--
+                "\![raise,OnKikkaOneByOne]";
+        }
+		
+		elseif HP[0]>0 && HP[1]<=0
+		{
+			KikkaWin;
+			
+			--
+				"\q[◇再战,OnKikkaOneByOneBegin]\n/
+				\q[◇返回,OnKikkaBattle]";
+				
+		}
+		
+		elseif HP[0]<=0 && HP[1]>0
+		{
+			KikkaLose
+				--
+				"\q[◇再战,OnKikkaOneByOneBegin]\n/
+				\q[◇返回,OnKikkaBattle]";
+				
+		}
+		
+		--
+			KikkaOneByOneInfo
+			
+}
+
+
+
+
+
+OnKikkaAI
+{
+	_id=OnKikkaAIId(8);
+
+	if _id==8&&HP[0]<=500&&ANG[0]!=2   //治疗
+	{
+		OnKikka治疗(0);
+	}
+	
+	elseif _id==7&&沉默回合[0]==-1    //沉默
+	{
+		"\![raise,OnKikkausespatkvs,6,10]";
+	}
+	
+	elseif _id==5&&天使之光回合[0]==-1     //天使之光
+	{
+		"\![raise,OnKikkausespatkvs,4,15]";
+	}
+	
+	
+	elseif _id==4&&赎罪回合[0]==-1    //赎罪
+	{
+		"\![raise,OnKikkausespatkvs,3,10]";
+	}
+	
+	if _id==3&&呐喊回合[0]==-1   //呐喊
+	{
+		"\![raise,OnKikkausespatkvs,2,10]";
+	}
+	
+	
+	elseif _id==1&&神威祈福回合[0]==-1   //神威祈福
+	{
+		"\![raise,OnKikkausespatkvs,0,20]";
+	}
+	
+	elseif _id==6&&天使之怒回合[0]==-1    //天使之怒
+	{
+		"\![raise,OnKikkausespatkvs,5,10]";
+	}
+	
+	
+	elseif _id==2  //双连击
+	{
+		"\![raise,OnKikkausespatkvs,1,10]";
+	}
+	
+	
+	else
+	{
+		Kikka物理攻击(0);
+	}
+	
+}
+
+OnKikkaAIId
+{
+	_id=-1;
+	if _argc>0
+		_id=_argv[0];
+	_SP=(1,20,10,10,10,15,10,10,50);
+	
+	_HP0=(TOINT(ANG[0]*1.2*(4*STR[0]-2*DEF[1]*IGN[1])),TOINT(ANG[0]*1.2*0.75*(4*(STR[0]+10)-2*DEF[1]*IGN[1])),TOINT(ANG[0]*2*(4*STR[0]-2*DEF[1]*IGN[1])),TOINT(ANG[1]*1.2*0.75*(4*STR[1]-2*(DEF[0]+10)*IGN[0])),TOINT(ANG[0]*1.2*0.5*(4*STR[0]-2*DEF[1]*IGN[1]*0)),TOINT(ANG[0]*1.2*0.75*(4*(STR[0])-2*(DEF[1]-10)*IGN[1])),TOINT(2*1.2*0.5*(4*STR[0]-2*DEF[1]*IGN[1])),60,300);
+	_HP1=(TOINT(ANG[1]*1.2*(4*STR[1]-2*DEF[0]*IGN[0])),TOINT(ANG[1]*1.2*0.75*(4*(STR[1]+10)-2*DEF[0]*IGN[0])),TOINT(ANG[1]*2*(4*STR[1]-2*DEF[0]*IGN[0])),TOINT(ANG[1]*1.2*0.75*(4*STR[1]-2*(DEF[0]+10)*IGN[0])),TOINT(ANG[1]*1.2*0.5*(4*STR[1]-2*DEF[0]*IGN[0]*0)),TOINT(ANG[1]*1.2*0.75*(4*(STR[1])-2*(DEF[0]-10)*IGN[0])),TOINT(2*1.2*0.5*(4*STR[1]-2*DEF[0]*IGN[0])),60,300);
+	_tempid=-1;
+	_HPMAX=-1000;
+	_HPLEFT=0;
+	_HPLEFT2=0;
+	for _i=0;_i<9;_i++
+	{
+		_HPMIN=1000;
+		_HPLEFT=0;
+		_HPLEFT2=-1;
+		for _j=0;_j<9;_j++
+		{
+			_n=1.0;
+			_n2=1.0;
+			if SP[1]-_SP[_j]*_n2>=0
+				_HPLEFT2=_HP1[_j]*_n2-HP[0]-6*SP[0];
+			if SP[0]-_SP[_j]*_n>=0
+				_HPLEFT=_HP0[_j]*_n-HP[1]-6*SP[1];
+			while SP[1]-_SP[_j]*_n2>=0&&SP[0]-_SP[_j]*_n>=0&&_HPLEFT2<_HPLEFT
+			{
+				_HPLEFT2=_HP1[_j]*_n2-HP[0]-6*SP[0];
+				_HPLEFT=_HP0[_j]*_n-HP[1]-6*SP[1];
+				_n++;
+                _n2++;
+			}
+			if _HPLEFT2 <_HPMIN
+				_HPMIN=_HPLEFT2;
+		}
+		_n=1.0;
+		_n2=1.0;
+		if SP[0]-_SP[_i]*_n>=0
+			_HPLEFT=_HP0[_i]*_n-HP[1]-6*SP[1];
+		
+		while SP[0]-_SP[_i]*_n>=0&&_HPLEFT<_HPMIN
+		{
+			_HPLEFT=_HP0[_i]*_n-HP[1]-6*SP[1];
+			_n++;
+		}
+		if _HPMAX<_HPLEFT-_HPLEFT2&&_id!=_i
+		{
+			_HPMAX=_HPLEFT-_HPLEFT2;
+			_tempid=_i;
+		}
+		
+	}
+	_tempid;
+
+}
+
+
+
+
+
+OnKikkaBattleBegin
+{
+	OnKikkabattleReset;
+	kikkabattlemode="挑战";
+	OnKikka挑战;
+}
+
+
+OnKikkabattleReset
+{
+	HP=(1000,1000,1000);
+	SP =(500,500,500);
+	ANG = (1,1,1);
+	IGN = (1,1,1);
+	STRADD=(0,0,0);
+	DEFADD=(0,0,0);
+	DEFMINUS=(0,0,0);
+	STR=(20+STRADD[0],20+STR1ADD[1],20+STR1ADD[2]);
+	DEFBASE=(1,1,1);
+	DEF=(15+DEFADD[0]-DEFMINUS[0],15+DEFADD[1]-DEFMINUS[1],15+DEFADD[2]-DEFMINUS[2]);
+	防御回合=(-1,-1,-1);
+	神威祈福回合=(-1,-1,-1);
+	呐喊回合=(-1,-1,-1);
+	赎罪回合=(-1,-1,-1);
+	天使之光回合=(-1,-1,-1);
+	天使之怒回合=(-1,-1,-1);
+	沉默回合=(-1,-1,-1);
+	SILENT=(0,0,0);
+	LOSE=IARRAY;
+	TURN=0;
+	
+	
+}
+
+OnKikkaBattleVar
+{
+	STR[0]=TOINT(20+STRADD[0]);
+	STR[1]=TOINT(20+STRADD[1]);
+	STR[2]=TOINT(20+STRADD[2]);
+	DEF[0]=TOINT(DEFBASE[0]*(15+DEFADD[0]-DEFMINUS[0]));
+	DEF[1]=TOINT(DEFBASE[1]*(15+DEFADD[1]-DEFMINUS[1]));
+	DEF[2]=TOINT(DEFBASE[2]*(15+DEFADD[2]-DEFMINUS[2]));
+}
+
+
+
+
+OnKikka挑战
+{
+	_txt="";
+	_txt+=OnKikkaTurnJudge(2);
+	
+	_txt+=OnKikkaBattleVar;
+	_character="橘花,斗和,%(username)";
+	for _i=0;_i<3;_i++
+	{
+		if HP[_i]<=0&&_i!=2&&CheckBattleLose(_i)==0
+		{
+			
+			HP[_i]=0;
+			LOSE,=_i;
+			_txt+="\0\s[26]%(_character[_i])战败了\x";
+		}
+	}
+	
+	LOSE=DELSAMEARR(LOSE)
+		
+		
+		if HP[2]>0 
+		{
+			if ARRAYSIZE(LOSE)>=2
+			{
+				_txt+="\0\s[26]%(_character[2])取得战斗胜利\x";
+				
+				_txt+="\q[◇再战,OnKikkaBattleBegin]\n/
+					\q[◇返回,OnKikkaBattle]";
+			}
+			else
+				_txt+=OnBattleOption;
+		}
+		
+		
+		else
+		{
+			_txt+="\0\s[26]%(_character[2])战败了\x";
+			
+			_txt+="\q[◇再战,OnKikkaBattleBegin]\n/
+				\q[◇返回,OnKikkaBattle]";
+				
+		}
+		
+		_txt+=KikkaBattleInfo
+			
+			
+			
+			_txt
+			
+}
+
+
+
+
+CheckBattleLose
+{
+	_a=TOINT(_argv[0]);
+	_r=0;
+	foreach LOSE;_i
+	{
+		if TOINT(_i)==TOINT(_a)
+			_r=1;
+	}
+	_r;
+	
+}
+
+
+
+
+OnKikka挑战反击
+{
+	TURN=TOINT(reference0);
+	if _argc>0
+		TURN=TOINT(_argv[0]);
+	OnKikkaTurnJudge(TURN);
+	--
+		OnKikkaOneByOneVar;
+	--
+		
+		
+		
+		_character="橘花,斗和,%(username)";
+	for _i=0;_i<3;_i++
+	{
+		if HP[_i]<=0&&_i!=TURN&&CheckBattleLose(_i)==0
+		{
+			HP[_i]=0;
+			LOSE,=_i;
+			"\0\s[26]%(_character[_i])战败了\x";
+		}
+	}
+	LOSE=DELSAMEARR(LOSE);
+	
+	--
+		if HP[TURN]>0&&ARRAYSIZE(LOSE)>=2
+		{
+			"\0\s[26]%(_character[TURN])取得战斗胜利\x";
+			--
+				"\q[◇再战,OnKikkaBattleBegin]\n/
+				\q[◇返回,OnKikkaBattle]";
+				
+				return;
+		}
+		
+		_p=RAND(3);
+		while _p==TURN
+		{
+			_p=RAND(3);
+		}
+		
+		foreach LOSE;_i
+		{
+			while TURN==_i||TURN==2
+			{
+				TURN=RAND(3);
+			}
+			while _p==_i||_p==TURN
+			{
+				_p=RAND(3);
+			}
+		}
+		
+		if HP[TURN]>0
+		{
+			_t=RAND(10);
+			if _t>=8
+			{
+				Kikka物理攻击(TURN,_p);
+			}
+			elseif _t>=4 && _t<=7
+			{
+				if SP[TURN]>=30 && SILENT[TURN]!=1
+				{
+					
+					"\![raise,OnKikkausespatkvs,1,10,%(_p)]";
+					
+					
+					{
+						if ANG[TURN]!=2
+						{
+							"\![raise,OnKikkausespatkvs,1,10,%(_p)]";
+							"\![raise,OnKikkausespatkvs,0,20,%(_p)]";
+							if 呐喊回合[TURN]==-1
+								"\![raise,OnKikkausespatkvs,2,10,%(_p)]";
+						}
+						else 
+						{
+							"\![raise,OnKikkausespatkvs,1,10,%(_p)]";
+						}
+						
+					}
+					
+					
+					{
+						if ANG[TURN]!=2
+						{
+							"\![raise,OnKikkausespatkvs,1,10,%(_p)]";
+							"\![raise,OnKikkausespatkvs,3,10,%(_p)]";
+							"\![raise,OnKikkausespatkvs,4,15,%(_p)]";
+						}
+						else 
+						{
+							"\![raise,OnKikkausespatkvs,1,10,%(_p)]";
+						}
+						
+					} 
+					
+					
+				}
+				else
+				{
+					Kikka物理攻击(TURN,_p);
+				}
+				
+			}
+			elseif _t>=0 && _t<=3
+			{
+				if HP[TURN]<=500 && SP[TURN]>=50
+				{
+					_i=RAND(2);
+					if _i==0
+					{
+						OnKikka治疗(TURN);
+					}
+					elseif _i==1 && SILENT[TURN]!=1
+					{
+						if ANG[TURN]!=2
+						{
+                            "\![raise,OnKikkausespatkvs,1,10,%(_p)]";
+                            "\![raise,OnKikkausespatkvs,6,10,%(_p)]";
+                            "\![raise,OnKikkausespatkvs,5,10,%(_p)]";
+						}
+						else 
+						{
+							"\![raise,OnKikkausespatkvs,1,10,%(_p)]";
+						}
+						
+					}
+				}
+				else 
+				{
+					Kikka物理攻击(TURN,_p);
+				}
+				
+				
+			}
+			
+			
+			--
+				if _p==2
+					"\![raise,OnKikka挑战]";
+				else
+				{
+					"\![raise,OnKikka挑战反击,%(_p)]";
+				}
+				
+        }
+		
+		else
+		{
+			
+			if _p==2
+				"\![raise,OnKikka挑战]";
+			else
+			{
+				"\![raise,OnKikka挑战反击,%(_p)]";
+			}
+			
+		}
+		
+}
+
+
+
+
+KikkaOneByOneInfo
+{
+	"\_q\1\![set,choicetimeout,0]橘花HP：%(HP[0])  SP：%(SP[0])\n/
+		%(username)HP：%(HP[1])   SP：%(SP[1])\_q"
+		
+}
+
+
+
+KikkaBattleInfo
+{
+	"\_q\1\![set,choicetimeout,0]橘花HP：%(TOINT(HP[0]))  SP：%(SP[0])\n/
+		斗和HP：%(TOINT(HP[1]))  SP：%(SP[1])\n/
+		%(username)HP：%(TOINT(HP[2]))   SP：%(SP[2])\_q"
+		
+}
+
+OnKikkaUvcBegin
+{
+	//---- 決定攻击对象
+	ERASEVAR("s");
+	if ghostexcount > 0
+	{
+		指定人格 = ghostexlist[RAND(ghostexcount)]
+	}
+	case 指定人格
+	{
+		if 指定人格 != "" && ghostexcount == 1
+		{
+			
+			"准备和人格%(指定人格)进行战斗，接下来应该进行怎样的战斗？\n/
+				\q[猜拳大作战,OnInnerHandGameVSMode]\n/
+				\q[一对一单挑,OnInnerOneByOneBegin]\n/
+                                \q[◇不用了,OnKikkaBattle]"
+		}
+		elseif ghostexcount>=2
+		{
+			"当前人格数量大于3，是否进行人格大乱斗？\n/
+				\q[人格大乱斗,OnInner人格大乱斗模式]"
+				
+		}
+		
+		else
+		{
+			"\0\s[0]没有呼叫出任何人格，无法进行战斗。\e"
+		}
+	}
+		
+}
+
+OnInnerHandGameVSMode
+{
+	"请选择游戏模式\n/
+		\__q[OnKikkaHandGameVSBegin]帮%selfname出拳\__q\n/
+		\__q[OnSelfHandGameVSBegin]%selfname自己出拳\__q/
+                \q[◇不用了,OnKikkaBattle]"
+}
+
+OnKikkaHandGameVSBegin
+{
+	指定人格 = ghostexlist[RAND(ghostexcount)];
+	HP0=1000;
+	HP1=1000;
+	atk=0;
+	kikkabattlemode=""
+		OnKikkaHandGameVSChoice;
+}
+
+OnSelfHandGameVSBegin
+{
+	指定人格 = ghostexlist[RAND(ghostexcount)];
+	TURN=0;
+	HP=(1000,1000);	
+	atk=0;
+	OnInnerHandGame;
+	
+}
+
+
+
+
+OnKikkaHandGameVSChoice
+{
+	_受到伤害=reference0;
+	
+    if _受到伤害>0
+	{ 
+		
+		HP0-=_受到伤害;
+			"\0%(被动作)，%selfname损血100\x";
+        
+	}
+	
+	--
+		if HP0>0 && HP1>0
+        {
+			
+			"%selfname应该出\n/
+				\q[◇剪刀,OnInnerShowHandVS,1]\n/
+				\q[◇石头,OnInnerShowHandVS,2]\n/
+				\q[◇布,OnInnerShowHandVS,3]\n/
+				\q[◇不用了,OnKikkaBattle]"
+				
+		}
+		
+		elseif HP0<=0 && HP1>0
+		{
+			
+			"%selfname战斗失败了\x"
+				
+				--
+				"\q[◇再战,OnKikkaHandGameVSBegin]\n/
+				\q[◇返回,OnKikkaBattle]";
+		}
+		
+		elseif HP0>0 && HP1<=0
+		{
+			"%selfname战斗胜利了\x"
+				
+				--
+				"\q[◇再战,OnKikkaHandGameVSBegin]\n/
+				\q[◇返回,OnKikkaBattle]";
+		}
+		
+		--
+			主动信息;
+			
+}
+
+
+OnInnerShowHandVS
+{
+	"%selfname出";
+	--
+		switch reference0
+	{
+		"";
+		"剪刀\n\w9\x";
+		"石头\n\w9\x";
+		"布\n\w9\x";
+        
+	}
+	
+	--
+		"\![raise,OnInnerHandGameVS,%(reference0)]";
+	
+	
+	
+}
+
+OnInnerHandGameVS
+{
+	
+	if HP0>0 && HP1>0
+	{
+		
+		_i=RAND(3)+1;
+		--
+			
+			
+			"\0\s[0]%(指定人格)出.\w8";
+        --
+			switch _i
+        {
+			"";
+			"剪刀\n\w9\x";
+			"石头\n\w9\x";
+			"布\n\w9\x";
+			
+        }
+		
+		--
+			if (3 + _i - reference0)%3==0
+                
+			{
+				atk=0;
+				"\0平手,HP不变\x";
+				--         
+					"\![raise,OnKikkaHandGameVSChoice,%(atk)]";
+				
+			}  
+			elseif (3 + _i - reference0)%3==1
+			{
+				atk=100;
+				"\0%(指定人格)赢了,轮到%(指定人格)发动攻击\x";
+				--            
+					"\![raise,OnKikkaHandGameVSChoice,%(atk)]";
+				
+			}
+			elseif (3 + _i - reference0)%3==2
+			{
+				atk=0;
+				HP1 -= 100;
+				"\0%(指定人格)输了\x";
+				--               
+					"\0%(动作)，%指定人格损血100\x";
+				--
+					"\![raise,OnKikkaHandGameVSChoice,%(atk)]";
+				
+			}
+			
+            
+	}
+	
+	else
+	{
+		
+		"\![raise,OnKikkaHandGameVSChoice]";
+		
+		
+	}
+	
+	--
+		被动信息;
+		
+}
+
+
+OnInnerHandGame
+{
+	TURN=TOINT(reference0);
+	_受到伤害=reference2;
+	_i=RAND(3)+1;
+	_p=(TURN+1)%2;
+	_move=(动作,被动作);
+	_selfname="%selfname";
+	_character=(_selfname,指定人格);
+	if _受到伤害>0
+	{ 
+		
+		HP[TURN]-=_受到伤害;
+			"\0%(_move[_p])，%(_character[TURN])损血100\x";
+        
+	}
+	--
+		
+		InnerGameinfo;
+	--
+		
+		if HP[TURN]>0 && HP[_p]>0
+		{
+			
+			
+			"\0\s[0]%(_character[TURN])出.\w8";
+			--
+				switch _i
+			{
+                "";
+                "剪刀\n\w9\x";
+                "石头\n\w9\x";
+                "布\n\w9\x";
+				
+			}
+			
+			--
+				if reference1 ==NULL
+				{
+					"\![raise,OnInnerHandGame,%(_p),%(_i),%(atk)]";
+				}
+				
+				else
+				{
+					
+					if (3 + _i - reference1)%3 ==0
+					{
+						atk=0;
+						"\0平手,HP不变\x";
+						--
+							
+							"\![raise,OnInnerHandGame,%(_p),,%(atk)]";
+                        
+						
+					}
+					elseif (3 + _i - reference1)%3 ==1
+					{
+						atk=100;
+						"\0%(_character[TURN])赢了,轮到%(_character[TURN])发动攻击\x";
+						
+						--
+							"\![raise,OnInnerHandGame,%(_p),,%(atk)]";
+						atk=0;
+						
+					}
+					elseif (3 + _i - reference1)%3 ==2
+					{
+						atk=0;
+						HP[TURN]-=100;
+						"\0%(_character[TURN])输了\x";
+						--
+							"\0%(_move[_p])，%(_character[TURN])损血100\x";
+						--
+							"\![raise,OnInnerHandGame,%(_p),,%(atk)]";
+						
+						
+					}
+				}
+		}
+		
+		
+		elseif HP[TURN]<=0 && HP[_p]>0
+		{
+			
+			HP0=0;
+			"\0%(_character[TURN])战斗失败了\x";
+			--
+				
+				"\q[◇再战,OnSelfHandGameVSBegin]\n/
+				\q[◇返回,OnKikkaBattle]";
+				
+		}
+		
+		elseif HP[TURN]>0 && HP[_p]<=0
+		{
+			
+			HP[_p]=0;
+			"\0%(_character[TURN])战斗胜利了\x";
+			--
+				"\q[◇再战,OnSelfHandGameVSBegin]\n/
+				\q[◇返回,OnKikkaBattle]";
+				
+		}
+		
+		
+		
+		
+}
+
+InnerGameinfo
+{
+	"\_q\1\![set,choicetimeout,0]%selfnameHP：%(HP[0])  SP：%(SP[0])\n/
+		%(指定人格)HP：%(HP[1])  SP：%(SP[1])\_q"
+}
+
+
+
+OnInnerOneByOneBegin
+{
+	kikkabattlemode="inneronebyone";
+	OnKikkaOneByOneReset;
+	OnInnerOneByOne;
+	
+}
+
+OnInnerOneByOne
+{
+	OnKikkaTurnJudge(0);
+	
+	--
+		OnKikkaOneByOneVar;
+	
+	if HP[0]>0 && HP[1]>0
+	{
+		OnBattleOption;
+		
+	}
+	
+	
+	elseif HP[0]>0 && HP[1]<=0
+	{
+		"%selfname战斗胜利了。\x";
+	}
+	
+	elseif HP[0]<=0 && HP[1]>0
+	{
+		"%selfname战斗失败了。\x";
+		
+	}
+	
+	
+	
+	--
+		InnerGameinfo;
+	
+}
+
+
+
+OnInner反击
+{
+	OnKikkaTurnJudge(1);
+	--
+		OnKikkaOneByOneVar;
+	--
+		if HP[0]>0 && HP[1]>0
+		{
+			_t=RAND(10);
+			if _t>=8
+			{
+				Kikka物理攻击(1);
+			}
+			elseif _t>=4 && _t<=7
+			{
+				if SP[1]>=30 && SILENT[1]!=1
+				{
+					
+					"\![raise,OnKikkausespatkvs,1,10]";
+					
+					
+					{
+						if ANG[1]!=2
+						{
+							"\![raise,OnKikkausespatkvs,1,10]";
+							"\![raise,OnKikkausespatkvs,0,20]";
+							if 呐喊回合[1]==-1
+								"\![raise,OnKikkausespatkvs,2,10]";
+						}
+						else 
+						{
+							"\![raise,OnKikkausespatkvs,1,10]";
+						}
+						
+					}
+					
+					
+					{
+						if ANG[1]!=2
+						{
+							"\![raise,OnKikkausespatkvs,1,10]";
+							"\![raise,OnKikkausespatkvs,3,10]";
+							"\![raise,OnKikkausespatkvs,4,15]";
+						}
+						else 
+						{
+							"\![raise,OnKikkausespatkvs,1,10]";
+						}
+						
+					} 
+					
+					
+				}
+				else
+				{
+					Kikka物理攻击(1);
+				}
+				
+			}
+			elseif _t>=0 && _t<=3
+			{
+				if HP[1]<=500 && SP[1]>=50
+				{
+					_i=RAND(2);
+					if _i==0
+					{
+						OnKikka治疗(1);
+					}
+					elseif _i==1 && SILENT[1]!=1
+					{
+						if ANG[1]!=2
+						{
+                            "\![raise,OnKikkausespatkvs,1,10]";
+                            "\![raise,OnKikkausespatkvs,6,10]";
+                            "\![raise,OnKikkausespatkvs,5,10]";
+						}
+						else 
+						{
+							"\![raise,OnKikkausespatkvs,1,10]";
+						}
+						
+					}
+				}
+				else 
+				{
+					Kikka物理攻击(1);
+				}
+				
+				
+			}
+			
+			
+			--
+                "\![raise,OnInnerOneByOne]";
+        }
+		
+		else
+			"\![raise,OnInnerOneByOne]";
+		
+		
+		
+}
+
+OnInner人格大乱斗模式
+{
+	
+	"请选择人格大乱斗模式。\n/
+		\__q[OnInner观战模式]观战模式（多个人格的内斗）\__q\n/
+		\__q[OnInner挑战模式]挑战模式（玩家控制当前人格挑战其他人格）\__q\n/
+		\q[◇不用了,OnKikkaBattle]"
+		
+		
+		
+}
+
+OnInner观战模式
+{
+	kikkabattlemode="inner观战";
+	OnInnerBattleReset;
+	
+	OnInner观战;
+		
+		
+}
+
+
+
+
+OnInnerBattleReset
+{
+	HP=IARRAY;
+	SP=IARRAY;
+	ANG=IARRAY;
+	IGN=IARRAY;
+	STRADD=IARRAY;
+	DEFADD=IARRAY;
+	DEFMINUS=IARRAY;
+	STR=IARRAY;
+	DEFBASE=IARRAY;
+	DEF=IARRAY;
+	防御回合=IARRAY;
+	神威祈福回合=IARRAY;
+	呐喊回合=IARRAY;
+	赎罪回合=IARRAY;
+	天使之光回合=IARRAY;
+	天使之怒回合=IARRAY;
+	沉默回合=IARRAY;
+	SILENT=IARRAY;
+	LOSE=IARRAY;
+	TURN=0;
+	
+	for _i=0;_i<ghostexcount+1;_i++
+	{
+		HP[_i]=1000;
+		SP[_i]=500;
+		ANG[_i]=1;
+		IGN[_i]=1;
+		STRADD[_i]=0;
+		DEFADD[_i]=0;
+		DEFMINUS[_i]=0;
+		STR[_i]=20+STRADD[_i];
+		DEFBASE[_i]=1;
+		DEF[_i]=15+DEFADD[_i]-DEFMINUS[_i];
+		防御回合[_i]=-1;
+		神威祈福回合[_i]=-1;
+		呐喊回合[_i]=-1;
+		赎罪回合[_i]=-1;
+		天使之光回合[_i]=-1;
+		天使之怒回合[_i]=-1;
+		沉默回合[_i]=-1;
+		SILENT[_i]=0;
+		
+		
+	}
+	
+	
+}
+
+
+OnInnerBattleVar
+{
+	STR=IARRAY;
+	DEF=IARRAY;
+	for _i=0;_i<ghostexcount+1;_i++
+	{
+		STR[_i]=TOINT(20+STRADD[_i]);
+		DEF[_i]=TOINT(15+DEFADD[_i]-DEFMINUS[_i]);
+	}
+}
+
+GetBattleGhostName
+{
+	_character=IARRAY;
+	_character[0]="%selfname";
+	for _i=0;_i<ghostexcount;_i++
+	{
+		_character[_i+1]=ghostexlist[_i];
+		
+		
+	}
+	_character;
+	
+	
+}
+
+InnerBattleInfo
+{
+	_txt="\_q\1\![set,choicetimeout,0]";
+	
+	_character=GetBattleGhostName;
+	for _i=0;_i<ghostexcount+1;_i++
+	{
+		_txt+="%(_character[_i])HP：%(TOINT(HP[_i]))  SP：%(SP[_i])\n";
+		
+	}
+	
+	_txt+="\_q";
+	_txt;
+}
+
+
+OnInner观战
+{
+	TURN=TOINT(reference0);
+	if _argc>0
+		TURN=TOINT(_argv[0]);
+	OnKikkaTurnJudge(TURN);
+	--
+		OnInnerBattleVar;
+	--
+		InnerBattleInfo;
+	--
+		"\0";
+	--
+		_character=GetBattleGhostName;
+	for _i=0;_i<ghostexcount+1;_i++
+	{
+		if HP[_i]<=0&&_i!=TURN&&CheckBattleLose(_i)==0
+		{
+			HP[_i]=0;
+			LOSE,=_i;
+			"\0\s[26]%(_character[_i])战败了\x";
+		}
+	}
+	LOSE=DELSAMEARR(LOSE);
+	
+	--
+		if HP[TURN]>0&&ARRAYSIZE(LOSE)>=ghostexcount
+		{
+			"\0\s[26]%(_character[TURN])取得战斗胜利\x";
+			--
+				"\q[◇再战,OnInner观战模式]\n/
+				\q[◇返回,OnKikkaBattle]";
+				
+				return;
+		}
+		
+		_p=RAND(ghostexcount+1);
+		while _p==TURN
+		{
+			_p=RAND(ghostexcount+1);
+		}
+		
+		foreach LOSE;_i
+		{
+			while TURN==_i
+			{
+				TURN=RAND(ghostexcount+1);
+			}
+			while _p==_i||_p==TURN
+			{
+				_p=RAND(ghostexcount+1);
+			}
+		}
+		
+		if HP[TURN]>0
+		{
+			_t=RAND(10);
+			if _t>=8
+			{
+				Kikka物理攻击(TURN,_p);
+			}
+			elseif _t>=4 && _t<=7
+			{
+				if SP[TURN]>=30 && SILENT[TURN]!=1
+				{
+					
+					"\![raise,OnKikkausespatkvs,1,10,%(_p)]";
+					
+					
+					{
+						if ANG[TURN]!=2
+						{
+							"\![raise,OnKikkausespatkvs,1,10,%(_p)]";
+							"\![raise,OnKikkausespatkvs,0,20,%(_p)]";
+							if 呐喊回合[TURN]==-1
+								"\![raise,OnKikkausespatkvs,2,10,%(_p)]";
+						}
+						else 
+						{
+							"\![raise,OnKikkausespatkvs,1,10,%(_p)]";
+						}
+						
+					}
+					
+					
+					{
+						if ANG[TURN]!=2
+						{
+							"\![raise,OnKikkausespatkvs,1,10,%(_p)]";
+							"\![raise,OnKikkausespatkvs,3,10,%(_p)]";
+							"\![raise,OnKikkausespatkvs,4,15,%(_p)]";
+						}
+						else 
+						{
+							"\![raise,OnKikkausespatkvs,1,10,%(_p)]";
+						}
+						
+					} 
+					
+					
+				}
+				else
+				{
+					Kikka物理攻击(TURN,_p);
+				}
+				
+			}
+			elseif _t>=0 && _t<=3
+			{
+				if HP[TURN]<=500 && SP[TURN]>=50
+				{
+					_i=RAND(2);
+					if _i==0
+					{
+						OnKikka治疗(TURN);
+					}
+					elseif _i==1 && SILENT[TURN]!=1
+					{
+						if ANG[TURN]!=2
+						{
+                            "\![raise,OnKikkausespatkvs,1,10,%(_p)]";
+                            "\![raise,OnKikkausespatkvs,6,10,%(_p)]";
+                            "\![raise,OnKikkausespatkvs,5,10,%(_p)]";
+						}
+						else 
+						{
+							"\![raise,OnKikkausespatkvs,1,10,%(_p)]";
+						}
+						
+					}
+				}
+				else 
+				{
+					Kikka物理攻击(TURN,_p);
+				}
+				
+				
+			}
+			
+			
+			--
+				
+				"\![raise,OnInner观战,%(_p)]";
+			
+        }
+		
+		else
+		{        
+			"\![raise,OnInner观战,%(_p)]";
+		}
+		
+}
+
+OnInner挑战模式
+{
+	kikkabattlemode="inner挑战";
+	OnInnerBattleReset;
+	OnInner挑战;
+}
+
+OnInner挑战
+{
+	_txt="";
+	_txt+=OnKikkaTurnJudge(0);
+	
+	_txt+=OnInnerBattleVar;
+	_character=GetBattleGhostName;
+	for _i=0;_i<ghostexcount+1;_i++
+	{
+		if HP[_i]<=0&&_i!=0&&CheckBattleLose(_i)==0
+		{
+			
+			HP[_i]=0;
+			LOSE,=_i;
+			_txt+="\0\s[26]%(_character[_i])战败了\x";
+		}
+	}
+	
+	LOSE=DELSAMEARR(LOSE);
+	
+	
+	if HP[0]>0 
+	{
+		if ARRAYSIZE(LOSE)>=ghostexcount
+		{
+			_txt+="\0\s[26]%(_character[0])取得战斗胜利\x";
+			
+			_txt+="\q[◇再战,OnInner挑战模式]\n/
+				\q[◇返回,OnKikkaBattle]";
+		}
+		else
+			_txt+=OnBattleOption;
+	}
+	
+	
+	else
+	{
+		_txt+="\0\s[26]%(_character[2])战败了\x";
+		
+		_txt+="\q[◇再战,OnInner挑战模式]\n/
+			\q[◇返回,OnKikkaBattle]";
+			
+	}
+	
+	_txt+=InnerBattleInfo;
+	
+	
+	
+	_txt;
+	
+}
+
+
+
+OnInner挑战反击
+{
+	TURN=TOINT(reference0);
+	if _argc>0
+		TURN=TOINT(_argv[0]);
+	OnKikkaTurnJudge(TURN);
+	--
+		OnInnerBattleVar;
+	--
+		InnerBattleInfo;
+	--
+		"\0";
+	--
+		_character=GetBattleGhostName;
+	for _i=0;_i<ghostexcount+1;_i++
+	{
+		if HP[_i]<=0&&_i!=TURN&&CheckBattleLose(_i)==0
+		{
+			HP[_i]=0;
+			LOSE,=_i;
+			"\0\s[26]%(_character[_i])战败了\x";
+		}
+	}
+	LOSE=DELSAMEARR(LOSE);
+	
+	--
+		if HP[TURN]>0&&ARRAYSIZE(LOSE)>=ghostexcount
+		{
+			"\0\s[26]%(_character[TURN])取得战斗胜利\x";
+			--
+				"\q[◇再战,OnInner挑战模式]\n/
+				\q[◇返回,OnKikkaBattle]";
+				
+				return;
+		}
+		
+		_p=RAND(ghostexcount+1);
+		while _p==TURN
+		{
+			_p=RAND(ghostexcount+1);
+		}
+		
+		foreach LOSE;_i
+		{
+			while TURN==_i
+			{
+				TURN=RAND(ghostexcount+1);
+			}
+			while _p==_i||_p==TURN
+			{
+				_p=RAND(ghostexcount+1);
+			}
+		}
+		
+		if HP[TURN]>0
+		{
+			_t=RAND(10);
+			if _t>=8
+			{
+				Kikka物理攻击(TURN,_p);
+			}
+			elseif _t>=4 && _t<=7
+			{
+				if SP[TURN]>=30 && SILENT[TURN]!=1
+				{
+					
+					"\![raise,OnKikkausespatkvs,1,10,%(_p)]";
+					
+					
+					{
+						if ANG[TURN]!=2
+						{
+							"\![raise,OnKikkausespatkvs,1,10,%(_p)]";
+							"\![raise,OnKikkausespatkvs,0,20,%(_p)]";
+							if 呐喊回合[TURN]==-1
+								"\![raise,OnKikkausespatkvs,2,10,%(_p)]";
+						}
+						else 
+						{
+							"\![raise,OnKikkausespatkvs,1,10,%(_p)]";
+						}
+						
+					}
+					
+					
+					{
+						if ANG[TURN]!=2
+						{
+							"\![raise,OnKikkausespatkvs,1,10,%(_p)]";
+							"\![raise,OnKikkausespatkvs,3,10,%(_p)]";
+							"\![raise,OnKikkausespatkvs,4,15,%(_p)]";
+						}
+						else 
+						{
+							"\![raise,OnKikkausespatkvs,1,10,%(_p)]";
+						}
+						
+					} 
+					
+					
+				}
+				else
+				{
+					Kikka物理攻击(TURN,_p);
+				}
+				
+			}
+			elseif _t>=0 && _t<=3
+			{
+				if HP[TURN]<=500 && SP[TURN]>=50
+				{
+					_i=RAND(2);
+					if _i==0
+					{
+						OnKikka治疗(TURN);
+					}
+					elseif _i==1 && SILENT[TURN]!=1
+					{
+						if ANG[TURN]!=2
+						{
+                            "\![raise,OnKikkausespatkvs,1,10,%(_p)]";
+                            "\![raise,OnKikkausespatkvs,6,10,%(_p)]";
+                            "\![raise,OnKikkausespatkvs,5,10,%(_p)]";
+						}
+						else 
+						{
+							"\![raise,OnKikkausespatkvs,1,10,%(_p)]";
+						}
+						
+					}
+				}
+				else 
+				{
+					Kikka物理攻击(TURN,_p);
+				}
+				
+				
+			}
+			
+			
+			--
+				if _p==0
+					"\![raise,OnInner挑战,%(_p)]";
+				else
+					"\![raise,OnInner挑战反击,%(_p)]";
+				
+				
+        }
+		
+		else
+		{        
+			if _p==0
+				"\![raise,OnInner挑战,%(_p)]";
+			else
+				"\![raise,OnInner挑战反击,%(_p)]";
+			
+			
+		}
+		
+}
+
+
+OnKikkaTurnJudge
+{
+	_id=0;
+	if _argc>0
+		_id=TOINT(_argv[0]);
+	_character="橘花,%(username)"[_id];
+	if kikkabattlemode=="挑战"
+		_character="橘花,斗和,%(username)"[_id];
+	elseif kikkabattlemode=="inneronebyone"
+		_character="橘花,%(指定人格)"[_id];
+	elseif kikkabattlemode=="inner观战"||kikkabattlemode=="inner挑战"
+		_character=GetBattleGhostName[_id];
+	
+	
+	if 防御回合[_id]>0
+	{
+        防御回合[_id]--;
+	}
+	elseif 防御回合[_id]==0
+	{
+		防御回合[_id]=-1;
+        --
+			DEFBASE[_id]=1;
+	}
+	
+	if 神威祈福回合[_id]>0
+	{
+        神威祈福回合[_id]--;
+	}
+	elseif 神威祈福回合[_id]==0
+	{
+		神威祈福回合[_id]=-1;
+        --
+			STRADD[_id]=0
+			"%(_character)使用的祈福技能失效了\x";
+	}
+    
+	--
+		if 呐喊回合[_id]>0
+		{
+			呐喊回合[_id]--;
+		}
+		elseif 呐喊回合[_id]==0
+		{
+			呐喊回合[_id]=-1;
+			--
+				DEFADD[_id]=0;
+			"%(_character)使用的呐喊技能失效了\x";
+		}
+		
+		--
+			
+			if 赎罪回合[_id]>0
+			{
+				赎罪回合[_id]--;
+			}
+			
+			elseif 赎罪回合[_id]==0
+			{
+				赎罪回合[_id]=-1;
+				--
+					IGN[_id]=1;
+				"%(_character)使用的赎罪技能失效了\x";
+			}
+			
+			--
+				
+				if 天使之光回合[_id]>0
+				{
+					天使之光回合[_id]--;
+				}
+				elseif 天使之光回合[_id]==0
+				{
+					天使之光回合[_id]=-1;
+					--
+						DEFMINUS[_id]=0;
+					"%(_character)受到的天使之光技能失效了\x";
+				}
+				
+				--
+					
+					if 天使之怒回合[_id]>0
+					{
+						天使之怒回合[_id]--;
+					}
+					elseif 天使之怒回合[_id]==0
+					{
+						天使之怒回合[_id]=-1;
+						--
+							ANG[_id]=1;
+						"%(_character)使用的天使之怒技能失效了\x";
+					}
+					
+					--
+						
+						if 沉默回合[_id]>0
+						{
+							沉默回合[_id]--;
+						}
+						elseif 沉默回合[_id]==0
+						{
+							沉默回合[_id]=-1;
+							--
+								SILENT[_id]=0;
+							"%(_character)受到的沉默技能失效了\x";
+						}
+						
+						
+						--
+							OnKikkaOneByOneVar;
+						
+}
+
+DamageMove
+{
+	
+	_attack="橘花,%(username)"[_argv[0]];
+	_damage="橘花,%(username)"[1-_argv[0]];
+	if kikkabattlemode=="挑战"
+	{   
+		_attack="橘花,斗和,%(username)"[_argv[0]];
+		_damage="橘花,斗和,%(username)"[_argv[1]];
+	}
+	elseif kikkabattlemode=="inneronebyone"
+	{
+        _attack="橘花,%(指定人格)"[_argv[0]];
+		_damage="橘花,%(指定人格)"[_argv[1]];
+	}
+	elseif kikkabattlemode=="inner观战"||kikkabattlemode=="inner挑战"
+	{
+        _attack=GetBattleGhostName[_argv[0]];
+		_damage=GetBattleGhostName[_argv[1]];
+	}
+	"%(_attack)捏了%(_damage)的鼻子";
+	"%(_attack)捏了%(_damage)的脸";
+	"%(_attack)拧了%(_damage)的耳朵";
+	"%(_attack)扯了%(_damage)的头发";
+	"%(_attack)打了%(_damage)一拳";
+	
+}
+
+DamageMove2
+{
+	_attack="橘花,%(username)"[_argv[0]];
+	_damage="橘花,%(username)"[1-_argv[0]];
+	if kikkabattlemode=="挑战"
+	{ 
+		_attack="橘花,斗和,%(username)"[_argv[0]];
+		_damage="橘花,斗和,%(username)"[_argv[1]];
+	}
+	elseif kikkabattlemode=="inneronebyone"
+	{
+        _attack="橘花,%(指定人格)"[_argv[0]];
+		_damage="橘花,%(指定人格)"[_argv[1]];
+	}
+	elseif kikkabattlemode=="inner观战"||kikkabattlemode=="inner挑战"
+	{
+        _attack=GetBattleGhostName[_argv[0]];
+		_damage=GetBattleGhostName[_argv[1]];
+	}
+	
+	"%(_attack)用铁沙掌推了%(_damage)一下";
+	"%(_attack)用铁头功撞了%(_damage)一下";
+	"%(_attack)用金刚脚踩了%(_damage)一下";
+	"%(_attack)用小蛮腰撞了%(_damage)一下";
+	"%(_attack)用屁股撞了%(_damage)一下";
+}
+
+ClearKikkaBattleVar
+{
+	ERASEVAR("HP");
+	ERASEVAR("SP");
+	ERASEVAR("ANG");
+	ERASEVAR("IGN");
+	ERASEVAR("STRADD");
+	ERASEVAR("DEFADD");
+	ERASEVAR("DEFMINUS");
+	ERASEVAR("STR");
+	ERASEVAR("DEFBASE");
+	ERASEVAR("DEF");
+	ERASEVAR("防御回合");
+	ERASEVAR("神威祈福回合");
+	ERASEVAR("呐喊回合");
+	ERASEVAR("赎罪回合");
+	ERASEVAR("天使之光回合");
+	ERASEVAR("天使之怒回合");
+	ERASEVAR("沉默回合");
+	ERASEVAR("SILENT");
+	ERASEVAR("LOSE");
+	ERASEVAR("TURN");
+	ERASEVAR("battleflag");
+	ERASEVAR("kikkabattlemode");
+}
+

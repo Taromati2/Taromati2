@@ -1,0 +1,5 @@
+﻿charset,UTF-8
+type,shell
+name,浴衣
+accept,橘花
+directory,yukata

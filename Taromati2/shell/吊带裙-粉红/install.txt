@@ -1,0 +1,5 @@
+﻿charset,UTF-8
+type,shell
+name,吊带裙-粉红
+accept,橘花
+directory,吊带裙-粉红

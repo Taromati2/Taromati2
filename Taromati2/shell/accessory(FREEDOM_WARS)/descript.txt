@@ -1,0 +1,42 @@
+charset,Shift_JIS
+craftman,8　シェル改変zutsu
+name,アクセサリ（フリーダムウォーズ）
+type,shell
+sakura.balloon.alignment,none
+kero.balloon.alignment,none
+shiori.logo.x,0
+shiori.logo.y,0
+sakura.balloon.offsetx,20
+sakura.balloon.offsety,20
+kero.balloon.offsetx,0
+kero.balloon.offsety,10
+menu.background.bitmap.filename,background.png
+menu.foreground.bitmap.filename,foreground.png
+menu.sidebar.bitmap.filename,sidebar.png
+menu.background.font.color.r,110
+menu.background.font.color.g,220
+menu.background.font.color.b,220
+menu.foreground.font.color.r,0
+menu.foreground.font.color.g,0
+menu.foreground.font.color.b,0
+menu.disable.font.color.r,40
+menu.disable.font.color.g,80
+menu.disable.font.color.b,80
+menu.separator.color.r,110
+menu.separator.color.g,220
+menu.separator.color.b,220
+menu.background.alignment,leftbottom
+menu.foreground.alignment,leftbottom
+menu.sidebar.alignment,bottom
+
+
+//-----着せ替え定義----------------------------------
+sakura.bindgroup30.name,頭, 帽子,
+sakura.bindgroup30.default,1
+sakura.bindgroup50.name,眼鏡, 黒縁眼鏡,
+sakura.bindgroup50.default,0
+
+sakura.menuitem0,30
+sakura.menuitem1,-
+sakura.menuitem2,50
+//---------------------------------------------------

@@ -1,0 +1,211 @@
+﻿
+　scribble.dll
+
+　デスクトップに図形とか描いてみたりする。
+
+
+●コマンド一覧
+
+．color r g b
+
+　描画に使う色を指定。それぞれ0～255。
+　初期値は255,255,255。
+　もう一度colorを呼ぶまで色は同じ。
+
+
+．pen_width n
+
+　ペン幅を指定。単位ピクセル。
+　初期値は５。
+
+．dot x y
+
+　座標(x,y)に点を打つ。
+
+
+．line x1 y1 x2 y2 [x3 y3 ...]
+
+　(x1,y1)から(x2,y2)まで線を引く。
+　続きがあればさらに(x2,y2)から(x3,y3)、(x4,y4)と引いていく。
+
+
+．rectangle l t r b
+
+　左上を(l,t)、右下を(r,b)とした長方形を描く。
+
+．square l t w
+
+　左上を(l,t)とし、幅を w とする正方形を描く。
+
+．ellipse l t r b
+
+　左上を(l,t)、右下を(r,b)とした長方形に内接する楕円を描く。
+
+
+．circle x y r
+
+　中心を(x,y)、半径を r とする円を描く。
+
+．arc l t r b x1 y1 x2 y2
+
+　左上を(l,t)、右下を(r,b)とした長方形に内接する楕円の一部分（つまり弧）を描く。
+　始点は「楕円の中心座標から(x1,y1)へ伸ばした直線」と楕円との交点、
+　終点は「楕円の中心座標から(x2,y2)へ伸ばした直線」と楕円との交点、
+
+．polygon x1 y1 x2 y2 [x3 y3 ...]
+
+　指定された座標から構成される多角形を描く。
+　lineとの違いは終点と始点が結ばれること、及び塗りつぶしが可能なこと。
+
+．fill
+
+　画面全体を塗りつぶす。
+
+．clear
+
+　描いたものを全部消して元のデスクトップを表示する。
+
+
+
+．blt x y filename
+
+　画像ファイルを読み込んで(x,y)に表示。
+　bmp, png, jpegに対応。
+
+．blt x y filename l t r b
+
+　画像の一部分だけを表示。
+
+．blt x y filename r g b
+
+　指定した色を抜いて透過表示。
+
+．blt x y filename l t r b r g b
+
+　両方。
+
+
+
+．screen_width
+
+　デスクトップの幅を取得。
+
+．screen_height
+
+　デスクトップの高さを取得。
+
+
+
+
+．text x y s
+
+　(x,y)に文字列sを表示。
+
+．text l t r b s
+
+　長方形(l,t,r,b)内に文字列sを表示。
+
+
+．font_color r g b
+
+　text系で使うフォントの色を指定。
+
+
+．font_size n
+．font_size w h
+
+　text系で使うフォントの大きさを指定。
+　縦横で別の値を指定することもできる。
+
+
+．font_face name
+
+　text系で使うフォント名を指定。ＭＳ ゴシックとかTimes New Romanとか。
+
+
+．font_bold f
+．font_italic f
+．font_underline f
+．font_strike f
+
+　text系で使うフォントを飾る。fが1なら有効、0なら無効。
+　効果は順に太字、斜体、下線、打ち消し線。
+
+
+
+●オプション
+
+．f
+
+　囲む系は、最後の引数として f を加えるとぬりつぶしになる。
+
+
+
+●ふに
+
+　ベーマガ追悼兼４月１日ネタでBASIC栞でも作ろうかと思ってたんですけど、
+　用途適合カスタマイズとか色々大変そうなので別方向に逃げてみた結果。
+
+　なんかこー、無限ループが懐かしい。
+
+
+
+●付録
+
+　里々の ＠SAORI セクションにコピペできるもの。
+
+color,saori/scribble.dll,color
+pen_width,saori/scribble.dll,pen_width
+dot,saori/scribble.dll,dot
+line,saori/scribble.dll,line
+rectangle,saori/scribble.dll,rectangle
+square,saori/scribble.dll,square
+ellipse,saori/scribble.dll,ellipse
+circle,saori/scribble.dll,circle
+arc,saori/scribble.dll,arc
+polygon,saori/scribble.dll,polygon
+fill,saori/scribble.dll,fill
+clear,saori/scribble.dll,clear
+blt,saori/scribble.dll,blt
+screen_width,saori/scribble.dll,screen_width
+screen_height,saori/scribble.dll,screen_height
+text,saori/scribble.dll,text
+font_color,saori/scribble.dll,font_color
+font_size,saori/scribble.dll,font_size
+font_face,saori/scribble.dll,font_face
+font_bold,saori/scribble.dll,font_bold
+font_italic,saori/scribble.dll,font_italic
+font_underline,saori/scribble.dll,font_underline
+font_strike,saori/scribble.dll,font_strike
+blt_t,saori/scribble.dll,blt_t
+
+
+●謝辞
+
+　jpegの読み込みにはlibjpegを使用しています。
+　pngの読み込みにはlibpng/zlibを使用しています。 
+　
+　作者の方々に感謝します。
+
+
+●履歴
+
+　03/04/04
+　　初版
+
+　03/04/11
+　　blt, screen_width, screen_heightを追加。
+
+　03/04/15
+　　text, font_* を追加。
+
+●作者
+
+　櫛ヶ浜やぎ
+　
+
+●連絡先
+
+　http://www.geocities.co.jp/SiliconValley-Cupertino/8536/
+
+

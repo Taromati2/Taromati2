@@ -1,0 +1,612 @@
+﻿A 报警一览表    A.1   报警一览表（CNC）⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 506 A.2   报警一览表（PMC）⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 537 |A.3   报警一览表（串行主轴）⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ | |560 A.4   错误代码一览表（串行主轴）⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ ⋯ 567   注意   报警一览表也包含了对于 0i-C 系列和 0i Mate-C 系列无效功能报警的描述。                              A.1 报警代码一览表（CNC） (1) 程序错误/有关编程和操作的报警（P/S 报警） 号码 |信       息 |内            容 
+000 |PLEASE TURN OFF POWER |输入了要求断电源之后才生效的的参数，请切断电源。 
+001 |TH PARITY ALARM |TH 报警（输入了带有奇偶性错误的字符）修正程序或纸带。 
+002 |TV PARITY ALARM |TV 报警（一个程序段内的字符数为奇数），只有在设定画面上的 TV 校验有效（为 1）时，才产生报警。 
+003 |TOO MANY DIGITS |输入了超过允许值的数据（参照最大指令值一节，修改数据。）
+004 |ADDRESS NOT FOUND |程序段开头无地址，只输入了数值或符号“－”。修改程序。 
+005 |NO DATA AFTER ADDRESS |地址后没有紧随相应的数据，而输入了下一个地址，EOB 代码。修改程序。 
+006 |ILLEGAL USE OF NEGATIVE SIGN |负号“－”输入错误（在不能使用“－”符号的地址后输入了该符号。或输入了两个或两个以上的“－”符号）。修改程序。
+007 |ILLEGAL USE OF DECIMAL POINT |小数点“.”输入错误（在不能使用“.”的地址后输入了小数点。或输入了两个或两个以上的“.”）。修改程序。 
+009 |ILLEGAL ADDRESS INPUT |在有意义的信息区输入了不可用的地址。修改程序。 
+010 |IMPROPER G-CODE |指定了一个不能用的 G 代码或针对某个没有提供的功能指定了某个 G 代码。修改程序。 
+011 |NO FEEDRATE COMMANDED |没有指定切削进给速度，或进给速度指令不当。修改程序。 
+014 |CAN NOT COMMAND G95 （M series） |没有螺纹切削/同步进给功能时指令了同步进给。修改程序。 |ILLEGAL LEAD COMMAND  （T series） |可变螺纹切削时，地址 K 指令的螺距增、减量超过了最大指令值，或指令螺距值为负值。修改程序。 
+015 |TOO MANY AXES COMMANDED （M series） |指定的移动坐标轴数超过了联动轴数。修改程序。 |TOO MANY AXES COMMANDED  （T series） |移动轴超过了联动轴数，或者在扭矩极限到达信号的跳步功能指令（G31）中，在同一个程序段中无轴移动指令，或者指令了2 个轴以上的轴移动。 同一程序段的轴移动指令必须为单个轴。 
+020 |OVER |TOLERANCE |OF RADIUS |在圆弧扦补（G02 或 G03）中，圆弧始点半径值与圆弧终点半径值的差超过了 NO.3410 号参数的设定值。 
+021 |ILLEGAL |PLANE |AXES COMMANDED |在圆弧扦补中，指令了不在指定平面（G17、G18、G19）的轴。修改程序。 
+022 |NO CIRCLE RADIUS |在圆弧插补指令中，没指定圆弧半径 R 或圆弧的起始点到圆心之间的距离的坐标值 I，J 或 K。   号码 |信       息 |内            容 
+023 |ILLEGAL RADIUS COMMAND（T series） |指定圆弧半径 R 时，R 被指令为负值。修改程序。 
+025 |CANNOT COMMAND F0 IN G02/G03（M series） |在圆弧扦补中，用 F1 一位数进给指令了 F0（快速进给）。修改程序。 
+027 |NO AXES COMMANDED IN G43/G44（M series） |在刀具长度补偿 C 中的 G43/G44 程序段中，没有指定轴。 刀具长度补偿 C 中，没有取消补偿时，又对其它轴进行补偿。
+028 |ILLEGAL PLANE SELECT |在平面选择指令中，在同一方向指定了两个或两个以上的坐标轴。修改程序。 
+029 |ILLEGAL OFFSET VALUE （M series） |用 H 代码选择的偏置量的值过大。修改程序。 |ILLEGAL OFFSET VALUE （T series） |用 T 代码选择的偏置量的值过大。修改程序。 
+030 |ILLEGAL OFFSET NUMMBER （M series） |用 D/H 代码指令的刀具半径补偿，刀具长度补偿、三维刀具补偿的偏置号过大。或者，用 P 代码指令的追加工件坐标系号过大。修改程序。 |ILLEGAL OFFSET NUMMBER （T series） |T 功能的刀具位置偏移量的偏置号过大。修改程序。 
+031 |ILLEGAL P COMMAND IN G10|在程序输入偏置量（G10）中，指定偏置量的 P 值太大，或者没有指定 P 值。修改程序。 
+032 |ILLEGAL OFFSET VALUE IN G10 |偏置量程序输入（G10）或用系统变量写偏置量时，指定的偏置量过大。修改程序。 
+033 |NO SOLUTI0N AT CRC （M series） |刀具补偿没有求到交点。修改程序。 |NO SOLUTION AT CRC  （T series） |刀尖半径补偿没有求到交点。修改程序。 
+034 |NO |CIRC |ALLOWED |IN ST-UP/EXT BLK（M series） |刀具补偿 C 中，在 G02/G03 方式进行起刀或取消刀补。修改程序。 |NO |CIRC |ALLOWED |IN ST-UP/EXT BLK（T series） |刀尖半径补偿中，在 G02/G03 方式进行起刀或取消刀补。修改程序。 
+035 |CAN NOT COMMANDED G39 （M series） |在刀具补偿 B 取消方式或在非补偿平面指令了 G39。修改程序。|CAN NOT COMMANDED G31 （T series） |刀尖半径补偿方式中，指令了跳步切削（G31）。修改程序。 
+036 |CAN NOT COMMANDED G31（M series） |刀具补偿方式中，指令了跳步切削（G31）。修改程序。 
+037 |CAN NOT CHANGE PLANE IN CRC （M series） |刀具补偿 B 方式下在非补偿平面指令了 G40。或刀具补偿 C 方式中，切换补偿平面 G17，G18 或 G19。修改程序。 |CAN NOT CHANGE PLANE IN NRC （T series） |刀尖半径补偿中，切换了补偿平面。修改程序。 
+038 |INTERFERENCE IN CIRCULAR BLOCK （M series） |在刀具补偿 C 中，圆弧的始点或终点与圆心一致，可能产生过切。修正程序。  |INTERFERENCE IN CIRCULAR BLOCK （T series） |在刀尖半径补偿中，圆弧的始点或终点与圆心一致，可能产生过切。修改程序。      号码 |信       息 |内            容 
+039 |CHF/CNR NOT ALLOWED IN NRC（T series） |在刀尖半径补偿中、与起始/取消、切换G41/ G42的同时进行倒角和拐角R，或程序在进行倒角或拐角处时有可能造成过切。修改程序。 
+040 |INTERFERENCE IN G90/G94 BLOCK （T series） |单一形固定循环 G90/G94 中，用刀尖半径补偿时有可能产生过切。修改程序。 
+041 |INTERFERENCE IN NRC  （M series） |刀尖半径补偿中可能产生过切。在刀尖半径补偿方式中，两个或两个以上的程序段被连续（没有移动）用在一些功能上，例如辅助功能和暂停功能。修改程序。 |INTERFERENCE IN NRC  （T series） |刀尖半径补偿中可能产生过切。修改程序。 
+042 |G45/G48 NOT ALLOWED IN CRC （M series） |在刀具补偿方式中，指令了刀具位置补偿（G45～G48）。修改程序。 
+044 |G27-G30 NOT ALLOWED IN FIXED CYC （M series） |在固定循环方式中，指令了 G27～G30。修改程序。 
+045 ||ADDRESS |Q |NOT |FOUND（G73/G83）（M series） |在固定循环（G73/G83）中，没有给出每次切削的深度（Q），或者只给出 Q0。修正程序。 
+046 |ILLEGAL REFERENCE RETURN COMMAND |在返回第 2，3，4 参考点指令中，非 P2，P3，P4 被指令。修改程序。 
+047 |ILLEGAL AXIS SELECT |三维刀具补偿或三维坐标转换起始时，指令了两个或两个以上的同方向的轴（基本轴和平行轴）。 
+048 |BASIC 3 AXIS NOT FOUND |三维刀具补偿或三维坐标转换起始时，而 XP， YP 或 ZP 被省略时，三个基本坐标轴没有被设定在参数 1022 中。 
+049 |ILLEGAL OPERATION （G68/G69）（M series） |没有套入三维坐标转换指令（G68/G69）和刀具长度补偿指令（G43，G44，G45）。修改程序 
+050 |CHF/CNR NOT ALLOWED IN THRD BLK （M series） |在螺纹切削程序段，指令了任意角度的倒角，拐角 R。修改程序。|CHF/CNR NOT ALLOWED IN THRD BLK （T series） |在螺纹切削程序段，指令了任意角度的倒角，拐角 R。修改程序。
+051 ||MISSING |MOVE |AFTER CHF/CNR （M series） |指令了任意角度的倒角、拐角 R 程序段的下个程序段的移动或移动量不合适。修改程序。 ||MISSING |MOVE |AFTER CHF/CNR （T series） |倒角、拐角 R 程序段的下个程序段的移动或移动量不合适。修改程序。 
+052 |CODE IS NOT G01 AFTER CHF/CNR（M series） |在指令了任意角度倒角、拐角 R 的程序段的下一个程序段，是指令了 G01，G02，G03 之外的程序段。修改程序。 |CODE IS NOT G01 AFTER CHF/CNR（T series） |指令了倒角、拐角 R 程序段的下个程序段没有 G01。修改程序。号码 |信       息 |内            容 
+039 |CHF/CNR NOT ALLOWED IN NRC（T series） |在刀尖半径补偿中、与起始/取消、切换G41/ G42的同时进行倒角和拐角R，或程序在进行倒角或拐角处时有可能造成过切。修改程序。 
+040 |INTERFERENCE IN G90/G94 BLOCK （T series） |单一形固定循环 G90/G94 中，用刀尖半径补偿时有可能产生过切。修改程序。 
+041 |INTERFERENCE IN NRC  （M series） |刀尖半径补偿中可能产生过切。在刀尖半径补偿方式中，两个或两个以上的程序段被连续（没有移动）用在一些功能上，例如辅助功能和暂停功能。修改程序。 |INTERFERENCE IN NRC  （T series） |刀尖半径补偿中可能产生过切。修改程序。 
+053 ||TOO |MANY COMMANDS （M series） |ADDRESS |在没有任意角度倒角、拐角 R 功能的系统中，指令了逗号“，” 或者在任意角度倒角、拐角 R 指令中，逗号“，”之后，不是R,C 指令。修改程序。 ||TOO |MANY COMMANDS  （T series） |ADDRESS |在倒角、拐角 R 指令中，指令了两个或两个以上的 I，K，R。或者在直接输入图纸尺寸中逗号“，”之后，不是 C 或 R；或者用非指令逗号“，”的方法（PRM3405#4=1）指令了逗号“，”。修改程序。 
+054 |NO TAPER ALLOWED AFTER CHF/CNR（T series） |在被指定的角度或拐角 R 处的倒角程序段，指定了包含锥度的指令。修改程序段。   |  号码 |信       息 |内            容 
+055 |MISSING MOVE VALUE IN CHF/CNR （M series） |在任意角度倒角、拐角 R 的程序段中指定的移动量比倒角、拐角 R 的量还小。修改程序。 
+056  |NO END POINT& ANGLE IN CHF/CNR （T series） |在图纸尺寸直接输入中只有角度指定（A）的程序段的下个程序段指令中，终点和角度都没有指定。在倒角拐角 R 指令中，X（Z）轴中正指令 I（K ）。修改程序。 
+057 |NO SOLUTION OF BLOCK END （T series） |在图纸尺寸直接输入中，不能正确计算出程序段终点。 
+058 |END POINT NOT FOUND （M series） |任意角度倒角、拐角中，指令了选择平面以外的轴。修改程序。|END POINT NOT FOUND （T series） |直接坐标图纸尺寸编程中，不能找出程序段终点。 
+059 |PROGRAM |NUMBER |NOT FOUND |在外部程序号检索中，没有发现指定的程序号，或者检索了后台编辑中的程序号。或者在宏程序调用中被指定程序号的程序在存储器中没有被发现。确认程序号和外部信号。或者中止后台编辑操作。 
+060 |EQUENCE NUMBER NO FOUND |指定的顺序号在顺序号搜索中未找到，检查顺序号。 
+061 |ADDRESS P/Q NOT FOUND IN G70-G73（T series） |在 G70,G71,G72，G73 指令的程序段中，没指令地址 P 或 Q。修改程序。 
+062 |ILLEGAL |COMMAND |IN G71-G76（T series） |①G71，G72 中，切削深度为 0 或负数。 ②在 G73 中，重复次数为 0 或负数。 号码 |信       息 |内            容 
+055 |MISSING MOVE VALUE IN CHF/CNR （M series） |在任意角度倒角、拐角 R 的程序段中指定的移动量比倒角、拐角 R 的量还小。修改程序。 ||③在 G74，G75 中，△I，△k 为负数。 ④在 G74，G75 中，△I，△k 为 0，但 U、W 不为 0。 ⑤在 G74，G75 中，决定了退刀方向，但△d 指定了负值。 ⑥在 G76 中，螺纹高度及第 1 次切削深度指定了 0 或负值。 ⑦在 G76 中，最小切削深度比螺纹高度值还大。 ⑧在 G76 中，指定了不可使用的刀尖角度。 修改程序。 
+063 |SEQUENCE |NUMBER |NOT FOUND（T series） |在 G70，G71，G72，G73 中，没有找到 P 指定的顺序号。 修改程序。 
+064 |SHAPE |PROGRAM |NOT MONOTONOUSLY （T series）|在复合形固定循环（G71，G72）中，指定了非单调增大或单调减少以外的加工形状。 
+065 |ILLEGAL |COMMAND |IN G71-G73（T series） |①在 G71,G72,G73 中，用 P 指定顺序号的程序段中，没有指令G00 或 G01。 ②在 G71，G72 中，在 P 指定的程序段中指令了 Z(W）（G71），或者指令了 X（U）（G72）。 修改程序。 
+066 |IMPROPER |G-CODE |IN G71-G73（T series） |在 G71，G72,G73 用 P 指定的程序段间，指令了不允许的 G 代码。修正程序。 
+067 |CAN NOT ERROR IN MODE （T series） |在 MDI 方式，指令了含有 P、Q 的 G70，G71，G72，G73。 修改程序。        号码 |信       息 |内            容 
+069 |FORMAT ERROR IN G70-G73（T series） |G70，G71，G72，G73 的 P、Q 指令的程序段的最后移动指令以倒角或拐角 R 结束。修改程序。 
+070 |NO |PROGRAM |SPACE |IN MEMORY |存储器的存储容量不够。删除各种不必要的程序并再试。 
+071 |DATA NOT FOUND |没有发现检索的地址数据。或者在程序号检索中，没有找到指定的程序号。再次确认要检索的数据。 
+072 |TOO MANY PROGRAMS |登录的程序数超过 200 个。删除不要的程序，再次登录。 
+073 |PROGRAM |NUMBER ALREADY IN USE |要登录的程序号与已登录的程序号相同。变更程序号或删除旧的程序号后再次登录。 
+074 |ILLEGAL PROGRAM NUMBER|程序号为 1～9999 以外的数字。修改程序号。 
+075 |PROTECT |登录了被保护的程序号。 
+076 |ADDRESS P NOT DEFINED |在包括 M98、G65 或 G66 指令的程序段中，没有指定地址 P（程序号）。修改程序。 
+077 |SUB |PROGRAM |NESTING ERROR |调用了 5 重子程序。修改程序。 
+078 |NUMBER  NOT  FOUND |M98、M99、G65 或 G66 的程序段中的地址 P 指定的程序号或顺序号未找到。或者 GO TO 语句指定的顺序号未找到。或调用了正在被后台编辑的程序。修改程序或中止后台编辑操作。 
+079 |PROGRAM VERIFY ERROR |存储器与程序校对中，存储器中的某个程序与从外部 I/O 设备中读入的不一致。检查存储器中的程序及外部设备中的程序。
+080 |G37 ARRIVAL SIGNAL NOT ASSERTED  （M series） |在刀具长度自动测量功能（G37）中，在参数 6254 （ε值）设定的区域内，测量位置到达信号（XAE，YAE，ZAE）没有变为 ON。此报警属设定或操作错误。  |ARRIVAL |SIGNAL |NOT ASSERTED  （T series） |自动刀具补偿功能中（G36,G37），在参数 6254，6255（ε值）设定的区域内测量位置到达信号（XAE，ZAE）没有变为 ON。此报警属设定或操作错误。 
+081 |OFFSET |NUMBER |NOT FOUND  IN  G37 （M series） |在刀长自动测量功能中，没指令 H 代码，而指令了刀长自动测量（G37）。修改程序。  |OFFSET |NUMBER |NOT FOUND  IN  G37 （T series） |在自动刀具补偿功能中，没有指令 T 代码，却指令了 G36、G37 自动刀具补偿。修改程序。 
+082 |H-CODE NOT ALLOWED IN G37（M series） |刀长自动测量功能中，在同一程序段指令了 H 代码和刀长自动测量（G37）。修改程序。  |T-CODE NOT ALLOWED IN G37（T series） |在自动刀具补偿功能中，在同一程序段指令了 T 代码和自动刀具补偿（G36，G37）。修改程序。 
+083 |ILLEGAL AXIS COMMAND IN G37 （M series） |刀长自动测量（G37）功能中，轴指定错。或者移动指令变为增量指令。修改程序。  |ILLEGAL AXIS COMMAND IN G37（T series） |自动刀具补偿功能（G36，G37）中，轴指定错。或者移动指令变为增量指令。修改程序。           号码 |信       息 |内            容 
+085 |COMMUNICATION ERROR |用阅读机/穿孔机接口进行数据读入时，出现溢出错误，奇偶错误或成帧错误。可能是输入的数据的位数不吻合，或波特率的设定、设备的规格号不对。 
+086 |DR SIGNAL OFF |用阅读机/穿孔机接口进行数据输入输出时，I/O 设备的动作准备信号（DR）断开。 可能是 I/O 设备电源没有接通，电缆断线或印刷电路板出故障。号码 |信       息 |内            容 
+085 |COMMUNICATION ER|ROR |用阅读机/穿孔机接口进行数据读入时，出现溢出错误，奇偶错误或成帧错误。可能是输入的数据的位数不吻合，或波特率的设定、设备的规格号不对。 
+086 |DR SIGNAL OFF ||用阅读机/穿孔机接口进行数据输入输出时，I/O 设备的动作准备信号（DR）断开。 可能是 I/O 设备电源没有接通，电缆断线或印刷电路板出故障。
+087 |BUFFER OVERFLOW ||用阅读机/穿孔机接口读入数据时，虽然指定了读入停止，但超过了 10 个字符后输入仍未停止。I/O 设备或印刷电路板出故障。
+088 ||LAN |FILE |TRANS |ERROR||（CHANNEL－1） ||传输出错，经由以太网进行的文件数据传输被停止。 
+089 ||LAN |FILE |TRANS |ERROR||（CHANNEL－2） ||传输出错，经由以太网进行的文件数据传输被停止。 
+090 |REFERENCE  RETURN  INCOMPLETE |1．因起始点离参考点太近，或速度过低，而不能正常返回参考点。把起始点移到离参考点足够远的距离，再进行参考点返回。或提高返回参考点的速度，再进行参考点返回。 2．使用绝对位置检测器进行参考点返回时，如出现此报警，除了确认上述条件外，还要进行以下操作： 在伺服电机转至少一转后，断电源再开机，再返回参考点。
+091 ||REFERENCE |RETURN INCOMPLETE |自动运行暂停时，不能进行手动返回参考点。 
+092 ||AXES |NOT |ON |THE REFERENCE POINT |在 G27（返回参考点检测）中，被指定的轴没有返回到参考点。
+094 |PTYPE |NOT |ALLOWED （COORD CHG） |程序再起动中不能指令 P 型，（自动运行中断后。又进行了坐标系设定）按照操作说明书，重新正确地操作。 
+095 |PTYPE NOT ALLOWED （EXT OFS CHG） |程序再起动中，不能指令 P 型（自动运行中断后，变更了外部工件偏置量）按照操作说明书，重新正确地操作。 
+096 |PTYPE NOT ALLOWED （WRK OFS CHG） |程序再起动中，不能指令 P 型（自动运行中断后，变更了工件偏置量）按照操作说明书，重新正确操作。 
+097 |PTYPE |NOT |ALLOWED （AUTO EXEC） |程序再起动中不能指令 P 型。（接通电源后，紧急停止后，或P/S 报警 094～097 的复位后，一次也没进行自动运行。）进行自动运行。 
+098 |G28 FOUND IN SEQUENCE RETURN |电源接通或紧急停止后没有返回参考点就指令程序再起动，检索中发现了 G28。进行返回参考点。 
+099 |MDI EXEC NOT ALLOWED AFT SEARCH |在程序再起动中，检索结束后进行轴移动之前，用 MDI 进行了移动指令。应先进行轴移动，不能介入 MDI 运行。 
+100 |PARAMETER WRITE ENABLE |参数设定画面，PWE（参数可写入）被定为“1”。请设为“0”，再使系统复位。      号码 |信       息 |内            容 
+101 |PLEASE CLEAR MEMORY |用程序编辑改写存储器时，电源断电了。当此报警发生时，同时按下「PROG」和「RESET」键，只删除编辑中的程序，报警也被介除。再次登录被删除的程序。 
+109 |FORMAT ERROR IN G08 |G08 后面的 P 值不是 0，1，或没有指令。 
+110 |DATA OVERFLOW |固定小数点显示的数据的绝对值超过了允许范围。修正程序。
+111 |CALCULATE  DATA OVERFLOW |宏程序功能的宏程序命令的运算结果超出允许范围（-1047～-10-29，0，10-29～1047）。修改程序。 
+112 |DIVIDED BY ZERO |除数为“0”（包括 tan90°）。修改程序。 
+113 |IMPROPER COMMAND |指定了用户宏程序不能使用的功能。修正程序。 
+114 |FORMAT ERROR IN MACRO |<公式>以外的格式中有误。修正程序。 
+115 |ILLEGAL  VARIABLE NUMBER |用户宏程序或高速循环加工中指定了没定义的值作为变量号。或高速循环加工中标题内容不恰当。此报警在下列情况发生：1．指定切削循环号码调用相应的标题没找到. 2．循环连接数据值超出允许范围 (0-999). 3．标题中的数据号超出允许范围 (0-32767). 4．执行的格式化数据的起始变量号超出允许范围(#20000-#85535). 5．执行的格式化数据的末存储变量号超出允许范围 (#85535)6．执行的格式化数据的存储起始数据变量号,与使用中的标题变量号重叠。    修改程序。 
+116 |WRITE  PROTECTED VARIABLE |赋值语句的左侧为禁止输入的变量。修正程序。 
+118 |PARENTHESIS  NESTING ERROR |括号的嵌套数超过了上限值（5 重）。修正程序。 
+119 |ILLEGAL ARGUMENT |SQRT 的自变量为负值。或 BCD 的自变量为负值，BIN 自变量的各位为 0～9 以外的值，修正程序。 
+122 |FOUR  FOLD  MACRO MODAL-CALL |宏程序模态调出，指定为 4 重。 修正程序。 
+123 |CAN |NOT |USE |MACRO COMMAND IN DNC |在 DNC 运转中使用了宏程序控制指令。 修正程序。 
+124 |MISSING END STATEMENT |DO-END 没有 1∶1 对应。修正程序。 
+125 |FORMAT ERROR IN MACRO |<公式>的格式有错误。修正程序。 
+126 |ILLEGAL LOOP NOMBER |DOn 中，未满足 1≤n≤3。修正程序。             号码 |信       息 |内            容 
+127 |NC MACRO STATEMENT IN SAME BLOCK |NC 指令与宏程序指令混用。 修正程序。 
+128 |ILLEGAL MACRO SEQUENCE NUMBER |在转移命令中，转移点的顺序号不是 0～9999。或者没有找到转移点的顺序号。修正程序。 
+129 |ILLEGAL |ARGUMENT ADDRESS |指令了<自变量>中不允许的地址。 修正程序。 
+130 |ILLEGAL AXIS OPERATION |PMC 对 CNC 控制轴给出了轴控制指令，反之，CNC 对 PMC 控制的轴给出了轴控制指令。修改程序。 
+131 |TOO |MANY |EXTERNAL ALARM MESSAGES |外部报警信息中，发生了 5 个以上的报警。从 PMC 梯形图中找原因。 
+132 |ALARM |NUMBER |NOT FOUND |外部报警信息全清时，没有对应的报警号。检查 PMC 梯形图。
+133 |ILLEGAL |DATA |IN |EXT ALARM MSG |外部报警信息或外部操作信息中，小分区数据有错误。检查PMC 梯形图。 
+135 |ILLEGAL ANGLE COMMAND （M series） |分度工作台定位角度指令了非最小角度的整数倍的值。 修改程序。 |SPINDLE |ORIENTATION PLEASE（T series） |主轴一次也没有定向，就进行了主轴分度。进行主轴定向。 
+136 |ILLEGAL |AXIS |COMMAND （M series） |分度工作台分度功能中，与 B 轴同时指令了其他轴。修改程序。|C/N-CODE & MOVE CMD IN SAME BLK（T series） |与主轴分度地址 C、H 同一程序段指令了其他轴的移动指令。修改程序。 
+137 |M-CODE & MOVE CMD IN SAME BLK |在有关主轴分度的 M 代码的程序段指令了其他轴移动指令。修改程序。 
+138 |SUPERIMPOSED |DATA OVERFLOW |PMC 控制轴的扩展功能中的双重控制中，CNC 和 PMC 的总发送量过大。 
+139 |CAN |NOT |CHANGE |PMC CONTROL AXIS |PMC 轴控制中，指令了轴选择。 修改程序。 
+141 |CAN NOT COMMAND G51 IN CRC （M series） |刀具补偿方式中，指令了 G51（比例缩放有效）。 修改程序。 
+142 |ILLEGAL SCALE RATE （ M series） |指令的比例缩放倍率值在 1～999999 之外。请修正比例缩放倍率值。（G51 Pp⋯ ；或参数 5411，5421) 
+143 |SCALED |MOTION |DATA OVERFLOW（M series） |比例缩放的结果、移动量、坐标值、圆弧半径等超过了最大指令值。修改程序或比例缩放倍率 
+144 |ILLEGAL PLANE SELECTED （M series） |坐标旋转平面与圆弧或刀具补偿 C 的平面必须一致。 修改程序。 
+145 |ILLEGAL CONDITIONS IN POLAR COORDINATE INTERPOLATION |极坐标扦补开始或取消的条件不正确， 1）|在非 G40 方式指令了 G12.1/G13.1。 2）|平面选择错误。参数 5460,5461 设定错。 修改程序或参数。 
+146 |IMPROPER G CODE  |在极坐标扦补方式，使用了不能指令的 G 代码。按操作说明书的[极坐标插补]部分，修改程序。 
+148 |ILLEGAL SETTING DATA (M series) |自动拐角倍率的减速比及判定角度超过允许设定值的范围。修改参数（1710～1714）的设定值。       号码 |信       息 |内            容 
+150 |ILLEGAL |TOOL |GROUP NUMGER |刀具组号超出允许的最大值。 修改程序。 
+151 |TOOL GROUP NUMBER NOT FOUND |在加工程序中，没有设定指定刀具的组号。 修改程序或参数设定值。 
+152 |NO SPACE FOR TOOL ENTRY |一组内的刀具数超过了可以登录的最大值。修改刀具数的设定值。 
+153 |T-CODE NOT FOUND |在刀具寿命数据登录时，在应指定 T 代码的程序段中没有指定 T 代码。修正程序。 
+154 |NOT USING TOOL IN LIFE GROUP （M series） |在没有指令刀具组时，却指令了 H99 或 D99。 修改程序。 
+155 |ILLEGAL T-GODE IN M06  （M series） |在加工程序中，M06 程序段的 T 代码与正在使用的组不对应。修改程序。 |ILLEGAL T-GODE IN M06  （T series） |加工程序中指令了 T△△88，而组号△△与使用中刀具所属组号不一致。修改程序。 
+156 |P/L COMMAND NOT FOUND |在设定刀具组的程序的开头时，没有指令 P/L。修改程序。 
+157 |TOO MANY TOOL GROUPS |设定的刀具组数超过了允许的最大值。（查看参数 6800 的第 0 位和第 1 位）修改程序。 
+158 |ILLEGAL TOOL LIFE DATA |设定的寿命值太大。修改设定值。 
+159 |TOOL |DATA |SETTING INCOMPLETE |在执行设定程序期间，电源断了。需再次设定。 
+160 |MISMATCH WAITING M-CODE（T series（At two-path）） |在等待 M 代码时，开头 1 和 2 中指令了不同的 M 代码。 修改程序。 |MISMATCH WAITING M-CODE（T series（At three-path）） |1）|虽然指定了相同的 P 指令，但是等待中的 M 代码不匹配。2）|虽然等待中的 M 代码匹配，但是 P 指令不匹配。 3）|同时指定了双路径等待和三路径等待。 修改程序。 |G72.1 NESTING ERROR （M series） |带有 G72.1，进行轮回复制的一个子程序，包含另一个 G72.1 指令。修改程序。 
+161 |ILLEGAL |P |OF |WAITING M-CODE （T series（three-path control）） |1）|P 地址的值为负，1，2，4 或不小于 8 的值。 2）|P 中指定的值与系统配置不一致。 修改程序。 |G72.1 NESTING ERROR （M series） |带有 G72.2，进行轮回复制的一个子程序，包含另一个 G72.2 指令。修改程序。 
+163 |COMMAND  G68/G69 INDEPENDENTLY （T series（At two-path）） |平衡切削中没有分别指令 G68 和 G69。 修改程序。 
+169 |ILLEAGAL TOOL GEOMETRY DATA（At two-path） |干涉检测中发现不正确的刀具轮廓数据。 设定正确数据或选择正确的刀具外形。 
+175 |ILLEGAL G107 COMMAND  |圆柱扦补开始或解除的条件不正确。变为圆柱扦补方式，使用如下指令格式「G07.1 回转轴名称  圆柱半径」         号码 |信       息 |内            容 
+176  |IMPROPER G-CODE IN G107 （M series） |圆柱插补方式中，指令了不能指令的 G 代码。下述 G 代码圆柱插补方式中不可用： 1）|定位的 G 代码：G28，G73，G74，G76，G81-G89 等包括快速进给循环的代码。 2）|系统坐标设定的 G 代码：G52，G92。 3）|坐标系选择的 G 代码： G53，G54-G59。 修改程序。 |IMPROPER G-CODE IN G107 （T series） |圆柱扦补方式中，指令了不能指令的 G 代码。下述 G 代码圆柱插补方式中不可用： 1）|定位 G 代码：G28，G81-G89 等包括快速进给循环的代码。2）|系统坐标设定的 G 代码：G50，G52 3）|坐标系选择 G 代码： G53，G54-G59。 修改程序。 
+181 |FORMAT |ERROR |IN |G81 BLOCK （Hobbing machine, EGB）（M series） |G81 程序段格式错误（滚齿机） 1）|T（齿数）没有给定。 2）|T，L，Q，P 中任一给定了指令范围以外的数据。 3）|同步系数计算值溢出。 修改程序。 
+182 |G81 |NOT |COMMANDED（Hobbing machine）（M series）|没有指定由 G81 给出的同步指令 G83（C 轴伺服滞后值偏置）。修改程序。（滚齿机） 
+183 |DUPLICATE G83（COMMAND）（Hobbing machine）（M series）|G83给出的C轴伺服滞后值偏置补偿后，在被G81指令取消前，G83 又被指定。 
+184 |ILLEGAL COMMAND IN G81 （Hobbing machine, EGB）（M series） |G81 给出同步指令过程中，指定了不该有的指令。（滚齿机） 1）|指定了 G00，G27，G28，G29，G30 等给出的 C 轴指令。2）|指定了 G20，G21 给出的英制/公制切换。 
+185 |RETURN TO REFERENCE POINT (Hobbing machine)(M series) |开机或急停解除后，一次没有返回参考点就给出了 G81 指令。
+186 |PARAMETER SETTING ERROR (Hobbing machine, EGB) （M series） |G81 相关参数错误。（滚齿机） 1）C 轴没有被设为旋转轴。 2）滚刀轴和位置编码器齿轮比设定错误。 修改参数。 
+187 |HOB |COMMAND |IS |NOT ALLOWED |指令 G81.4 或 G81 时的模式状态发生错误 1.设定了固定循环模式（G81 到 G89）。 2.设定了螺纹切削模式。 3.C 轴处于同步，复合或双重控制。 
+190 |ILLEGAL AXIS SELECT  （M series） |恒定线速度切削控制中，轴指定错误。（参照参数 3770 的设定）轴指定 P 超出指定范围。修改程序。 
+194 |SPINDLE |COMMAND |IN SYNCHRO-MODE |串行主轴同步控制方式中，指令了轮廓控制方式或者主轴定位（Cs 轴控制）和刚性攻丝方式的指令。修改程序以便事先解除同步控制方式。         号码 |信       息 |内            容 
+197 |C-AXIS |COMMANDED |IN SPINDLE MODE |CON 信号（DGN＝G027.7）为 OFF 时，程序指令了沿 Cs 轴的移动指令。从 PMC 梯形图查找 CON 信号不接通的原因。 
+199 |MACRO WORD UNDEFINED |使用了未定义的宏语句。修改用户宏程序。 
+200 |ILLEGAL S CODE COMMAND |刚性攻丝中的 S 值超出允许范围，或没指令。修改程序。 
+201 |FEEDRATE NOT FOUND IN RIGID TAP |刚性攻丝中，没有指令 F。修改程序。 
+202 |POSITION LSI OVERFLOW |刚性攻丝中主轴分配值过大。（系统错） 
+203 |PROGRAM MISS AT RIGID TAPPING |刚性攻丝中 M 代码（M29）或 S 指令位置不对。修改程序。 
+204 |ILLEGAL AXIS OPERATION |刚性攻丝中在刚性攻丝 M 代码（M29）和 M 系的 G84 或 G74（T 系的 G84 或 G88）的程序段间，指令了轴移动。修改程序。 |ILLEGAL PLANE SELECT （T series） |在 Z－X 平面以外指令了图纸尺寸直接输入。修改程序。 
+205 |RIGID MODE DI SIGNAL OFF |在刚性攻丝中，指令了 M 代码（M29），但当执行 M 系的 G84 或 G74（T 系的 G84 或 G88）的程序段时，刚性方式的 DI 信号（DGN G061.0）没有成为 ON 状态，从 PMC 梯形图查 DI 信号不为 ON 的原因。 
+206 |CAN NOT CHANGE PLANE (RIGID TAP)（M series） |刚性攻丝方式中，指令了平面切换。修改程序。 
+207 |RIGID DATA MISMATCH |刚性攻丝方式中，指令的距离太短或太长。 
+210 |CAN |NOT |COMAND M198/M199 |在程序运行中，执行了 M198，M199。或者在 DNC 运行中执行了 M198。修改程序。 在复合型固定循环的小型加工中中断宏程序而执行 M99。 
+211 |G31(HIGH)NOT ALLOWED IN G99 |选择了高速跳步时，在每转指令中，指令了 G31。修改程序。
+212 |ILLEGAL PLANE SELECT （M series） |在含有附加轴的平面中，指令了任意角度倒角、拐角 R。修改程序。  |ILLEGAL PLANE SELECT  （T series） |在 Z－X 平面以外指令了图纸尺寸直接输入。修改程序。 
+213 |ILLEGAL |COMMAND |IN SYNCHRO-MODE（M series） |在同步（简易同步控制）运行中，发生以下异常。 1）|对于从动轴。在程序中指令了移动。 2）|对于从动轴指令了 JOG 进给/手轮进给/增量进给。 3）|电源接通后没进行手动返回参考点就指令自动返回参考点 4）|主动轴和从动轴的位置偏差量超过参数（No.8313）中的设定值。 |ILLEGAL |COMMAND |IN SYNCHRO-MODE（Tseries） |移动指令加到了一个同步控制的轴上。         号码 |信       息 |内            容 
+214 |ILLEGAL |COMMAND |IN SYNCHRO-MODE |同步控制中，执行了坐标系设定或偏置型刀具补偿。修改程序。
+217 |DUPLICATE |G51.2（COMMANDS）（T series） |G51.2/G251（多边形）方式中，再一次指令了 G51.2/G251。修改程序。 
+218 |NOT FOUND P/Q COMMAND IN G251（T series） |在 G51.2/G251 的程序段中，设有指令 P/Q，或指令值在允许范围之外，修改程序。 
+219 |COMMAND |G250/G251 INDEPENDENTLY （T series）|G51.2/G251，G50.2/G250 与其他指令同在一程序段。修改程序。
+220 |ILLEGAL |COMMAND |IN SYNCHR-MODE （T series） |同步运行中 NC 程序或 PMC 轴控制接口给同步轴指定了移动指令。修改程序或检查 PMC 梯形图。 
+221 |ILLEGAL COMMAND IN SYNCHR-MODE （T series） |同时进行多边形加工同步运行和 Cs 轴控制。修改程序。 
+222 |DNC OP.NOT ALLOWED IN  BG.-EDIT（M series） |后台编辑状态，输入和输出同时被执行。 请执行正确操作。 
+224 |RETURN |TO |REFERENCE POINT（M series） |自动运行开始以前，没有返回参考点（只在参数 1005#0 为 0 时）。请进行返回参考点的操作。  |TURN TO REFERENCE POINT |循环启动前必须进行参考点返回。 
+225 |SYNCRONOUS/MIXED CONTROL ERROR （T series（At two-path）） |此报警在下列情况发生。（在同步和混合控制指令中检测出） 1|轴号参数（No.1023）设定错误。 2|控制指令错误。 在滚齿加工中，指令给出了同步控制，混合控制或双重控制的C 轴。 修改程序或参数。 
+226 |ILLEGAL  COMMAND  IN SYNCHROMODE （T series（At two-path）） |移动指令被发送到同步模式下的同步轴。修改程序。 
+229 |CAN |NOT |KEEP SYNCHRO-STATE（T series） |此报警在下列情况下发生： 1|由于系统过载，致使同步/混合状态不能被保持。 2|上述情况在 CNC 设备（硬件）中发生，同步状态不能保持。（此报警在正常使用条件下不会发生） 
+230 |R CODE NOT FOUND （Grinding machine）（T series）|在 G61 程序段，没有给出进给数量 R，或指令 R 为负值。修正程序。 
+231 |ILLEGAL FORMAT IN G10 OR L50 |在用程序输入参数时，指令格式有以下错误： 1|没有输入地址 N 或 R。 2|输入了不存在的参数号。 3|轴号过大。 4|有轴型参数但没有指令轴号。 5|没有轴型参数，但指令了轴号。 6|在密码功能锁定状态下，试图改变参数 3210 的内容，或设   定参数 3204 的第 4 位（NE9）为 0。 7|试图改变程序加密参数（参数 3220~3223）。          号码 |信息 |内容 
+232 |TOO MANY HELICAL AXIS COMMANDS |在螺旋轴插补模式，指定了三个或三个以上的轴（一般定向控制模式（M series）为两个或两个以上的轴）为螺旋轴。 
+233 |DEVICE BUSY |要使用与 RS232C 接口连接的设备时，其它用户却正在使用它。
+239 |BP/S ALARM |使用控制外部 I/O 单元功能正进行穿孔时，进行了后台编辑操作。
+240 |BP/S ALARM |MDI 运行时，进行了后台编辑。 
+241 |ILLEGAL FORMAT IN  |渐开线插补指令中，没有指定结束点 I，J，K 或 R。  |G02.2/G03.2（M series） |
+242 |ILLEGAL COMMAND IN G02.2/G03.2（M series） |渐开线插补指令中指定了无效的值。 ●|开始或结束点在基圆以内。 ●|I，J，K 或 R 被设为 0。 ●|渐开线起始与起点或终点的旋转数超过 100。 
+243 |OVER TOLERANCE OF END POINT（M series） |包含起点的渐开线，终点不在渐开线上。落在了由参数 5610 所设定的范围以外。 
+244 |P/S ALARM （T series） |在由扭矩极限信号决定跳步功能中，扭矩极限信号输入之前，累积误差脉冲数超过了 32767。请重新改变轴的进给速度和扭矩极限值等。 
+245 |T-CODE |NOT |ALOWEE |IN THIS BLOCK （T series） |T 代码程序段中，指令了不允许指令的 G 代码（G50，G10，G04） 
+246 |ENCODE PROGRAM NUMBER ERROR |读取一个加密程序时，尝试使用带有超过保护范围的数来存储程序。（查看参数 3222 和 3223） 
+247 |ILLEGAL CODE USED FOR OUTPUT |加密程序输出时，压缩代码被设为 EIA。修改为 ISO。 
+250 |Z AXIS WRONG COMMAND （ATC）（M series） |在换刀指令（M06T_）程序段中，指定了 Z 轴径向移动指令。（只对钻削中心 ROBODRILL） 
+251 |ATC ERROR（M series） |下列情况发生此报警： ●|M06T_指令中包含一个不可用的 T 代码。 ●|Z 轴机械坐标为正时，给出 M06 指令。 ●|当前刀具号的参数（No.7810）被设为 0。 ●|固定循环模式中给出了 M06 指令。 ●|参考点返回指令（G27-G44）和 M06 被指定在同一程序段。●|刀补模式（G41-G44）中指令了 M06。 ●|在开机或急停解除后，没有进行参考点返回就指令了 M06。●|换刀过程中机床锁住信号和 Z 轴忽略信号被接通。 ●|换刀过程中检测到报警。 此状态的判别请参照诊断号 No.530。（只对钻削中心）               号码 |信息 |内容 
+252 |ATC SPINDLE ALARM （M series） |ATC 主轴定位过程中发生超差错误。详细信息查诊断 No.531。（只对钻削中心 ROBODRILL） p-259 
+253 |G05 IS NOT AVAILABLE （M series） |在先行控制方式（G08P1）指令了高速缓冲二进制输入运行（G05）和高速循环加工(G05)。要在执行这些 G05 指令前执行 G08P0，请取消先行控制方式。 
+5010 |END OF RECORD |指定了程序结束符“％”。I/O 设备指定错误，或修改程序。 
+5011 |PARAMETER ZERO（CUT MAX）（M series） |HPCC 方式中的最大切削进给速度（参数 No.1422，No.1430，No.1431，No.1432）为 0。 
+5014 |TRACE DATA NOT FOUND  （M series） |因没有轨迹数据，不能运行。 
+5015 |NO ROTATION AXIS（M series）|刀具轴方向手动进给，所指定的旋转轴不存在。 
+5016 |ILLEGAL COMBINATION OF M CODE |在一个程序段中指令了属于同一组的 M 代码，或是在一个程序段中，某个不能与其它 M 代码一起指令的 M 代码，却与其它的 M 代码一起指令了。 
+5018 |POLYGON AXIS SPPED ERROR （T series） |功能种类：多边形加工 G51.2 方式中，主轴或多边形同步轴的速度超过了限制值或太小，不能维持指令值的转速比。 
+5020 |PARAMETER |OF |RESTART ERROR |程序再起动的参数设定错误。 
+5043 |TOO MANY G68 NESTING （M series） |三维坐标转换指令 G68 被指令了三次或更多次。 |TOO MANY G68 NESTING （T series） |三维坐标转换指令 G68.1 被指令了三次或更多次。 
+5044 |G68 FORMAT ERROR （M series） |一个 G68 指令段包含格式错误。下列情况引发此报警： 1.|I，J 或 K 从 G68 指令段丢失（没有选择坐标旋转）。 2.|G68 指令段中 I，J 或 K 都为 0。 3.|R 从 G68 指令段丢失。 |G68 FORMAT ERROR （T series） |一个 G68.1 指令段包含格式错误。下列情况引发此报警： 1.|I，J 或 K 从 G68.1 指令段丢失（没有选择坐标旋转）。 2.|G68.1 指令段中 I，J 或 K 都为 0。 3.|R 从 G68.1 指令段丢失。                号码 |信息 |内容 
+5046 |ILLEGAL PARAMETER (ST.COMP) |直线补偿的参数设定错误。可能的原因如下： 1.|某移动轴或补偿轴的参数设定了一个实际不存在的轴号。2.|负向和正向终点之间出现多于 128个螺距误差补偿点。 3.|直线的补偿点号码没有按正确次序给定。 4.|负向和正向终点间的螺距误差补偿点，不存在直线补偿点。5.|各个补偿点的补偿值过大或过小。 6.|参数 No.13881 到 13886 的设定值（插补型直线补偿）无效。
+5050 |ILL-COMMAND IN CHOPPING MODE (M series) |圆弧螺纹切削时，指定了切换主要轴的指令。或者，指定了设定主要轴的长度为 0 的指令。 
+5051 |M-NET CODE ERROR |收到异常字符（使用了非传输代码） 
+5052 |M-NET ETX ERROR |异常 ETX 代码 
+5053 |M-NET CONNECT ERROR |连接时间监测错误（参数 No.175） 
+5054 |M-NET RECEIVE ERROR |接收时间监测错误（参数 No.176） 
+5055 |M-NET PRT/FRT ERROR |垂直奇偶或框架错误 
+5057 |M-NET BOARD SYSTEM DOWN|传输时间错误（参数 No.177）； ROM 奇偶错误； CPU 中断； 
+5058 |G35/G36 FORMAT ERROR (T series) |圆弧螺纹切削时，指定了切换主要轴的指令。或者，指定了设定主要轴的长度为 0 的指令。 
+5059 |RADIUS IS OUT OF RANGE |圆弧扦补中，用 I、J、K 指令圆弧中心时，半径超过了 9 位数。
+5060 |ILLEGAL |PARAMETER |IN G02.3/G03.3 (M series) |参数设定错误。 参数 No.5641（设定直线轴）没有设。 设定在参数 No.5641 里的轴不是直线轴。 参数 No.5642（设定旋转轴）没有设。 设定在参数 No.5642 里的轴不是旋转轴。 直线轴和旋转轴不受 CNC 控制。（参数 No.1010 中设定的值超出范围。） 
+5061 |ILLEGAL |FORMAT |IN G02.3/G03.3 (M series) |指数型插补指令（G02.3/G03.3）存在格式错误。 地址 I、J 或 K 没指定。 地址 I、J 或 K 的值为 0。 
+5062 |ILLEGAL |COMMAND |IN G02.3/G03.3 (M series) |指数型插补指令（G02.3/G03.3）中指定的值有错误。指定了指数插补中不允许的值。（例如，指定了负数值）               号码 |信息 |内容 
+5063 |IS NOT PRESET AFTER REF. (M series) |工件厚度测量开始前，位置计数器没有预设。下列情况引发此报警： (1)没有首先建立原点就尝试开始测量。 (2)手动返回原点后，没有预设位置计数器，就尝试开始测量。
+5064 |DIFFERENT AXIS UNIT (IS-B,IS-C) (M series) |圆弧插补时，一个平面内的轴含有不同增量系统。 
+5065 |DIFFERENT AXIS UNIT (PMC AXIS) (M series) |含有不同增量系统轴被指定在同一 DI/DO 组，受 PMC 轴控制。修改参数 No.8010 的设定。 
+5067 |G05 PO COMMANDED IN G68/G51 MODE (HOPCC) (M series) |在 G51（缩放比例）或 G68（坐标系旋转）中，HPCC 模式不能被取消。修正程序。 
+5068 |G31 FORMAT ERROR (M series) |持续高速跳步指令（G31 P90）存在下列错误之一： 1.|没有指定沿刀具移动的轴。 2.|沿刀具移动的轴多于一个。 或者，EGB 跳步指令（G31.8）或持续高速跳步指令（G31.9）存在下列错误之一： 1.|移动指令加到了 EGB 轴（工件轴）。 2.|指定了一个以上的轴。 3.|没有指定 P。 4.|指定的 Q 值超出了允许范围。 修正程序。 
+5069 |WHL-C:ILLEGA P-DATA (M series) |砂轮磨损补偿的 P 值无效。 
+5073 |NO DECIMAL POINT |应该指令小数点的地址上没有输入小数点。 
+5074 |ADDRESS DUPLICATION  ERROR |在同一个程序段内，指令了两次或两次以上的相同地址。或在同一程序段内指令了两个或两个以上同一组的 G 代码。 
+5082 |DATA SERVER ERROR |此报警详情显示在数据服务器信息画面。 
+5085 |SMOOTH IPL ERROR 1 |平滑插补的程序段包含了一个格式错误。 
+5096 |MISMATCH WAITING M-CODE (M series) |不同的等待码（M 代码）指定在 HEAD1 和 HEAD2 中。 修正程序。 
+5110 |NOT STOP POSITION (G05.1G1) (M series) |在 AI 轮廓控制方式中，指定了一个非法 G 代码。 在 AI 轮廓控制方式中，指定了分度工作台的分度轴。 |NOT STOP POSITION (G05.1G1) (21i-M) |在 AI 先行控制方式中，指定了一个非法 G 代码。 在 AI 先行控制方式中，指定了分度工作台的分度轴。      号码 |信息 |内容 
+5111 |IMPROPER |MODEL |G-CODE (G05.1 G1) (M series) |指令了 AI 轮廓控制方式时，保留了非法的模态 G 代码。 
+5112 |G08 CAN NOT BE COMMANDED (G05.1 G1) (M series) |先行控制（G08）被指令在 AI 轮廓控制方式中。 |G08 CAN NOT BE COMMANDED (G05.1 G1) (21i-M) |先行控制（G08）被指令在 AI 先行控制方式中。 
+5114 |NOT STOP POSITION (G05.1 Q1) (M series) |手动插入后重新启动时，没有返回到停止坐标时的位置。  |NOT STOP POSITION (G05.1 Q1) (21i-M) |在 MDI 方式中指令了 AI 轮廓控制（G05.1）。 
+5115 |SPL : ERROR (M series) |指定的阶数有误。 | |没有指定节点。 | |指定的节点有误。 | |轴的数量超出限制。 | |其它的程序错误。 
+5116 |SPL : ERROR (M series) |预读的程序段中存在程序错误。 | |节点不遵守单向递增的原则。 | |在 NURBS 插补方式中，指令了不能一起使用的方式。 
+5117 |SPL : ERROR (M series) |NURBS 的第一个控制点不正确。 
+5118 |SPL : ERROR (M series) |手动绝对方式设为接通状态，手动干涉后，NURBS 补偿被重新启动。 
+5122 |ILLEGAL COMMAND IN SPIRAL (M series) |螺旋或圆锥插补指令中包含错误。原因可能为下列情况之一：1）|指定了 L=0。 2）|指定了 Q=0。 3）|指定了 R/，R/，C。 4）|0 被指定为高度增量。 5）|三个或三个以上的轴被指定为高度轴。 6）|有两个高度轴的情况下指令了一个高度增量。 7）|没有选择螺旋插补功能的情况下指令了圆锥插补。 8）|半径差值>0 的时候指定 Q<0。 9）|半径差值<0 的时候指定 Q>0。    10) 没有指定高度轴的情况下指令了高度增量。 
+5123 |OVER TOLERANCE OF END POINT (M series) |指令的终点与计算的终点间的差值超出允许范围 （参数 No.3471）。  号码 |信息 |内容 
+5124 |CAN NOT COMMAND SPIRAL (M series) |在下列方式中指令了圆锥补偿或螺旋补偿： 1）|缩放 2）|可编程镜像 3） 极坐标插补 在刀补 C 方式中，中心被设为起点或终点。 
+5134 |FSSB : OPEN READY TIME OUT|初始化时 FSSB 不能变成准备状态。 
+5135 |FSSB : ERROR MODE |FSSB 进入了错误方式。 
+5136 
+5137 |FSSB : NUMBER OF AMPS IS SMALL |与控制轴的数量比较，FSSB 认出的放大器的数量不够。  |FSSB :CONFIGURATIONERROR|FSSB 检测到配置错误。 
+5138 |FSSB : AXIS SETTING NOT COMPLETE |在自动设定方式，还没完成轴的设定。 在 FSSB 设定画面进行轴的设定。 
+5139 |FSSB : ERROR |伺服初始化没有正常结束。 光缆可能失效，或者与放大器或别的模块的连接有误。 检查光缆和连接状态。 
+5155 |NOT RESTART PROGRAM BY G05 |G05 伺服倾斜控制中，互锁或进给保持后，尝试执行重新启动的操作。此操作不能被执行。（G05 倾斜控制也同时被终止）
+5156 |ILLEGAL AXIS OPERATION (AICC) (M series) |在 AI 轮廓控制方式中，控制轴选择信号（PMC 轴控制）变化了。在 AI 轮廓控制方式中，简易同步轴选择信号变化了。 |ILLEGAL AXIS OPERATION (AICC) (21i-M) |在 AI 前馈控制方式中，控制轴选择信号（PMC 轴控制）变化了。在 AI 前馈控制方式中，简易同步轴选择信号变化了。 
+5157 |PARAMETER ZERO (AICC) (M series) |最大切削进给速度的参数（No.1422 或 1432）设定值为 0。插补前加减速的参数（No.1770 或 No.1771）设定值为 0。请正确设定参数。 
+5195 |DIRECTION CAN NOT BE JUDGED (T series) |刀具补偿测量值直接输入 B 功能中，具有单一触点的接触式传感器储存的脉冲方向不固定。此时为下述的任一种状态。 ·偏置写入方式时，处于停止状态。 ·伺服关断状态。 ·方向变化。 ·2 轴同时移动。 
+5196 |ILLEGAL OPERATION (HPCC) (M series) |HPCC 方式中执行了分离操作。（如果在 HPCC 方式中执行了分离操作，此报警通常在已执行的程序段结束后发生） 
+5197 |FSSB : OPEN TIME OUT |CNC 允许 FSSB 打开，FSSB 却没有打开。 
+5198 |FSSB : ID DATA NOT READ |暂时分配失败，因此放大器初始 ID 信息不能被读取。 
+5199 |FINE TORQUE SENSING PARAMETER |与精转矩检测功能相关的参数不合法。 ·存储间隔无效 ·无效的轴名被设为目标轴修正参数  号码 |信息 |内容 
+5218 |ILLEGAL PARAMETER (INCL.COMP) |斜角补偿参数设定存在错误。 原因： 1.|正向和负向终点间的螺距误差补偿点数超过 128 个。 2.|斜角补偿点号码的大小关系不正确。 3.|某倾斜角补偿点落在了正向和负向终点间的斜角误差补偿点之外。 4.|各个补偿点的补偿值过大或过小。 修正参数。 
+5219 |CAN NOT RETURN |三维坐标转换过程中不允许有手动插入或返回。 
+5220 |REFERENCE POINT ADJUSTMENT MODE |自动设定的参考点参数被设定。（参数 No.1819#2=1）执行自动设定。 (手动将机械位置定位在参考位置，再执行手动参考点返回。）补充：自动设定是将参数 No.1819#2 设为 0。 
+5222 |SRAM CORRECTABLE ERROR |SRAM 可修正性错误无法进行修正。 原因：存储器初始化时发生错误。 措施：更换主印刷电路板（SRAM 模块）。 
+5227 |FILE NOT FOUND |使用内装 Handy File 进行传送时，所指定的文件没有找到。 
+5228 |SAME NAME USED |两个相同文件名存在于内装 Handy File 中。 
+5229 |WRITE PROTECTED |内装 Handy File 的软驱写保护。 
+5231 |TOO MANY FILES |使用内装 Handy File 进行传送时，文件数量超过限制。 
+5232 |DATA OVER-FLOW |内装 Handy File 的软驱空间不足。 
+5235 |COMMUNICATION ERROR |使用内装 Handy File 进行传送时，发生传送错误。 
+5237 |READ ERROR |内装 Handy File 的软驱无法读取。软驱可能失效，或磁头脏。也可能 Handy File 失效。 
+5238 |WRITE ERROR |内装 Handy File 的软驱不能写入。软驱可能失效，或磁头脏。也可能 Handy File 失效。 
+5242 |ILLEGAL AXIS NUMBER (M series) |柔性同步的主动轴和从动轴的轴号不正确。（柔性同步控制接通时发生此报警）或者，从动轴的轴号小于主动轴。 
+5243 |DATA OUT OF RANGE (M series) |齿轮比设定不正确。（柔性同步控制接通时发生此报警） 
+5244 |TOO MANY DI ON (M series) |即使在自动操作时 M 代码被输入，柔性同步方式信号也不接通或关断。          号码 |信息 |内容 
+5245 |OTHER AXIS ARE COMMANDED (M series) |在柔性同步控制中或柔性同步控制接通时，出现了下列指令情况之一： 1.|同步控制的主动轴或从动轴为EGB轴。 2.|同步控制的主动轴或从动轴为切割（chopping）轴。 3.|在返回参考点方式。 
+5251 |ILLEGAL PARAMETER IN G54.2 (M series) |卡具偏置参数（No7580 到 7588）不合法。修改参数。 
+5252 |ILLEGAL COMMAND IN G54.2 (M series) |P 值指定的卡具偏置的偏置号过大。 
+5257 |G41/G42 NOT ALLOWED IN MDI MODE (M series) |在 MDI 方式中，指令了 G41/G42（刀具补偿 C:M 系列）(由参数 No.5008#4 来设定)。 |G41/G42 NOT ALLOWED IN MDI MODE (T series) |在 MDI 方式中，指令了 G41/G42（刀尖半径补偿:T 系）由参数 No.5008#4 来设定） 
+5300 |SET ALL OFFSET DATAS AGAIN |刀具偏置数据的英制/公制自动转换功能(OIM:参数 No.5006#0) 接通或关闭后，所有刀具偏置数据必须重新设定。此报警信息提醒操作者进行数据的重新设定。 如果发生了此报警，要重新设定所有的刀具偏置数据。如果不进行设定就操作机床会造成故障。 
+5302 |ILLEGAL COMMAND IN G68 MODE |在坐标系统旋转方式下指定了设定坐标系统的指令。 
+5303 |TOUCH PANEL ERROR |触摸面板发生错误。 原因： 1.|触摸面板持续被按压。 2.|电源接通时触摸面板被按压。排除以上原因，然后再打开电源。 
+5306 |MODE CHANGE ERROR |在宏程序调用中，方式转换执行不正确。 
+5307 |INTERNAL DATA OVER FLOW (M series) |以下功能中，内部数据超出允许范围。 1）改进旋转轴的进给。 
+5311 |FSSB:ILLEGAL CONNECTION |FSSB 相关的连接不合法。 此报警在如下所列情况发生： 1.|两个相邻的伺服轴号（参数 No.1023），奇数号和偶数号，被分配给连接了不同 FSSB 系统的放大器。 2.|系统不满足执行 HRV 控制的必要条件，且指定使用了含有不同 FSSB 电流控制环的 FSSB 系统连接的两个脉冲模块。
+5321 |S- COMP.VALUE OVERFLOW |直线补偿值超过最大值 32767。发生此报警后，要执行手动参考点返回。 
+5400 |SPL:ILLEGAL AXIS COMMAND (M series) |指定为样条插补或平滑插补的轴指令不正确。如果在样条插补方式下没指定样条插补轴，则发生此报警。样条插补轴在包含 G06.1 的程序段或下一程序段中指定。对于平滑插补用 G5.1Q2 指定的轴不正确。   号码 |信息 |内容 
+5401 |SPL:ILLEGAL COMMAND (M series) |不允许指定 G06.1 的 G 代码模式，指定了 G06.1。 
+5402 |SPL:ILLEGAL AXIS MOVING (M series) |非样条插补轴方向有移动。 例如，三维刀具补偿方式中使用的偏置向量包括X，Y和Z轴，两轴坐标执行样条插补时，发生沿Z轴的移动，就引发此报警。
+5403 |SPL:CAN NOT MAKE VECTOR (M series) |无法启动三维轴刀具补偿向量。 当一个三维刀具补偿向量创建给第二点或后续点时，补偿点以及前一个点和后一个点位于同一直线上，此直线与前一个点的三坐标刀具补偿向量平行。 当一个三维刀具补偿向量创建在圆弧插补或样条插补的结束点时，结束点和倒数第三个点是一样的。 
+5405 |ILLEGAL PARAMETER IN G41.2/G42.2 (M series) |决定旋转轴和旋转平面间的关系的参数设定不正确。 
+5406 |G41.3/G40 FORMAT ERROR (M series) |1）|某G43.1或G40程序段包含移动指令。 2）|某G1.3程序段包含有G代码或M代码，抑制了缓冲。 
+5407 |ILLEGAL COMMAND IN G41.3 (M series) |1）|在G41.3中，除了G00和G01还指令了其它01组的G代码。2）|在G41.3中给出了偏置指令（07组的G代码）。 3）|G41.3（启动）的下一程序段中不包含移动指令。 
+5408 |G41.3 ILLEGAL START_UP (M series) |1）|在01组方式中，除了G00和G0，指令了G41.3（启动）。2）|启动时，刀具方向矢量和移动方向矢量所包括的角度为0 或180度。 
+5409 |ILLEGAL PARAMETER IN G41.3 (M series) | 决定旋转轴和旋转平面间的关系的参数（No.xxxx到xxxx）设定不正确。 
+5411 |NURBS:ILLEGAL ORDER (M series) |指定的步数不正确。 
+5412 |NURBS:NO KNOT COMMAND (M series) |没有指定节点。或者，在NURBS插补方式，指定了与NURBS插补无关的程序段。 
+5413 |NURBS:ILLEGAL AXIS COMMAND (M series) |没有由控制点决定的轴被指令在第一个程序段中。 
+5414 |NURBS:ILLEGAL KNOT (M series) |只包含节点的程序段数不足。 
+5415 |NURBS:ILLEGAL CANCEL (M series) |NURBS插补尚未完成的情况下，NURBS插补方式就关断了。 
+5416 |NURBS:ILLEGAL MODE (M series) |在NURBS插补方式中指定了不能与NURBS插补方式一起使用的方式。 
+5417 |NURBS:ILLEGAL MULTI-KNOT(M series) |起始点和结束点上没有指令与节数一样多的步数。 
+5418 |NURBS:ILLEGAL KNOT VALUE  (M series) |节数不是单向递增的。 
+5420 |ILLEGAL PARAMETER IN G43.4/G43.5 (M series) |枢轴刀具长度补偿相关参数不正确。 
+5421 |ILLEGAL COMMAND IN G43.4/G43.5 (M series) |在枢轴刀具长度补偿（2型）方式，指定了旋转轴。  号码 |信息 |内容 
+5422 |EXCESS VELOCITY IN G43.4/G43.5 (M series) |作为枢轴刀具长度补偿的结果，沿进给轴移动的刀具移动超过最大进给量。 
+5425 |ILLEGAL OFFSET VALUE (M series) |偏置号不正确。 
+5430 |ILLEGAL COMMAND IN 3-D CIR (M series) |在不能指定三维圆弧插补的方式下，指令了三维圆弧插补（G02.4/G03.4）。或者，在三维圆弧插补方式中指定了无法使用的指令。 
+5432 |G02.4/G03.4 FORMAT ERROR (M series) |三维圆弧插补指令（G02.4/G03.4）不正确。 
+5433 |MANUAL INTERVENTION IN 3-D CIR (M series) |在三维圆弧插补（G02.4/G03.4）方式中，手动绝对开关在打开的状态下进行了手动干预。 
+5435 |PARAMETER OUT OF RANGE (TLAC) (M series) |不正确的参数设定（设定值的范围） 
+5436 |PARAMETER SETTING ERROR1 (TLAC) (M series) |不正确的参数设定（旋转轴的设定） 
+5437 |PARAMETER SETTING ERROR2 (TLAC) (M series) |不正确的参数设定（刀具轴的设定） 
+5440 |ILLEGAL DRILLING AXIS SELECTED (M series) |固定钻孔循环中指定的钻孔轴不正确。 钻孔轴固定循环的 G 代码指令段没有指定 Z 点。若没有与钻孔轴平行的轴，则同时要指定平行轴。 
+5445 |CRC:MOTION IN G39 (M series) |刀补中拐角圆弧插补(G39)没单独指令而与移动指令同时指定
+5446 |CRC:NO AVOIDANCE (M series) |刀补干涉检测回避功能中，因不存在干涉回避矢量不能执行。
+5447 |CRC:DANGEROUS AVOIDANCE (M series) |刀补干涉检测回避功能中，判断进行回避操作将导致危险。 
+5448 |CRC:INTERFERENCE TO AVD. (M series) |刀补干涉检测回避功能中，对于已经执行回避矢量，另一个干涉将发生。 
+5452 |IMPROPER G-CODE (5 AXIS MODE) (M series) |出现了不能被指令的 G 代码。（5 轴模式）下列情况时发生此报警： 1）|刀补中加了三维刀具补偿（侧面偏置及端面偏置），或三    维刀具补偿（侧面偏置及端面偏置）中加了刀补。 2）|三维刀补中的侧面偏置中加了端面偏置，或在端面偏置中    加了侧面偏置。 3）|刀具长度补偿中加了刀具轴方向刀长补偿，或在刀具轴方    向刀长补偿中加了刀具长度补偿。 4）|刀具长度补偿中提供了刀具中心点控制，或刀具中心点控    制中提供了刀具长度补偿。 5）|刀具轴方向刀具长度补偿中提供了刀具中心点控制，或刀具中心点控制中提供了刀具轴方向刀具长度补偿。 如果发生了此报警，取消相关的方式，然后指定另一不同的方式。 
+5453 |NOTE: G68 IS CANCELED (HPCC)(M series) |参数 No.5400#2 设为 1 时，复位没有取消 G68，程序重新开始时发生此报警。 按<RESET>和<CAN>消除此报警。一旦执行此操作，在下次重新开始的时候就不会发生此报警。||重新开始的时候就不会发生此报警。 
+5455 |ILLEGAL ACC.PARAMETER (M series) |最适宜的转矩加速/减速参数不正确。可能的原因如下： 1）|减速度与加速度的比率低于极限。 2）|减速到速度为 0 所需要的时间超过最大值。  注：AICC 指的是 AI 轮廓控制（Contour Control）.    (2)后台编辑报警（BP/S 报警） 号码 |信       息 |内            容 ??? |BP/S alarm |在通常的程序编辑中，发生了与 P/S 报警相同号码的 BP/S 报警（P/S 070,071,072,073,074,085～087 等）。修改程序。
+140 |BP/S alarm |某一程序已被前台选择，却在后台对它进行选择或删除操作。请正确运用后台编辑。  注：后台编辑的报警显示在其画面的键输入行上，而不是报警画面上，可由任一 MDI 键操作进行解除。   (3)绝对脉冲编码器（APC）的报警 号码 |信       息 |内            容 
+300 |APC alarm:nth-axis origin return |在 n 轴（1～4 轴），进行手动返回参考点。 
+301 |APC alarm:nth-axis communication |n 轴（1～4 轴）APC 通讯错。（数据传送异常）。 APC、电缆或伺服接口模块不良。 
+302 |APC alarm:nth-axis over time |n 轴（1～4 轴）超时错。（数据传送异常）。 APC、电缆或伺服接口模块不良。 
+303 |APC alarm:nth-axis framing |n 轴（1～4 轴）APC 成帧错。（数据传送异常）。 APC、电缆或伺服接口模块不良。 
+304 |APC alarm:nth-axis parity |n 轴（1～4 轴）APC 奇偶错误。（数据传送）。 APC、电缆或伺服接口模块不良。 
+305 |APC alarm:nth-axis pulse error |n 轴（1～4 轴）APC 脉冲错误报警。（APC 报警） APC 或电缆不良。 
+306 |APC alarm:nth-axis battery volatge 0 |n 轴（1～4 轴）APC 用电池电压已降低到不能保持数据的程度。（APC 报警）电池或电缆不良。 
+307 |APC alarm:nth-axis battery low 1 |n 轴（1～4 轴）APC 用电池电压降低到要更换电池的程度（APC 报警）。请更换电池。 
+308 |APC alarm:nth-axis battery low 2 |n 轴（1～4 轴）APC 用电池电压已降低到必须更换电池的程度（含电源 OFF 时）。（APC 报警）更换电池。 
+309 |APC ALARM: n AXIS ZRN IMPOSSIBL |电机没转 1 转以上就返回参考点。 使电机转 1 转以上，关电源，再接通后，返回参考点。   (4)感应同步器报警 号码 |信       息 |内            容 
+330 |INDUCTOSYN:DATA ALARM |感应同步器的绝对位置数据（偏置数据）无法被检测。 
+331 |INDUCTOSYN:ILLEGAL PRM |参数 No.1874，1875 或 1876 设定为 0。  (5)串行脉冲编码器（SPC）的报警 号码 |信       息 |内            容 
+360 |n AXIS: ABNORMAL CHECKSUM (INT) |内置脉冲编码器发生校验和错误。 
+361 |n AXIS: ABNORMAL PHASE DATA (INT) |内置脉冲编码器发生相位数据错误。 
+362 |n AXIS: ABNORMAL REV.DATA (INT) |内置脉冲编码器发生转速计数错误。 
+363 |n AXIS: ABNORMAL CLOCK (INT) |内置脉冲编码器发生时钟错误。 
+364 |n AXIS: SOFT PHASE ALARM (INT)|数字伺服软件检测到内置脉冲编码器的无效数据。 
+365 |n AXIS: BROKEN LED (INT) |内置脉冲编码器发生 LED 错误。 
+366 |n AXIS: PULSE MISS (INT) |内置脉冲编码器发生脉冲错误。 
+367 |n AXIS: COUNT MISS (INT) |内置脉冲编码器发生计数错误。 
+368 |n AXIS: SERIAL DATA ERROR (INT)|内置脉冲编码器发出的传输数据无法接收。 
+369 |n AXIS: DATA TRANS. ERROR (INT) |从内置脉冲编码器接收的数据发生 CRC 或停止位错误。 
+380 |n AXIS: BROKEN LED (EXT) |分离型检测器的 LED 错误。 
+381 |n AXIS: ABNORMAL PHASE (EXT) |分离型直线尺发生相位数据错误。 
+382 |n AXIS: COUNT MISS (EXT) |分离型检测器发生脉冲错误。 
+383 |n AXIS: PULSE MISS (EXT) |分离型检测器发生计数错误。 
+384 |n AXIS: SOFT PHASE ALARM (EXT) |数字伺服软件检测到分离型检测器的无效数据。 
+385 |n AXIS: SERIAL DATA ERROR (EXT) |分离型检测器发出的传输数据无法接收。 
+386 |n AXIS: DATA TRANS. ERROR (EXT) |从分离型检测器接收的数据发生 CRC 或停止位错误。 
+387 |n |AXIS:ABNORMAL |ENCODER (EXT) |分离型检测器发生错误。详情请与光栅尺制造厂家联系。                串行脉冲编码器 报警的详细内容 |串行脉冲编码器报警的详细内容，显示在诊断号照下面内容） |No.202，No.203 上。（参   #6(CSA):  串行编码器异常。更换脉冲编码器。 #5(BLA):  电池电压不足。更换电池。此位与 No.350 报警无关。 #4(PHA):  串行编码器或反馈电缆异常。更换电缆或编码器。 #3(PCA):  串行编码器异常。更换编码器。 #2(BZA):  初次给脉冲编码器供电。检查电池的连接，断开电源然后再次接通电源，返回参考点。此报警与 No.350 无关。 #1(CKA):  串行编码器异常。更换编码器。 #0(SPH):   串行编码器或反馈电缆异常。更换串行编码器或电缆。     #7(DTE):  串行编码器通讯异常。 其原因是编码器、反馈电缆或反馈接收电路异常。 更换编码器，反馈电缆或伺服控制模块之一。 #6(CRC):  串行编码器通讯异常。 其原因是编码器、反馈电缆或反馈接收电路异常。 更换编码器、反馈电缆或伺服控制模块之一。 #5(STB):  串行编码器通讯异常。 其原因是编码器、反馈电缆或者反馈接收电路异常。 更换编码器、反馈电缆或伺服控制模块之一。 #4(PRM):  因参数无效而报警。此时也显示伺服参数错误报警。（报警号No.417）。               (6)伺服报警(1/2) | 号码 |信       息 |内            容 
+401 |SERVO |ALARM:n-TH |AXIS VRDY OFF |n 轴（1～4 轴）的伺服放大器的准备好信号 DRDY 为 OFF。 
+402 |SERVO ALARM:SV CARD NOT EXIST |没有提供轴控制卡。 
+403 |SERVO |ALARM:CARD/SOFT MISMATCH |轴控制卡与伺服软件的搭配不合适。 可能的原因如下： ·没有提供正确的轴控制卡。 ·快闪存储器中没有安装正确的伺服软件。 
+404 |SERVO |ALARM:n-TH |AXIS VRDY ON |轴卡的准备好信号（MCON）为 OFF，而伺服放大器的准备好信号（DRDY）为 ON。或者电源接通时即使 MCON 为 OFF，但 DRDY 仍是 ON。请确认伺服接口模块和伺服放大器的连接。
+405 |SERVO ALARM:（ZERO POINT RETURN FAVLT） |位置控制系统异常。由于返回参考点时 NC 内部，或伺服系统异常，可能不能正确返回参考点。重新用手动返回参考点。 
+407 |SERVO |ALARM:EXCESS ERROR |在简易同步控制中，出现以下异常。同步轴之间的位置偏差量超过了参数（No.8314）设定的值。 
+409 |TORQUEALM':EXCESS ERROR |伺服电机出现了异常负载。或 Cs 方式中主轴电机出现了异常负载。 
+410 |SERVO |ALARM:n-TH AXIS-EXCESS ERROR |发生了以下异常之一： 1）n 轴停止中的位置偏差量的值超过了参数（NO.1829）上设定的值。 2）简易同步控制中，同步时的最大补偿量超过了参数（No.8325）上设定的值。此报警只发生在从动轴。 
+411 |SERVO |ALARM:n-TH AXIS-EXCESS ERROR |n 轴（1～4 轴）移动中的位置偏差量大于设定值。 参考故障处理的步骤。 
+413 |SERVO ALARM:n-TH AXIS-LSI OVERFLOW |n 轴（1～4 轴）的误差寄存器的内容超出±231 的范围。这种错误通常是由于参数设定错误造成。 
+415 |SERVO |ALARM:n-TH AXIS-EXCESS SHIFT |在 n 轴（1～4 轴）指令了大于 524288000 检测单位/sec 的速度。此错误是因 CMR 的设定错误造成的。 
+417 |SERVO ALARM：n-TH AXIS PARAMETER INCORRECT |当第 n 轴（1-4 轴）处在下列状况之一时发生此报警。（数字伺服系统报警） 1）|参数 No.2020（电机形式）设定在特定限制范围以外。 2）|参数 No.2022（电机旋转方向）没有设定正确值（111 或-111）3）|参数 No.2023（电机一转的速度反馈脉冲数）设定了非法数据（例如小于 0 的值） 4）|参数 No.2024（电机一转的位置反馈脉冲数）设定了非法数据（例如小于 0 的值） 5）|参数 No.2084 和参数 No.2085（柔性齿轮比）没有设定。 6）|参数 No.1023（伺服轴数）设定了超出范围（1 到伺服轴数）的值或是设定了范围内不连续的值，或设定隔离的值（例如没有 3 轴，而设定 4） 7）|PMC 轴控制中，扭矩控制参数设定不正确。 （恒定扭矩的参数设定为 0。） 
+420 |SERVO ALARM: n AXIS SYNC TORQUE |简易同步控制中，主动轴与从动轴扭矩指令差超过了参数设定值（No.2031）。 
+421 |SERVO |ALARM: |n |AXIS EXECESS ER (D) |使用双位置反馈功能时，半闭环的误差与全闭环的误差之差值过大。请确认双位置变换参数（No.2078,2079）的设定值。 
+422 |SERVO ALARM: n AXIS |在 PMC 轴的扭矩控制中，速度超出了允许的速度。 
+423 |SERVO ALARM: n AXIS |在 PMC 轴的扭矩控制中，超过了参数设定的允许移动累计值。 号码 |信       息 |内            容 
+430 |n AXIS:SV.MOTOROVERHEAT |伺服电机过热。 
+431 |n AXIS: CNV.OVERLOAD |1）|PSM：发生过热。 2）|β系列 SVU：发生过热。 
+432 |n AXIS: CNV.LOWVOLT CON. |1）|PSM：控制电源电压降低。 2）|PSMR：控制电源电压降低。 3）|β系列 SVU：控制电源电压降低。 
+433 |n AXIS: CNV.LOWVOLT DC LINK |1）|PSM：DC link 电压降低。 2）|PSMR：DC link 电压降低。 3）|α系列 SVU：DC link 电压降低。 4）|β系列 SVU：DC link 电压降低。 
+434 |nAXIS:INV.LOWVOLT CONTROL |SVM：控制电源电压降低。 
+435 |nAXIS: |INV.LOWVOLT |DC LINK |SVM：DC link 电压降低。 
+436 |nAXIS: SOFTTHERMAL(OVC) |数字伺服软件检测到软件热态（OVC） 
+437 |nAXIS:CNV.OVERCURRENT POWER |PSM：输入回路流入高电流。 
+438 |nAXIS:INV.ABNORMAL CURRENT |1）|SVM：电机电流过高。 2）|α系列 SVU：电机电流过高。 3）|β系列 SVU：电机电流过高。 
+439 |n |AXIS: |CNV.OVERVOLT POWER |1）|PSM：DC link 电压过高。 2）|PSMR：DC link 电压过高。 3）|α系列 SVU：DC link 电压过高。  号码 |信       息 |内            容 
+430 |n AXIS:SV.MOTOROVERHEAT |伺服电机过热。 ||4）β系列 SVU：DC link 电压过高。 
+440 |n |AXIS: |CNV.EX DECELERATION POW. |1）|PSMR：再生放电总量过大。 2）|α系列 SVU：再生放电总量过大。或再生放电回路异常。
+441 |n |AXIS: |ABNORMAL CURRENT OFFSET |数字伺服软件检测到电机电流检测回路异常。 
+442 |n AXIS: CNV.CHARGE FAULT |1）|PSM：DC link 的备用放电回路异常。 2）|PSMR：DC link 的备用放电回路异常。 
+443 |n AXIS: CNV.COOLING FAN FAILURE |1）|PSM：内部风扇不转。 2）|PSMR：内部风扇不转。 3）|β系列 SVU：内部风扇不转。 
+444 |n AXIS: INV.COOLING FAN FAILURE |SVM：内部风扇不转。 
+445 |n AXIS: SOFT DISCONNECT ALARM |数字伺服软件检测到某脉冲编码器断线。 
+446 |n AXIS: HARD DISCONNECT ALARM |硬件检测到内置脉冲编码器断线。 
+447 |nAXIS:HARD DISCONNECT(EXT) |硬件检测到分离型检测器断线。 
+448 |nAXIS:UNMATCHED FEEDBACK ALARM |内置脉冲编码器的反馈数据符号与分离型检测器的反馈数据符号不同。 
+449 |n AXIS: INV.IPM ALARM |1）|SVM：IPM（智能电源模块）检测到一个报警。 2）|α系列 SVU：IPM（智能电源模块）检测到一个报警。 
+453 |n |AXIS: |SPC |SOFT DISCONNECT ALARM |α脉冲编码器软件断线报警。 关断 CNC 电源，然后移动和插入脉冲编码器电缆。如果仍发生报警，更换脉冲编码器。    号码 |信       息 |内            容 
+456 |ILLEGAL CURRENT LOOP |电流控制循环设定（参数 No.2004，参数 No.2003 的第 0 位和参数 No.2013 的第 0 位）不正确。可能的原因如下。 － 对于两个轴，伺服轴号（参数 No.1023 中设定）为奇数后面跟一个偶数（例如，一对轴轴 1 和 2，轴 5 和 6），每个轴设定了不同的当前控制周期。 － 设定电流控制周期所必须的从属单元的数量、类型以及它们之间的连接方式，不满足需要。 
+457 |ILLEGAL HI HRV(250US) |即使电流控制循环为 200μs 仍然指定使用高速 HRV。 
+458 |CURRENT LOOP ERROR |电流控制循环设定与实际当前控制循环不匹配。 
+459 |HI HRV SETTING ERROR |对于两个轴，伺服轴号（参数 No.1023 中设定）为奇数后面跟一个偶数（例如，一对轴轴 1 和 2，轴 5 和 6），其中一个轴的 SVM 支持高速 HRV 控制，但是另一个轴的 SVM 不支持。查看p-274 的规格||SVM 的规格。 
+460 |n AXIS: FSSB DISCONNECT |FSSB 通讯突然中断。可能的原因如下： 1）|FSSB 传输电缆未连接或断线。 2）|放大器电源突然掉电。 3）|放大器发生低电压报警。 
+461 |n |AXIS: |ILLEGAL |AMP INTERFACE |2 轴放大器的轴被分配到快速类型接口。 
+462 |n AXIS: SEND CNC DATA FAILED |由于 FSSB 通讯错误，导致从属站不能接收到正确数据。 
+463 |n AXIS: SEND SLAVE DATA FAILED |由于 FSSB 通讯错误，导致伺服系统不能接收到正确数据。 
+464 |n |AXIS: |WRITE |ID |DATA FAILED |试图在放大器维修画面写入维修信息，但是失败了。 
+465 |n |AXIS: |READ |ID |DATA FAILED |开机时，放大器初始 ID 信息不能被读取。 
+466 |n |AXIS: |MOTOR/AMP COMBINATION |放大器的最大电流值与电机的不匹配。 
+467 |n AXIS: ILLEGAL SETTING OF AXIS |在轴设定画面，当一个轴指定占用一个 DSP（通常对应两个轴）时，下列的伺服功能没有开放 1.学习控制（参数 No.2008 的第 5 位=1） 2.高速电流环（参数 No.2004 的第 0 位=1） 3.高速接口轴（参数 No.2005 的第 4 位=1） 
+468 |HI |HRV |SETTING ERROR(AMP) |一个放大器的某个控制轴指定了使用高速 HRV，但是放大器不支持高速 HRV。                伺服报警的详细内容 |有关放大器报警（No.414）的详细内容在诊断显示的 No.200.No.201,No.204 上显示。   #7(OVL):  发生过载报警。（详细内容显示在诊断显示 No.201 上）。 #6(LV):  伺服放大器电压不足的报警。确认伺服放大器的 LED。 #5(OVC):  在数字伺服内部，检查出过电流报警。 #4(HCA):  检测出伺服放大器电流异常报警。确认伺服放大器的 LED。 #3(HVA):  检测出伺服放大器过电压报警。确认伺服放大器的 LED。 #2(DCA):  伺服放大器再生放电电路报警。确认伺服放大器的 LED。 #1(FBA):  发生了断线报警。（详细内容显示在诊断显示的 No.201 上。） #0(OFA):  数字伺服内部发生了溢出报警。    当诊断显示号 No.200 的 OVL 为 1 时 #7(ALD):  1：电机过热。           0：伺服放大器过热。 诊断显示 No.200 的 FBA 为 1 时  ALD |EXP |报警内容 1 |0 |内装编码器断线（硬件） 1 |1 |分离式编码器断线（硬件） 0 |0 |脉冲编码器断线（软件）    #6(OFS):   数字伺服电流值的 A/D 转换异常。 |#5(MCC):   |伺服电磁接触器的接点熔断了。 #4(LDA):   LED 表明串行编码器 C 异常。 #3(PMS):   由于反馈电缆异常导致反馈脉冲错误。               (7)超程报警 号码 |信       息 |内            容 
+500 |OVER TRAVEL:＋n |超过了 n 轴的正向存储行程检查Ⅰ的范围（参数 1320 或 1326）（注）。 
+501 |OVER TRAVEL:－n |超过了 n 轴的负向存储行程检查 I 的范围（参数 1321 或 1327）（注）。 
+502 |OVER TRAVEL:＋n |超过了 n 轴的正向存储行程检查Ⅱ的范围（参数 1322）。 
+503 |OVER TRAVEL:－n |超过了 n 轴的负向存储行程检查Ⅱ的范围（参数 1323）。 
+504 |OVER TRAVEL:＋n（T series）|超过了 n 轴的正向存储行程检查Ⅲ的范围（参数 1324）。 
+505 |OVER TRAVEL:－n（T series）|超过了 n 轴的负向存储行程检查Ⅲ的范围（参数 1325）。 
+506 |OVER TRAVEL:＋n |超过了 n 轴正向的硬件 OT（硬件超程）。 
+507 |OVER TRAVEL:－n |超过了 n 轴负向的硬件 OT（硬件超程） 
+508 |INTERFERENCE: ＋n (T series (two-path control)) |沿第 n 轴正方向移动的刀具干涉另一刀架。 
+509 |INTERFERENCE: －n (T series (two-path control)) |沿第 n 轴负方向移动的刀具干涉另一刀架。 
+510 |OVER TRAVEL:＋n |移动之前的行程检测报警。一个程序段指定的结束点，落在了沿 N 轴正方向行程检测所定义的禁止范围以内。修正程序。 
+511 |OVER TRAVEL:－n |移动之前的行程检测报警。一个程序段指定的结束点，落在了沿 N 轴负方向行程检测所定义的禁止范围以内。修正程序。 
+514 |INTERFERENCE: ＋n |旋转区域干涉检测功能发现第 n 轴正方向干涉。 
+515 |INTERFERENCE: －n |旋转区域干涉检测功能发现第 n 轴负方向干涉。  注  参数 1326 和 1327 在行程限位切换信号 EXLM 接通时有效。    (8)伺服报警(2/2) 号码 |信       息 |内            容 
+600 |n AXIS: INV.DC LINK OVER CURRENT |DC link 电流过大。 
+601 |n AXIS: INV.RADIATOR FAN FAILURE |外部散热风扇不转。 
+602 |n AXIS: INV.OVERHEAT |伺服放大器过热。 
+603 |n AXIS: INV.IPM ALARM(OH) |IPM（智能电源模块）检测到过热报警。 
+604 |nAXIS:AMP.COMMUNICATIO NG ERROR |SVM 和 PSM 之间传输通讯失败。 
+605 |n AXIS: CNV.EX.DISCHARGE POW. |PSMR：再生电源过大。 
+606 |n AXIS: CNV.RADIATOR FAN FAILURE |PSM：外部散热导流风扇不转。 PSMR：外部散热导流风扇不转。 
+607 |n AXIS: CNV.SINGLE PHASE FAILURE |PSM：输入电压在开相状态。 PSMR：输入电压在开相状态。  警告状态下伺服放大器的报警号 |报警状态下伺服放大器的报警号 |报警信息 
+608 |444 |n 轴：SVM 内部冷却风扇停转。 
+609 |601 |n 轴：SVM 散热冷却风扇停转。 
+610 |443 |n 轴：PSM 冷却风扇停转。 
+611 |606 |n 轴：PSM 散热冷却风扇停转。 
+612 |431 |n 轴：PSM 主回路过载。 
+613 |607 |n 轴：PSM 主电源缺相。  (9)过热报警 号码 |信       息 |内            容 
+700 |OVERHEAT:CONTROL UNIT |这是控制部分过热。请检查风扇的动作并对空气过滤网进行清扫。 
+701 |OVERHEAT:FAN MOTOR |控制单元上部的风扇电机过热。请检查风扇电机动作，如有问题请更换风扇。 
+704 |OVERHEAT:SPINDLE |检测主轴波动时，出现主轴过热。 ①如果是重切削，请减轻切削条件。②检查刀具是否很钝了。③主轴放大器不良。   (10)刚性攻丝报警 号码 |信       息 |内            容 
+740 |RIGID TAP ALARM:EXCESS ERROR |刚性攻丝时，主轴停止中的位置偏差量超过了设定值。 
+741 |RIGID TAP ALARM:EXCESS ERROR |刚性攻丝时，主轴运行中的位置偏差量超过了设定值。 
+742 |RIGID  TAP  ALARM:LSI OVERFLOW |刚性攻丝时，主轴的 LSI 溢出。      (11)关于串行主轴的报警 号码 |信       息 |内            容 
+749 |S-SPINDLE  LSI  ERROR |接通电源后在系统起动中，发生串行通讯错误时的报警。 其原因可考虑以下几点： ①光缆接触不良，或者脱落、断线。②母板不良。③主轴放大器、印刷板不良。④主轴放大器异常（故障内容与 SPM 显示A,A1,A2 时的故障内容一致）。 接通 CNC 电源后发生本报警时或将 CNC 复位，本报警仍不能解除时，将电源（含主轴电源）切断，然后再起动。 主轴放大器异常时，请参照 FANUC SERVO MOTOR αi 系列维修说明书（B-65285C）或 FANUC SERVO MOTOR α系列维修说明书（B-65165CM）确认 SPM 显示 A,A1,A2 等时的故障原因。 
+750 |SPINDLE SERIAL LINK START FAULT |装有串行主轴的系统当接通电源时，主轴放大器没有成为正常起动状态时发生此报警。其原因大致有以下几点： ①光缆接触不良或主轴放大器的电源 OFF。 ②NC 电源 ON 时，主轴放大器的显示器显示 SU-01 或 AL-24 以外的报警状态，这种报警主要是串行主轴运行中，电源关断引起的。 此时可将主轴放大器的电源关断然后再次起动。 ③其他（硬件配置错误等）。 本报警在系统（含主轴控制单元）启动后不发生。 ④第 2 主轴（参数号 3701#4,SS2＝1 时）为上述①～③状态时，详细内容请参照诊断号 409 及 439。 
+752 |FIRST |SPINDLE |MODE CHANGE FAULT |串行主轴控制中，对轮廓控制方式、主轴定位、刚性攻丝方式的切换及对主轴控制方式的切换没有正常完成。对于来自 CNC 的切换指令，主轴放大器响应不正常时发生此报警。 
+754 |SPINDLE-1 |ABNORMAL TORQUE ALM |在第 1 主轴电机中检测出异常负载。 
+762 |SECOND |SPINDLE |MODE CHANGE FAULT |内容同报警 No.752。（第二主轴用） 
+764 |SPINDLE-2 |ABNORMAL TORQUE ALM |内容同报警 No.754。（第二主轴用） 
+772 |SPINDLE-3 MODE CHANGE ERROR |内容同报警 No.752。（第三主轴用） 
+774 |SPINDLE-3 |ABNORMAL TORQUE ALM |内容同报警 No.754。（第三主轴用） 
+782 |SPINDLE-4 MODE CHANGE ERROR |内容同报警号 752。（第四主轴用） 
+784 |SPINDLE-4 |ABNORMAL TORQUE ALM |内容同报警号 754。（第四主轴用）          主轴报警 750 号的详细内容  第 1 和第 2 主轴     ＃3（SPE）  0：串行主轴控制中，串行主轴参数满足了主轴放大器的起动条件。        |1：串行主轴控制中，串行主轴参数不满足主轴放大器的起动条件。 |＃2（S2E）  | | | |0：串行主轴控制起动中，第 2 主轴正常。             轴异常。 | | | |1：串行主轴控制起动中，检测出第 2 主＃1（S1E）  | | | |0：串行主轴控制起动中，第 1 主轴正常。             轴异常。 | | | |1：串行主轴控制起动中，检测出第 1 主＃0（SHE）  | | |0：CNC 的串行通讯模块正常。             | | | |1：CNC 的串行通讯模块异常。   第 3 和第 4 主轴                               ＃3（SPE）  0：串行主轴控制中，串行主轴参数满足了主轴放大器的起动条件。        |1：串行主轴控制中，串行主轴参数不满足主轴放大器的起动条件。 ＃2（S4E）  0：串行主轴控制起动中，第 4 主轴正常。             1：串行主轴控制起动中，检测出第 4 主轴异常。 ＃1（S3E）  0：串行主轴控制起动中，第 3 主轴正常。             1：串行主轴控制起动中，检测出第 3 主轴异常。 ＃0（SHE）  0：CNC 的串行通讯模块正常。             | | |                     1：CNC 的串行通讯模块异常。     (12)关于 0i-PC 的报警  号码 |信       息 |内            容 
+4500 |REPOSITIONING INHIBITED |在圆弧插补（G02，G03）方式中，指定了重复定位指令。 
+4502 |ILLEGAL COMMAND IN BOLT HOLE |在 G26 指令中，半径 I 设定为零或负值，或孔数（K）设为零。或 I，J，K 没有指定。 
+4503 |ILLEGAL COMMAND IN LINE AT ANGLE |在 G76 指令中，孔数（K）设为 0 或负值。或 I，J，K 没有指定。 
+4504 |ILLEGAL COMMAND IN ARC |在 G77 指令中，半径或孔数（K）设定为零或负值。或 I，J，K 没有指定。 
+4505 |ILLEGAL COMMAND IN GRID |在 G78，G79 指令中，孔数（P，K）设定为零或负值。或 I，J，K，P 没有指定。 
+4506 |ILLEGAL COMMAND IN SHARE PROOFS |在 G86 指令中，刀具尺寸（P）设定为零，或空格长度（I）大于刀具尺寸（P）的 1.5 倍或更小。或 I，J，K，P 没有指定。
+4507 |ILLEGAL COMMAND IN SQUARE |在 G87 指令中，刀具尺寸（P,Q）设定为零或负值，或空格长度（I,J）大于刀具尺寸（P,Q）的 3 倍或更小。或 I，J，K，P，Q 没有指定。 
+4508 |ILLEGAL COMMAND IN RADIUS |在 G88 指令中，移动螺距（Q）为零、负值或大于等于圆弧长度。或半径（I）为零、负值。或 I，J，K，P，Q 没有指定。
+4509 |ILLEGAL COMMAND IN CUT |在 G89 指令中，移动螺距（Q）为零、负值或大于等于长度 I|AT ANGLE |的另一个值。或 I，J，K，P，Q 没有指定。 
+4520 |T,M INHIBITED IN NIBBLING-MODE |在步冲方式中，指定了 T 代码，M 代码，G04，G70，G75。
+4521 |EXCESS NIBBLING MOVEMENT（X，Y） |在步冲方式中，，X 轴或 Y 轴的移动距离大于或等于极限值（No.16188~16193）。 
+4522 |EXCESS NIBBLING MOVEMENT（C） |在圆弧步冲 G68 指令或通常的步冲方式中，C 轴的移动距离大于或等于极限值（No.16194）。 
+4523 |ILLEGAL COMMAND IN CIRCLE-NIBBL |在圆弧步冲 G68 指令中，移动螺距（Q）为零、负值，或大于等于极限值（No.16186，16187）。或半径（I）设为零、负值或 I，J，K，P，Q 没有指定。 
+4524 |ILLEGAL COMMAND IN LINE-NIBBL |在直线步冲 G69 指令中，移动螺距（Q）为零、负值，或大于等于极限值（No.16186,16187）。或 I，J，K，P，Q 没有指定。
+4530 |A/B MACRO NUMBER ERROR |由 A 或 B 宏程序储存和调用的号码在 1~5 之外。 
+4531 |U/V MACRO NUMBER ERROR |U/V 宏指令中，一个宏程序存储期间试图存储另一个宏程序。不在存储宏程序的过程中，指令了 V 宏指令。 U 与 V 的宏程序号码不能一一对应。 
+4532 |IMPROPER U/V MACRO NUMBER  |在 U 或 V 宏指令中，指令了禁止的宏号码（在 1~99 之外）。
+4533 |U/V MACRO MEMORY OVERFLOW |在 U/V 宏指令中，超出了宏存储容量。 
+4534 |W MACRO NUMBER NOT FOUND |在 U/V 宏指令中，指令了没有存储的宏号码。          号码 |信       息 |内            容 
+4535 |U/V MACRO NESTING ERROR |U/V 宏指令中，调用了 3 重以上的宏程序。 试图在 90~99 宏程序号的存储区域，存储 15 个以上的宏指令。
+4536 |NO W ， Q COMMAND IN MULTI-PIECE |在多工件操作指令（G73,G74）中，没有指定 W 或 Q。 
+4537 |ILLEGAL |Q |VALUE |IN MULTI-PIECE |在多工件操作指令（G73,G74）中，Q 设定在 1 ~ 4 之外的值。
+4538 |W |NO.NOT |FOUND |IN MULTI-PIECE  |在没有存储多工件操作指令（G73,G74）的指令中，指定了宏号码 W。 
+4539 |MULTI-PIECE |SETTING |IS ZERO |虽然多工件操作功能中指定为零（No.16206 或信号 MLP1 和MLP2（PMC 地址 G231，#0 和#1）），仍指定多工件操作指令。
+4540 |MULTI-PIECE COMMAND WITHIN  MACRO |当存储 U 或 V 宏指令时，指定了多工件操作指令（G73,G74）。
+4542 |MULTI-PIECE |COMMAND |虽然已经指令了 G98P0，仍发出 G73 指令。 |ERROR |虽然已经指令了 G98K0，仍发出 G74 指令。 
+4543 |MULTI-PIECE |COMMAND ERROR |虽然已经指令了 G98P0，用于 G73 指令的 Q 值不是 1 或 3。虽然已经指令了 G98K0，用于 G73 指令的 Q 值不是 1 或 2。
+4544 |MULTI-PIECE RESTART ERROR|在恢复多工件操作指令中，恢复位置（P）设定在 1~被加工的总工件数之外。 
+4600 |T, |C |COMMAND |IN INTERPOLATION |在直线插补（G01）方式或圆弧插补（G02，G03）方式，指定了 T 指令或 C 轴指令。 
+4601 |INHIBITED T，M COMMAND |在 G52，G72，G73，G74 程序段中，指定了 T 或 M 指令。 
+4602 |ILLEGAL T-CODE |指定了在刀具登录画面中没登录的 T 指令。 
+4606 |A T COMMAND WAS ISSUED |在法线控制中，发出了 A T 指令。 
+4650 |IMPROPER G-CODE IN OFFSET MODE |在刀尖半径补偿方式中，指定了非法的 G 代码（G73，G74，G75）等。 
+4700 |PROGRAM ERROR （OT+） |在 X 轴移动指令中的值超出了存储行程检测 1 的正向值。 
+4701 |PROGRAM ERROR （OT-） |在 X 轴移动指令中的值超出了存储行程检测 1 的负向值。 
+4702 |PROGRAM ERROR （OT+） |在 Y 轴移动指令中的值超出了存储行程检测 1 的正向值。 
+4703 |PROGRAM ERROR （OT-） |在 Y 轴移动指令中的值超出了存储行程检测 1 的负向值。                     号码 |信       息 |内            容 
+4800 |ZONE: PUNCHING INHIBITED 1|当执行安全区域检查时，在禁止穿孔的区域 1 中给出了穿孔指令。 
+4801 |ZONE: PUNCHING INHIBITED 2|当执行安全区域检查时，在禁止穿孔的区域 2 中给出了穿孔指令。 
+4802 |ZONE: PUNCHING INHIBITED 3|当执行安全区域检查时，在禁止穿孔的区域 3 中给出了穿孔指令。 
+4803 |ZONE: PUNCHING INHIBITED 4|当执行安全区域检查时，在禁止穿孔的区域 4 中给出了穿孔指令。 
+4810 |ZONE: ENTERING INHIBITED 1+X |当执行安全区域检查时，沿 X 正方向移动的部分进入到区域 1 中，区域 1 禁止进入。 
+4811 |ZONE: ENTERING INHIBITED 1-X |当执行安全区域检查时，沿 X 负方向移动的部分进入到区域 1 中，区域 1 禁止进入。 
+4812 |ZONE: ENTERING INHIBITED 2+X |当执行安全区域检查时，沿 X 正方向移动的部分进入到区域 2 中，区域 2 禁止进入。 
+4813 |ZONE: ENTERING INHIBITED 2-X |当执行安全区域检查时，沿 X 负方向移动的部分进入到区域 2 中，区域 2 禁止进入。 
+4814 |ZONE: ENTERING INHIBITED 3+X |当执行安全区域检查时，沿 X 正方向移动的部分进入到区域 3 中，区域 3 禁止进入。 
+4815 |ZONE: ENTERING INHIBITED 3-X |当执行安全区域检查时，沿 X 负方向移动的部分进入到区域 3 中，区域 3 禁止进入。 
+4816 |ZONE: ENTERING INHIBITED 4+X |当执行安全区域检查时，沿 X 正方向移动的部分进入到区域 4 中，区域 4 禁止进入。 
+4817 |ZONE: ENTERING INHIBITED 4-X |当执行安全区域检查时，沿 X 负方向移动的部分进入到区域 4 中，区域 4 禁止进入。 
+4830 |ZONE: ENTERING INHIBITED 1+Y |当执行安全区域检查时，沿 Y 正方向移动的部分进入到区域 1 中，区域 1 禁止进入。 
+4831 |ZONE: ENTERING INHIBITED 1-Y |当执行安全区域检查时，沿 Y 负方向移动的部分进入到区域 1 中，区域 1 禁止进入。 
+4832 |ZONE: ENTERING INHIBITED 2+Y |当执行安全区域检查时，沿 Y 正方向移动的部分进入到区域 2 中，区域 2 禁止进入。 
+4833 |ZONE: ENTERING INHIBITED 2-Y |当执行安全区域检查时，沿 Y 负方向移动的部分进入到区域 2 中，区域 2 禁止进入。 
+4834 |ZONE: ENTERING INHIBITED 3+Y |当执行安全区域检查时，沿 Y 正方向移动的部分进入到区域 3 中，区域 3 禁止进入。 
+4835 |ZONE: ENTERING INHIBITED 3-Y |当执行安全区域检查时，沿 Y 负方向移动的部分进入到区域 3 中，区域 3 禁止进入。 
+4836 |ZONE: ENTERING INHIBITED 4+Y |当执行安全区域检查时，沿 Y 正方向移动的部分进入到区域 4 中，区域 4 禁止进入。 
+4837 |ZONE: ENTERING INHIBITED 4-Y |当执行安全区域检查时，沿 Y 负方向移动的部分进入到区域 4 中，区域 4 禁止进入。 
+4870 |AUTO SETTING FEED ERROR |安全区域自动设定的进给率与参数值（No.16538，No.16539）不同。 
+4871 |AUTO SETTING PIECES ERROR|在安全区域自动设定中，安全区域点不正确。或位置检测器故障，请告知机床制造商。 
+4872 |AUTO |SETTING |COMMAND ERROR |M 代码，S 代码或 T 代码与安全区域自动设定指令（G32）一起执行。 G32 指定在单步方式、刀具补偿、旋转方式或比例缩放方式中。      (13)系统报警                       （本报警使用复位键不能复位） 号码 |信       息 |内            容 
+900 |ROM PARITY |CNC、宏程序、数字伺服等的 ROM 奇偶错误。修改所显示号码的 FROM 的内容。 
+910 |SRAM PARITY: (BYTE 0) |在零件程序存储 RAM 中发生奇偶校验错误。全清 RAM，或更换 SRAM 模块或母板。然后重新设定参数和数据。 
+911 |SRAM PARITY: (BYTE 1) |
+912 |DRAM PARITY: (BYTE 0) |DRAM 模块中发生奇偶校验错误。更换 DRAM 模块。 
+913 |DRAM PARITY: (BYTE 1) |
+914 |DRAM PARITY: (BYTE 2) |
+915 |DRAM PARITY: (BYTE 3) |
+916 |DRAM PARITY: (BYTE 4) |
+917 |DRAM PARITY: (BYTE 5) |
+918 |DRAM PARITY: (BYTE 6) |
+919 |DRAM PARITY: (BYTE 7) |
+920 |SERVO ALARM (1-4 AXIS) |这是伺服报警（第一到第四轴）。出现了监控报警或轴卡内 RAM 奇偶错误。请更换轴控制卡。 
+921 |SERVO ALARM (5-8 AXIS) |这是伺服报警（第五到第八轴）。发生了监控报警或轴卡内 RAM 奇偶错误。请更换轴控制卡。 
+926 |FSSB ALARM |FSSB 报警。 更换轴控制卡。 
+930 |CPU INTERRUPT |CPU 报警（非正常中断）。 母板或 CPU 卡不良。 
+935 |SRAM ECC ERROR |零件程序存储的 RAM 发生错误。 措施： 更换主印刷电路板（SRAM 模块），执行全清操作，然后设定所有参数和数据。 
+950 |PMC SYSTEM ALARM PCxxx YYYYYYYYYYYYYY |PMC 异常。 PCxxx 的详情，查看此说明书中 A..2 部分报警信息列表（PMC）（LIST OF ALARMS（PMC））。 
+951 |PMC WATCH DOG ALARM |PMC 异常。 （监控报警）母板可能故障。 
+970 |NMI OCCURRED IN PMCLSI |使用 PMC-SA1，母板上的 PMC 控制 LSI 设备异常。（I/O RAM 奇偶）更换母板。 
+971 |NMI OCCURRED IN SLC |使用 PMC-SA1，检测到 I/O Link 断线。检查 I/O Link。 
+972 |NMI OCCURRED IN OTHER MODULE |母板以外的另一电路板发生 NMI 错误。 选择功能板可能有故障。 
+973 |NON MASK INTERRUPT |未知原因造成的 NMI 错误。 
+974 |F-BUS ERROR |FANUC 总线发生错误。 母板或选择功能板可能有故障。 
+975 |BUS ERROR |母板发生总线错误。 母板可能有故障。 号码 |信       息 |内            容 
+900 |ROM PARITY |CNC、宏程序、数字伺服等的 ROM 奇偶错误。修改所显示号码的 FROM 的内容。 
+910 |SRAM PARITY: (BYTE 0) |在零件程序存储 RAM 中发生奇偶校验错误。全清 RAM，或更换 SRAM 模块或母板。然后重新设定参数和数据。 
+911 |SRAM PARITY: (BYTE 1) |
+912 |DRAM PARITY: (BYTE 0) |DRAM 模块中发生奇偶校验错误。更换 DRAM 模块。 
+913 |DRAM PARITY: (BYTE 1) |
+914 |DRAM PARITY: (BYTE 2) |
+915 |DRAM PARITY: (BYTE 3) |
+916 |DRAM PARITY: (BYTE 4) |
+917 |DRAM PARITY: (BYTE 5) |
+918 |DRAM PARITY: (BYTE 6) |
+919 |DRAM PARITY: (BYTE 7) |
+920 |SERVO ALARM (1-4 AXIS) |这是伺服报警（第一到第四轴）。出现了监控报警或轴卡内 RAM 奇偶错误。请更换轴控制卡。 
+921 |SERVO ALARM (5-8 AXIS) |这是伺服报警（第五到第八轴）。发生了监控报警或轴卡内 RAM 奇偶错误。请更换轴控制卡。 
+926 |FSSB ALARM |FSSB 报警。 更换轴控制卡。 
+930 |CPU INTERRUPT |CPU 报警（非正常中断）。 母板或 CPU 卡不良。 
+935 |SRAM ECC ERROR |零件程序存储的 RAM 发生错误。 措施： 更换主印刷电路板（SRAM 模块），执行全清操作，然后设定所有参数和数据。 
+950 |PMC SYSTEM ALARM PCxxx YYYYYYYYYYYYYY |PMC 异常。 PCxxx 的详情，查看此说明书中 A..2 部分报警信息列表（PMC）（LIST OF ALARMS（PMC））。 
+951 |PMC WATCH DOG ALARM |PMC 异常。 （监控报警）母板可能故障。 
+970 |NMI OCCURRED IN PMCLSI |使用 PMC-SA1，母板上的 PMC 控制 LSI 设备异常。（I/O RAM 奇偶）更换母板。 
+971 |NMI OCCURRED IN SLC |使用 PMC-SA1，检测到 I/O Link 断线。检查 I/O Link。 
+976 |L-BUS ERROR |局部总线发生错误。 母板可能故障。       A.2  报警代码一览表（PMC）  (1)PMC 报警信息（PMC-SB7） 报警号 |错误位置/修正措施 |内容 ER01 PROGRAM DATA ERROR |1) 重新输入顺序程序。 2) 更换主印刷电路板。 |顺序程序无效。 ER02 PROGRAM SIZE OVER |1)|缩减顺序程序。 2)|与 FANUC 联系，取得更大梯图步数的选择功能。 |顺序程序太大。顺序程序无效。 ER03 PROGRAM SIZE ERROR （OPTION） |1)|缩减顺序程序。 2)|与 FANUC 联系，取得更大梯图步数的选择功能。 |顺序程序超出指定的梯图步数选择容量。 ER04 PMC TYPE UNMATCH |使用离线编程工具，将顺序程序变成正确的 PMC 类型。 |顺序程序的类型设定与实际类型不符。 ER06 |PMC |CONTROL SOFTWARE TYPE UNMATCH |与 FANUC 联系，确认相应的 PMC 类型。 |CNC 系统配置与 PMC 类型的组合无效。（例如，PMC-SB5 用在一个 3 通道 CNC 系统） ER07 NO OPTION （LADDER STEP） |1)|恢复备份的 CNC 参数数据。 2)|检查数据清单重新输入 CNC 参数3)|与 FANUC 联系，确认梯图步数选择的必要容量。 |没有找到梯图步数选择功能。 ER08 OBJECT UNMATCH  |与 FANUC 联系。 |顺序程序中使用了不支持的功能。 ER09 PMC LABEL CHECK ERROR PLEASE TURN ON POWER AGAIN WITH PUSHING ‘O’＆‘Z’（. CLEAR PMC SRAM） |1)|同时按住“O”和“Z”键，  再接通 CNC 电源。 2)|若使用了上下料控制功能， CNC 开机的同时按住“5” 和“Z”键。 3)|更换存储电池。 4)|更换主印刷电路板。 |进行了诸如改变 PMC 类型等操作， PMC 的保持型存储器必须进行初始化。 ER10 OPTION AREA NOTHING （xxxx） |与 FANUC 联系，重新装载 PMC 管理软件。 |PMC 管理软件装载不正确。 ER11 OPTION AREA NOTHING （xxxx） |与 FANUC 联系，重新装载 PMC 管理软件。 |PMC C 板管理软件装载不正确。              报警号 |错误位置/修正措施 |内容 ER12 OPTION AREA ERROR (xxxx) |与 FANUC 联系，重新配置 PMC 管理软件。 |PMC 管理软件无效。 (BASIC 和 OPTION 的版本不匹配) ER13 OPTION AREA ERROR (xxxx) |与 FANUC 联系，重新配置 PMC 管理软件。 |PMC C 板的管理软件无效。 (BASIC 和 OPTION 的版本不匹配) ER14 OPTION AREA VERSION ERROR (xxxx) |与 FANUC 联系，重新配置 PMC 管理软件。 |PMC 管理软件无效。 (BASIC 和 OPTION 的版本不匹配) ER15 OPTION AREA VERSION ERROR (xxxx) |与 FANUC 联系，重新配置 PMC 管理软件。 |PMC C 板的管理软件无效。 （BASIC 和 OPTION 的版本不匹配） ER16 RAM CHECK ERROR (PROGRAM RAM) |更换主印刷电路板。 |储存顺序程序的存储器初始化失败。 ER17 PROGRAM PARITY |1) 重新输入顺序程序。 2) 更换主印刷电路板。 |顺序程序的奇偶校验无效。 ER18 PROGRAM DATA ERROR BY I/O |重新输入顺序程序。 |顺序程序被读取时，产生了一个中断指令。 ER19 LADDER DATA ERROR |再次显示梯图编辑画面，然后使用[<<]键退出编辑方式。 |梯图编辑过程中，使用功能键强行将系统切换到 CNC 画面。 ER20 |SYMBOL/COMMENT DATA ERROR |再次显示符号/注释编辑画面，然后使用[<<]键退出编辑方式。 |符号/注释编辑过程中，使用功能键强行将系统切换到 CNC 画面。 ER21 MESSAGE DATA ERROR |再次显示信息数据编辑画面，然后使用[<<]键退出编辑方式。 |信息数据编辑过程中，使用功能键强行将系统切换到 CNC 画面。 ER22 PROGRAM NOTHING |1) 重新输入顺序程序。 2) 更换主印刷电路板。 |顺序程序空。 ER23 |PLEASE |TURN |OFF POWER |CNC 关机再开机。 |进行了诸如改变 PMC 类型等操作，电源必须关断再打开。 ER25 SOFTWARE VERSION ERROR (PMCAOPT) |与 FANUC 联系，重新配置 PMC 管理软件。 |PMC 管理软件无效。 （PMCAOPT 的版本不正确） ER26 |PMC |CONTROL MODULE ERROR (PMCAOPT) |1)|与 FANUC 联系，重新配置 PMC管理软件。 2)|更换主印刷电路板。 |PMC 管理软件的初始化失败。              报警号 |错误位置/修正措施 |内容 ER27 LADDER FUNC.PRM IS OUT OF RANGE |修改顺序程序。将功能指令的参数号改到有效范围以内的值。 |使用功能指令 TMR，TMRB，CTR，DIFU 或 DIFD 的情况，指定了一个超出范围的参数号。 ER32 NO I/O DEVICE |1)检查 I/O 设备电源是否接通。 2)检查 I/O 设备是否在 CNC 开机前   接通电源。 3)检查电缆连接。 |诸如 I/O Link，连接单元，和 Power Mate 之类的 I/O 设备没有连接。 ER33 I/O LINK ERROR |更换主印刷电路板。 |I/O Link 的 LSI 失效。 ER34 I/O LINK ERROR (xx) |1)检查连接到 xx 组设备的电缆。 2)检查 I/O 设备是否在 CNC 开机前   接通。 3)更换安装PMC控制模块的xx组设   备。 |xx 组的从属装置中，与 I/O 设备的传输时出现错误。 ER35 TOO MUCH OUTPUT DATA IN GROUP (xx) |减少 xx 组输出数据。 |xx 组 I/O Link 的输出数据超出极限（33 字节）。 超出的数据无效。 ER36 TOO MUCH INPUT DATA IN GROUP (xx) |减少 xx 组输入数据。 |xx 组 I/O Link 的输入数据超出极限（33 字节）。 超出的数据无效。 ER38 MAX SETTING OUTPUT DATA OVER (xx) |修改每组输出数据，使总量少于 128 字节。 |I/O Link 的 I/O 空间不足。 （输出侧 xx 组后的任意组分配无效） ER39 MAX SETTING INPUT DATA OVER (xx) |修改每组输入数据总量到少于 128 字节。 |I/O Link 的 I/O 空间不足。 （输入侧 xx 组后的任意组分配无效） ER40 I/O LINK-II SETTING ERROR (CHx) |重新配置 I/O Link-II。 |I/O Link-II 设定无效。 （CH1：主板，CH2：从板） ER41 |I/O |LINK-II |MODE ERROR (CHx) |重新配置 I/O Link-II。 |I/O Link-II 方式设定无效。 （CH1：主板，CH2：从板） ER42 I/O LINK-II STATION NO. ERROR (CHx) |重新配置 I/O Link-II。 |I/O Link-II 位置号设定无效。 （CH1：主板，CH2：从板） ER97 I/O LINK (CHxyyGROUP) |1)|检查 yy 组 I/O 设备的电缆连接是否正确。 2)|检查每个 I/O 设备的电源。 3)|检查I/O link分配数据选择功能的参数设定。 |yy 组中 I/O 模块的分配号码与实际 I/O 设备的连接不符。注）通过使用保持型继电器         K906.2，此报警可以控制         检测功能的检测。         K906.2=0：执行连接检测       （初始值）。         K906.2=1：不执行连接检         测。      报警号 |错误位置/修正措施 |内容 ER98 |ILLEGAL |LASER CONNECTION |修改 I/O 模块的分配。 |使用激光 I/O 设备时，I/O 模块的分配与实际 I/O 设备配置不符。 ER99 |X,Y96-127 |ARE ALLOCATED |修改 I/O 模块的分配。 |使用激光 I/O 设备时，另一 I/O 设备分配了 X96-127/Y96-127。 X96-127/Y96-127 是专用于激光 I/O 设备的地址，不能用于其它设备。 WN02 |OPERATE |ADDRESS ERROR |修改 PMC 系统参数设定的 0 系列操作面板地址。 |PMC 系统参数设定的 0 系列操作面板地址无效。 WN03 |ABORT NC-WINDOW/EXIN |1)|检查梯图程序没有错误，然后重新启动梯图程序（使用 RUN 键）。 2)|CNC 关机再开机。 |梯图程序在 CNC 和 PMC 进行通讯的过程中停止。 功能指令 WINDR，WINDW，EXIN 和DISPB 可能没有正常执行。 WN05 |PMC |TYPE |NO CONVERSION |使用离线编程工具，将顺序程序改为正确的 PMC 类型。 |顺序程序的类型设定与实际类型不符。 （例如， PMC-SB5 类型，传送了PMC-SA3/SA5 的梯图程序。） WN06 TASK STOPPED BY DEBUG FUNC |要重新启动一个已经停止的用户任务，停止顺序程序，然后再次执行。 |使用 PMC C 板的情况下，用户任务由于一个纠错功能的暂停被终止。 WN07 LADDER SP ERROR (STACK) |修改顺序程序，使子程序的嵌套级数少于 8。 |使用子程序的调用功能指令 CALL 或CALLU 时，嵌套级数过多（超过 8）。WN17 |NO |OPTION (LANGUAGE) |1)|恢复备份的参数数据。 2)|检查参数单，重新输入参数。 3)|与 FANUC 联系，确认 PMC C 程序选择功能的必要容量。 |使用 PMC C 板时，没有发现 PMC C 程序选项。 WN18 |ORIGIN |ADDRESS ERROR |1)|在 PMC 系统参数画面，按[ORIGIN]。 2)|设 定 PMC 系 统 参 数LANGUAGE ORIGIN到地图文件中的 RC_CTLB_INIT 所提示的地址中去。 |使用 PMC C 板时，PMC 系统参数LANGUAGE ORIGIN 无效。 WN19 GDT ERROR (BASE, LIMIT) |在 link 控制状态或建立文件中修改用户定义的 GDT 设定，  |使用 PMC C 板时，用户定义的 GDT 中的 BASELIMIT 或 ENTRY 无效。 WN20 |COMMON |MEM. COUNT OVER |将共享的存储器数量改为 8 或更小。 修改共享存储器的 link 控制状态，建立文件，或其它类型文件 |使用 PMC C 板时，共享存储器的数量超过 8。      报警号 |错误位置/修正措施 |内容 WN21 COMMON MEM. ENTRY ERROR |在 link 控制状态，修改共享存储器GDT 中的 ENTRY。 |使用 PMC C 板时，共享存储器 GDT 中的 ENTRY 超出范围。 WN22 LADDER 3 PRIORITY ERROR |在 link 控制状态，改变 TASK LEVEL（LADDER LEVEL 3）的值为 0，10 到 99，或-1。 |使用PMC C板时，LADDER LEVEL 3 的优先权超出范围。 WN23 TASK COUNT OVER |在 link 控制状态，改变 TASK COUNT 为 16 或更小。（要改变 task count，需修改 link 控制状态，建立文件，以及需要连接的文件配置）|使用 PMC C 板时，用户任务数量超过 16。 WN 24 TASK ENTRY ADDR ERROR |在建立文件中改变 GDT 表格为 32（20H）到 95（5FH）。 |使用 PMC C 板时，用户任务登录选择器超出范围。 WN25 |DATA |SEG |ENTRY ERROR |在 link 控制状态，改变 DATA SEGMENT GDT ENTRY 的值，以及在建立文件中改变 GDT 表格为32（20H）到 95（5FH）。 |使用 PMC C 板时，数据段登录地址超出范围。 WN26 USER TASK PRIORITY ERROR |在 link 控制状态，改变各个任务的TASK LEVEL 值为 10 到 99，或-1。（注意-1被指定在只有一个任务的情况，包括第三级梯图） |使用 PMC C 板时，用户任务的优先权超出范围。 WN27 |CODE |SEG |TYPE ERROR |在 link 控制状态和建立文件中，按照段设定，改变代码段的值。 |使用 PMC C 板时，代码段类型无效。在限制控制文件中的 RENA-MESEG 代码段设定错误。 WN28 DATA SEG TYPE ERROR |在 link 控制状态和建立文件中，按照段设定，改变代码段的值。 |使用 PMC C 板时，数据段类型无效。在限制控制文件中的 RENA-MESEG 数据段设定错误。 WN29 COMMON MEM SEG TYPE ERROR |在 link 控制状态和建立文件中，按照段设定，改变代码段的值。 |使用 PMC C 板时，共享存储器的段类型无效。在共享存储器中限制控制文件的 RENAMESEG 段设定错误。WN30 |IMPOSSIBLE ALLOCATE MEM. |1)|检查在 link 控制状态的 USER GDT ADDRESS 以及建立文件中的代码段起始地址是否正确。 2)|变 PMC 系 统 参 数 MAX LADDER AREA SIZE 为最小值。3)|变 link 控制状态的堆栈容量为最小值。 |使用 PMC C 板时，数据，堆栈和其它存储器区域不能保留。 WN 31 IMPOSSIBLE EXECUTE LIBRARY |1)|检查是否是程序库支持的类型。2)|重新配置 PMC 管理软件并与FANUC 联系。 |使用 PMC C 板时，程序库表功能不能执行。       报警号 |错误位置/修正措施 |内容 WN32 LNK CONTROL DATA ERROR |1)|检 查 PMC 系 统 参 数 LANGUAGE ORIGIN 是否设为 RC_CTLNB_INIT 的地址。 2)|再次创建 link 控制状态。 |使用 PMC C 板时，link 控制状态（程序控制）数据无效。 WN33 |LNK |CONTROL VER.ERROR |在 PMC C 程序中修改 link 控制状态。 |使用 PMC C 板时，link 控制状态数据版本发生错误。 WN34 LOAD MODULE COUNT OVER |将独立装载模块的数量变为 8 或更小。 |使用 PMC C 板时，独立装载模块的数量超过 8。 WN35 CODE AREA OUT OF RANGE |检查 link 图、在 RAM 范围内分配程序段。 |使用 PMC C 板时，代码段的区域超出 RAM 的范围。 WN36 |LANGUAGE |SIZE ERROR (OPTION) |1)|缩减 PMC C 程序。 2)|与 FANUC 联系，确认选择大容量的 PMC C 程序。 |使用 PMC C 板时，PMC C 程序超过所指定的选择容量。 WN37 |PROGRAM |DATA ERROR (LANG.) |初始化 PMC C 程序存储器。（[EDIT]→[CLEAR]→[CLRLNG]→[EXEC]） |PMC C 程序存储器必须进行初始化。WN38 RAM CHECK ERROR (LANG.) |更换主印刷电路板。 |初始化 PMC C 程序存储器失败。 WN39 |PROGRAM |PARITY (LANG.) |1)|重新输入 PMC C 程序。 2)|更换主印刷电路板。 |PMC C 程序奇偶校验无效。 WN40 |PROGRAM |DATA ERROR BY I/O (LANG.) |重新输入语言程序。 |读取 PMC C 程序时，给出了中断指令。 WN41 |LANGUAGE |TYPE UNMATCH |1)重新输入 PMC C 程序。 2)更换主印刷电路板。 |使用 PMC C 板时，输入了不可用的 C 程序。 WN42 UNDEFINE LANGUAGE ORIGIN ADDRESS |1)在 PMC 系统参数画面，点  [ORIGIN]. 2)设定PMC系统参数LANGUAGE   ORIGIN 为图文件中   RC_CTLB_INIT 所指定的地址。|使用 PMC C 板时，没有设定 PMC 参数的 LANGUAGE ORIGIN。 WN48 UNAVAIL LANGUAGE BY CNC UNMATCH |拆下 PMC C 板。 |在不能使用 PMC C 板的 CNC 上，安装了 PMC C 板。              (2)报警信息（PMC-SA1） 信       息 |内容和处理 ALARM NOTHING |正常状态。 ER00 PROGRAM DATA ERROR（ROM） |ROM 的顺序程序写入不正确。 （处理）交换顺序程序的 ROM。 ER01 PROGRAM DATA ERROR（RAM） |调试用 RAM 的顺序程序不良。 （处理）清除调试用 RAM，再次输入梯形图。 选择了 RAM 但是没有安装调试用 RAM。 （处理）安装调试用 RAM 或安装顺序程序的 ROM，并设 K17#3 = 0 选择 ROM。 ER02 PROGRAM SIZE OVER |顺序程序的容量，超过了梯形图（只对 PMC-SC）最大容量。 （处理）在 SYSPRM 画面转换 MAX LADDER AREA SIZE，然后重新启动系统。 ER03 PROGRAM SIZE ERROR(OPTION) |顺序程序的容量超过了选择指定的容量。 （处理）增加指定容量或减少顺序程序的容量。 ER04 PMC TYPE UNMATCH |顺序程序的 PMC 方式设定与实际方式不对应。 （处理）使用离线编程工具改变 PMC 方式设定。 ER05 PMC MODULE TYPE ERROR |PMC 控制模块种类不符。 （处理）更换正确的 PMC 控制模块。 ER07 NO OPTION (LADDER STEP) |没有选择梯形图步数。 ER10 OPTION AREA NOTHING(系列名） |没有传送 PMC-SB 的管理软件。 （处理）所装的软件与订单不符合。与 FANUC 联系。 ER11 OPTION AREA NOTHING(系列名） |没有传送 PMC-C 的管理软件。 （处理）所安装的软件与合同不符合。与 FANUC 联系。 ER12 OPTION AREA ERROR(系列名） |PMC-RB 管理软件的 BASIC 和 OPTION 的系列不一致。（处理）与 FANUC 联系。 ER13 OPTION AREA  ERROR(系列名） |PMC-C 管理软件的 BASIC 和 OPTION 的系列不一致。（处理）与 FANUC 联系。 ER14 OPTION AREA  VERSIION ERROR(系列名） |PMC-RB 管理软件 BASIC 和 OPTION 的版本不符合。（处理）与 FANUC 联系。 ER15 OPTION AREA  VERSIION ERROR(系列名） |PMC-C 管理软件 BASIC 和 OPTION 的版本不符合。（处理）与 FANUC 联系。 ER16 RAM CHECK ERROR  (PROGRAM RAM) |调试用 PAM 不能正常读/写。 （处理）更换调试用 RAM。 ER17 PROGRAM PARITY |顺序程序的 ROM 或调试用 RAM 发生了奇偶错误。 （处理）ROM：ROM 老化，更换顺序程序的 ROM。         RAM：进行一次 PMC 顺序程序编辑，仍发生错误时，更换调试用 RAM。        信息 |内容和处理 ER18 PROGRAM DATA  ERROR BY I/O |用脱机编程器等传送顺序程序时，发生了电源关断等中断。 （处理）清除顺序程序，再次传送顺序程序。 ER19 LADDER DATA ERROR |在梯形图编辑中，发生了电源关断等中断，或者用操作键引起的 CNC 画面切换。 （处理）进行一次 PMC 编辑操作，或者再次输入梯形图。 ER20 SYMBOL/COMMENT  DATA ERROR |编辑符号注释时，发生了电源关断等中断。或者在编辑中用操作键切换了 CNC 画面。 （处理）用 PMC 进行一次符号，注释的编辑，或者再次输入符号，注释。ER21 MESSAGE DATA ERROR |在信息编辑中，发生了电源关断等中断。或在编辑中用操作键切换了 CNC 画面。 （处理）用 PMC 进行一次信息编辑。或者再次输入信息。 ER22 PROGRAM NOTHING |无顺序程序。 ER23 PLEASE TURN OFF  POWER |变更了 LADDER MAX AREA SIZE 等的设定。 （处理）为使变更有效，重新接通电源。 ER25 SOFTWARE VERSION  ERROR(PMCAOPT) |PMC-SB 管理软件版本不符。 （处理）与 FANUC 联系。 ER26 SOFTWARE VERSION  ERROR(PMCAOPT) |不能进行 PMC-SB 管理软件的初始化。 （处理）与 FANUC 联系。 ER27 LADDER FUNC. PRM IS OUT OF RANGE |功能指令 TMR，TMRB，CTR，DIFU 或 DIFD 的参数号不在范围。 （处理）修正号码到范围内。                                                      *发生 ER00～ER27 报警时不能执行顺序程序。  信       息 |内容和处理 ER32 NO I/O DEVICE |没有连接 DI/DO 单元，I/O 单元，连接单元等 I/O 设备。连接内置 I/O 卡时，此信息不显示。 （处理）使用内置 I/O 卡时：         确认内置 I/O 卡是否连接正确。         使用 I/O Link 时：         确认 DI/DO 单元的电源是否打开，确认电缆的连接。 ER33 SLC ERROR |I/O Link 的 LSI 不良。 （处理）请更换 PMC 驱动模块。 ER34 SLC ERROR(xx） |与××组的 DI/DO 单元的通讯发生了异常。 （处理）检查与××组 DI/DO 单元电缆的连接。确认 DI/DO 单元是否在 CNC 和 PMC 启动之前打开。或者更换装在××组的 DI/DO 单元上的 PMC 驱动模块。       信       息 |内容和处理 ER35 TOO MUCH OUTPUT DATA IN GROUP(xx) |××组内的输入数据数超出最大值，超过 32 字节的数据无效。 （处理）每组的数据请参照下面的说明书。 “FANUC I/O Unit-MODEL A 连接维修说明书”（B-61813） “FANUC I/O Unit-MODEL B 连接维修说明书”（B-62163） ER36 TOO MUCH INPUT DATA IN GROUP(xx) |××组内的输入数据数超过最大值。超过 32 字节数据无效。 （处理）每组的数据请参照下面说明书。 “FANUC I/O 单元-MODEL A 连接维修说明书”（B-61813） “FANUC I/O 单元-MODEL B 连接维修说明书”（B-62163） ER38 MAX SETTING OUTPUT DATA OVER(xx) |某组的分配数据超过 128 字节。 （xx 组输出侧或 xx 组之后的分配数据无效。） （处理）减少各组的输出数据分配到 128 字节或更少。 ER39 MAX SETTING INPUT  DATA OVER(xx) |某组的分配数据超过 128 字节。 （xx 组输入侧或 xx 组之后的分配数据无效。） （处理）减少各组的输入数据分配到 128 字节或更少。 ER98 |ILLEGAL |LASER CONNECTION |激光 I/O 单元数据分配不匹配。 （处理）检查梯图分配数据与实际 I/O 单元的配合。 ER99 |X ， Y96-127 |ARE ALLOCATED |使用激光 I/O link 时，梯图 I/O 指定了 X96-X127 以及 Y96-Y127。（处理）删除 X96-X127 和 Y96-Y127 的 I/O 分配。 WN02 |OPERATE |PANEL ADDRESS  ERROR |FS-0 操作盘的地址设定数据不正确。 （处理）修改地址设定数据。 WN03 ABORT NC-WINDOW/EXIN |在 CNC-PMC 间的通讯中， LADDER 停止了。可能功能指令WINDR,WINDW,EXIN,DISPB 等不能正常动作。 （处理）重新启动系统时，此报警会解除。确认梯形图是否存在问题，然后执行顺序程序（按 RUN 键）。 WN04 UNAVAIL EDIT MODULE |不认 LADDER 编辑模块。（PMC-SAx/SBx= 1 到 3） （处理）确认插槽位置的安装。         确认安装的模块。 WN05 PMC TYPE NO  CONVERSION |PMC-SA3/SA5 的梯图程序传送给了 PMC-SB5。 （处理）修正梯图类型。 WN06 |TASK |STOPPED |BY DEBUG FUNC |某些用户任务被调试功能中的停止点打断。 WN07 LADDER SP ERROR(STACK) |使用功能指令 CALL（SUB65）或 CALLU（SUB66）时 LADDER 的堆栈存储器溢出了。 （处理）减少子程序的嵌套数,使之在 8 以内。 WN17 |NO |OPTION（LANGUAGE） |没有 C 语言选择功能。 WN18 |ORIGIN |ADDRESS ERROR |系统参数的 LANGUAGE ORIGIN 地址错误。 （处理）设定系统参数的 LANGUAGE ORIGIN 为图文件中的RC_CTLB_INIT 符号地址。    |信       息 | |内容和处理 WN19 GDT ERROR (BASE,LIMIT) |用户定义的 GDT 中的 BASE，LIMIT 或 ENTRY 值不合法。 （处理）修正 link 控制状态的地址以及构造文件。 WN20 COMMON MEM.COUNT OVER |公共存储数量超过 8。 （处理）减少公共存储的数量为 8 或更小。有必要修正公共存储器的 link 控制状态，构造文件和类型文件。 WN21 COMMON MEM.ENTRY ERROR |公共存储器的 GDT ENTRY 超出范围。 （处理）在 link 控制状态修正公共存储器的 GDT ENTRY 地址。 WN22 LADDER 3 PRIORITY ERROR |LADDER LEVEL 3 的优先权超出范围。 （处理）在 link 控制状态修正 LADDER LEVEL 3 的值，可取范围为 0 或10-99 或-1。 WN23 TASK COUNT OVER |用户任务的数量超过 16。 （处理）在 link 控制状态确认 TASK COUNT。任务数量改变时，有必要修正 link 控制状态，构造文件和要连接文件的组合。 WN24 |TASK |ENTRY |ADDR ERROR |用户任务的登录地址选择器超出范围。 （处理）修正构造文件中的 GDT 表，值的范围在 32（20H）-95（5FH）。WN25 |DATA |SEG |ENTRY ERROR |数据段的登录地址超出范围。 （处理） 修正 link 控制状态的 DATA SEGMENT GDT ENTRY 以及构造文件中的 GDT 表范围在 32（20H）-95（5FH）。 WN26 USER TASK PRIORITY ERROR |用户任务的优先权超出范围。 （处理）修正 link 控制状态的 TASK LEVEL，范围在 10-99 或-1。 WN27 CODE SEG TYPE ERROR |代码段的类型不合法，限制控制文件中的 RENAMESEG 的代码段错误。（处理）修正 link 控制状态的代码段条目，与构造文件中的条目对应。 WN28 DATA SEG TYPE ERROR |数据段的类型不合法，限制控制文件中的 RENAMESEG 的数据段错误。（处理）修正 link 控制状态的数据段条目，与构造文件中的条目对应。 WN29 COMMON MEM SEG TYPE ERROR |公共存储器的段的类型不合法，公共存储器的限制控制文件中RENAMESEG 的段错误。 （处理）修正 link 控制状态的公共存储器条目，与构造文件中的条目对应。 WN30 IMPOSSIBLE ALLOCATE MEM. |数据和堆栈等的存储不能被分配。 （处理）确认构造文件中的代码段和 link 控制状态的 USER GDT ADDRESS 是否正确。 或者减小系统参数的 MAX LADDER AREA SIZE 值，以及 link 控制状态的堆栈容量。 WN31 IMPOSSIBLE EXECUTE LIBRARY |库表功能不能执行。 （处理）确认库表的目标模型。 或者，有必要更换新版本的 PMC 系统 ROM。    信       息 |内容和处理 WN32 LNK CONTROL DATA ERROR |Link 控制状态数据不合法。 （处理）确认系统参数 LANGUAGE ORIGIN 是否设为图文件的RC_CTLNB_INIT 地址。或者再次创建 link 控制状态。 WN33 LNK CONTROL VER. ERROR |Link 控制状态数据版本错误。 （处理）在 C 程序中修正 link 控制状态。 WN34 LOAD MODULE COUNT OVER |独立加载模块数量超过 8 个。 （处理）减少独立加载模块的数量到少于 8 个。 WN35 CODE AREA OUT OF RANGE |指定的代码区域超过地址范围。 （处理）修正 C 程序。 WN36 LANGUAGE SIZE ERROR (OPTION) |C 程序的容量超过选择的容量。 （处理）减小 C 程序的容量。 WN37 PROGRAM DATA ERROR (LANG.) |某个 C 程序被毁坏。 （处理）重新传送 C 程序。 WN38 RAM CHECK ERROR (LANG.) |某个 C 程序被毁坏。 （处理）重新传送 C 程序。 WN39 |PROGRAM |PARITY (LANG.) |C 程序中的奇偶校验不匹配。 （处理）重新传送 C 程序。 WN40 PROGRAM DATA ERROR BY I/O (LANG.) |C 程序的传送被打断，例如电源掉电等。 （处理）全清 C 程序，重新传送。 WN41 |LANGUAGE |TYPE UNMATCH |C 程序类型不匹配。 （处理）修正 C 程序。 WN42 UNDEFINE LANGUAGE ORIGIN ADDRESS |没设定语言源地址。 （处理）设定语言源地址。   注   报警 WN17 到 WN42 指示 PMC 用户 C 程序相关的错误。                  (3) 系统报警信息（PMC-SB7）  |信息 |内容和处理 1 |PC004 CPU ERR              xxxxxxxx:yyyyyyyy PC006 CPU ERR              xxxxxxxx:yyyyyyyy PC009 CPU ERR              xxxxxxxx:yyyyyyyy PC010 CPU ERR              xxxxxxxx:yyyyyyyy |PMC 中发生 CPU 错误。 xxxxxxxx 和 yyyyyyyy 显示了内部错误代码。  若发生此报警，主板可能失效。  处理）更换主板，检查是否还发生错误。如果错误还发生，与 FANUC 联系，报知错误发生时的条件状况（系统配置，操作，时间以及错误发生的频率等）。 2 |PC030 RAM PARITY       aa:bb |PMC 发生 RAM 奇偶校验错误。 aa 和 bb 显示了内部错误代码。  若发生此报警，主板可能失效。  处理） 更换主板，检查是否还发生错误。如果错误还发生，与 FANUC 联系，报知错误发生时的条件状况（系统配置，操作，时间以及错误发生的频率等）。 3 |PC050 I/OLINK(CHx)          aa:bb-aa:bb    or PC050 I/OLINK CHx          aabb-aabb:aabb |I/O Link 发生通讯错误。 CHx 为通道号。 aa 和 bb 显示了内部错误代码。  若发生此报警，可能的原因如下： (1)|使用 I/O 单元 A 时，分配了基本扩展，但是基本部分没有连接。 (2)|电缆没有连接好。 (3)|电缆失效。 (4)|I/O 设备（I/O 单元，Power Mate 等）失效。 (5)|I/O Link 的控制或驱动电源没有连接。 (6)|I/O 设备中的某 DO 脚发生短路。 (7)|主板失效。 处理） (1)|检查 I/O 分配数据与实际 I/O 设备是否相符。 (2)|检查电缆连接是否正确。 (3)|根据“FANUC I/O 单元-MODEL A 连接维修说明书”（B-61813）和“FANUC I/O 单元-MODEL B 连接维修说明书”（B-62163），检查指定电缆是否有误。 (4)|更换 I/O 单元接口模块，电缆或主板，然后检查错误是否还发生。 4 |PC060 FBUS        xxxxxxxx:yyyyyyyy PC061 FL-R        xxxxxxxx:yyyyyyyy PC062 FL-W        aa:xxxxxxxx:yyyyyyyy |PMC 发生总线错误。 aa,xxxxxxxx 和 yyyyyyyy 显示了内部错误代码。  若发生了此报警，硬件可能失效。  处理）与 FANUC 联系，报知错误发生时的条件状况（系统配置，操作，时间以及错误发生的频率等），显示的内部错误代码和各板的 LED 状态。    |信息 |内容和处理 5 |PC070 SUB65 CALL（STACK） |执行梯图功能指令 CALL/CALLU 过程中发生堆栈错误。  处理） 检查 CALL/CALLU 指令与 SPE 指令的对应。如果错误不能定位，与 FANUC 联系，报知梯图程序和错误发生时的状况。 6 |PC080 SYS EMG        xxxxxxxx:yyyyyyyy PC081 FL EMG        xxxxxxxx:yyyyyyyy |其它软件引发的系统报警。  处理）与 FANUC 联系，报知错误发生时的条件状况（系统配置，操作，时间以及错误发生的频率等），显示的内部错误代码和各板的 LED 状态。 7 |PC097 PARITY ERR   （LADDER） PC098 PARITY ERR (DRAM) |PMC 系统发生奇偶校验错误。  若发生此报警，主板可能失效。  处理） 更换主板，然后检查错误是否修正。如果更换后还发生报警，与 FANUC 联系，报知错误发生时的条件状况（系统配置，操作，时间以及错误发生的频率等）。              (4) 系统报警信息（C语言板）  |信息 |内容和处理 1 |PC1nn CPU INTERRT xxxxyyyyyy             STATUS LED ☆★ |CPU 错误（异常中断） nn     ：特殊代码 i80486 的特殊代码。详情参照介绍 CPU 的相关说明。 00 分割错误。分割指令中的除数为 0。 12|由于超过堆栈段限制等造成的错误。 13|由于超过堆栈段限制等造成的保护。 xxxx    ：系统发生错误的地点的段选择器。           0103 到 02FB 的一个值显示了 C 执行的区域。 yyyyyy  ：系统发生错误的地点的偏置地址。 处理） 如果没有使用 C 程序，或者即使检查了 C 程序也无法定位错误，请与 FANUC 联系。 2 |PC130 RAM PRTY aa xxxxyyyyyy   STATUS LED □★ |C 语言板上的用户 RAM 或 DRAM 发生奇偶校验错误。 aa       ：RAM 奇偶校验错误信息。 xxxx     ：系统发生错误处的段选择器。 yyyyyy   ：系统发生错误处的偏置地址。 5 |PC160 F-BUS ERROR xxxxyyyyyy PC161 F-BUS ERROR xxxxyyyyyy PC162 F-BUS ERROR xxxxyyyyyy STATUS LED ★□ |C 语言板发生总线错误。 xxxx     ：系统发生错误处的段选择器。 yyyyyy   ：系统发生错误处的偏置地址。 6 |PC170 F-BUS ERROR xxxxyyyyyy PC171 F-BUS ERROR xxxxyyyyyy PC172 F-BUS ERROR xxxxyyyyyy STATUS LED ★□ |C 语言板发生总线错误。 xxxx     ：系统发生错误处的段选择器。 yyyyyy   ：系统发生错误处的偏置地址。 7 |PC199 ROM PARITY eeeeeeee STATUS LED ★☆ |C 语言板上的系统 ROM 发生奇偶校验错误。 eeeeeeee  ：ROM 奇偶校验错误信息。 STATUS LED (绿色)          □：关   ■：开    ☆★：闪烁    (5)报警信息（编辑：PMC-SB7） |                                                         在编辑梯形图过程中的信息显示 报警号 |错误位置/修正措施 |内容 OVERLAPPED COM |如果 COME 丢失，在正确的位置添加上。如果 COM 不必要，就去掉。 |没有 COME 对应此 COM。 END IN COM END1 IN COM END2 IN COM |如果 COME 丢失，在正确的位置添加上。如果 COM 不必要，就去掉。 |在 COM 和 COME 中间发现 END，END1，END2，或 END3。 JMPE IN COM |JMPE 和对应的 JMP 必须有相同的 COM/COME 状态。查看 JMP 的范围和 COM 的范围，调整到相互不重叠：一个范围完全包含另一个范围是可以的。 |在 COM 和 COME 中间发现 JMPE，JMP 和对应的 JMPE 有不同的COM/COME 状态。 SP/SPE IN COM |如果 COME 丢失，在正确的位置添加上。如果 COM 不必要，就去掉。 |在 COM 和 COME 中间发现 SP 或 SPE。 COME WITHOUT COM |如果 COM 丢失，在正确的位置添加上。如果 COME 不必要，就去掉。 |没有 COM 对应此 COME。 DUPLICATE CTR NUMBER （WARNING） |如果 CTR 中有一些是不必要的，就去掉。如果所有都是必要的，在它们的参数中分配不同的号码，使之独立。（如果两个或更多带有相同参数号的指令，从不在一次同时执行，梯图程序可能能正常工作。但是，从安全和维修的角度考虑，所有这些指令应该带有各自不同的参数号。） |多数 CTR 有同样的参数号码。（此为警告） ILLEGAL CTR NUMBER |如果不必要，就去掉。根据 PMC 方式，分配不超过最大数值的正确号码。 |CTR 有的参数号超出范围。 DUPLICATE DIFU/DIFD NUMBER （WARNING） |如果它们中的一些是不必要的，就去掉。如果所有都是必要的，在它们的参数中分配不同的号码，使之独立。（如果两个或更多带有相同参数号的指令，从不在一次同时执行，梯图程序可能能正常工作。但是，从安全和维修的角度考虑，所有这些指令应该带有各自不同的参数号。） |多数 DIFU 或 DIFD 有同样的参数号码。（此为警告） ILLEGAL |DIFU/DIFD NUMBER |如果不必要，就去掉。根据 PMC 方式，分配不超过最大数值的正确号码。 |DIFU 或 DIFD 有的参数号超出范围。NO END NO END1 NO END2 NO END3 |在正确的位置添加 END，END1，END2，或 END3。 |没有发现 END，END1，END2，或 END3。  报警号 |错误位置/修正措施 |内容 DUPLICATE END1 DUPLICATE END2 DUPLICATE END3 |去掉多余的 END1，END2，或 END3。|发现多重 END1，END2 或 END3。 GARBAGE AFTER END GARBAGE AFTER END2 GARBAGE AFTER END3 |去掉不必要的网格，将必要的网格移动到正确的位置，使它们能正常执行。|在 END，END2 或 END3 后有网格，不能被执行。 OVERLAPPED JMP |如果 JMPE 丢失，在正确的位置添加上。如果 JMP 不必要，就去掉。 |没有 JMPE 对应此 JMP。 JMP/JMPE TO BAD COM LEVEL |JMP 和对应的 JMPE 必须有相同的 COM/COME 状态。查看 JMP 的范围和 COM 的范围，调整到相互不重叠：一个范围完全包含另一个范围是可以的。 |JMP 和对应的 JMPE 有不同的COM/COME 状态。 COME IN JMP |COME 和对应的 COM 必须有相同的 JMP/JMPE 状态。查看 COM 的范围和 JMP 的范围，调整到相互不重叠：一个范围完全包含另一个范围是可以的。 |在 JMP 和 JMPE 中间发现 COME，COM 和对应的 COME 有不同的JMP/JMPE 状态。 END IN JMP END1 IN JMP END2 IN JMP END3 IN JMP |如果 JMPE 丢失，在正确的位置添加上。如果 JMP 不必要，就去掉。 |JMP 和 JMPE 中间发现 END，END1， END2，或 END3。 SP/SPE IN JMP |如果 JMPE 丢失，在正确的位置添加上。如果 JMP 不必要，就去掉。 |JMP 和 JMPE 中间发现 SP 或 SPE。JMPB OVER COM BORDER|JMPB 和它的目标必须有相同的 COM/COME 状态。查看 JMPB 的范围和 COM 的范围，调整到相互不重叠：一个范围完全包含另一个范围是可以的。 |JMPB 和 它 的 目 标 有 不 同 的COM/COME 状态。 JMPB OVER LEVEL |JMPB 只能跳到相同的程序级，或在子程序内。如果 JMPB 不必要，就去掉。如果 JMPB 的 LBL 丢失，在正确的位置添加上。如果应该是 JMPC，将其改正。 |JMPB 跳到不同的程序级。 LBL |FOR |JMPB |NOT FOUND |如果JMPB不必要，就去掉。如果JMPB 的 LBL 丢失，在正确的位置添加上。|JMPB 无法找到正确的 LBL。 JMPC IN BAD LEVEL |JMPC 用来从一个子程序跳到第 2 级。如果 JMPC 不必要，就去掉。如果应该是 JMPB 或 JMP，将其改正。 |JMPC 没有在子程序中使用。 LBL |FOR |JMPC |NOT FOUND |如果 JMPC 不必要，就去掉。如果 LBL 丢失，在正确的位置添加上：JMPC 跳到第 2 级。如果应该是 JMPB 或 JMP，将其改正。 |JMPC 无法找到正确的 LBL。 p-301 报警号 |错误位置/修正措施 |内容 LBL FOR JMPC IN BAD LEVEL |JMPC 用来从子程序跳到第 2 级。如果 JMPC 不必要，就去掉。如果辅程序中 JMPC 要跳的同一 L-地址有另一个 LBL，那么给这两个 LBL 分配不同的 L-地址。如果应该是 JMPB 或 JMP，将其改正。 |JMPC 的目标不是第 2 级。 JMPC INTO COM |JMPC 的 LBL 必须被分配在一组 COM 和 COME 对以外。如果 JMPC 不必要，就去掉。如果 LBL 位置错误，将其移动到正确位置。如果 JMPC 的 L-地址错误，修正之。 |在 COM 和 COME 之间，JMPC 跳到LBL。 JMPE WITHOUT JMP |如果 JMP 丢失，在正确的位置添加上。如果 JMPE 不必要，就去掉。 |没有 JMP 与此 JMPE 对应。 TOO MANY LBL |去掉不必要的 LBL。如果此错误仍然发生，调整程序结构，减少使用 LBL。|LBL 过多。 DUPLICATE LBL |如果一些 LBL 不必要，就去掉。如果所有这些 LBL 都是必要的，那么给它们分配不同的 L-地址，使它们独立。|在多数 LBL 中使用了相同的 L-地址。OVERLAPPED SP |如果 SP 丢失，在正确的位置添加上。如果 SPE 不必要，就去掉。 |没有 SP 与此 SPE 对应。 SPE WITHOUT SP |如果 SP 丢失，在正确的位置添加上。如果 SPE 不必要，就去掉。 |没有 SP 与此 SPE 对应。 END IN SP |如果 SPE 丢失，在正确的位置添加上。如果 END 在错误位置，将其移动到正确位置。 |SP 和 SPE 之间没有发现 END。 DUPLICATE P ADDRESS |如果一些 SP 不必要，就去掉。如果所有这些 SP 都是必要的，给它们分配不同的 P-地址，使它们独立。 |在多数 SP 中使用了相同的 P-地址。DUPLICATE |TMRB NUMBER (WARNING) |如果它们中的一些是不必要的，就去掉。如果所有都是必要的，在它们的参数中分配不同的号码，使之独立。（如果两个或更多带有相同参数号的指令，从不在一次同时执行，梯图程序可能能正常工作。但是，从安全和维修的角度考虑，所有这些指令应该带有各自不同的参数号。） |多数 TMRB 有同样的参数号码。（此为警告） ILLEGAL TMRB NUMBER |如果不必要，就去掉。根据各自 PMC 方式，分配不超过最大数值的正确号码。 |TMBR 有参数号超出范围。    报警号 |错误位置/修正措施 |内容 DUPLICATE TMR NUMBER (WARNING) |如果它们中的一些是不必要的，就去掉。如果所有都是必要的，在它们的参数中分配不同的号码，使之独立。（如果两个或更多带有相同参数号的指令，从不在一次同时执行，梯图程序可能能正常工作。但是，从安全和维修的角度考虑，所有这些指令应该带有各自不同的参数号。） |多数 TMR 有同样的参数号码。（此为警告） ILLEGAL TMR NUMBER |如果不必要，就去掉。根据各自 PMC 方式，分配不超过最大数值的正确号码。 |TMB 有参数号超出范围。 NO SUCH SUBPROGRAM |如果调用了错误的子程序，修正之。如果子程序丢失，创建之。 |使用 CALL/CALLU 调用的子程序没找到。 UNAVAILABLE INSTRUCTION |确认此梯图程序是否正确。如果是正确的，所有这些不支持的指令都必须删除。 |发现此 PMC 方式不支持的指令。 SP IN BAD LEVEL |SP 可用在子程序的顶端。 修改程序，使 SP 不在其它位置出现。|SP 发现在错误位置。 LADDER |PROGRAM |IS BROKEN |此梯图程序必须进行一次全清，再次写入程序。 |梯图可能由于某些原因造成中断。 NO WRITE COIL |添加正确的软件继电器线圈。 |没有找到必要的软件继电器线圈。 CALL/CALLU |IN |BAD LEVEL |CALL/CALLU 必须使用在第 2 级或在辅程序中。不要用在其它位置。 |CALL/CALLU 用在错误位置。 SP IN LEVEL3 |如果 END3 位置错误，将其移到正确位置。如果 SP 不必要，就去掉 |SP 在第 3 级被发现                                                                   PMC 编辑器画面的网格编辑过程中的信息显示 报警号 |错误位置/修正措施 |内容 TOO MANY FUNCTIONAL INSTRUCTIONS IN ONE NET |一个网格中只能包含一个功能指令。如果必要，将网格分割成多个。 |一个网格中有过多的功能指令。 TOO LARGE NET |将网格分割成多个，减少一个网格中的步数。 |网格太大。网格转换为目标程序时，超过 256 步。 NO |INPUT |FOR OPERATION |线圈没有输入指令，或线圈连接到了不带输出的输出指令，造成此报警。如果线圈不必要，就去掉。如果需要，连接指定的输入。 |没有信号提供给逻辑操作。 OPERATION |AFTER FUNCTION IS FORBIDDEN|功能指令的输出不能被连接到继电器，或是连接到了将要被逻辑操作执行的其它信号上。 |除了软件线圈，带有功能指令的逻辑操作输出都是不允许的。 WRITE COIL IS EXPECTED|在网格上添加正确的写入环。 |需要写入环，但是没有找到。 BAD COIL LOCATION |线圈只能被定位在最右边列。任何其它位置上的线圈都必须清除，将必要的线圈放在正确的位置。 |线圈在错误位置。 SHORT CIRCUIT |接触器短路，修正连接。 |接触器连接短路。 FUNCTION AFTER DIVERGENCE IS FORBIDDEN |功能指令不能被用于网格的输出部分。如果必要，将网格分割成多个。 |功能指令用来输出部分网格。 ALL COIL MUST HAVE SAME INPUT |一个网格的所有线圈左端都必须连接到相同的输入点。 |一个网格包含一个以上的线圈时，除了影响线圈的接触器外，线圈不应该带有任何接触器。 BAD CONDITION INPUT |检查功能指令所有条件输出的连接。尤其是含多个条件输出的功能指令，检查条件输出的连接是否相互干扰。 |输入功能指令的一些条件没有正确连接。 NO CONNECTION |在需要连接处发现间隙，修正连接。 |有信号没连接。 NET |IS |TOO COMPLICATED |测试每个连接，找出不必要的弯曲连接，或连接到不同点的线圈。 |网格太复杂，无法分解。 PARAMETER |IS |NOT SUPPLIED |输入所有的继电器地址，以及功能指令的参数。 |发现了带有空地址的继电器，或带有空参数的功能指令。          (6) 报警信息（编辑：PMC-SA1） 信息 |内容和处理 ADDRESS BIT NOTHING |没有设定继电器/线圈地址。 FUNCTION NOT FOUND |输入号码没有功能指令。 COM FUNCTION MISSING |功能指令 COM（SUB29）没有正确执行。 COM 和 COME（SUB29）没有正确对应。 或，在不能指定数量的方式下指定 COM 控制的线圈的数量。 EDIT BUFFER OVER |没有空余的缓冲区域进行编辑。（处理）请在编辑下缩减 NET。 END FUNCTION MISSING |功能指令 END1，END2，END3 和 END 不存在。或，END1，END2， END3 和 END 在错误网格。或，END1，END2，END3 和 END 不正确。ERROR NET FOUND |网格错误。 ILLEGAL FUNCTION NO. |错误的功能指令号被查找。 FUNCTION LINE ILLEGAL |功能指令连接不正确。 HORIZONTAL LINE ILLEGAL |网格的水平线没有连接。 ILLEGAL NET CLEARED |在编辑 LADDER 的时候电源关断，造成编辑中的一些网格被清除。 ILLEGAL OPERATION |操作不正确。 数值未指定，以及只按了 INPUT 键地址数据输入不正确。 由于屏幕上显示指令的空间不足，功能指令不能被使用。 SYMBOL UNDEFINED |输入的符号没有定义。 INPUT INVALID |输入数据不正确。 COPY，INSLIN，C-UP，C-DOWN 等没有数值输入。 输入地址被分配给软件线圈。数据表分配了不正确的字符。 NET TOO LARGE |输入网格比编辑缓冲大。 （处理）在编辑下缩减网格。 JUMP FUNCTION MISSING |功能指令 JMP（SUB10）没有正确执行。对应的 JMP 和 JMPE（SUB30）不正确。 在不能指定数量的方式下指定跳过的线圈的数量。（只有在PMC-RB/RC 能指定线圈数量） LADDER BROKEN |LADDER 中断。 LADDER ILLEGAL |存在不正确的 LADDER。 IMPOSSIBLE WRITE |尝试在 ROM 中编辑顺序程序。 OBJECT BUFFER OVER |顺序程序区域满。 （处理）缩减 LADDER。 PARAMETER NOTHING |功能指令没参数。 PLEASE COMPLETE NET |LADDER 中存在错误网格。 （处理）修正错误网格后，继续运行。 信息 |内容和处理 PLEASE KEY IN SUB NO. |请输入功能指令的号码。 （处理）如果不输入功能指令，请再次按软键“FUNC”。 PROGRAM MODULE NOTHING |在既没有调试 RAM 又没有程序 ROM 的情况下，尝试了编辑。 RELAY COIL FORBIT |存在不必要的继电器或线圈。 RELAY OR COIL NOTHING |继电器或线圈不够。 PLEASE CLEAR ALL |不能恢复顺序程序。 （处理）清除所有数据。 SYMBOL DATA DUPLICATE |另一处定义了同样的符号名称。 COMMENT DATA OVERFLOW |注释数据区满。 （处理）减少注释的数量。 SYMBOL DATA OVERFLOW |符号数据区满。 （处理）减少符号的数量。 VERTICAL LINE ILLEGAL |网格中存在不正确的垂直线。 MESSAGE DATA OVERFLOW |信息数据区满。 （处理）减少信息的数量。 1ST LEVEL EXECUTE TIME OVER |LADDER 的第 1 级太大，无法按时执行完。 （处理）减少 LADDER 的第 1 级。 PARA NO. RANGE ERR: |某功能指令的参数号不在范围内。 （处理）改正号码到范围内。 PARA NO. DUPLICATE: |某功能指令的参数号使用了一次以上。 （处理）如果是重复的号码造成的问题，变换为一个未使用的参数号。              (7)|错误信息（Ladder编辑完成后，自动写入到快闪ROM时发生） 错误信息 |内容和处理 PROGRAM ALREADY EXISTS |程序已经存在于快闪 ROM 中。（在 BLANK 里） PROGRAM ALREADY EXISTS (EXEC?) |程序已经存在于快闪 ROM 中。 （修正）显示此信息时，再次按 EXEC 键进行写入或擦除操作。（在写入或擦除时） PROGRAM NOTHING |快闪 ROM 中没有程序 ERASE ERROR F-ROM WRITE ERROR 13 F-ROM WRITE ERROR 28 |快闪 ROM 异常。需要更换。 与 FANUC 服务部门联系，寻求更换。 WRITE ERROR F-ROM WRITE ERROR 12 F-ROM WRITE ERROR 29 |READ ERROR |ANOTHER USED F-ROM WRITE ERROR 9 F-ROM WRITE ERROR 36 |快闪 ROM 用在了 PMC 以外的地方。 MUST BE IN EMG STOP NOT EMG STOP F-ROM WRITE ERROR 10 F-ROM WRITE ERROR 37 |CNC 不在急停状态。 NO OPTION |没有选择 ROM 盒。 SIZE ERROR IMPOSSIBLE WRITE (SIZE OVER) NO SPACE F-ROM WRITE ERROR 1 F-ROM WRITE ERROR 15 F-ROM WRITE ERROR 35 |顺序程序过大，超过快闪 ROM 的容量。（写入时） （修正）尝试使用压缩功能。（EDIT/CLEAR 画面）如果还出现相同状况，则必须加大快闪 ROM 的容量。 被读取的顺序程序过大，超过快闪 RAM 的容量。（读取时） （修正）RAM 的容量必须扩大。           (8)|错误信息（分配数据编辑时发生） 信息 |内容和处理 ERR: GROUP NO.(0-15) |组号必须为 0 到 15。 ERR: BASE NO.(0-1) |基本号码必须为 0 或 1。 WARN: BASE NO. MUST BE 0 |对 I/O Unit-B，基本号码必须为 0。基本号码强置为 0。 ERR: SLOT NO.(1-10) |对 I/O Unit-A，插槽号码必须为 1 到 10。 ERR: SLOT NO.(0,1-30) |对 I/O Unit-B，插槽号必须为 0 或 1 到 30 的数。 ERR: SLOT NO MUST BE 0 |当 I/O Unit-B 设定电源开/关信息时，插槽号码必须为 0。 ERR: ILLEGAL NAME |输入指定名称不合法或不支持。输入正确的名称。 INPUT INVALID |输入字符串不合法。以正确的输入格式输入字符串。 IMPOSSIBLE WRITE |尝试编辑 ROM 数据。ROM 数据不能被编辑。 ERR: |ADDRESS |ALREADY ASSIGNED |指定的地址已经被分配。分配另一地址。或者删除已经存在的数据，再设定地址。 ERR: ADDRESS OVER |设定地址超过最大值（X127，Y127）。检查单元上需要被设定的地址。ERR: SLOT ALREADY DEFINED |指定的插槽已经分配。检查存在的数据。 WARN: SLOT ALREADY DEFINED |指定的插槽已经分配。检查存在的数据。 ERR: UNIT TYPE MISMATCH (IN OR OUT) |输入模块找不到某一个 X 地址，或者输入模块不能找到某一个 Y 地址。WARN: UNIT TYPE MISMATCH (MODEL) |I/O Unit-A 和 I/O Unit-B 被分配在同一组。这两种单元不能存在于同一组中。              (9) 报警信息（I/O）  |错误信息 |内容和处理 F L A S H  R O M |PROGRAM ALREADY EXISTS |程序已经存在于快闪 ROM 中。（BLANK 时） |PROGRAM ALREADY EXISTS （EXEC？） |程序已经存在于快闪 ROM 中。 修正）显示此信息后，再次按 EXEC 键进行写入或擦除操作。（写入或擦除时） |ERASE ERROR |快闪 ROM 异常。需要更换。与 FANUC 服务部门联系，协助更换。 |WRITE ERROR ||READ ERROR ||ANOTHER USED |快闪 ROM 用在 PMC 之外的领域。 |MUST BE IN EMG STOP NOT EMG STOP |CNC 没有在急停状态。 |NO OPTION |没有选择 ROM 盒功能。 |SIZE ERROR |顺序程序比快闪 ROM 的容量大。（写入时） 修正）尝试使用压缩功能。（EDIT/CLEAR 画面）如果还出现相同的现象，就必须扩大快闪 ROM 的容量。 被读取的顺序程序容量比 RAM 的容量大。（读取时）修正）必须扩大 RAM 容量。 |I/O OPEN ERROR nn |nn =－1：RS-232C 被用在 PMC 以外的领域。修正）检查是否 RS-232C 被用在 PMC 以外的领域。       在在线设定画面（翻看 8.5.1 部分的 III），检查 RS-232C 的显示是否为“NOT USE”。 nn =6：没有找到 RS-232C 选择功能。 H O S T . F D C A S . O T H E R S ||nn =20：RS-232C 连接不正确。 修正）检查通道是否设定，连接，波特率，以及其它设定是否正确。 |I/O WRITE ERROR nn |nn =20：RS-232C 连接不正确。 修正）检查通道是否设定，连接，波特率，以及其它设定是否正确。 nn =22：通讯不能正常执行。 修正）检查电缆是否损坏。 |I/O READ ERROR nn |nn =20：RS-232C 连接不正确。 修正）检查通道是否设定，连接，波特率，以及其它设定是否正确。 nn =22：通讯不能正常执行。 修正）检查电缆是否损坏。 |ADDRESS IS OUT OF RANGE (xxxxxx) |非 PMC 调试 RAM 区域的数据被传输。 xxxxxx：显示传输地址。 |DATA ERROR |读取非法数据。 修正）检查电缆和设定（速度）。 当 C 区程序被读入到 16i/18i/21i 中： 修正）按软键[EDIT]，[CLEAR]，[CLRLNG]，然后按[EXEC] 清除 C 区域。 |PROGRAM DATA ERROR |尝试输出数据，但是数据不合法。 修正）查看报警画面的报警号。   |错误信息 |内容和处理 M E M O R C A R D |CREATE ERROR |指定的文件名不合法。 修正）指定一个 MS-DOS 格式的文件名。（翻看 7.2（5）） |NO MORE SPACE or WRITE ERROR |存储卡上没有足够的剩余空间。 修正）删除一些文件，创建剩余空间。 |NOT READY |没有安装存储卡。 修正）检查存储卡是否安装。 |MOUNT ERROR |没有格式化。 修正）执行格式化。（翻看 7.3.4（a）） |WRITE PROTECT |存储卡写保护。 修正）将存储卡的保护开关设为 OFF。 |BATTERY ALARM |存储卡电池不足。 修正）更换存储卡电池。 |FILE NOT FOUND |指定的文件号码或文件名没有找到。 修正）使用 LIST，检查文件名或文件号。 |DELETE ERROR |文件不能删除。 修正）改变文件属性。 |PROGRAM ALREADY EXISTS |文件重名。 修正）使用另一个文件名。 |I/O WRITE ERROR nn I/O READ ERROR nn I/O COMPARE ERROR nn I/O DELETE ERROR nn I/O LIST ERROR nn I/O FORMAT ERROR nn |nn =30：没有安装存储卡。修正）检查存储卡是否安装。 nn =31：存储卡不能被写入。 修正）将存储卡的保护开关设为 OFF。       使用 S-RAM 卡代替存储卡。 nn =32：存储卡电池不足。修正）更换存储卡电池。 nn =102：存储卡上没有足够的剩余空间。 修正）删除一些文件创建剩余空间。 nn =135：存储卡没有格式化。 nn =105：存储卡没有格式化。修正）将存储卡进行格式化。 nn =114：指定的文件没有找到。 修正）使用 LIST，检查文件名或文件号。 nn =115：指定的文件受保护。 修正）检查文件属性。 C O M M O N |COMPARE ERR XXXXXX=AA：BB CONT？（Y/N） |设备和 PMC 间数据有差异。 XXXXXX：地址   aa：     PMC 上的数据   bb：     设备上的数据 修正）要继续操作，输入 Y；否则，输入 N。然后按 INPUT 键。  |DATA ERROR |读取了不合法数据。 修正）检查电缆和设定（速度）。 当 C 区程序被读入到 16i/18i/21i 中： 修正）按软键[EDIT]，[CLEAR]，[CLRLNG]，然后按[EXEC] 清除 C 区域。 |PROGRAM DATA ERROR |尝试输出数据，但是数据不合法。 修正）查看报警画面的报警号。     A.3                                 报警一览表 |当发生串行主轴报警时，CNC 显示下列号码。n 代表发生报警的主轴的(串行主轴) |号码。（n =1：第一主轴；n =2：第二主轴；依次类推）  注：*1   注意 SPM 根据 LED 红灯亮或黄灯亮所代表的意义不同。当红灯亮时，SPM 显示为 2 位报警号码。黄灯亮时，SPM 显示为顺序程序的错误代码（例如，在急停状态没有解除的情况下给出旋转指令）。   →查看附录 A.4，“错误代码（串行主轴）”。    α系列主轴放大器上的报警号码和报警显示 号码 |信息 |SPM 显示（*1）|故障位置和处理方法 |内容 （750） |SPINDLE |SERIAL LINK ERROR |A0 A |1|更换 SPM 控制电路板上的ROM。 2|更换 SPM 控制电路板。 |程序没有正常启动。ROM 序列错误或 SPM 控制电路板上硬件异常。 （749） |S-SPINDLE LSI ERROR |A1 |更换 SPM 控制电路板。 |SPM 控制电路板上的 CPU 外围电路检测异常。 7n01 |SPN_n_: |MOTOR OVERHEAT |01 |1|检查外围设备的温度以及负载状态。 2|如果冷却风扇不转，更换掉。|电机线圈中嵌入的温度测量器起作用。 电机内部温度超标。 电机持续过度使用，或冷却部分异常。 7n02 |SPN_n_: |EX |SPEED ERROR |02 |1|检查切削条件，减小负载。 2|修正参数 No.4082。 |电机速度不能到达指定值。检测到电机负载转矩超标。参数 No.4082 中设定的加/ 减速时间无效。 7n03 |SPN_n_: FUSE ON DC LINK BLOWN |03 |1|更换 SPM 单元。 2|检查电机绝缘状态。 3|更换接口电缆。 |PSM 准备好（显示 00），但是 SPM 的 DC link 电压过低。 SPM 上 DC link 部分的保险断。（电源设备损坏或电机对地短路。） JX1A/JX1B 连接电缆异常。7n04 |SPN_n_: INPUT FUSE/ POWER FAULT |04 |检查 SPM 的电源状态。 |PSM 发现缺相。（PSM 报警为 5）         号码 |信息 |SPM 显示（*1）|故障位置和处理方法 |内容 7n06 |SPN_n_:THERMAL SENSOR DISCONNECT |06 |1|检查并修正参数。 2|更换反馈电缆。 |电机的温度传感器没有连接。 7n07 |SPN_n_:OVERSPEED |07 |检查是否有顺序错误。（例如，主轴不能转动时检查是否指定了主轴同步控制。） |电机速度超过额定速度的
+115%。 主轴在位置控制模式时，位置偏移量累积过大。（主轴同步控制时，SFR 和 SRV 被关掉。） 7n09 |SPN_n_:OVERHEAT        MAIN CIRCUIT |09 |1|改善散热条件。 2|如果散热风扇不转，更换SPM 单元。 |电源的晶体管散热器温度异常。 7n11 |SPN_n_:OVERVOLT POW CIRCUIT |11 |1|检查选择的 PSM。 2|检查输入电源电压以及电机加速时的电压变化。如果电压超过 253VAC（对 200-V 系统）或 530VAC（对 400-V 系统），改善电源的阻抗。 |检测到 PSM 的 DC link 部分过电压。（PSM 报警显示：7）PSM 选择错误。（超过 PSM 的最大输出规格。） 7n12 |SPN_n_:OVERCURRENT        POW CIRCUIT |12 |1|检查电机绝缘状态。 2|查主轴参数。 3|更换 SPM 单元。 |电机输出电流过高。 电机相关参数与电机型号不匹配。 电机绝缘不良。 7n15 |SPN_n_:SP SWITCH CONTROL  ALARM |15 |1|检查修正梯图顺序。 2|更换开关 MC。 |主轴开关/输出开关的开关顺序操作异常。 开关 MC 接触状态检查信号和指令不符。 7n16 |SPN_n_:RAM FAULT |16 |更换 SPM 控制电路板。 |检测到 SPM 控制电路板异常。（外部 RAM 数据异常。）7n18 |SPN_n_:SUMCHECK ERROR PGM DATA |18 |更换 SPM 控制电路板。 |检测到 SPM 控制电路板异常。（程序 ROM 数据异常。）7n19 |SPN_n_:EX OFFSET        CURRENT U |19 |更换 SPM 单元。 |检测到 SPM 部分异常。（U 相电流检测回路的初始值异常。） 7n20 |SPN_n_:EX OFFSET        CURRENT V |20 |更换 SPM 单元。 |检测到 SPM 部分异常。（V 相电流检测回路的初始值异常。） 7n21 |SPN_n_:POS SENSOR POLARITY ERROR |21 |检查及修正参数。 （No.4000#0，4001#4） |位置传感器的极性参数设定错误。     号码 |信息 |SPM 显示（*1）|故障位置和处理方法 |内容 7n24 |SPN_n_:SERIAL TRANSFER ERROR |24 |1|将 CNC 到主轴的电缆与电源电缆分开放置。 2|更换电缆。 |CNC 电源关断（正常关机或电缆断线）。 传输到 CNC 的通讯数据检测到错误。 7n26 |SPN_n_:DISCONNECT C-VELO DETECT |26 |1|更换电缆。 2|重新调整前置放大器。 |Cs 轮廓控制的电机侧的检测信号（连接器 JY2）幅度异常。 （电缆被摘除，调整错误等） 7n27 |SPN_n_:DISCONNECT        POS-CODER |27 |1|更换电缆。 2|重新调整 BZ 传感器信号。 |1|主轴位置编码器（连接器JY4）信号异常。 2|MZ 或 BZ 传感器的信号（连接器 JY2）幅度异常。  （电缆被摘除，调整错误等）  7n28 |SPN_n_:DISCONNECT C-POS DETECT |28 |1|更换电缆。 2|重新调整前置放大器。 |Cs 轮廓控制的位置检测信号（连接器 JY5）异常。 7n29 |SPN_n_:SHORTTIME        OVERLOAD |29 |检查修正负载状态。 |在一段时间里持续超负荷运行。（电机轴被锁住的情况下励磁启动，也发生此报警。） 7n30 |SPN_n_:OVERCURRENT        POW CIRCUIT |30 |检查修正电源电压。 |PSM 主回路的输入检测到过电流。（PSM 报警显示：1） 电源电压不平衡。 PSM 部分错误（超过 PSM 的最大输出规格） 7n31 |SPN_n_:MOTOR LOCK        OR V-SIG LOS |31 |1|检查修正负载状态。 2|更换电机传感器电缆（JY2 或JY5）。 |电机不能到达指定转速。（转速级别没有达到旋转指令的 SST 级且持续出现。） 速度检测信号异常。 7n32 |SPN_n_:RAM FAULT        SERIAL LSI |32 |更换 SPM 控制电路板。 |SPM 控制回路部分检测异常。（串行传递数据的 LSI 装置异常。） 7n33 |SPN_n_:SHORTAGE POWER CHARGE |33 |1|检查修正电源电压。 2|更换 PSM 单元。 |放大器中的电磁接触器打开时，电源回路部分支流电源电压充电不足。（如开相以及电抗器失效等。）      号码 |信息 |SPM 显示（*1）|故障位置和处理方法 |内容 7n34 |SPN_n_:PARAMETER SETTING ERROR |34 |根据说明修正参数值。 如果参数号未知，连接主轴检测板，然后查看显示的参数。 |参数数据超过设定的允许值。 7n35 |SPN_n_:EX SETTING        GEAR RATIO |35 |根据参数说明书修正数值。 |齿轮传动比数据超过设定的允许值。 7n36 |SPN_n_:OVERFLOW ERROR COUNTER |36 |检查位置环增益是否过大，修正数值。 |发生计数溢出错误。 7n37 |SPN_n_:SPEED DETECT        PAR.ERROR |37 |根据参数说明书修正数值。 |速度检测的脉冲数设定参数不正确。 7n39 |SPN_n_:1-ROT Cs SIGNAL ERROR |39 |1|调整前置放大器的 1 转信号。2|检查电缆屏蔽。 3|更换电缆。 |Cs 轮廓控制中检测到 1 转信号和 AB 相脉冲数的不匹配。 7n40 |SPN_n_:NO 1-ROT Cs SIGNAL DETECT |40 |1|调整前置放大器的 1 转信号。2|检查电缆屏蔽。 3|更换电缆。 |Cs 轮廓控制中没有 1 转信号。 7n41 |SPN_n_:1-ROT POS-CODER ERROR |41 |1|检查修正参数。 2|更换电缆。 3|重新调整 BZ 传感器信号。 |1|主轴位置编码器（连接头JY4）中的 1 转信号异常。2|MZ 或 BZ 传感器的 1 转信号（连接头 JY2）异常。3|参数设定错误。 7n42 |SPN_n_:1-ROT POS-CODER DETECT |42 |1|更换电缆。 2|重新调整 BZ 传感器信号。 |1|主轴位置代码（连接头JY4）中的 1 转信号异常。2|MZ 或 BZ 传感器的 1 转信号（连接头 JY2）异常。7n43 |SPN_n_:DISCON.PC FOR DIF.SP. MODE |43 |更换电缆。 |SPM 3 型中的速度位置信号（连接头 JY8）异常。 7n44 |SPN_n_:CONTROL CIRCUIT(AD) ERROR |44 |更换 SPM 控制电路板。 |检测到 SPM 控制电路板异常（A/D 转换器异常）。 7n46 |SPN_n_:SCREW        1-ROT POS-        COD.ALARM |46 |1|检查修正参数。 2|更换电缆。 3|重新调整 BZ 传感器信号。 |螺纹切削操作过程中检测到与 41 号报警相同的异常状况。         号码 |信息 |SPM 显示（*1）|故障位置和处理方法 |内容 7n47 |SPN_n_:POS-CODER SIGNAL ABNORMAL |47 |1|更换电缆。 2|重新调整 BZ 传感器信号。 3|改善电缆布局（调整邻近电源线的走线）。 |1|主轴位置编码器（连接器 JY4）中的 A/B 相信号异常。 2|MZ 或 BZ 传感器的 A/B 相信号（连接头 JY2）异常。 A/B 信号和 1 转信号间的关联不正确（内部脉冲不符）。7n49 |SPN_n_:HIGH CONV.        DIF.SPEED |49 |检查计算的微分速度值是否超过电机最大速度。 |在差异速度模式时，被换算至主轴速度的其它主轴速度超出允许值。（差异速度通过其它主轴的速度乘上齿轮比得到） 7n50 |SPN_n_:SPNDL CONTROL OVERSPEED |50 |检查计算数值是否超过电机最大速度。 |在主轴同步控制中，速度指令的计算值超过允许值（电机速度通过齿轮传动比乘上指定的主轴速度计算）。7n51 |SPN_n_:LOW VOLT DC        LINK |51 |1|检查改善电源电压。 2|更换 MC。 |检测到输入电压降低。（PSM 报警显示：4）（瞬间电压消失或 MC 接触不良） 7n52 |SPN_n_:ITP SIGNAL        ABNORMAL I |52 |1|更换 SPM 控制电路板。 2|更换 CNC 上的主轴接口电路板。 |检测到 NC 接口异常（ITP 信号停止）。 7n53 |SPN_n_:ITP SIGNAL        ABNORMAL II |53 |1|更换 SPM 控制电路板。 2|更换 CNC 上的主轴接口电路板。 |检测到 NC 接口异常（ITP 信号停止）。 7n54 |SPN_n_:OVERLOAD        CURRENT |54 |查看负载状态。 |检测到过电流。 7n55 |SPN_n_:POWER LINE SWITCH ERROR |55 |1|更换电磁接触器。 2|检查修正控制时序。 |选择主轴的电磁接触器的电源连接信号或输出信号异常。 7n56 |SPN_n_:INNER COOL-        ING FAN STOP |56 |更换 SPM 单元。 |SPM 控制回路的冷却风扇停转。 7n57 |SPN_n_:EX DECEL- ERATION POWER |57 |1|减少加/减速变化。 2|检查冷却条件（外围设备温度）。 3|如果风扇停转，更换电阻器。4|如果阻抗异常，更换电阻器。|再生阻抗检测到过载。（PSMR 报警显示：8）检测到温度调节装置异常或短时间过载。 再生放电电阻未连接，或检测到阻抗异常。     号码 |信息 |SPM 显示（*1）|故障位置和处理方法 |内容 7n58 |SPN_n_:OVERLOAD IN        PSM |58 |1|检查 PSM 冷却状态。 2|更换 PSM 单元。 |PSM 的散热器温度异常升高。（PSM 报警显示：3） 7n59 |SPN_n_:COOLING FAN        STOP IN SPM |59 |更换 SPM 单元。 |PSM 内的冷却风扇停转。（PSM 报警显示：2） 7n62 |SPN_n_:MOTOR VCMD        OVERFLOWED |62 |检查以及修正参数。 （No.4021，4056 到 4059） |指定的电机速度过高。 7n66 |SPN_n_:AMP MODULE COMMUNICA- TION |66 |1 更换电缆。 2 检查连接。 |放大器间通讯错误。 7n73 |SPN_n_:MOTOR SEN- SOR DISCON- NECTED |73 |1|更换反馈电缆。 2|检查屏蔽措施。 3|检查改正连接。 4|调整传感器。 |电机传感器反馈信号没有。7n74 |SPN_n_:CPU TEST ER-        ROR |74 |更换 SPM 的控制回路电路板。|CPU 测试中检测到错误。 7n75 |SPN_n_:CRC ERROR |75 |更换 SPM 的控制回路电路板。|CPU 测试中检测到错误。 7n79 |SPN_n_:INITIAL TEST        ERROR |79 |更换 SPM 的控制回路电路板。|初始化测试操作中检测到错误。 7n81 |SPN_n_:1-ROT MOTOR        SENSOR ERROR |81 |1|检查修正参数。 2|更换反馈电缆。 3|调整传感器。 |电机传感器的一转信号不能被正确检测。 7n82 |SPN_n_:NO 1-ROT MOTOR  SENSOR |82 |1|更换反馈电缆。 2|调整传感器。 |电机传感器的一转信号没有产生。 7n83 |SPN_n_:MOTOR SEN- SOR SIGNAL ERROR |83 |1|更换反馈电缆。 2|调整传感器。 |检测到不规则的电机传感器反馈信号。 7n84 |SPN_n_:SPNDL SENSOR DISCONNEC- TED |84 |1|更换反馈电缆。 2|检查屏蔽措施。 3|检查改正连接。 4|检查修正参数。 5|调整传感器。 |主轴传感器反馈信号不存在。 7n85 |SPN_n_:1-ROT SPNDL SENSOR ERROR |85 |1|检查修正参数。 2|更换反馈电缆。 3|调整传感器。 |主轴传感器的一转信号不能被正确检测。 7n86 |SPN_n_:NO 1-ROT SPNDL SENSOR ERROR |86 |1|更换反馈电缆。 2|调整传感器。 |主轴传感器的一转信号没有产生。 7n87 |SPN_n_:SPNDL SENSOR        SIGNAL ERROR |87 |主轴传感器没有产生一转信号。 |检测到不规则的主轴传感器反馈信号。      号码 |信息 |SPM 显示（*1）|故障位置和处理方法 |内容 7n88 |SPN_n_:COOLING RADIFAN FAILURE |99 |更换 SPM 外部冷却风扇。 |外部冷却风扇停转。 7n97 |SPN_n_:OTHER SPINDLE |97 |更换 SPM。 |检测到其它不规则信号。 |ALARM |||7n98 |SPN_n_:OTHER CONVERTER ALARM |98 |检查 PSM 报警显示。 |检测到 PSM 报警。   号码 |信息 |SPM 显示（*1）|故障位置和处理方法 |内容 
+9001 |SPN_n_:MOTOR        OVERHEAT |01 |1|检查外围电气温度以及负载状态。 2|如果冷却风扇停转，更换之。|电机线圈中安置的温度调节器发生作用。 电机内部温度超过指定值。使用的电机超过额定负载状态，或冷却部分异常。 
+9002 |SPN_n_:EX SPEED        ERROR |02 |1|检查切削状况，减小负载。 2|修正参数 No.4082 |电机速度不能到达指定值。检测到电机负载转矩过大。参数 No.4082 中的加/减速时间不足。 
+9003 |SPN_n_:FUSE ON DC        LINK BLOWN |03 |1|更换 SPM 单元。 2|检查电机绝缘状态。 3|更换接口电缆。 |PSM 在准备好状态（显示 00），但是 SPM 中的 DC link电压太底。 SPM 中的 DC link 保险烧毁。（电源设备损坏或电机接地。） JX1A/JX1B 连接电缆异常。
+9006 |SPN_n_:THERMAL SENSOR DISCONNECT |06 |1 检查修正参数。 2 更换反馈电缆。 |电机的温度传感器未连接。
+9007 |SPN_n_:OVERSPEED |07 |顺序检查错误。（例如，检查主轴同步控制是否在主轴不能转动的情况下被指定。） |电机速度超过额定速度的
+115%。 主轴位置控制模式中，位置误差累积过大（主轴同步控制过程中 SFR 和 SRV 被关断。） 
+9009 |SPN_n_:OVERHEAT        MAIN CIRCUIT |09 |1|改善散热片的冷却条件。 2|如果散热片的风扇停转，更换 SPM 单元。 |电源放热管中异常温升。          号码 |信息 |SPM 显示（*1）|故障位置和处理方法 |内容 
+9011 |SPN_n_:OVERVOLT        POW CIRCUIT |11 |1|检查被选择的 PSM。 2|检查输入电源电压以及电机减速时的电压变化。如果电压超过 253VAC（对于 200-V 系统）或 530VAC（对于 400-V 系统），改善电源的阻抗。 |PSM 的 DC link 部分检测到过电压。（PSM 报警显示：7） PSM 选择错误。（超出 PSM 的最大输出规格） 
+9012 |SPN_n_:OVERCURRENT        POW CIRCUIT |12 |1|检查电机绝缘状况。 2|检查主轴参数。 3|更换 SPM 单元。 |电机输出电流过高。 电机相关参数与电机不匹配。 电机绝缘不良。 
+9015 |SPN_n_:SP SWITCH CONTROL ALARM |15 |1|检查修正梯形图程序。 2|更换 MC 开关。 |主轴转换/输出开关操作的顺序异常。 MC开关接触状态检测信号和指令不匹配。 
+9016 |SPN_n_:RAM FAULT |16 |更换 SPM 控制电路板。 |SPM 控制回路部分检测到异常。（外部数据 RAM 异常。） 
+9018 |SPN_n_:SUMCHECK ERROR PGM DATA |18 |更换 SPM 控制电路板。 |SPM 控制回路部分检测到异常。（程序 ROM 数据异常。） 
+9019 |SPN_n_:EX OFFSET        CURRENT U |19 |更换 SPM 单元。 |SPM 部分检测到异常。（U 相电流检测回路的初始值异常。） 
+9020 |SPN_n_: EX OFFSET        CURRENT V |20 |更换 SPM 单元。 |SPM 部分检测到异常。（V 相电流检测回路的初始值异常。） 
+9021 |SPN_n_:POS SENSOR POLARITY ERROR |21 |检查修正参数。 （No.4000#0，4001#4） |位置传感器的极性参数设定错误。 
+9024 |SPN_n_:SERIAL TRANSFER ERROR |24 |1|将 CNC 到主轴的连接电缆   远离电源电缆。 2|更换电缆。 |CNC 电源关断（正常电源关断或电缆断线）。 传送到 CNC 的通讯数据检测到错误。 
+9027 |SPN_n_:DISCONNECT        POS-CODER |27 |1|更换电缆。 2|重新调整 BZ 传感器信号。 |1|主轴位置编码（连接头   JY4）信号异常。 2|MZ 或 BZ 传感器的信号（连接头 JY2）幅度异常。（电缆未连接，调整错误   等）       号码 |信息 |SPM 显示（*1）|故障位置和处理方法 |内容 
+9029 |SPN_n_:SHOTTIME        OVERLOAD |29 |检查改善负载状态。 |在一段特定时间内持续过载的状态。（在激磁状态将电机换档锁住，也发生此报警。） 
+9030 |SPN_n_:OVERCURRENT        POW CIRCUIT |30 |检查改善电源电压。 |PSM 主回路检测到过电流。（PSM 报警显示：1） 电源电压不平衡。 PSM 选择错误（超出 PSM 的最大输出规格）。 
+9031 |SPN_n_:MOTOR LOCK        OR V-SIG LOS |31 |1|检查改善负载状态。 2|更换电机传感器电缆（JY2   或 JY5）。 |电机不能到达指定的速度。（持续出现低于 SST 等级的旋转速度。）主轴检测信号异常。 
+9032 |SPN_n_:RAM FAULT        SERIAL LSI |32 |更换 SPM 控制电路板。 |SPM 控制电路部分检测到异常。（串行传输的 LSI 设备异常。） 
+9033 |SPN_n_:SHORTAGE POWER CHARGE |33 |1|检查改善电源电压。 2|更换 PSM 单元。 |当放大器的电磁接触器打开时（例如开相以及缺少放电电阻），电源回路部分的直流电充电不足。 
+9034 |SPN_n_:PARAMETER SETTING ERROR |34 |修正手册上对应的参数值。 如果不知道参数号，连接上主轴检测板，然后检查显示的参数。 |参数数据超过允许设定。 
+9035 |SPN_n_:EX SETTING        GEAR RATIO |35 |修正手册上对应的参数值。 |齿轮比数据超过允许设定。
+9036 |SPN_n_:OVERFLOW ERROR COUNTER |36 |检查位置增益值是否过大，修正该值。 |发生计数溢出错误。 
+9037 |SPN_n_:SPEED DETECT        PAR.ERROR |37 |修正手册上对应的参数值。 |速度检测器中的脉冲数参数设定不正确。 
+9041 |SPN_n_:1-ROT POS-        CODER ERROR |41 |1|检查修正参数。 2|更换电缆。 3|重新调整 BZ 传感器信号。 |1|主轴位置编码器（连接   头 JY4）的 1 转信号异   常。 2|MZ 或 BZ 传感器（连接   头 JY2）的 1 转信号异   常。 3|参数设定错误。   号码 |信息 |SPM 显示（*1）|故障位置和处理方法 |内容 
+9042 |SPN_n_:NO 1-ROT. POS-CODER DETECT |42 |1|更换电缆。 2|重新调整 BZ 传感器信号。 |1|主轴位置编码器（连接   头 JY4）的 1 转信号没   连接。 2|MZ 或 BZ 传感器（连接   头 JY2）的 1 转信号没   连接。 
+9043 |SPN_n_:DISCON. PC FOR DIF. SP. MODE |43 |更换电缆。 |SPM 3 型中的微分速度位置编码器信号（连接头JY8）异常。 
+9046 |SPN_n_:SCREW 1-ROT POS-CODER. ALARM |46 |1|检查修正参数。 2|更换电缆。 3|重新调整 BZ 传感器信号。 |螺纹切削操作过程中检测到相当于 41 号报警的异常状况。 
+9047 |SPN_n_:POS-CODER SIGNAL ABNORMAL |47 |1|更换电缆。 2|重新调整 BZ 传感器信号。 3|调整电缆布局（邻近电源线   的电缆）。 |1|主轴位置编码器（连接   头 JY4）的 A/B 相信号   异常。 2|MZ 或 BZ 传感器的 A/B   相信号（连接头 JY2）   异常。 A/B 相和 1 转信号之间的关系不正确（脉冲间隔不匹配）。 
+9049 |SPN_n_:HIGH CONY.        DIF. SPEED |49 |检查计算的微分速度值是否超过电机最大速度。 |在差异速度模式时，被换算至主轴速度的其它主轴速度超出允许值。（差异速度通过其它主轴的速度乘上齿轮比得到） 
+9050 |SPN_n_:SPNDL CON- TROL OVER- SPEED |50 |检查计算值是否超过电机最大速度。 |主轴同步控制，速度指令的计算值超过允许值（电机速度通过主轴指令速度与齿轮比相乘得到）。 
+9051 |SPN_n_:LOW VOLT DC        LINK |51 |1|检查改善电源电压。 2|更换 MC。 |检测到输入电压降低。（PSM 报警显示：4）（电源电压不稳或 MC 接触不良） 
+9052 |SPN_n_:ITP SIGNAL        ABNORMAL I |52 |1|更换 SPM 控制电路板。 2|更换 CNC 上的主轴接口印   刷电路板。 |检测到 NC 接口异常（ITP 信号停止）。 
+9053 |SPN_n_: ITP SIGNAL        ABNORMAL II |53 |1|更换 SPM 控制电路板。 2|更换 CNC 上的主轴接口印   刷电路板。 |检测到 NC 接口异常（ITP 信号停止）。 
+9054 |SPN_n_:OVERLOAD        CURRENT |54 |查看负载状态。 |检测到过载电流。 
+9055 |SPN_n_:POWER LINE        SWITCH ERROR |55 |1|更换电磁接触器。 2|检查改善顺序程序。 |选择主轴或输出的电磁接触器电源线状态信号异常。  号码 |信息 |SPM 显示（*1）|故障位置和处理方法 |内容 
+9056 |SPN_n_:INNER COOL-        ING FAN STOP |56 |更换 SPM 单元。 |SPM 控制电路的冷却风扇停转。 
+9057 |SPN_n_:EX DECEL- ERATION POWER |57 |1|减少加/减速次数。 2|检查冷却条件（外围电路温   度）。 3|如果冷却风扇停转，更换阻   抗。 4|如果阻抗异常，更换阻抗。 |再生放电检测到过载。（PSMR 报警显示：8）温度调节器运行或短时间过载。 放电电阻未连接或阻值不正确。 
+9058 |SPN_n_:OVERLOAD IN        PSM |58 |1|检查 PSM 冷却状态。 2|更换 PSM 单元。 |PSM 散热器温度异常升高。（PSM 报警显示：3） 
+9059 |SPN_n_:COOLING FAN        STOP IN PSM |59 |更换 SPM 单元。 |PSM 中的冷却风扇停转。 （PSM 报警显示：2） 
+9066 |SPN_n_:AMP MODULE COMMUNICA- TION |66 |1|更换电缆。 2|检查改正连接。 |与放大器之间的通讯发生错误。 
+9073 |SPN_n_:MOTOR SEN- SOR DISCON- NECTED |73 |1|更换反馈电缆。 2|检查屏蔽。 3|检查改正连接。 4|调整传感器。 |电机传感器反馈信号不存在。 
+9074 |SPN_n_:CPU TEST        ERROR |74 |更换 SPM 的控制印刷电路板。|CPU 测试中检测到错误。 
+9075 |SPN_n_:CRC ERROR |75 |更换 SPM 的控制印刷电路板。|CPU 测试中检测到错误。 
+9079 |SPN_n_:INITIAL TEST        ERROR |79 |更换 SPM 的控制印刷电路板。|初始化测试操作中检测到错误。 
+9081 |SPN_n_:1-ROT MOTOR        SENSOR ERROR |81 |1|检查修正参数。 2|更换反馈电缆。 3|调整传感器。 |无法正确检测到电机传感器的一转信号。 
+9082 |SPN_n_:NO 1-ROT MOTOR SENSOR |82 |1|更换反馈电缆。 2|调整传感器。 |电机传感器的一转信号没发出。 
+9083 |SPN_n_:MOTOR SEN- SOR SIGNAL ERROR |83 |1|更换反馈电缆。 2|调整传感器。 |检测到不规则的电机传感器反馈信号。 
+9084 |SPN_n_:SPNDL SEN- SOR DISCON- NECTED |84 |1|更换反馈电缆。 2|检查屏蔽。 3|检查改正连接。 4|检查修正参数。 5|调整传感器。 |主轴传感器反馈信号不存在。 
+9085 |SPN_n_:1-ROT SPNDL SENSOR ERROR |85 |1|检查修正参数。 2|更换反馈电缆。 3|调整传感器。 |无法正确检测到主轴传感器的一转信号。    号码 |信息 |SPM 显示（*1）|故障位置和处理方法 |内容 
+9086 |SPN_n_:NO 1-ROT SPNDL SEN- SOR ERROR |86 |1|更换反馈电缆。 2|调整传感器。 |无法正确检测到主轴传感器的一转信号。 
+9087 |SPN_n_:SPNDL SEN- SOR SIGNAL ERROR |87 |主轴传感器的一转信号没发出。 |检测到不规则的主轴传感器反馈信号。 
+9088 |SPN_n_:COOLING RA- DIFAN FAIL- URE |88 |更换 SPM 的外部冷却风扇。 |外部冷却风扇停转。 
+9097 |SPN_n_:OTHER SPINDLE ALARM | |检查 SPM 的报警显示。 |其它主轴报警。 
+9098 |SPN_n_:OTHER CON- VERTER ALARM | |检查 PSM 的报警显示。 |其它转换报警。 
+9110 |SPN_n_:AMP COMMU- NICATION ERROR |b0 |1|更换放大器与模块间的通讯电缆。 2|更换 SPM 或 PSM 控制电路板。 |放大器与模块间的通讯错误。 
+9111 |SPN_n_:CONV.LOW VOLT CON- TROL |b1 |更换 PSM 控制电路板。 |转换控制电源电压低（PSM 显示=6） 
+9112 |SPN_n_:CONV.EXDIS-        CHARGE POW. |b2 |1|检查再生放电电阻。 2|检查电机选择。 3|更换 PSM。 |超出转换再生电源（PSM 显示=8） 
+9113 |SPN_n_: CONV.COOL- ING FAN FAILURE |b3 |更换冷却风扇。 |转换器散热片冷却风扇停转（PSM 显示=A） 
+9120 |SPN_n_:COMMUNICA- TION DATA ERROR |C0 |1|更换 CNC 和 SPM 间的传输   电缆。 2|更换 SPM 控制电路板。 3|更换 CNC 侧的主轴接口印   刷电路板。 |传输数据报警 
+9121 |SPN_n_:COMMUNICA- TION DATA ERROR |C1 |1|更换 CNC 和 SPM 间的传输   电缆。 2|更换 SPM 控制电路板。 3|更换 CNC 侧的主轴接口印   刷电路板。 |传输数据报警 
+9122 |SPN_n_:COMMUNICA- TION DATA ERROR |C2 |1|更换 CNC 和 SPM 间的传输   电缆。 2|更换 SPM 控制电路板。 3|更换 CNC 侧的主轴接口印   刷电路板。 |传输数据报警       A.4  错误代码一览表注, *1 当黄色 LED 灯亮时，SPM 用 2 位数的号码显示错误代码。错误代码在 CNC 画面上不显示。 红色 LED 灯亮时，显示串行主轴发生的报警号，但意义不同，请特别注意。参照报警一览表（串行主轴）。  （串行主轴）   | α系列主轴放大器上错误显示 SMP 显示(*1) |故障位置·处理 |内            容 01 |请确认, *ESP，MRDY 的顺序。（请注意 MRDY 信号的使用／不使用的参数设定（NO.4001#0）。 |*ESP（紧急停止信号。包括 PMC 信号和 PSM 触点信号 *2 两种）及 MRDY（机械准备好信号）没有输入但却输入了 SFR（正转信号）／SRV（反转信号）／ORCM（定向指令）。 02 |确认主轴电机速度检测器的参数（NO.4011#2,1,0）。 |装有高分辨率磁传感器的主轴电机（NO.4001#6，5＝0，1），速度检测器 128λ／rev 的设定为（NO.4011#2，1，0 ＝0，0，1），不符合 128λ／rev 的设定。此时，电机不能励磁。 03 |确认 Cs 轮廓控制用检测器的参数(NO.4001#5；N0.4018#4)。 |装有高分辨率磁传感器的设定(N0.4001#5＝1)或 Cs 轮廓控制功能的设定不对(N0.4018#4＝1)，但输入了 Cs 控制指令。此时电机不能励磁。 04 |确 认 位 置 编 码 器 信 号 的 参 数（NO.4001#2）。 |使用位置编码信号的设定不对（NO.4001#2＝1）但输入了伺服方式（刚性攻丝、主轴定位）或主轴同步控制指令。此时电机不能励磁。 05 |确认准停的软件选择。 |没有准停选择功能，却输入了准停指令（ORCM）。 06 |确认主轴输出切换软件的选择，及动力线状态信号（RCH） |没有设定输出切换的选择功能，却选择了低速线圈。（RCH＝1） 07 |确认顺序（CON，SFR，SRV） |虽然指令了 Cs 轮廓控制方式，但 SFR／SRV 没有输入。08 |确认顺序（SFR，SRV）。 |指令了伺服方式（刚性攻丝，主轴定位），但没输入 SFR／SRV。 09 |确认顺序（SPSYC，SFR，SRV） |指令了主轴同步控制方式，但没有输入 SFR／SRV。 10 |C 轴控制指令中，不要指令其他运行方式，转移到其他方式之前，请解除 Cs 轮廓控制指令 |在 Cs 轮廓控制方式中，又指令了其他运行方式（伺服方式，主轴同步控制、定向）。 11 |伺服指令方式中，不要指令其他运行方式，在解除伺服指令方式后，再转移到其他方式。 |伺服方式（刚性攻丝，主轴定位）中，指令了其他运行方式（Cs 轮廓控制，主轴同步控制，定向）。      SMP 显示(*1) |故障位置·处理 |内            容 12 |在主轴同步控制指令中，请不要指令其他运行方式。当解除主轴同步控制指令之后，再转移到其他方式。 |在主轴同步控制中，指令了其他运行方式（Cs 轮廓控制、伺服方式，定位）。 13 |在定向指令中，请不要指令其他运行方式。解除定向指令之后再指令其他方式。 |在定向指令中，指令了其他运行方式（Cs 轮廓控制、伺服方式、同步控制）。 14 |请输入 SFR／SRV 两信号中的一个信号。 |同时输入了 SFR 信号和 SRV 信号。 15 |请确认参数（NO.4000#5）的设定和PMC 信号。 |具有差速方式功能的参数设定（NO.4000#5＝1）时，指令了 Cs 轴轮廓控制。 16 |请确认参数（NO.4000#5）的设定和 PMC 信号（DEFMD）。 |参数设定上是无差速方式功能（NO.4000#5=0），但输入了差速方式指令（DEFMD）。 17 |确认参数（NO.4011#2）的设定。 |速度检测器的参数设定（NO.4011#2，1，0）不合适。（无该速度检测器）。 18 |请确认参数（NO.4001#2）的设定和 PMC 信号（ORCM）。 |按不使用位置编码器设定的参数（NO.4001#2＝0），却输入了位置编码器方式的定向指令（ORCMA）。 19 |在定向指令中，不要指令其他运行方式。在解除定向指令之后，再指令其它方式。 |在磁传感器方式定向中，指令了其他运行方式。 20 |请确认参数（NO.4001#5，NO.4014#5， NO.4018#4）的设定。 |设定了有从属运行方式功能的参数（NO.4014#5=1），并设定了使用高分辨率磁传感器（NO.4001#5=1）或设定了用α传感器的 Cs 轮廓控制功能（NO.4018#4=1）。这些不能同时设定。 21 |从属运行方式指令（SLV）请在通常运行方式状态中输入。 |在位置控制（伺服方式，定向等）动作中，输入了从属运行方式指令（SLV）。 22 |位置控制指令请在通常运行方式状态输入。 |从属运行方式中（SLVS＝1）输入了位置控制指令（伺服方式，定向等）。 23 |请确认参数（NO.4014#5）的设定和PMC 信号。 |在参数设定上没有从属运行方式功能（NO.4014#5=0），却输入了从属运行方式指令（SLV）。 24 |请确认 PMC 信号（INCMD）。最初请用绝对指令进行定向。 |最初用增量指令（INCMD＝1）进行定向，接着又输入了绝对位置指令（INCMD=0）。 25 |请确认主轴放大器规格和参数（NO.4018#4）。 |不是 SPM4 型主轴放大器，却设定了 Cs 轮廓控制功能（NO.4018#4=1）。  注, *2 PSM 的接点信号          PSM 上的 ESP1 和 ESP2 之间  接点开：紧急停止                                                                   接点关：正常运行                           

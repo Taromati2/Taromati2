@@ -1,0 +1,296 @@
+﻿//-----SQL操作---------------------
+/*---------------------------------
+まともな説明
+
+  1. 呼び出し方
+     debeso [-options] sql
+
+       -r ランダムに一行取得。
+       -f 全検索結果の最初のカラムだけを取得
+       -j 取得したものを ^A (バイト値 1、面倒なので変更不可) でつなげて返す
+
+     -r, -f のどちらも指定されない場合は -r が指定されたものと見なされます。
+
+  2. 戻り値
+
+     +-----------------------------------------------------+
+     |          |     select     |それ以外|    エラー時    |
+     |----------+----------------+--------+----------------|
+     |  Result  |取得件数(*1)    |0       |負の数          |
+     |----------+----------------+--------+----------------|
+     |  Value0  |取得結果(有れば)|無し    |エラーメッセージ|
+     |----------+----------------+--------+----------------|
+     |Value1以降|取得結果(有れば)|無し    |無し            |
+     +-----------------------------------------------------+
+     (*1) ただし -j が指定された場合は取得結果そのもの。
+*/
+//---------------------------------
+//    -r : 有结果时传回1，无结果传回0,並随机取出結果至valueex0,
+//         （当符合记录>=2时,不能得到所有符合结果的第一条记录。且valueex1和1之后的值不明）;
+//    -j : 将结果保存至数组，无valueex。如果有多条记录符合则随机输出,>=2时,有和-r一样的缺少第一条记录的性质
+//    -f : 将符合的记录总条数传回，valueex0、valueex1、valueex2...分别为符合记录的第一条、第二条、第三条...
+//---------------------------------
+
+
+OnSQLSave
+{
+	if FATTRIB('saori\debeso.db')!=-1
+		_temp=FCOPY('saori\debeso.db','profile');
+}
+
+OnSQLLoad
+{
+	if FATTRIB('profile\debeso.db')!=-1
+		_temp=FCOPY('profile\debeso.db','saori')
+	else{
+		_temp=FULLNAMEFCOPY('saori\debeso.db.base','profile\debeso.db')
+		OnSQLLoad
+	}
+}
+ClearSQLVar{
+	
+}
+
+/*---------------------------------------------------------------------------------------
+ *  函式名：SQLite
+ *  机能　：FUNCTIONEX改造版，执行SAORI并可指定输出的变数名
+ *  引数　：_argv[0]　 选项或SQL语言
+ *			_argv[1]　 选项
+ *					   -r : 将符合的结果总数传回，并(随机)取出结果至valueex?。
+ *					　 -j : 将结果作成阵列后传回，无valueex?。
+ *					　 -f : 将符合的结果总数传回，valueex?的值为符合者的ID。
+ * --------------------------------------------------------------------------------------
+*/
+
+SQLite
+{
+	//if _argv[1]
+		FUNCTIONEX("saori\debeso.dll", "%(_argv[0])", "%(_argv[1])");
+	//else
+	//	FUNCTIONEX("saori\debeso.dll", "%(_argv[0])");
+}
+
+//---- 资料表相关 ---------------------------------------------------------------------------------
+
+//---- 资料表清单
+SQLite.Table
+{
+	SQLite("-f","SELECT name FROM sqlite_master WHERE type='table'");
+}
+
+//---- 栏位清单
+// _argv[0] : 资料表名称
+SQLite.Column
+{
+	_res = SQLite("-j","SELECT sql FROM sqlite_master WHERE type='table' AND name='%(_argv[0])'");
+	_res = RE_REPLACE(_res, ".*\(|\)| integer| text| primary key| ", "");
+	_res = SPLIT(_res,",");
+	_res;
+}
+
+//栏位ID
+// _argv[0] : 资料表名称
+// _argv[1] : 栏位名称
+SQLite.GetColumnID
+{
+	_res = SQLite.Column(_argv[0])
+	for _i=0;_res[_i]!="%(_argv[1])";_i++{
+		do_nothing
+	}
+	_i
+}
+
+//---- 新增资料表
+// _argv[0] : 资料表名称
+// _argv[1] : 栏位名称
+SQLite.Create
+{
+	SQLite( "CREATE TABLE %(_argv[0])(%(_argv[1]))");
+}
+
+//---- 删除资料表
+// _argv[0] : 资料表名称
+SQLite.Drop
+{
+	SQLite( "DROP TABLE %(_argv[0])");
+}
+
+//---- 资料表清单
+/*
+// _argv[0] : 资料表名称
+// _argv[1] : 栏位名称
+// _argv[2] : 命令(ADD, DROP, RENAME)
+// _argv[3] : ColumnID
+SQLite.Alter
+{
+	// 取得栏位名称
+	_cln = SQLite.Column(_argv[0]);
+	// 取得栏位名称和资料型态
+	_res = SQLite("-j","SELECT sql FROM sqlite_master WHERE type='table' AND name='%(_argv[0])'");
+	_res = RE_REPLACE(_res, ".*\(|\)", "");
+	_res = SPLIT(_res,",");
+	
+	if _argv[2] == "ADD" {
+		_res[_argv[3]] ,= _argv[1];
+		_tmp = SQLite( "CREATE TABLE db_temp (%(_res))");
+		_tmp = SQLite( "INSERT INTO db_temp ((%_cln)) SELECT * FROM %(_argv[0])");
+		_tmp = SQLite( "DROP TABLE %(_argv[0])");
+		_tmp = SQLite( "CREATE TABLE %(_argv[0]) (%(_res))");
+		_tmp = SQLite( "INSERT INTO %(_argv[0]) SELECT * FROM db_temp");
+		_tmp = SQLite( "DROP TABLE db_temp");
+	}
+	elseif _argv[2] == "DROP" {
+		_res[_argv[3]] = IARRAY;
+		_cln[_argv[3]] = IARRAY;
+		_tmp = SQLite( "CREATE TABLE db_temp (%(_res))");
+		_tmp = SQLite( "INSERT INTO db_temp SELECT %(_cln) FROM %(_argv[0])");
+		_tmp = SQLite( "DROP TABLE %(_argv[0])");
+		_tmp = SQLite( "CREATE TABLE %(_argv[0]) (%(_cln))");
+		_tmp = SQLite( "INSERT INTO %(_argv[0]) SELECT * FROM db_temp");
+		_tmp = SQLite( "DROP TABLE db_temp");
+	}
+	elseif _argv[2] == "RENAME" {
+		_res[_argv[3]] = _argv[1];
+		_tmp = SQLite( "CREATE TABLE db_temp (%(_res))");
+		_tmp = SQLite( "INSERT INTO db_temp SELECT * FROM %(_argv[0])");
+		_tmp = SQLite( "DROP TABLE %(_argv[0])");
+		_tmp = SQLite( "CREATE TABLE %(_argv[0]) (%(_res))");
+		_tmp = SQLite( "INSERT INTO %(_argv[0]) SELECT * FROM db_temp");
+		_tmp = SQLite( "DROP TABLE db_temp");
+	}
+	else {
+		"ERROR: wrong ALTER description.";
+	}
+}
+*/
+SQLite.Alter.Getbase
+{
+	// 取得栏位名称
+	_argv[1] = SQLite.Column(_argv[0]);
+	// 取得栏位名称和资料型态
+	_argv[2] = SQLite("-j","SELECT sql FROM sqlite_master WHERE type='table' AND name='%(_argv[0])'");
+	_argv[2] = RE_REPLACE(_argv[2], ".*\(|\)", "");
+	_argv[2] = SPLIT(_argv[2],",");
+}
+// _argv[0] : 资料表名称
+// _argv[1] : 栏位名称
+// _argv[2] : ColumnID（可选）
+SQLite.Alter.Rename
+{
+	_cln=IARRAY
+	_res=IARRAY
+	SQLite.Alter.Getbase(_argv[0],&_cln,&_res)
+	if !_argv[2]
+		_argv[2]=SQLite.GetColumnID(_argv[0],_argv[1])
+	_res[_argv[2]] = _argv[1];
+	_tmp = SQLite( "CREATE TABLE db_temp (%(_res))");
+	_tmp = SQLite( "INSERT INTO db_temp SELECT * FROM %(_argv[0])");
+	_tmp = SQLite( "DROP TABLE %(_argv[0])");
+	_tmp = SQLite( "CREATE TABLE %(_argv[0]) (%(_res))");
+	_tmp = SQLite( "INSERT INTO %(_argv[0]) SELECT * FROM db_temp");
+	_tmp = SQLite( "DROP TABLE db_temp");
+}
+// _argv[0] : 资料表名称
+// _argv[1] : 栏位名称
+// _argv[2] : ColumnID（可选）
+SQLite.Alter.Add
+{
+	_cln=IARRAY
+	_res=IARRAY
+	SQLite.Alter.Getbase(_argv[0],&_cln,&_res)
+	if !_argv[2]
+		_argv[2]=SQLite.GetColumnID(_argv[0],_argv[1])
+	_res[_argv[2]] ,= _argv[1];
+	_tmp = SQLite( "CREATE TABLE db_temp (%(_res))");
+	_tmp = SQLite( "INSERT INTO db_temp ((%_cln)) SELECT * FROM %(_argv[0])");
+	_tmp = SQLite( "DROP TABLE %(_argv[0])");
+	_tmp = SQLite( "CREATE TABLE %(_argv[0]) (%(_res))");
+	_tmp = SQLite( "INSERT INTO %(_argv[0]) SELECT * FROM db_temp");
+	_tmp = SQLite( "DROP TABLE db_temp");
+}
+// _argv[0] : 资料表名称
+// _argv[1] : 栏位名称
+// _argv[2] : ColumnID（可选）
+SQLite.Alter.Drop
+{
+	_cln=IARRAY
+	_res=IARRAY
+	SQLite.Alter.Getbase(_argv[0],&_cln,&_res)
+	if !_argv[2]
+		_argv[2]=SQLite.GetColumnID(_argv[0],_argv[1])
+	_res[_argv[2]] = IARRAY;
+	_cln[_argv[2]] = IARRAY;
+	_tmp = SQLite( "CREATE TABLE db_temp (%(_res))");
+	_tmp = SQLite( "INSERT INTO db_temp SELECT %(_cln) FROM %(_argv[0])");
+	_tmp = SQLite( "DROP TABLE %(_argv[0])");
+	_tmp = SQLite( "CREATE TABLE %(_argv[0]) (%(_cln))");
+	_tmp = SQLite( "INSERT INTO %(_argv[0]) SELECT * FROM db_temp");
+	_tmp = SQLite( "DROP TABLE db_temp");
+}
+
+//---- 资料相关 -----------------------------------------------------------------------------------
+
+//---- 写入资料
+// _argv[0] : 资料表名称
+// _argv[1] : 栏位名称
+// _argv[2] : 资料
+SQLite.Insert
+{
+	if _argv[1] == "*"
+		SQLite( "INSERT INTO %(_argv[0]) VALUES (%(_argv[2]))");
+	else
+		SQLite( "INSERT INTO %(_argv[0]) (%(_argv[1])) VALUES (%(_argv[2]))");
+}
+
+//---- 搜寻资料
+// _argv[0] : 资料表名称
+// _argv[1] : 栏位名称
+// _argv[2] : 搜寻条件
+// _argv[3] : -r,-f,-j,-rj (可省略)
+SQLite.Search
+{
+	SQLite( "%(_argv[3])", "SELECT %(_argv[1]) FROM %(_argv[0]) WHERE %(_argv[2])");
+}
+
+//---- 更改资料
+// _argv[0] : 资料表名称
+// _argv[1] : 变更内容
+// _argv[2] : 搜寻条件
+SQLite.Update
+{
+	SQLite( "UPDATE %(_argv[0]) SET %(_argv[1]) WHERE %(_argv[2])");
+}
+
+//---- 删除资料
+//	_argv[0] : 资料表名称
+//	_argv[1] : 搜寻条件
+SQLite.Delete
+{
+	SQLite( "DELETE FROM %(_argv[0]) WHERE %(_argv[1])");
+}
+//---- 重命名资料
+//	_argv[0] : 资料表名称
+//	_argv[1] : 新名称
+SQLite.Rename
+{
+	// 取得栏位名称和资料型态
+	_res = SQLite("-j","SELECT sql FROM sqlite_master WHERE type='table' AND name='%(_argv[0])'");
+	_res = RE_REPLACE(_res, ".*\(|\)", "");
+	_res = SPLIT(_res,",");
+
+	_tmp = SQLite( "CREATE TABLE %(_argv[1]) (%(_res))");
+	_tmp = SQLite( "INSERT INTO %(_argv[1]) SELECT * FROM %(_argv[0])");
+	_tmp = SQLite( "DROP TABLE %(_argv[0])");
+}
+
+
+SQLite.Size
+{
+	_res = SQLite("-j","SELECT COUNT(ID) FROM %(_argv[0])");
+	_res;
+}
+
+SQLite.total
+{
+	SQLite("-f","SELECT ID FROM %(_argv[0])");
+}

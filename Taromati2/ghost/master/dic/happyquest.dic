@@ -1,0 +1,148 @@
+﻿///////////////////////////////////////////
+////////// 开心知识问答游戏辞书
+////////// written by forjane 2009.09.02
+///////////////////////////////////////////
+
+
+
+
+OnQuestBegin
+{
+	if QuickStartVersion
+		NeedUpdate
+	else{
+		CountQuests;
+		questcount = 1;
+		_txt = "\0\s[40]要来挑战一下开心知识问答吗？\w9\n";
+		if ISVAR("questrecord") > 0 {
+			_txt += "现在连续回答正确的最高纪录是%(questrecord)题喔～\w9\w9\w9";
+		}
+		_txt += "\c" + ShowQuest(RAND(questnum));
+		_txt;
+	}
+}
+
+ShowQuest
+{
+	_txt = "\0\b[1]第" + questcount + "题：\n[150]";
+	_temp = LoadQuest(_argv[0]);
+	_quest =_temp[0, '#'];
+	_answer = _temp[1, '#'];
+	
+	_txt += _quest + "\n\n\_q";
+	for _i = 2; _temp[_i, '#'] != ""; _i++ {
+		_txt += '\q[◇' + _temp[_i, '#'] + ',OnQuestAnswered,' + SUBSTR(_temp[_i, '#'], 0, 1) + ',' + _answer + ']\n';
+	}
+	_txt += "\![set,choicetimeout,0]\e";
+	_txt;
+}
+
+OnQuestAnswered
+{
+	if reference0 == reference1 {
+		questcount ++;
+		ShowQuest(RAND(questnum));
+	}
+	else {
+		if questcount > 10 {
+			intimacy ++;
+		}
+		if questrecord < questcount - 1 {
+			questrecord = questcount - 1;
+			"\0\s[2]哇！\w9\w9你创造了新的记录…\w9…\w9\w9"
+			"\0\s[2]新的记录喔，\w9你连续答对了%(questrecord)题耶！\w9"
+			--
+			"\1\s[12]不要太得意。\w9\s[10]"
+			"\1\s[12]下次就没这么好运了。\w9\s[10]"
+			""
+		}
+		elseif questrecord == questcount - 1 {
+			"\0\s[5]不错喔，\w9平了你的最好成绩呢。\w9"
+			"\0\s[5]可惜了，\w9差一点破纪录…\w9…\w9"
+			--
+			"\1\s[12]下次就没这么好运了。\w9\s[10]"
+			""
+		}
+		elseif questcount - 1 > questrecord / 2 {
+			"\0\s[35]好可惜喔…\w9…\w9"
+			"\0\s[35]啊…\w9…\w9"
+			--
+			"还差%(questrecord + 1 - questcount)题就成功了。\w9" 
+			"离最好成绩还差%(questrecord + 1 - questcount)题而已。\w9" 
+			--
+			"\1\s[11]这种稀奇古怪的题目，\w9能答对才怪。\w9\s[10]\0\s[8]\n[150]果然还是太难了点吗？\w9"
+			"\1\s[11]你不要太为难他啦。\w9\s[10]"
+		}
+		elseif questcount < 2 {
+			"\0\s[8]不是吧，\w9一上来就错了…\w9…\w9"
+			"\0\s[8]…\w9…\w9你有认真在想吗？\w9\1\s[11]才怪。\w9\s[10]"
+			"\0\s[8]这题目…\w9…\w9对你来说，\w9太难了吗？\w9"
+			"\0\s[8]…\w9…\w9\1\s[11]这种稀奇古怪的题目，\w9能答对才怪。\w9\s[10]\0\s[8]\n[150]果然还是太难了点吗？\w9"
+		}
+		else {
+			"\0\s[2]你确定是这个答案吗？\w9\w9";
+			"\0\s[2]那个…\w9…\w9虽然不愿意说，\w9答案不是这个喔。\w9"
+			"\0\s[2]再仔细想想看…\w9…\w9"
+			"\0\s[26]别灰心！\w9"
+		}
+		--
+		"\0\n[150]\n\n\n\q[◇重来,OnQuestBegin]\n[150]\q[◇返回上一层,OnOpenMenu,2]\n\q[◇终了,OnQuestEnd]\n\![set,choicetimeout,0]\e"
+	}
+}
+
+
+OnQuestEnd
+{
+	"\0\s[2]不玩了吗？\w9好可惜喔…\w9…\w9\w9\e";
+}
+
+CountQuests
+{
+	_file = "data\happyquest.txt";
+	questnum = 0;
+	_buff = "";
+	if FOPEN(_file,"r") {
+		_buff = FREAD(_file);
+		while _buff != -1 && SUBSTR(_buff, 0, 1) != "#" {
+			_buff = FREAD(_file);
+		}
+		while _buff != -1 {
+			_buff = FREAD(_file);
+			_buff = FREAD(_file);
+			questnum ++;
+			_buff = FREAD(_file);
+			while _buff != -1 && SUBSTR(_buff, 0, 1) != "#" {
+				_buff = FREAD(_file);
+			}
+		}
+	}
+	FCLOSE(_file);
+}
+
+LoadQuest
+{
+	_file = "data\happyquest.txt";
+	_quest = "";
+	_buff = "";
+	_count = 0;
+	if FOPEN(_file,"r") {
+		_buff = FREAD(_file);
+		while _buff != -1 && SUBSTR(_buff, 0, 1) != "#" {
+			_buff = FREAD(_file);
+		}
+		for _i = 0; _i < _argv[0]; _i++ {
+			_buff = FREAD(_file);
+			_buff = FREAD(_file);
+			_buff = FREAD(_file);
+			while _buff != -1 && SUBSTR(_buff, 0, 1) != "#" {
+				_buff = FREAD(_file);
+			}
+		}
+		_buff = FREAD(_file);
+		_quest = _buff + FREAD(_file);
+	}
+	FCLOSE(_file);
+	_quest;
+
+}
+

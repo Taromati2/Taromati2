@@ -1,0 +1,5 @@
+charset,Shift_JIS
+type,shell
+name,チョコレート
+accept,橘花
+directory,chocolate

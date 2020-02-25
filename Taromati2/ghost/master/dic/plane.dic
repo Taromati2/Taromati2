@@ -1,0 +1,79 @@
+﻿
+OnPlane
+{
+if QuickStartVersion{
+		NeedUpdate
+		return
+	}
+_txt=""
+playingplane=1
+iii=0
+_txt+=LoadGameImage
+_txt+=SetBGImage("%m_BG_ame", 12);
+_txt+=OnShowBackground
+_txt
+}
+
+
+
+
+
+LoadGameImage
+{
+	//背景图片
+
+	//sakura
+	m_BG_sakura[0]="data\plane\Image\back.bmp"
+
+	//ame
+	for _i=0; _i<12; _i++
+	{
+	
+		if _i<10
+		{
+			m_BG_ame[_i]="data\\plane\\Image\\ame\\ame0%(_i).bmp"
+		}
+		else
+		{
+			m_BG_ame[_i]="data\\plane\\Image\\ame\\ame%(_i).bmp"
+		}
+		
+	}
+
+}
+
+
+OnShowBackground
+{
+_txt="\C\![quicksession,true]\c\b[2]\![set,choicetimeout,50]"
+            
+                m_iNowBGIndex++;
+              
+_txt+="\_b[%(m_BGImage[m_iNowBGIndex-1]),inline,--option=opaque]"
+		if m_iNowBGIndex >= m_iGBIndexMax
+		{
+			m_iNowBGIndex = 0;
+		}
+_txt+="\_l[260,340]\q[◇终了,OnPlaneGameOver]"   
+_txt
+}
+
+SetBGImage
+{
+        m_BGImage=IARRAY
+	m_BGImage = _argv[0];
+	m_iNowBGIndex = 0;
+	m_iGBIndexMax = _argv[1];
+}
+
+OnPlaneGameOver
+{
+_txt="\0\s[0]\b[0]\![sound,stop]不玩了吗。"
+
+playingplane=0
+ClearLinkWndVar
+
+_txt+="\e"
+_txt
+
+}

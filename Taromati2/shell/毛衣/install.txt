@@ -1,0 +1,5 @@
+charset,Shift_JIS
+type,shell
+name,セーター
+accept,橘花
+directory,sweater

@@ -1,0 +1,837 @@
+﻿GameSystem
+{
+        FIELD_LEFT    = 22;         // 左边界起始位置
+	FIELD_RIGHT   = 279;        // 右边界起始位置
+	FIELD_TOP     = 30;        // 上边界起始位置
+	FIELD_BOTTOM  = 352;        // 下边界起始位置
+        ROLE_CARD_X   = 0          // 角色卡片种类之横卡。程序中提供两种角色卡片，横卡和竖卡，玩一下会更清楚
+        UNIT_WIDTH    = 60        // 角色移动最小像素单元
+
+}
+
+
+OnHuanRongDao
+{
+	if QuickStartVersion{
+		NeedUpdate
+		return
+	}
+	playHuanRongDao=1
+	running="playHuanRongDao";
+	if DrawHuanRongBG==NULL
+	DrawHuanRongBG=1
+	GameSystem
+	--
+	HuanRongDaoInIt
+}
+
+
+HuanRongDaoInIt
+{
+_txt="\C\![quicksession,true]\c\b[2]"
+--
+ClearHRD
+--
+select=""
+rj=0
+playLevel=1
+steps=0
+  if reference0!=NULL
+  playLevel=reference0
+
+  if _argc > 0
+        {
+		playLevel = _argv[0];
+	}
+_txt+=LoadHuanRongDaoMap(playLevel)
+_txt+=OnDrawHuanRongRole
+_txt+HuanRongDaoMenu
+}
+
+
+
+HuanRongDaoMenu
+{
+        _txt="\_l[10,0]\q[设定,OnHuanRongDaoOption]     \_l[130,-]\q[帮助,OnHuanRongDaoHelp]     \_l[230,-]\q[◇终了,OnHuanRongDaoGameOver]"
+	_txt += "\_l[10,15]\q[◇上一关,OnHRDLastGame]    \_l[100,-]第%(playLevel)关%(levelName)     \_l[230,-]\q[◇下一关,OnHRDNextGame]";
+        _txt+="\_l[130,340]第%(steps)步"
+
+	//_txt += "\n\q[◇返回游戏列表,OnBoxGameList]  \q[◇终了,OnHuanRongDaoGameOver]";
+	_txt;
+}
+
+OnHuanRongDaoOption
+{
+_txt="\C\![quicksession,true]\c\![set,choicetimeout,0]\b[2]"
+_txt+="游戏界面：当前为%(游戏界面)\n\q[◇水墨风格,OnHuanRongDaoOption,jm,水墨风格]    \q[◇木子风格,OnHuanRongDaoOption,jm,木子风格]"
+
+if 游戏界面==NULL && DrawHuanRongBG==1
+游戏界面="水墨风格"
+
+if reference0=="jm"
+ {
+
+    if reference1=="水墨风格"
+      {
+    DrawHuanRongBG=1
+    游戏界面=reference1
+      }
+    elseif reference1=="木子风格"
+      {
+    DrawHuanRongBG=2
+    游戏界面=reference1
+    --
+    OnHuanRongDaoOption
+      }
+ }
+
+_txt+="\n\n\n\n\q[◇返回,OnDrawHuanRongRole]  \q[◇终了,OnHuanRongDaoGameOver]"
+
+_txt
+}
+
+OnHuanRongDaoHelp
+{
+_txt="\C\![quicksession,true]\c\![set,choicetimeout,0]\b[2]"
+_txt+="游戏说明：\n"
+_txt+="伪春菜版华容道。版本1.00（fancyang移植修改）。提供两种界面供选择。\n"
+_txt+="游戏操作：\n/
+1.选取目标用鼠标移至目的地。\n/
+2.Tab键选择，方向键移动。\n/
+3.R键重新开始当前游戏。\n/
+4.O键打开设定\n/
+5.H键打开帮助\n/
+6.L键上一关卡\n/
+7.N键下一关卡\n/
+"
+_txt+="\n\n\n\n\q[◇返回,OnDrawHuanRongRole]  \q[◇终了,OnHuanRongDaoGameOver]"
+_txt
+}
+
+
+
+
+OnHRDLastGame
+{
+if playLevel==1
+HuanRongDaoInIt(TotalLevel)
+elseif playLevel>1
+HuanRongDaoInIt(playLevel - 1);
+else
+HuanRongDaoInIt
+}
+
+
+OnHRDNextGame
+{
+  if playLevel==TotalLevel
+        HuanRongDaoInIt(1)   
+  elseif playLevel<TotalLevel
+	HuanRongDaoInIt(playLevel + 1);
+  else
+HuanRongDaoInIt
+}
+
+
+OnHuanRongDaoGameOver
+{
+
+
+
+
+
+"\0\s[0]\b[0]不玩了吗。"
+
+playHuanRongDao=0
+ClearHuanRongDaoVar
+
+--
+"\e"
+
+
+}
+
+
+ClearHuanRongDaoVar
+{
+        ERASEVAR("playHuanRongDao");
+        ERASEVAR("rolesInfo.x");
+        ERASEVAR("rolesInfo.y");
+	ERASEVAR("rolesInfo.k");
+	ERASEVAR("currentMap");
+	ERASEVAR("FIELD_LEFT");
+	ERASEVAR("FIELD_RIGHT");
+	ERASEVAR("FIELD_TOP");
+	ERASEVAR("FIELD_BOTTOM");
+	ERASEVAR("ROLE_CARD_X");
+	ERASEVAR("UNIT_WIDTH");
+	ERASEVAR("select");
+	ERASEVAR("rj");
+	ERASEVAR("playLevel");
+	ERASEVAR("steps,0");
+	ERASEVAR("TotalLevel");
+	ERASEVAR("levelName");
+	ERASEVAR("blank.x");
+	ERASEVAR("blank.y");
+	ERASEVAR("src.x");
+	ERASEVAR("src.y");
+	ERASEVAR("src.X");
+	ERASEVAR("src.Y");
+	ERASEVAR("src.w");
+	ERASEVAR("src.h");
+	ERASEVAR("dest.x");
+	ERASEVAR("dest.y");
+	ERASEVAR("Role");
+	ERASEVAR("buff");
+	ERASEVAR("xStart");
+	ERASEVAR("yStart");
+	ERASEVAR("kind");
+	ERASEVAR("role");
+	ERASEVAR("direct");
+
+
+
+}
+
+ClearHRD
+{
+levelName=""
+rolesInfo.x=IARRAY
+rolesInfo.y=IARRAY
+    for i = 0; i < 5; i++ 
+    {
+        for j = 0; j < 4; j++ 
+        {
+           currentMap[i*4+j] = -1;
+        }
+    }
+steps = 0;
+
+}
+
+
+OnDrawHuanRongRole
+{
+_txt="\C\![quicksession,true]\c\![set,choicetimeout,0]\b[2]"
+--
+GameSystem
+--
+   if DrawHuanRongBG==1
+     _txt+="\_l[2,10]\_b[data\HuanRongDao\background.jpg,inline,--option=opaque]"
+   else
+    {
+       FIELD_LEFT=26
+       FIELD_TOP=32
+       _txt+="\_l[2,10]\_b[data\HuanRongDao\background2.png,inline,--option=opaque]"
+    
+    }
+k=0
+blank.x=IARRAY
+blank.y=IARRAY
+--
+for i=0;i<5;i++
+  {
+  for j=0;j<4;j++
+    {
+
+   
+    if currentMap[i*4+j]==-1
+       {
+          
+            blank.x[k]=j
+            blank.y[k]=i
+            k++
+          
+       }
+       
+    }   
+
+  }
+--
+CheckHuanRongWin
+--
+
+//画小曹同志
+    src.x = 0;
+    src.y = 0;
+    src.X = 2*UNIT_WIDTH
+    src.Y = 2*UNIT_WIDTH;
+    src.w = 2*UNIT_WIDTH;
+    src.h = src.w;
+    dest.x=FIELD_LEFT + rolesInfo.x[0]*UNIT_WIDTH
+    dest.y=FIELD_TOP + rolesInfo.y[0]*UNIT_WIDTH
+ if DrawHuanRongBG==1
+   {
+    _txt+="\_l[%(dest.x),%(dest.y)]\__q[OncontrolMovement,0]\_b[data\HuanRongDao\roles.jpg,inline,--clipping=%(src.x) %(src.y) %(src.X) %(src.Y)]\__q"
+   if select == 0 
+    {
+        dest.x = dest.x + src.w / 2 - 7;
+        _txt+="\_l[%(dest.x),%(dest.y)]\_b[data\HuanRongDao\selectedT.bmp,inline]"
+        dest.y = dest.y + src.h - 17;
+       _txt+="\_l[%(dest.x),%(dest.y)]\_b[data\HuanRongDao\selectedB.bmp,inline]"
+    }
+  }
+
+else 
+  {
+    _txt+="\_l[%(dest.x),%(dest.y)]\__q[OncontrolMovement,0]\_b[data\HuanRongDao\roles2.png,inline,--clipping=%(src.x) %(src.y) %(src.X) %(src.Y)]\__q"
+   if select == 0 
+    _txt+="\_l[%(dest.x),%(dest.y)]\__q[OncontrolMovement,0]\_b[data\HuanRongDao\roles2s.png,inline,--clipping=%(src.x) %(src.y) %(src.X) %(src.Y)]\__q"
+   
+  }
+
+// 画五虎上将
+   for i = 1; i < 6; i++
+       {
+           if rolesInfo.k[i]==ROLE_CARD_X
+           {
+            src.x = (((i-1)/2)+1)*UNIT_WIDTH*2;
+            src.y = ((i + 1) % 2) * UNIT_WIDTH;
+            src.X = src.x+UNIT_WIDTH * 2;
+            src.Y = src.y+UNIT_WIDTH;
+            src.w = UNIT_WIDTH * 2;
+            src.h = UNIT_WIDTH;
+           }
+           else
+           {
+
+            src.x = (i + 7) * UNIT_WIDTH;
+            src.y = 0;
+            src.X = src.x+UNIT_WIDTH;
+            src.Y = UNIT_WIDTH * 2;
+            src.w = UNIT_WIDTH;
+            src.h = UNIT_WIDTH * 2;
+          }
+        dest.x=FIELD_LEFT + rolesInfo.x[i]*UNIT_WIDTH
+        dest.y=FIELD_TOP + rolesInfo.y[i]*UNIT_WIDTH;
+
+     if DrawHuanRongBG==1
+     {
+       _txt+="\_l[%(dest.x),%(dest.y)]\__q[OncontrolMovement,%(i)]\_b[data\HuanRongDao\roles.jpg,inline,--clipping=%(src.x) %(src.y) %(src.X) %(src.Y)]\__q"
+        if select == i 
+       {
+        dest.x = dest.x +  src.w/2 - 7;
+        _txt+="\_l[%(dest.x),%(dest.y)]\_b[data\HuanRongDao\selectedT.bmp,inline]"
+        dest.y = dest.y +  src.h - 17;
+       _txt+="\_l[%(dest.x),%(dest.y)]\_b[data\HuanRongDao\selectedB.bmp,inline]"
+       }
+    }
+
+    else
+    {
+           if rolesInfo.k[i]!=ROLE_CARD_X
+              { 
+                 src.x = (i + 9) * UNIT_WIDTH;
+                 src.y = 0;
+                 src.X = src.x+UNIT_WIDTH;
+                 src.Y = UNIT_WIDTH * 2;
+                 src.w = UNIT_WIDTH;
+                 src.h = UNIT_WIDTH * 2;
+              }
+        _txt+="\_l[%(dest.x),%(dest.y)]\__q[OncontrolMovement,%(i)]\_b[data\HuanRongDao\roles2.png,inline,--clipping=%(src.x) %(src.y) %(src.X) %(src.Y)]\__q"
+
+         if select == i 
+             {
+                _txt+="\_l[%(dest.x),%(dest.y)]\__q[OncontrolMovement,%(i)]\_b[data\HuanRongDao\roles2s.png,inline,--clipping=%(src.x) %(src.y) %(src.X) %(src.Y)]\__q"
+             }
+
+     }
+ 
+ }
+
+// 画路人甲、乙、丙、丁 
+          src.x = 6 * UNIT_WIDTH;
+          src.y = UNIT_WIDTH;
+          src.X = src.x+UNIT_WIDTH
+          src.Y = src.y+UNIT_WIDTH
+          src.w = UNIT_WIDTH;
+          src.h = UNIT_WIDTH;
+    for i = 6; i < 10; i++
+    {
+        dest.x=FIELD_LEFT + rolesInfo.x[i]*UNIT_WIDTH
+        dest.y=FIELD_TOP + rolesInfo.y[i]*UNIT_WIDTH;
+
+      
+  if DrawHuanRongBG==1
+     {
+       _txt+="\_l[%(dest.x),%(dest.y)]\__q[OncontrolMovement,%(i)]\_b[data\HuanRongDao\roles.jpg,inline,--clipping=%(src.x) %(src.y) %(src.X) %(src.Y)]\__q"
+
+        if select == i 
+       {
+        dest.x = dest.x +  src.w/2 - 7;
+        _txt+="\_l[%(dest.x),%(dest.y)]\_b[data\HuanRongDao\selectedT.bmp,inline]"
+        dest.y = dest.y +  src.h - 17;
+       _txt+="\_l[%(dest.x),%(dest.y)]\_b[data\HuanRongDao\selectedB.bmp,inline]"
+       }
+
+   }
+      else
+       {
+
+          src.x = (i+10)/2 * UNIT_WIDTH;
+          src.y =  (i%2) * UNIT_WIDTH;
+          src.X = src.x+UNIT_WIDTH
+          src.Y = src.y+UNIT_WIDTH
+          src.w = UNIT_WIDTH;
+          src.h = UNIT_WIDTH;
+        _txt+="\_l[%(dest.x),%(dest.y)]\__q[OncontrolMovement,%(i)]\_b[data\HuanRongDao\roles2.png,inline,--clipping=%(src.x) %(src.y) %(src.X) %(src.Y)]\__q"
+          if select == i 
+        _txt+="\_l[%(dest.x),%(dest.y)]\__q[OncontrolMovement,%(i)]\_b[data\HuanRongDao\roles2s.png,inline,--clipping=%(src.x) %(src.y) %(src.X) %(src.Y)]\__q"
+       }
+   }
+
+//空格处理
+      for i=0;i<2;i++
+      {
+       dest.x=FIELD_LEFT + blank.x[i]*UNIT_WIDTH
+       dest.y=FIELD_TOP + blank.y[i]*UNIT_WIDTH;
+      _txt+="\_l[%(dest.x),%(dest.y)]\__q[OncontrolMovement,%(select),%(blank.x[i]),%(blank.y[i])]\_b[data\HuanRongDao\HRDblank.png,inline]\__q"
+ 
+      }
+
+
+
+_txt+HuanRongDaoMenu
+}
+
+
+
+LoadHuanRongDaoMap
+{
+        playLevel=_argv[0]
+	_num ="#"
+	_mapfile = "data\HuanRongDao\map.txt";
+         levelName=""
+	_txt = "";
+        Role=IARRAY
+        i=0
+        TotalLevel=0
+        if FOPEN(_mapfile,"r") 
+         {
+         _buff = FREAD(_mapfile);
+         while _buff!=-1 
+           {
+           _buff = FREAD(_mapfile)
+          if _num _in_ _buff
+           TotalLevel++
+           }
+           
+
+
+         FCLOSE(_mapfile);
+         }
+	if FOPEN(_mapfile,"r") 
+         {
+		_buff = FREAD(_mapfile);
+		 while i<playLevel 
+                    {
+                   _buff = FREAD(_mapfile);
+                  if "#" _in_ _buff 
+                   i++;
+                    }
+		  if _buff == -1 
+                    {
+			"error";
+		    }
+		  if "#" _in_ _buff 
+                    {
+                      buff=_buff
+                      levelName=TextBetween(_buff,'#','@')
+                      
+                      for i=0;i<TotalLevel;i++
+                          {
+                          _buff = FREAD(_mapfile);
+                           for j=0;j<3;j++
+                               {
+                          Role[i*3+j]=SPLIT(_buff," ")[j]
+                               }
+                          }
+    
+
+		     }
+                --
+                MapState
+		FCLOSE(_mapfile);
+	}
+
+}
+
+MapState
+{
+
+//悲剧，小曹还得先独自来 
+    xStart=TOINT(Role[0])
+    yStart=TOINT(Role[1])
+    kind=Role[2]
+    rolesInfo.x[0]=xStart
+    rolesInfo.y[0]=yStart
+    rolesInfo.k[0]=kind
+    currentMap[yStart*4+xStart] = 0;
+    currentMap[yStart*4+xStart + 1] = 0;
+    currentMap[(yStart + 1)*4+xStart] = 0;
+    currentMap[(yStart + 1)*4+xStart + 1] = 0;
+
+
+//接着五虎猛将上
+    for  i = 1; i < 6; i++
+     {
+     xStart=TOINT(Role[i*3+0])
+     yStart=TOINT(Role[i*3+1])
+     kind=Role[i*3+2]
+     rolesInfo.x[i]=xStart
+     rolesInfo.y[i]=yStart
+     rolesInfo.k[i]=kind
+     currentMap[yStart*4+xStart] = i;
+
+     if kind ==ROLE_CARD_X
+           currentMap[yStart*4+xStart + 1] = i; 
+     else 
+           currentMap[(yStart + 1)*4+xStart] = i;  
+     }
+
+// 还有四个抢劫的 
+    for i = 6; i < 10; i++
+     {
+     xStart=TOINT(Role[i*3+0])
+     yStart=TOINT(Role[i*3+1])
+     kind=Role[i*3+2]
+     rolesInfo.x[i]=xStart
+     rolesInfo.y[i]=yStart
+     rolesInfo.k[i]=kind
+     currentMap[yStart*4+xStart] = i;
+     }
+
+}
+
+OnKeyMovement
+{
+
+OncontrolMovement(select,reference0)
+
+}
+
+
+
+OncontrolMovement
+{
+role=TOINT(reference0)
+select=TOINT(reference0)
+x=TOINT(reference1)
+y=TOINT(reference2)
+_roles=IARRAY
+__roles=IARRAY
+
+    xStart =    TOINT(rolesInfo.x[role])
+    yStart =  	TOINT(rolesInfo.y[role])
+    kind   =  	TOINT(rolesInfo.k[role])
+
+     if yStart > y
+        direct = 0;
+     elseif xStart > x 
+        direct = 1;
+     elseif xStart + 2 - kind<= x
+        direct = 2;
+     else
+        direct = 3;
+     if reference1==""&&reference2==""
+        direct=-1
+  if _argc>0
+         {
+           role=TOINT(_argv[0])
+           select=TOINT(_argv[0])
+           if _argv[1]=="up"
+           direct = 0;
+           elseif _argv[1]=="left"
+           direct = 1;
+           elseif _argv[1]=="right"
+           direct = 2;
+           elseif _argv[1]=="down"
+           direct = 3;
+           elseif _argv[1]=="r"
+           HuanRongDaoInIt(playLevel)
+           elseif _argv[1]=="h"
+           OnHuanRongDaoHelp
+           elseif _argv[1]=="o"
+           OnHuanRongDaoOption
+           elseif _argv[1]=="l"
+           OnHRDLastGame
+           elseif _argv[1]=="n"
+           OnHRDNextGame
+           elseif _argv[1]=="tab"
+              {
+                  for i=0;i<10;i++
+                 {
+          _roles[i]=i
+          }
+                                   
+             k=ARRAYSIZE(_roles)
+             a=0
+             for b=0;b<k;b++
+                         {
+                          if CheckBlank(_roles[b])==1
+                                   {
+                                   __roles[a]=_roles[b]
+                                     a++
+                                   }
+
+                          }
+
+
+
+             _roles=__roles
+             k=ARRAYSIZE(_roles)
+             rj=(rj+1)%k
+             role=_roles[rj]
+             select=_roles[rj]
+             direct=-1
+       }
+
+    xStart =    TOINT(rolesInfo.x[role])
+    yStart =  	TOINT(rolesInfo.y[role])
+    kind   =  	TOINT(rolesInfo.k[role])
+  }
+
+
+    case role
+      {
+    if role==0
+       {
+        case direct
+           {
+           if direct==0
+            {
+            if yStart - 1>=0 && xStart + 1<4 && currentMap[(yStart - 1)*4+xStart] == -1&& currentMap[(yStart - 1)*4+xStart + 1] == -1
+               {
+                 	currentMap[(yStart - 1)*4+xStart] = 0;
+                 	currentMap[(yStart - 1)*4+xStart + 1] = 0;
+                 	currentMap[(yStart + 1)*4+xStart] = -1;
+                 	currentMap[(yStart + 1)*4+xStart + 1] = -1;
+                 	rolesInfo.y[0]=yStart - 1;
+                        steps++
+               } 
+            
+         else 
+                role = -1;
+           }
+     elseif direct==1
+           {
+            if xStart - 1 >=0 && yStart + 1<5 && currentMap[yStart*4+xStart - 1] == -1&& currentMap[(yStart + 1)*4+xStart - 1] == -1 
+               {
+                 	currentMap[yStart*4+xStart - 1] = 0;
+                 	currentMap[(yStart + 1)*4+xStart - 1] = 0;
+                 	currentMap[yStart*4+xStart + 1] = -1;
+                 	currentMap[(yStart + 1)*4+xStart + 1] = -1;
+                 	rolesInfo.x[0]=xStart - 1;
+                        steps++
+              } 
+          else
+                role = -1;
+           }
+        elseif direct==2
+           {
+            if xStart + 2<4 && yStart + 1<5 && currentMap[yStart*4+xStart + 2] == -1  && currentMap[(yStart + 1)*4+xStart + 2] == -1
+             {
+                 	currentMap[yStart*4+xStart + 2] = 0;
+                 	currentMap[(yStart + 1)*4+xStart + 2] = 0;
+                 	currentMap[yStart*4+xStart] = -1;
+                 	currentMap[(yStart + 1)*4+xStart] = -1;
+                 	rolesInfo.x[0]=xStart + 1;
+            } 
+         else 
+                role = -1;
+           }
+       elseif direct==3
+          {
+            if yStart + 2<5 &&  xStart + 1<4 && currentMap[(yStart + 2)*4+xStart] == -1  &&currentMap[(yStart + 2)*4+xStart + 1] == -1           
+             {
+                 	currentMap[(yStart + 2)*4+xStart] = 0;
+                 	currentMap[(yStart + 2)*4+xStart + 1] = 0;
+                 	currentMap[yStart*4+xStart] = -1;
+                 	currentMap[yStart*4+xStart + 1] = -1;
+                 	rolesInfo.y[0]=yStart + 1;
+                        steps++
+             } 
+       else 
+                role = -1;
+         }  
+
+       }
+      
+    }
+    elseif role==1||role==2||role==3||role==4||role==5
+       {
+        case direct
+          {
+        if direct==0
+          {
+            if yStart - 1>=0 && xStart + 1 - kind<4 && currentMap[(yStart - 1)*4+xStart] == -1  &&	currentMap[(yStart - 1)*4+xStart + 1 - kind] == -1
+               {
+                 	currentMap[(yStart - 1)*4+xStart] = role;
+                 	currentMap[(yStart - 1)*4+xStart + 1 - kind] = role;
+                 	currentMap[(yStart + kind)*4+xStart] = -1;
+                 	currentMap[(yStart + kind)*4+xStart + 1 - kind] = -1;
+                 	rolesInfo.y[role]=yStart - 1;
+                        steps++
+               } 
+              else
+                role = -1;
+          }
+            
+        elseif direct==1
+          {
+            if xStart - 1>=0 && yStart + kind <5 && currentMap[yStart*4+xStart - 1] == -1 &&	currentMap[(yStart + kind)*4+xStart - 1] == -1
+            {
+                 	currentMap[yStart*4+xStart - 1] = role;
+                 	currentMap[(yStart + kind)*4+xStart - 1] = role;
+                 	currentMap[yStart*4+xStart + 1 - kind] = -1;
+                 	currentMap[(yStart + kind)*4+xStart + 1 - kind] = -1;
+                 	rolesInfo.x[role]=xStart - 1;
+                        steps++
+            } 
+              else 
+                role = -1;
+          }
+           
+         elseif direct==2
+          {
+            if yStart + kind<5 && xStart + 2 - kind<4 && currentMap[yStart*4+xStart + 2 - kind] == -1 &&	currentMap[(yStart + kind)*4+xStart + 2 - kind] == -1 
+            {
+                 	currentMap[yStart*4+xStart + 2 - kind] = role;
+                 	currentMap[(yStart + kind)*4+xStart + 2 - kind] = role;
+                 	currentMap[yStart*4+xStart] = -1;
+                 	currentMap[(yStart + kind)*4+xStart] = -1;
+                 	rolesInfo.x[role]=xStart + 1;
+                        steps++
+            } 
+              else 
+                role = -1;
+          }
+            
+         elseif direct==3
+          {
+            if yStart + 1 + kind<5 && xStart + 1 - kind<4 && currentMap[(yStart + 1 + kind)*4+xStart] == -1 &&	currentMap[(yStart + 1 + kind)*4+xStart + 1 - kind] == -1
+            {
+                 	currentMap[(yStart + 1 + kind)*4+xStart] = role;
+                 	currentMap[(yStart + 1 + kind)*4+xStart + 1 - kind] = role;
+                 	currentMap[yStart*4+xStart] = -1;
+                 	currentMap[yStart*4+xStart + 1 - kind] = -1;
+                 	rolesInfo.y[role]= yStart + 1 ;
+                        steps++
+            } 
+             else
+                role = -1;    
+          } 
+      }
+    }
+    elseif role==6||role==7||role==8||role==9
+      {
+        case direct
+           {
+        if direct==0
+             {
+            if 	yStart - 1>=0 && currentMap[(yStart - 1)*4+xStart] == -1
+                  {
+                 	currentMap[(yStart - 1)*4+xStart] = role;
+                 	currentMap[yStart*4+xStart] = -1;
+                 	rolesInfo.y[role]=yStart - 1;
+                        steps++
+                  } 
+            else 
+                role = -1;
+             }
+            
+        elseif direct==1
+            {
+            if xStart - 1>=0 && currentMap[yStart*4+xStart - 1] == -1
+              {
+                 	currentMap[yStart*4+xStart - 1] = role;
+                 	currentMap[yStart*4+xStart] = -1;
+                 	rolesInfo.x[role]=xStart - 1;
+                        steps++
+              } 
+             else 
+                role = -1;
+            }
+            
+        elseif direct==2
+          {
+            if xStart + 1<4 && currentMap[yStart*4+xStart + 1] == -1
+            {
+                 	currentMap[yStart*4+xStart + 1] = role;
+                 	currentMap[yStart*4+xStart] = -1;
+                 	rolesInfo.x[role]=xStart + 1;
+                        steps++
+            } 
+               else 
+                role = -1;
+         }
+            
+        elseif direct==3
+         {
+            if yStart + 1<5 && currentMap[(yStart + 1)*4+xStart] == -1
+            {
+                 	currentMap[(yStart + 1)*4+xStart] = role;
+                 	currentMap[yStart*4+xStart] = -1;
+                 	rolesInfo.y[role]=yStart + 1;
+                        steps++
+             } 
+               else 
+                role = -1;    
+          }
+      }
+    }
+  }
+
+
+
+
+
+OnDrawHuanRongRole
+}
+
+
+
+
+CheckBlank
+{
+    role=_argv[0]
+    xStart =    TOINT(rolesInfo.x[role])
+    yStart =  	TOINT(rolesInfo.y[role])
+    kind   =  	TOINT(rolesInfo.k[role])
+
+ case role
+      {
+    if role==0
+       {
+        
+            if yStart - 1>=0 && xStart + 1<4 && currentMap[(yStart - 1)*4+xStart] == -1&& currentMap[(yStart - 1)*4+xStart + 1] == -1|| xStart - 1 >=0 && yStart + 1<5 && currentMap[yStart*4+xStart - 1] == -1&& currentMap[(yStart + 1)*4+xStart - 1] == -1|| xStart + 2<4 && yStart + 1<5 && currentMap[yStart*4+xStart + 2] == -1  && currentMap[(yStart + 1)*4+xStart + 2] == -1|| yStart + 2<5 &&  xStart + 1<4 && currentMap[(yStart + 2)*4+xStart] == -1  &&currentMap[(yStart + 2)*4+xStart + 1] == -1      
+      {1;return}
+       }
+
+    elseif role==1||role==2||role==3||role==4||role==5
+       {
+        if yStart - 1>=0 && xStart + 1 - kind<4 && currentMap[(yStart - 1)*4+xStart] == -1  &&	currentMap[(yStart - 1)*4+xStart + 1 - kind] == -1||xStart - 1>=0 && yStart + kind <5 && currentMap[yStart*4+xStart - 1] == -1 &&	currentMap[(yStart + kind)*4+xStart - 1] == -1||yStart + kind<5 && xStart + 2 - kind<4 && currentMap[yStart*4+xStart + 2 - kind] == -1 &&	currentMap[(yStart + kind)*4+xStart + 2 - kind] == -1||yStart + 1 + kind<5 && xStart + 1 - kind<4 && currentMap[(yStart + 1 + kind)*4+xStart] == -1 &&	currentMap[(yStart + 1 + kind)*4+xStart + 1 - kind] == -1
+       {1;return}
+          
+      }
+    elseif role==6||role==7||role==8||role==9
+      {
+            if 	yStart - 1>=0 && currentMap[(yStart - 1)*4+xStart] == -1||xStart - 1>=0 && currentMap[yStart*4+xStart - 1] == -1||xStart + 1<4 && currentMap[yStart*4+xStart + 1] == -1||yStart + 1<5 && currentMap[(yStart + 1)*4+xStart] == -1
+             {1;return}
+      }
+   }
+0;return
+
+}
+
+CheckHuanRongWin
+{
+
+if currentMap[3*4+1]==0 && currentMap[3*4+2]==0 && currentMap[4*4+1]==0 && currentMap[4*4+2]==0
+  {
+   "恭喜%(username)过关。\x"
+   OnDrawHuanRongRole
+  }
+
+
+}

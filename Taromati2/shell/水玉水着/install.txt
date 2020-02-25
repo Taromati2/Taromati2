@@ -1,0 +1,5 @@
+﻿charset,UTF-8
+type,shell
+name,水玉水着
+accept,橘花
+directory,polka_dots

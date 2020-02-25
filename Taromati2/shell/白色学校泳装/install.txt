@@ -1,0 +1,5 @@
+﻿charset,UTF-8
+type,shell
+name,白スク水
+accept,橘花
+directory,sukumizu_w

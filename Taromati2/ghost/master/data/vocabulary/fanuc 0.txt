@@ -1,0 +1,344 @@
+﻿览表A|1  报警代码一CNC编号|含义|内容1 T 系列程序操作错误 P/S 报警 
+[T 系列]
+000|PLEASE TURN OFF POWER|输入了某个要求断开电源的参数 断开电源
+001|TH PARITY ALARM|TH 报警 输入了一个带有奇偶性错误的字符  对纸带进行修正
+002|TV PARITY ALARM|TV 报警  某个程序段中的字符数为奇数  只有在 TV 校验有效时才产生该报警
+003|TOO MANY DIGITS|输入的数据其位数超出最大允许数值  参见操作手册中最大可编程尺寸一项
+004|ADDRESS NOT FOUND|在某个程序段开始处没有输入地址的情况下输入了一个数字或 负 符号 
+005|NO DATA AFTER ADDRESS|地址后没有紧随相应数据而是另一个地址或 EOB 代码 
+006|ILLEGAL USE OF NEGATIVE SIGN|符号 - 负 输入错误 在某个不能使用 - 负 符号的地址后输入了该符号或者输入了两个或两个以上的负 符号 
+007|ILLEGAL USE OF DECIMAL POINT|小数点 . 输入错误 在某个不能使用 .. 的地址后输入对程序进行了小数点 或者输入了两个或两个以上的修正
+008|PROGRAM HAS AN ERROR AT THE END|程序没有以 M02/M30/M99 结束 却试图执行 EOR|%  
+009|ILLEGAL ADDRESS INPUT|在有特殊意义的区域输入了不能用的字符 
+010|IMPROPER G-CODE|指定了一个不能用的 G 代码或针对某个没有提供的功能指定了某个 G 代码 
+011|NO FEEDRATE COMMANDED|对某个切削进给没有指定进给速度 或进给速度不够  
+014|ILLEGAL LEAD COMMAND|在可变的丝杠螺纹加工中 由地址 K 给出的导程增减量超出最大指令值 或者发出了导程为负值的指令
+015|TOO MANY AXES COMMANDED|试图将机床沿着多个轴移动 但轴的数量超出最大联动坐标轴数另一种情况是G31 P99/P98在某个程序段中有由极限转矩达到信号指令的跳跃功能或者没有指定沿某个轴移动机床 或者指定了沿多个坐标轴移动机床请指定沿单个坐标轴移动机床
+020|OVER TOLERANCE OF RADIUS|在圆弧插补  G02 或 G03  中 圆弧起始点和圆弧中心之间0876 号的距离与圆弧终点和圆弧中心之间的距离之差超出了参数的设定值
+021|ILLEGAL PLANE AXIS COMMANDED|指定了某个在所选择的平面中不包括的坐标轴G18|G19| 使用 G17 
+023|ILLEGAL RADIUS COMMAND|在指令半径的圆弧插补中 对地址 R 指定了负值 
+028|ILLEGAL PLANE SELECT|在平面选择指令中 在同一个方向指定了两个或两个以上的坐标轴
+029|ILLEGAL OFFSET VALUE|由 T 代码指定的偏置量太大
+030|ILLEGAL OFFSET NUMBER|用于刀具补偿的 T 功能指定的刀具偏置量太大 
+031|ILLEGAL P COMMAND IN G10|在用 G10 设定补偿量时 地址 P 后的补偿号太大或没有指定该补偿号 
+032|ILLEGAL OFFSET VALUE IN G10|在用 G10 设定补偿量或用系统变量写入某个补偿量时 指定的补偿量太大
+033|NO SOLUTION AT CRC|对刀尖半径补偿不能确定交叉点  
+034|NO CIRC ALLOWED IN ST-UP/EXT BLK|在刀尖半径补偿方式中 起动或取消 G02 或 G03 操作 
+035|CAN NOT COMMANDED G31|在刀尖半径补偿方式中 指定了跳跃切削 G31 
+037|CAN NOT CHANGE PLANE IN NRC|在刀尖半径补偿过程中 切换了补偿平面 
+038|INTERFERENCE IN CIRCULAR BLOCK|在刀尖半径补偿中 由于圆弧的起始点或终点与圆弧中心重合而出现过切
+039|CHF/CNR NOT ALLOWED IN NRC|在刀尖半径补偿中G41 G42 同时指定了倒角或拐角 R 与起动 取消或在 R和 之间进行切换的操作 该程序可能使得在倒角或拐角 中出现过切 
+040|INTERFERENCE IN G90/G94 BLOCK|在固定循环 G90 或 G94 中的刀尖半径补偿中将出现过切  
+041|INTERFERENCE IN NRC|在刀尖半径补偿中将出现过切 
+046|ILLEGAL REFERENCE RETURN COMMAND|返回第二P4 三以及第四个参考位置指令中 指定了非 P2 P3 以及 的指令
+050|CHF/CNR NOT ALLOWED IN THRD BLK|在螺纹切削程序段中指定了倒角或拐角 R 
+051|MISSING MOVE AFTER CHF/CNR|在指令了倒角或拐角 R 程序段的下一程序段中指定了不恰当的移动或移动量 
+052|CODE IS NOT G01 AFTERCHF/CNR|指令了倒角或拐角 R 程序段的下一程序段不是垂直线 
+053|TOO MANY ADDRESSCOMMANDS|在倒角或拐角 R 指令中 指定了两个或两个以上的 I K 和 R 另一种情况是 在直接图纸尺寸编程中 逗号 后的字符不是 C 或 R ||
+054|NO TAPER ALLOWED AFTER CHF/CNR|在指定了倒角或拐角 R 的程序段中包括一个攻丝指令 对程序进行修正 
+055|MISSING MOVE VALUE INCHF/CNR|在倒角或拐角 R 程序段中 移动距离小于倒角或拐角 R 值 
+056|NO END POINT & ANGLE IN CHF/CNR|在仅指定了角度的程序段的下一程序段中X Z  既未指定终点I K  也未指定角度 在倒角指令中 对 轴指定了
+057|NO SOLUTION OF BLOCK END|在直接图纸编程中 没有正确计算程序段终点 
+058|END POINT NOT FOUND|在直接图纸编程中 没有找到程序段终点 
+059|PFOGRAM NUMBER NOT FOUND|在某个外部程序号搜索中 没有找到指定的程序号  另一种情况是某个指定用于搜索的程序正被后台处理器加以编辑检查程序号和外部信号 或终止后台编辑||
+060|SEQUENCE NUMBER NOT FOUND|指定的顺序号在顺序号搜索中未找到 检查顺序号 
+061|ADDRESS P/Q NOT FOUND IN G70G73|在 G70|G71|G72 或 G73 指令中没有指定地址 P 或 Q  
+062|ILLEGAL COMMAND IN G71-G76|1|G71 或 G72 中的切深为 0 或负值 2|G73 中的重复计数为 0 或负值 3|在 G74 或 G75 中 ∆i 或∆k 被指定了负值 4|尽管在 G74 或 G750 值中 ∆I 或∆k 为 0 但在地址 U 或 W 中指定了一个非5|尽管在 G74 或 G75 中确定了退刀方向 但却给∆d 指定了一个负值 6|在 G76 中为螺纹高度或首切深度指定了 0 值或负值7|G76 中指定的最小切深大于螺纹高度8|在 G76 中指定了一个不可用的刀尖角度 
+063|SEQUENCE NUMBER NOT FOUND|无法检索到 G70|G71|G72 或 G73 指令中地址 P 指定的顺序号  
+064|SHAPE PROGRAM NOTMONOTONOUSLY|在重复性的固定循环  G71 或 G72  中指定了某个无法用单一加工完成的目标形状 
+065|ILLEGAL COMMAND IN G71-G73|1|在带有由的程序段中没有指定G71|G72 G00或 G73或 G01指令中地址 P 指定的顺序号2|在带有由 G71 或 G72Z指令中地址W 或 X PU指定的顺序号的程序段中分别指定了地址
+066|IMPROPER G-CODE IN G71-G73|在由 G71|G72 或G 代码G73 中地址P 指定的两个程序段之间指定了一个不允许的
+067|CAN NOT ERROR IN MDI MODE|在 MDI 方式下 G70|G71|G72 或 G73 指令带有地址 P 和Q  
+068|TEN OR MORE POCKETS|刀套的数量大于或等于 II 型 G71 或 G72 的十倍
+069|FORMAT ERROR IN G70-G73|G70|G71|G72 或 G73 的R P 和 Q 指定的程序段中最终移动
+070|NO PROGRAM SPACE IN MEMORY|存储器的存储容量不够 删除各种不必要的程序 然后重试
+071|DATA NOT FOUND|要搜索的地址未找到 或者带有指定程序号的程序在搜索中未找到 检查数据
+072|TOO MANY PROGRAMS|要存储的程序数量超过 63 基本 125 可选 200 可选删除各种不必要的程序并再执行一次程序登录 ||
+073|PROGRAM NUMBER ALREADY IN USE|指定的程序号已经被使用 更改程序号或删除不必要的程序并再执行一次程序登录||
+074|ILLEGAL PROGRAM NUMBER|程序号为 1~9999 以外的数字修改程序号
+076|ADDRESS P NOT DEFINED|在包括 M98 G65 或 G66 指令的程序段中 没有指定地址 P 程序号
+077|SUB PROGRAM NESTING ERROR|调用的子程序数超出极限 
+078|NUMBER NOT FOUND|由包括 M98 M99 M65 或 G66GO TO的程序段中的地址 P 指定的程序号或顺序号未找到 由一个 语句指定的顺序号未找到另一种情况是某个调用的程序正被后台处理器进行编辑 或终止后台编辑
+079|PROGRAM VERIFY ERROR|在存储器与程序校对中 存储器中某个程序与从外部 I/O 设备读出的不一致检查存储器中的程序以及外部设备中的程序
+080|G37 ARRIVAL SIGNAL NOT ASSERTED|在自动刀具补偿功能 G36 G37 中测量位置达到信号 XAE 或 ZAE 在参数 数值ε 指定的某个区域中未接通这是由于设定或操作错误引起的 
+081|OFFSET NUMBER NOT FOUND IN G37|在没有 T 代码的情况下指定了自动刀具补偿  G36 G37  自动刀具补偿功能 
+082|T-CODE NOT ALLOWED IN G37|在同一个程序段中指定了 T 代码和自动刀具补偿 G36 G37  自动刀具补偿功能 
+083|ILLEGAL AXIS COMMAND IN G37|在自动刀具补偿  G36 G37 中 指定了一个非法坐标轴或指令是增量式的 
+085|COMMUNICATION ERROR|在使用阅读机/穿孔机接口往存储器中输入数据时 产生了超程奇偶性或成帧错误输入数据的位数或波特率的设定或 I/O 单元的规格号不正确
+086|DR SIGNAL OFF|在使用阅读机/穿孔DR机接口往存储器中输入数据时 阅读机/穿孔机的准备信号|被断开I/O 单元的电源断开 或电缆没有连接好 或某个印刷电路板出故障
+087|BUFFER OVERFLOW|在使用阅读机/穿孔机接口往存储器中输入数据时 尽管指定了I/O阅读终止指令 但在阅读了 10 个字符后 输入仍未中断
+090|REFERENCE |RETURNINCOMPLETE|返回参考位置无法正常执行 因为返回参考位置起始点太靠近参考位置或速度太低将起始点与参考位置分开足够远的距离或对返回参考位置指定一个足够快的速度检查程序内容
+091|MANUAL RETURN TO THE REFERENCE POSITION IS IMPOSSIBLE BECAUSE OF ATEMPORARY STOP |RESET手动返回参考位置无法执行 因为系统处于暂停状态  在按复位 键后 手动返回参考位置
+092|AXES NOT ON THE REFERENCE POINT|自动返回参考位置 G28 或由 G27 返回参考位置检测  指定的坐标轴没有返回至参考位置 
+094|P TYPE NOT ALLOWED  COORD CHG |在重新启动程序时 无法指定 P 类型  在自动操作被中断后 设定了坐标系按照操作手册执行正确操作
+095|P TYPE NOT ALLOWED  EXT OFS CHG |在重新启动程序时 无法指定 P 类型  在自动操作被中断后 外部工件偏移量被改变按照操作员手册执行正确操作
+096|P TYPE NOT ALLOWED  WRKOFS CHG |在重新启动程序时 无法指定 P 类型  在自动操作被中断后 工件补偿量被改变按照操作员手册执行正确操作
+097|P TYPE NOT ALLOWED AUTO EXEC |在重新启P/S 94~97动程序时 无法指令 P 类型  在电源接通后 在急停或 复位后 没有执行自动操作 执行自动操作||
+098|G28 FOUND IN SEQUENCE RETURN|在指定某个程序重新启动指令时 在电源G28接通或急停后  没有返回参考位置 并在搜索过程中找到了执行返回参考位置 
+099|MDI EXEC NOT ALLOWED AFT. SEARCH|在程序重新启动中的搜索完成后 用 MDI 发出了一个移动指令
+100|PARAMETER WRITE ENABLE|在 PARAMETER SETTING1  参数设置0  画面上 PWE 允许参数写入 被设为 将其设为 然后使系统复位
+101|PLEASE CLEAR MEMORY|在存储器被程序编辑操作改写时 电源断开  在发出该报警PWE 时1 通过以下方<DELETE式可以清除> 程序将参数设置设为然后在按住|键的同时接通电源
+110|DATA OVERFLOW|固定的小数点显示数据的绝对值超出允许范围 
+111|CALCULATED DATA OVERFLOW|计算结果无效 并发出 111 号报警 
+112|DIVIDED BY ZERO|指定了一个 0 除数  包括正切 90 度 
+113|IMPROPER COMMAND|指定了一个用户宏程序中不能使用的功能 
+114|FORMAT ERROR IN MACRO|用户宏程序BA 在< G65 程序段中包括一个> 未定义的 H 代码 用户宏程序 除表达式以外的其他格式中存在一个错误 
+115|ILLEGAL VARIABLE NUMBER|在用户宏程序或高速循环加工中指定了一个没有被定义为变量号的数值标题内容不合适 在下列情况下会发出该报警 高速循环加工1|对应于被调用的 指定的加工循环号的标题未找到 2|循环连接数值超出允许范围 0~9993|标题中的数据值超出允许范围 0~327674|可执行的数据#20000-#85535格式的起始数据变量号超出允许范围5|可执行的数据#85535 格式中 最后存储数据的变量号超出允许范围6|可执行的数据格式的保存用起始数据变量号与标题中的变量号重合
+116|WRITE PROTECTED VARIABLE|替代语句左侧是一个变量 其替代被禁止 ||
+118|PARENTHESIS NESTING ERROR|括号的嵌套超出上限 五重 
+119|ILLEGAL ARGUMENT|SQRT 自变量为负值 或者0~9 以外的其BCD 自变量为负值他值|并且在 BIN 自变量的每一行中出现
+122|DUPLICATE MACRO MODALCALL|宏程序模态调用被指定两重
+123|CAN NOT USE MACROCOMMAND IN DNC|在 DNC 操作过程中采用了宏程序控制指令
+124|MISSING END STATEMENT|DO-END 不对应于 1|1  
+125|FORMAT ERROR IN MACRO|用户宏程序 A 包括一个不能在 G65 程序段中指定的地址 用户宏程序 B 在<表达式>中包含一个格式错误
+126|ILLEGAL LOOP NUMBER|在 DOn 中 未设定 1≤n≤3  
+127|NC MACRO STATEMENT IN SAME BLOCK|NC 程序和用户宏程序指令同时存在
+128|ILLEGAL MACRO SEQUENCE NUMBER|在分支指令中指定的顺序号不是 0~9999 或者 它无法搜索||
+129|ILLEGAL ARGUMENT ADDRESS|在<自变量定义>中使用了一个不许使用的地址 
+130|ILLEGAL AXIS OPERATION|PMCCNC向 CNC 控制PMC的某个轴发出了一个坐标轴控制指令 或者 向某个由 控制的坐标轴发出了坐标轴控制指令||
+131|TOO MANY EXTERNAL ALARM MESSAGES|在外部报警信息中产生五个或五个以上的报警 参见 PMC 梯
+132|ALARM NUMBER NOT FOUND|在外部报警信息全清中不存在相应的报警号 参见 PMC 梯形图
+133|ILLEGAL DATA IN EXT. ALARM MSG|在外部报警信PMC 息或外部操作员信息中 小部分数据有错误 参见 梯形图
+135|SPINDLE ORIENTATION PLEASE|没做一次主轴定向 试图进行主轴分度 执行主轴定向
+136|C/H-CODE & MOVE CMD IN SAME BLK.|在主轴分度地址 C|H 程序段中 还指定了其他轴的移动指令 
+137|M-CODE & MOVE CMD IN SAME BLK.|在和与主轴分度相关的 M 代码同一程序段中指定了其他轴的移动指令 
+139|CAN NOT CHANGE PMCCONTROL AXIS|指令中 通过 PMC 轴控制进行坐标轴选择 ||
+146|IMPROPER G CODE|指定了极坐标插补方式中不能指定的 G 代码 参见 II-4.4 节并
+150|ILLEGAL TOOL GROUP NUMBER|刀具寿命管理的刀组号超出最大允许值 或者 修改刀具寿命数据
+151|TOOL GROUP NUMBER NOT FOUND|在加工程序中指定的刀具寿命管理的刀具组未设定 对程序或参数进行修正 
+152|NO SPACE FOR TOOL ENTRY|刀具寿命管理的一个组中刀具数超出最大可登录数 修改刀具数
+153|T-CODE NOT FOUND|在刀具寿命数据登录中 在应该指定一个 T 代码的地方却没有指定 
+155|ILLEGAL T-CODE IN M06|在加工程序中 在同一个程序段中的 M06 和 T 代码与使用中的刀具寿命管理的组号不一致 
+156|P/L COMMAND NOT FOUND|在设定刀具L|寿命管理的刀具组的程序标题时 没有指定 P 和
+157|TOO MANY TOOL GROUPS|要设定的刀具寿命管理的刀具组数量超出最大允许值 
+158|ILLEGAL TOOL LIFE DATA|要设置的刀具寿命太长 修正设定值 
+159|TOOL DATA SETTINGINCOMPLETE|在执行设定刀具寿命管理用的程序时 电源断开重新设定 
+160|MISMATCH WATING M-CODE (只对 TT)|在标题 1 和 2 中指定了不同的 M 代码作为等待 M 代码
+163|COMMAND |G68/G69INDEPENDENTLY (只对 TT)|在平衡切削中 没有单独指定 G68 和 G69  
+169|ILLEGAL TOOL GEOMETRY DATA (只对 TT)|干涉检查中 刀具形状数据不正确设定正确的数据或选择正确的刀具形状
+175|ILLEGAL G107 COMMAND|指令其终点为倒角或拐角 单元或印刷电路板出故障形图 找出其原因执行圆弧插补起动或取消的条件不对 
+176|IMPROPER G-CODE IN G107|指定了不能在圆弧插补方式中指定的下列 G 代码之一 1|定位用 G 代码 G28|G76|G81-G89 包括指定快移循环的代码2|设定坐标系的 G 代码 G50|G523|  选择坐标系的 G 代码 G53|G54-G59 
+177|CHECK SUM ERROR G05 MODE |检验和错误
+178|G05 COMMANDED IN G41/G42 MODE|在 G41/G42 方式中指定了 G05  
+179|PARAM. SETTING ERROR|由参数 597 设定的控制坐标轴的数量超出最大数值 修正参数设定值
+180|COMMUNICATION |ERROR REMOTE BUF |远程缓冲连接报警 确认电缆号 参数和 I/O 设备
+194|SPINDLE COMMAND INSYNCHRO-MODE|在串行主轴同步控制方式中 指定了轮廓控制方式  主轴定位Cs-轴控制 方式或刚性攻丝方式 以便事先释放串行主轴同步控制状态
+195|MODE CHANGE ERROR|不能切换串行主轴的控制方式 参见 PMC 的梯形图 
+197|C-AXIS COMMANDED IN SPINDLE MODE|在信号 CON 断开时 PMC程序指定了沿 Cf 坐标轴的移动  或参见|的梯形图以找出信号未接通的原因
+199|MACRO WORD UNDEFINED|采用了未定义的宏语句 修正用户宏程序 
+200|ILLEGAL S CODE COMMAND|在刚性攻丝中 S 值超出范围或未指定 S 值 在参数 5243 中设定刚性攻丝中可指定的 S 值的范围 改变参数设置或
+201|FEEDRATE NOT FOUND IN RIGID TAP|在刚性攻丝中 没有指定 F 值 
+202|POSITION LSI OVERFLOW|在刚性攻丝中 主轴分配值太大 
+203|PROGRAM MISS AT RIGIDTAPPING|在刚性攻丝中 刚性 M 代码 M29 或 S 指令的位置不正确||
+204|ILLEGAL AXIS OPERATION|在刚性攻丝中 在刚性 M 代码 M29 程序段与 G84|G74 程序段之间指定了一个坐标轴移动  
+205|RIGID MODE DI SIGNAL OFF|尽管指定了DI刚性 M 代码 M29 PMC但在执行 G84 G74 DI时刚性方式 信号却不接通 参见 的梯形图以找出 信号未接通的原因
+210|CAN NOOT COMMANDM198/M199|在预定操作中执行了 M198 和 M199 或 M198 在 DNC 操作中执行  
+211|G31 HIGH NOT ALLOWED IN G99具有高速跳跃选项时 在每转进给指令中指定了 G31  
+212|ILLEGAL PLANE SELECT|在 Z-X 平面以外的平面中指定了直接图纸尺寸编程 
+213|ILLEGAL COMMAND INSYNCHRO-MODE|指定同步控制坐标轴移动 
+214|ILLEGAL COMMAND INSYMCHRO-MODE|在同步控制中设定了坐标系或执行了移位型的刀具补偿 
+217|DUPLICATE G251 COMMAND G251 在 G251 方式中被进一步指定  
+218|NOT FOUND P/Q COMMAND IN G251|在 G251 程序段中没有指定 P 或 Q 或者指令值超出范围
+219|COMMAND G250/G251INDEPENDENTLY|G250 和 G251 不在独立的程序段中
+220|ILLEGAL COMMAND IN SYNCHRMODE|在同步操作中 NC 程序或 PMC 坐标轴控制接口对同步轴指定移动指令
+221|ILLEGAL COMMAND IN SYNCHRMODE|多面体加工操作和轴控制或平衡切削同时执行 
+224|RETURN TO REFERENCE POINT|在循环起动之前 没有返回参考点
+225|SYNCHRONOUS/MIXEDCONTROL ERROR  只对 TT |在下列情况下会产生该报警 在同步和混合控制指令的搜索1|坐标轴号参数设定错误 PRM10232|控制指令有错误对程序或参数进行修正 
+226|ILLEGAL COMMAND IN SYNCHRO-MODE  只对 TT |同步方式中给同步坐标轴发出了一个移动指令 对程序或参数进行修正
+229|CAN NOT KEEP SYNCHRO-STATE  只对 TT |在下列情况下产生该报警 1|由于系统过载而无法保持同步/混合状态时 2|CNC 硬件异常而无法保持同步/混合状态时在正常使用状态下不会产生该报警
+233|P/S ALARM|在转矩极限到达信号的跳跃功能中32767  转矩极限到达信号未输入前累积误差脉冲数超过 因此 无法用一次分配||修正脉冲数 更改轴进给速度和转矩极限等条件 然后重试 2 M 系列的程序操作错误 P/S 报警 [M 系列]
+000|PLEASE TURN OFF POWER|输入了某个要求断开电源的参数 断开电源
+001|TH PARITY ALARM|TH 报警 输入了一个带有奇偶性错误的字符  对纸带进行修正
+002|TV PARITY ALARM|TV 报警  某个程序段中的字符为奇数  只有在 TV 校验有效时才产生该报警
+003|TOO MANY DIGITS|输入的数据其位数超出最大允许数值  参见操作手册中最大可编程尺寸一项
+004|ADDRESS NOT FOUND|在某个程序段开始处没有输入地址的情况下输入了一个数字或 负 符号 
+005|NO DATA AFTER ADDRESS|地址后没有紧随相应数据而是另一个地址或 EOB 代码 
+006|ILLEGAL USE OF NEGATIVE SIGN|符号 - 负 输入错误 在某个不能使用 - 负 符号的地址后输入了该符号或者输入了两个或两个以上的负 符号 
+007|ILLEGAL USE OF DECIMAL POINT|小数点 . 输入错误 在某个不能使用 .. 的地址后输入对程序进行了小数点 或者输入了两个或两个以上的修正
+008|ILLEGAL USE OF PROGRAM END|由于在程序% 末端没有 M02 |M30 或 M99 却试图执行 EOR
+009|ILLEGAL ADDRESS INPUT|在有特殊意义的区域输入了不能用的字符 ||
+010|IMPROPER G-CODE|指定了一个不能用的 G 代码或针对某个没有提供的功能指定了某个 G 代码 
+011|NO FEEDRATE COMMANDED|对某个切削进给没有指定进给速度 或进给速度不够  
+014|CAN NOT COMMAND G95|在没有螺纹切削/同步进给选项的情况下 指定了同步进给 
+015|TOO MANY AXES COMMANDED|指定的移动坐标轴数超出联动轴数
+020|OVER TOLERANCE OF RADIUS|在圆弧插补  G02 或 G03  中 圆弧起始点和圆弧中心之间876 号的距离与圆弧终点和圆弧中心之间的距离之差超出了参数设定的值
+021|ILLEGAL PLANE AXIS COMMANDED|在圆弧插补中指定了某个在所选择的平面中不包括的坐标轴G17|G18|G19采用
+025|CANNOT COMMAND F0 ING02/G03|由圆弧插补中 F1 位数圆柱进给指定 F0  快速进给  
+027|NO AXES COMMANDED ING43/G44|在 G43 和 G44 程序段中没有对刀具长度补偿 C 指定坐标轴 补偿未取消  但对另一个坐标轴进行刀具长度补偿 C 
+028|ILLEGAL PLANE SELECT|在平面选择指令中 在同一方向指定了两个或两个以上的坐标轴 
+029|ILLEGAL OFFSET VALUE|H由 代码指定的补偿值太大 
+030|ILLEGAL OFFSET NUMBER|由 D/H 代码指定的用于刀具长度补偿或刀尖半径补偿的补偿号太大 
+031|ILLEGAL P COMMAND IN G10|在用 G10 设定补偿量时 地址 P 后的补偿号太大或没有指定该补偿号 
+032|ILLEGAL OFFSET VALUE IN G10|在用 G10 设定补偿量或用系统变量写入某个补偿量时 指定的补偿量太大
+033|NO SOLUTION AT CRC|对刀尖半径补偿不能确定交叉点  
+034|NO CIRC ALLOWED IN ST-UP/EXT BLK|在刀尖半径补偿方式中 起动或取消 G02 或 G03 操作 
+035|CAN NOT COMMANDED G39|在刀尖补偿 B 取消方式中或在除补偿平面以外的平面中指定了 G39 
+036|CAN NOT COMMANDED G31|在刀尖半径补偿方式中 指定了跳跃切削 G31 
+037|CAN NOT CHANGE PLANE IN CRC|在刀尖补偿C 方式B中中切给补偿平面以外的平面指定了换了 G17|G18 或 G19 选择的补偿平面G40 在刀尖补偿||
+038|INTERFERENCE IN CIRCULAR BLOCK|在刀尖半径补偿中 由于起始点或终点与圆弧中心重合而出现过切
+041|INTERFERENCE IN CRC|在刀尖补偿 C 中会出现过切 在刀尖半径补偿下 连续指定了两个或两个以上的程序段在其中没有移动指令只执行辅助功能和暂停功能
+042|G45/G48 NOT ALLOWED IN CRC|刀尖半径补偿中指定了刀具偏置 G45-G48  
+043|ILLEGAL T-CODE COMMAND|在 DRILL-MATET 代码 中或者在某个程序段中没有与T 代码超出范围 M06 代码一起指定一个
+044|G27-G30 NOT ALLOWED IN FIXED CYC|在固定循环方式中 指定了 G27-G30 之一 ||
+046|ILLEGAL REFERENCE RETURN COMMAND|返回第二P4 三以及第四个参考位置指令中 指定了非 P2 P3 以及 的指令
+050|CHF/CNR NOT ALLOWED IN THRD BLK|在螺纹切削程序段中指定了倒角或拐角 R 
+051|MISSING MOVE AFTER CHF/CNR|在指令了倒角或拐角 R 程序段的下一程序段中指定了不恰当的移动或移动量 
+052|CODE IS NOT G01 AFTERCHF/CNR|指令了倒角或拐角 R 程序段的下一程序段不是 G01 
+053|TOO MANY ADDRESSCOMMANDS|在没有追加任意角倒角或拐角 R 的系统中 指定了一个R C 逗号或在具有这种特征的系统中 在逗号后没指定 或 而是别的内容 
+055|MISSING MOVE VALUE INCHF/CNR|在任R意角度倒角或拐角 R 程序段中 移动距离小于倒角或拐角 值
+058|END POINT NOT FOUND|在任意角度倒角或拐角 R 切削程序段 指定坐标轴不在选定
+059|PFOGRAM NUMBER NOT FOUND|在某个外部程序号搜索中 没有找到指定的程序号  另一种情况是某个指定用于搜索的程序正被后台处理器加以编辑检查程序号和外部信号 或终止后台编辑||
+060|SEQUENCE NUMBER NOT FOUND|指定的顺序号在顺序号搜索中未找到 检查顺序号 
+070|NO PROGRAM SPACE IN MEMORY|存储容量不够 删除各种不必要的程序 然后重试
+071|DATA NOT FOUND|要搜索的地址未找到 或者带有指定程序号的程序在搜索中未找到 检查数据
+072|TOO MANY PROGRAMS|要存储的程序数量超过 63 基本 125 可选 200 可选删除各种不必要的程序并再执行一次程序登录 ||
+073|PROGRAM NUMBER ALREADY IN USE|指定的程序号已经被使用 更改程序号或删除不必要的程序并再执行一次程序登录||
+074|ILLEGAL PROGRAM NUMBER|程序号为 1~9999 以外的数字修改程序号
+076|ADDRESS P NOT DEFINED|在包括 M98 G65 或 G66 指令的程序段中 没有指定地址 P 程序号
+077|SUB PROGRAM NESTING ERROR|调用的子程序数超出极限值 
+078|NUMBER NOT FOUND|由包括一个 M98 M99 M65 或 G66GO TO的程序段中的地址 P 指定的程序号或顺序号未找到 由一个 语句指定的顺序号未找到另一种情况是某个调用的程序正被后台处理器进行编辑 或终止后台编辑
+079|PROGRAM VERIFY ERROR|在存储器与程序校对中 存储器中某个程序与从外部 I/O 设备读出的不一致检查存储器中的程序以及外部设备中的程序
+080|G37 ARRIVAL SIGNAL NOT ASSERTED|YAE在自动刀具ZAE长度测量功能 G37ε 中 测量位置达到信号 XAE 或 在参数 数值 指定的某个区域中未接通这是由于设定或操作错误引起的 
+081|OFFSET NUMBER NOT FOUND IN G37|在没有 H 代码的情况下指定了自动刀具长度测量 G37 自动刀具测量功能 
+082|T-CODE NOT ALLOWED IN G37|在同一个程序段中指定了 H 代码和自动刀具长度测量 G37 自动刀具长度测量功能
+083|ILLEGAL AXIS COMMAND IN G37|在自动刀具长度测量中 指定了一个非法坐标轴或移动指令是增量指令 
+085|COMMUNICATION ERROR|在使用阅读机/穿孔机接口往存储器中输入数据时 产生了超程奇偶性或成帧错误输入数据的位数或波特率的设定或 I/O
+086|DR SIGNAL OFF|在使用阅读机/穿孔DR机接口往存储器中输入数据时 阅读机/穿孔机的准备信号|被断开I/O 单元的电源断开 或电缆没有连接好 或某个印刷电路板出故障
+087|BUFFER OVERFLOW|在使用阅读机/穿孔机接口往存储器中输入数据时 尽管指定了I/O阅读终止指令 但在阅读了 10 个字符后 输入仍未中断单元或印刷电路板出故障
+090|REFERENCE |RETURNINCOMPLETE|返回参考位置无法正常执行 因为返回参考位置起始点太靠近参考位置或速度太低将起始点与参考位置分开足够远的距离 或对返回参考位置指定一个足够快的速度
+091|MANUAL RETURN IMPOSSIBLE DURING PAUSE |手动RESET返回参考位置无法执行 因为系统处于暂停状态  按复位 键 手动返回至参考位置
+092|AXES NOT ON THE REFERENCE POINT|由自动返回参考位置 G28 或由 G27  返回参考位置检测 指定的坐标轴没有返回至参考位置
+094|P TYPE NOT ALLOWED | COORD CHG |在重新启动程序时 无法指定 P 类型  在自动操作被中断后 设定坐标系操作 按照操作手册执行正确操作
+095|P TYPE NOT ALLOWED  |EXT OFS CHG |在重新启动程序时 无法指定 P 类型  在自动操作被中断后 外部工件补偿量被改变
+096|P TYPE NOT ALLOWED  WRKOFS CHG |在重新启动程序时 无法指定 P 类型  在自动操作被中断后 工件偏移量被改变
+097|P TYPE NOT ALLOWED AUTO EXEC |在重新启P/S 94~97动程序时 无法指定 P 类型  在电源接通后 在急停或 复位后 没有执行自动操作 执行自动操作||
+098|G28 FOUND IN SEQUENCE RETURN|在指定某个程序重新启动指令时 在电源G28接通或急停后  没有返回参考位置 并在搜索过程中找到了
+099|MDI EXEC NOT ALLOWED AFT. SEARCH|在程序重新启动中的搜索完成后 用 MDI 发出了一个移动指令
+100|PARAMETER WRITE ENABLE|在 PARAMETER SETTING1  参数设置0  画面上 PWE 参数允许写入 被设为 将其设为 然后使系统复位
+101|PLEASE CLEAR MEMORY|在存储器被程序编辑操作改写时 电源断开  在发出该报警PWE 时1通过以下方<DELETE式可以清除> 程序将参数设置设为然后在按住 键的同时接通电源 所有的程序将被删除
+110|DATA OVERFLOW|固定的小数点显示数据的绝对值超出允许范围 
+111|CALCULATED DATA OVERFLOW|计算结果无效 并发出 111 号报警 
+112|DIVIDED BY ZERO|指定了一个 0 除数  包括正切 90 度 
+113|IMPROPER COMMAND|指定了一个用户宏程序中不能使用的功能 
+114|FORMAT ERROR IN MACRO|用户宏程序 A 在某个B <G65 程序段中指定了一个> 未定义的 H 代码 用户宏程序 除公式以外的其他格式中存在一个错误||
+115|ILLEGAL VARIABLE NUMBER|在用户宏程序或高速循环加工中指定了一个没有被定义为变量号的数值标题 内容不合适 在下列情况下会发出该报警高速循环加工1|对应于被调用的 指定的加工循环号的标题未找到 2|循环连接数值超出允许范围 0~9993|标题 中的数据值超出允许范围 0~327674|可执行的数据#20000-#85535格式的起始数据变量号超出允许范围5|可执行的数据#85535 格式中 最后存储数据的变量号超出允许范围6|可执行的数据格式的保存用起始数据变量号与标题中的变量号重合 
+116|WRITE PROTECTED VARIABLE|替代语句左侧是一个变量 其替代被禁止 ||
+118|PARENTHESIS NESTING ERROR|括号的嵌套超出上限 五重 
+119|ILLEGAL ARGUMENT|SQRT 自变量为负值 或者0~9 以外的其BCD 自变量为负值他值 并且在 BIN 自变量的每一行中出现
+122|DUPLICATE MACRO |MODALCALL|宏模态调用被指定了两次 
+123|CAN NOT USE MACROCOMMAND IN DNC|在 DNC 操作过程中采用了宏程序控制指令
+124|MISSING END STATEMENT|DO-END 不对应于 1|1  
+125|FORMAT ERROR IN MACRO|用户宏程序B<公式A>格式指定了出错G65 程序段中不能指定的地址 用户宏程序
+126|ILLEGAL LOOP NUMBER|在 DOn 中 未设定 1≤n≤3  
+127|NC MACRO STATEMENT IN SAME BLOCK|NC 指令和用户宏程序指令同时存在 
+128|ILLEGAL MACRO SEQUENCE NUMBER|在分支指令中指定的顺序号不是 0~9999 或者 它无法搜索||
+129|ILLEGAL ARGUMENT ADDRESS|在<自变量定义>中使用了一个不许使用的地址 
+130|ILLEGAL AXIS OPERATION|PMCCNC向 CNC 控制PMC的某个轴发出了一个坐标轴控制指令 或者 向某个由 控制的坐标轴发出了坐标轴控制指令||
+131|TOO MANY EXTERNAL ALARM MESSAGES|在外部报警信息中产生五个或五个以上的报警 参见 PMC 梯
+132|ALARM NUMBER NOT FOUND|在外部报警信息全清中不存在相应的报警号 参见 PMC 梯形图
+133|ILLEGAL DATA IN EXT. ALARM MSG|在外部报警信PMC 息或外部操作信息中 小部分数据有错误  参见 梯形图
+135|ILLEGAL ANGEL COMMAND|分度表分度定位角没有以最小角度数值之整数倍数来指定 
+136|ILLEGAL AXIS COMMAND|在分度台分度中 另一个控制轴与 B 轴一起被指定 
+139|CAN NOT CHANGE |PMCCONTROL AXIS|在指令中 通过 PMC 轴控制进行坐标轴选择 
+141|CAN NOT COMMAND G51 IN CRC|在刀具补偿方式中指定了 G51  缩放接通  
+142|ILLEGAL SCALE RATE|缩放倍数不是 1~999999 修正缩放倍率的设定值
+143|SCALED MOTION DATAOVERFLOW|缩放结果 移动距离 坐标值和圆弧半径等超出最大指令值或修正缩放倍率||
+144|ILLEGAL PLANE SELECTED|坐标旋转平面和弧度或刀尖半径补偿 C 平面必须相同 
+148|ILLEGAL SETTING DATA|自1710~1714动拐角倍率减速比超出可设定的调节角范围 对参数号 进行修正
+150|ILLEGAL TOOL GROUP NUMBER|刀具寿命管理中的刀具组号超出最大允许值 
+151|TOOL GROUP NUMBER |NOT FOUND|在加工程序中指定的刀具寿命管理的刀具组未设定 对程序或参数进行修正 
+152|NO SPACE FOR TOOL ENTRY|刀具寿命管理的一个组中刀具数超出最大可登录数 修改刀具数
+153|T-CODE NOT FOUND|在刀具寿命数据登录中 在应该指定一个 T 代码的地方却没有指定 
+154|NOT USING TOOL IN LIFE GROUP|当在刀具寿命管理中没有指定刀具组时 指定了 H99 或 D99 ||
+155|ILLEGAL T-CODE IN M06|在加工程序中 在同一个程序段中的 M06 和 T 代码与使用中的刀具寿命管理的组号不一致 
+156|P/L COMMAND NOT FOUND|在设定刀具L|寿命管理的刀具组的程序标题时 没有指定 P 和
+157|TOO MANY TOOL GROUPS|要设定的刀具寿命管理的刀具组数量超出最大允许值 
+158|ILLEGAL TOOL LIFE DATA|要设定的刀具寿命太长 修正设定值 
+159|TOOL DATA SETTINGINCOMPLETE|在执行设定刀具寿命管理用的程序时 电源被断开  的平面内 单元的规格号不正确形图 找出其原因重新设定
+175|ILLEGAL G107 COMMAND|执行圆弧插补起动或取消的条件不对 要将方式改变成圆柱插补方式 以 G07.1 旋转轴名称圆柱半径 的格式指定该指令
+176|IMPROPER G-CODE IN G107|指定了不能在圆柱插补方式中指定的下列 G 代码之一 1|定位用 G 代码 G28|G73 G74|G76|G81-G89 包括指定快移循环的代码2|设定坐标系的 G 代码 G52|G923|  选择坐标系的 G 代码 G53|G54-G59 
+177|CHECK SUM ERROR G05 MODE |在高速远程缓冲中出现了检验和错误 
+178|G05 COMMANDED IN G41/G42 MODE|在 G41/G42 方式中指定了 G05  
+179|PARAM. SETTING ERROR|由参数 7510 设定的控制坐标轴的数量超出最大数值 修正参数设定值 
+180|COMMUNICATION ERROR REMOTE BUF |远程缓冲连接报警 确认电缆号 参数和 I/O 设备
+181|FORMAT ERROR IN G81 BLOCK  滚齿机 | 1 G812 程序段T由 T齿数L格式Q没有指定错误或 P 指定了超出指令范围的数据 
+182|G81 NOT COMMANDED  滚齿机 |未指定与 G81 同步指令 G83| C 轴伺服滞后量补偿  
+183|DUPLICATE G83  COMMANDS   滚齿机 |在由 G83 补偿 C 轴伺服滞后量以后 在用 G82 取消之前又指定了 G83
+184|ILLEGAL COMMAND IN G81  滚齿机 ||发出了一个不能在12   由由 G00G20|G27G21 发出了G28G81 同英G29步制运/公制转中指定的指令G30转等换指定了一个指令|C 轴指令
+185|RETURN TO REFERENCE POINT  滚齿机 |在电源G81 接通或急停后没有进行一次返回参考位置就指定了执行返回参考位置
+186|PARAMETER SETTING ERROR 滚齿机 |有1 关CG81 的参数错误 轴没有设为旋转轴2 某个滚齿轴和位置编码器齿轮比设定错误
+190|ILLEGAL AXIS SELECT|在恒表面速度控制中 指定坐标轴指令 P 包含一个非法数值 
+194|SPINDLE COMMAND INSYNCHRO-MODE|在串行主轴同步控制方式中 指定了 Cs 轮廓控制或刚性攻丝 
+195|SPINDLE CONTROL MODESWITCH|不能切换串行主轴控制方式 参见 PMC 梯形图
+197|C-AXIS COMMANDED IN SPINDLE MODE|在当前控制Cs 方式不是串行主轴 CsPMC轮廓控制时 发出了一个用于 坐标轴的移动指令 参见 梯形图或加工程序
+199|MACRO WORD UNDEFINED|采用了未定义的宏语句 修正用户宏程序 
+200|ILLEGAL S CODE COMMAND|在刚性攻丝中 S 值超出范围或未指定 S 值 
+201|FEEDRATE NOT FOUND IN RIGID TAP|在刚性攻丝中 没有指定 F 值 
+202|POSITION LSI OVERFLOW|在刚性攻丝中 主轴分配值太大 
+203|PROGRAM MISS AT RIGIDTAPPING|在刚性攻丝中 刚性 M 代码 M29 或 S 指令的位置不正确||
+204|ILLEGAL AXIS OPERATION|在刚性攻丝中 在刚性 M 代码 M29 程序段与 G84|G74 程序段之间指定了一个坐标轴移动  
+205|RIGID MODE DI SIGNAL OFF|尽管DGNG061.1指定了DI刚信号却不性 M未接通代码接通的M29原因参见 PMC但在执行的梯形G84图以G74找出 DI时信刚性方式号
+210|CAN NOOT COMMANDM198/M199|在预定操作中执行了 M198 和 M199 或 M198 在 DNC 操作中执行
+211|CAN NOT COMMAND HIGH-SPEED SKIP|在每转进给或刚性攻丝方式中指定了高速跳跃 G31 功能||
+212|ILLEGAL PLANE SELECT|在包括附加轴的平面中指定任意角度倒角或拐角 R 
+213|ILLEGAL COMMAND INSYNCHRO-MODE|在用1 简单同步化控制的操作中 出现以下任一种报警   程序给从动轴发布移动指令 /|/2|程序给从动轴发布手动连续进给手动进给增量进给指令3|在电源接通后 没有执行手动返回参考位置 程序发布自动返回参考位置指令4|主 从坐标轴之间的位置误差之差超出参数中设定的数值
+214|ILLEGAL COMMAND INSYMCHRO-MODE|在同步控制中设定了坐标系或执行了移位型的刀具补偿 
+222|DNC OP. NOT ALLOWED IN BG.EDIT|在后台编辑时进行输入和输出操作 进行正确操作 
+224|RETURN TO REFERENCE POINT|在自动操作开始之前没有返回参考位置 返回参考位置
+230|R CODE NOT FOUND|对固定磨削循环的 G160 程序段 没有指定切入磨削量 R 或者 R 指令值为负值 
+250|SIMULTANEOUS M06 AND Z-AXIS MOVEMENT NOT ALLOWED|在 DRILL MATE 中同时指定了换刀 M06 和 Z 轴移动 3 后台编辑报警???|BP/S 报警|BP/S 报警以与P/S070 P/S071报警072  在073普通程序编辑中出074|085|086现  087相同编号等出现
+|
+BP/S 报警|试图在后台选择或删除某个正被前台选择的程序 注正确使用后台编辑注由于意采|用后台编辑功能 在 MDI|操作 B 中可能显示后台报警3n0|第 n 轴请求返回原点|第 n|n=1~8 个坐标轴需要手动返回参考位置3n1|APC 报警|第 n 轴通讯|第APCn 个坐标轴通讯错误 数据传输故障  可能的原因包括电缆或伺服接口模块出故障3n2|APC 报警|第 n 轴超时|第 n 个坐标轴 APC 超时错误 APC数据传输故障 可能的原因包括|电缆或伺服接口模块出故障3n3|APC 报警|第 n 轴成帧|第APCn 个坐标轴成帧错误 数据传输故障  可能的原因包括电缆或伺服接口模块出故障3n4|APC 报警|第 n 轴奇偶性|第APCn 个坐标轴奇偶性错误 数据传输故障 可能的原因包括电缆或伺服接口模块出故障3n5|APC 报警|第 n 轴脉冲错误|第APCn 个坐标轴报警 APCAPC或电脉冲错误报警缆可能出故障 3n6|APC 报警|第 n 轴电池电压 0|第 nAPC个坐标轴 APC 电池电压下降至低电平 因此无法保存数据|报警 电池或电缆可能出故障3n7|APC 报警|第 n 轴电池低 1|第APCn 个坐标轴 APC 电池电压达到一个必须换新电池的电平报警 更换电池3n8|APC 报警|第 n 轴电池低 2|第 n 个坐标轴 APC  电APC池电压达到一个必须换新电池的电平包(4) 绝对脉冲编码器 APC 报警|括在电源断开时|报警5 串行脉冲编码器 SPC 报警在发出下列报警之一时 其可能原因是脉冲编码器 或电缆出故障3n9|SPC ALARM   n AXIS PLUSE CODER|n 坐标轴脉冲编码器出故障• 串行脉冲编码3n9|串行脉冲编码器 3n9 号报警的详细情况在诊断地址 760~767 号  770~777 号  中显示器 号报警的 如下所示
+760|767|||CSA|BLA|PHA|RCA|BZA|CKA|SPH详细情况|#7|#6|#5|#4|#3|#2|#1|#0 至CSABLA 串行脉冲编码器出故障 更换  电池电压太低 更换电池 该报警与串行脉冲编码器报警无关 PHARCA 串行脉冲编码器或反馈电缆出故障 更换串行脉冲编码器或反馈电缆串行脉冲编码器出故障 更换BZA 串行脉冲编码器首次供电 确保电池电缆连接良好将电源断开再接通 执行一次返回参考位置该报警与串行脉冲编码器报警无关CKASPH 串行脉冲编码器出故障 更换串行脉冲编码器或反馈电缆出故障 更换串行脉冲编码器或反馈电缆 #7|#6|#5|#4|#3|#2|#1|#0DTE|CRC|STB|||||
+770|777至DTE 串行脉冲编码器发生通讯错误NC 脉冲编码器  反馈电缆或反馈接收电路出故障 更换脉冲编码器 反馈电缆或轴板CRC 串行脉冲编码器发生通讯错误NC 脉冲编码器  反馈电缆或反馈接收电路出故障 更换脉冲编码器 反馈电缆或 轴板STB 串行脉冲编码器发生通讯错误 脉冲编码器 反馈电缆或反馈接收电路出故障 6 伺服报警编号|含义||内容
+400|SERVO ALARM|1|2TH AXISOVERLOAD|1 轴|2 轴过载信号接通 详情参见 720 或 721 号诊断显示 
+401|SERVO ALARM|1|2TH AXISVDRY OFF|1 轴|2 轴伺服放大器 READY 准备 信号 DRDY 断开
+402|SERVO ALARM|3|4TH AXISOVERLOAD|3 轴|4 轴过载信号接通 详情参见 722 或 723 号诊断显示 
+403|SERVO ALARM|3|4TH AXISVDRY OFF|3 轴|4 轴伺服放大器 READY 准备 信号 DRDY 断开
+404|SERVO ALARM|n-TH AXIS VDRY ON|尽管第 n 轴卡  1~8READY轴 READY 准备 DRDY信号 MCON  断开 但伺服放大器 准备 信号 依然接通或者 当接通电源时 即使 MCON 断开 DRDY 也接通 查看并确保轴卡和伺服放大器连接完好
+405|SERVO ALARM   ZERO POINTRETURN FAULT|位置控制系统出错 由于返回参考位置中某个 NC 或伺服系统出故障可能使返回参考位置无法正确执行再试手动返回参考位置
+406|SERVO ALARM7|8TH ACIS OVERLOAD7|8TH AXIS VDRY OFF|7 轴 8 轴过载信号接通 详情参见 726 或 727 号诊断显示 7 轴 8 轴伺服放大器 READY 准备 信号 DRDY 断开4n0|SERVO ALARM   n-TH AXIS –EXCESS ERROR|当第 n 轴停止时 位置偏差量大于设定值 注 对每个轴的参数 必须设定极限值4n1|SERVO ALARM   n-TH AXIS –EXCESS ERROR|当第 n 轴移动时 位置偏差量大于设定值 注 对每个轴的参数 必须设定极限值4n3|SERVO ALARM   n-TH AXIS-LSI OVERFLOW|第 n 轴误差寄存器的内容超出 231 该误差往往由于参数设置不当而引起4n4|SERVO |ALARM   n-TH |AXIS-DETECTION RELATED ERROR|第 n 轴数字伺服系统出故障 详情参见 720 至 727 号诊断显示4n5|SERVO |ALARM  EXCESS SHIFT|n-TH |AXIS-|在第 n 轴中试图设定一个超出CMR 设置不当而引起的4000000 单位/s 的速度 该错误是由于4n6|SERVO |ALARM  DISCONECTION|n-TH |AXIS-|第 n 轴脉冲编码器中出现位置检测系统故障  断线报警 4n7|SERVO |ALARM   n-TH |AXISPARAMETER INCORRECT|当第 n 轴处于下列条件之一时 出现该报警  数字伺服系统报警12  参数号在参数号-111 8n208n22电机电机型号旋转方向中设置的值超出指定中没有设置适当范围值 111 4 非法在参数号 3 在参数号或 数据 88某个小于nn和23248n电机电机85 26900每每柔的数值的数值性进给转的速度转的位置号至等等274传动反馈反馈号比脉冲数脉冲数不正确未设定中设置了中设置了非法数据 某个小于 56  参数号某个轴选择参数8n84 从7  在参数计算中出现溢出
+490|SERVO ALARM|5|6-TH AXIS OVERLOAD|5 轴 6 轴过载信号接通 详情参见 724 或 725 号诊断显示  
+491|SERVO ALARM|5|6-TH AXISVDRY OFF|5 轴 6 轴伺服放大器 READY 准备 信号 DRDY 断开
+494|SERVO ALARM|5|6-TH AXIS VDRY ON|READY第 5 6 轴的轴卡准备信号 MCON 断开 但伺服放大器准备 信号依然接通 或者 当接通电源时 即使 MCON 断开 DRDY 也接通 查看并确保轴卡和伺服放大器连接完好
+495|SERVO ALARM|5|6-TH AXISZERO POINT RETURN|这是一个位置控制电路异常 可能是返回参考位置由于 NC或伺服系统异常而失败 重试返回参考位置注意如果在刚性攻丝中出现主轴误差过大的报警 则会显示攻丝进给轴误差过大的报警号#7|#6|#5|#4|#3|#2|#1|#0OVL|LV|OVC|HCAL|HVA|DCAL|FBAL|OFAL
+720|7274n4 号伺服报警详情|4n4 号伺服报警的详细说明被显示在轴顺序的 720~727 号诊断中至|OVL|产生了一个过400载报警402406/490|该位引起| |号伺服报警 LV |在伺服LED放大器中产生了低电压报警检查OVCHCAL|在数字伺服内部产生了一个过电流报警在伺服LED放大器内产生了一个异常电流报警 检查HVAL|在伺服LED放大器内产生了一个过电压报警检查DCAL|在伺服LED放大器中产生了再生放电电路报警 检查4n6FBALOFAL|产生了一个断线报警 该位引发 号伺服报警 数字伺服内部产生了一个溢出报警7 主轴报警和相应措施
+408|SPINDLE SERIAL LINK START FAULT|当带串行主轴的系统中的电源接通 而主轴放大器没有准备好不能正确起动时 会产生该报警可以考虑以下四种原因 1|光缆连接不合适 或者主轴放大器的电源断开 2|当 NC 电源在除 SU-01 或 AL-24  显示在主轴放大器的 LED 上 以外的其他报警条件下接通时在这种情况下 将主轴放大器电源断开一次 然后再进行起动3|其他原因 硬件配置不恰当在系统  含主轴控制单元  被启动后 不会发生该报警||
+409|SPINDLE ALARM DETECTION|在带有串行主轴的系统中发生了主轴AL-XX|XX| 放大器报警 该报警以其中 为一个数字的形式被显示B-65045E在主轴放大器的显示器上详0397情参见交流主轴7 串行接口的维修手册 设置 号参数的第 位会使主轴放大器报警号出现在画面上8 超程报警和相应措施5n0|OVER TRAVEL|+n|超出第 n 轴+侧的存储行程检查 1|25n1|OVER TRAVEL|-n|超出第 n 轴-侧的存储行程检查 1|25n2|OVER TRAVEL|+n|超出第 n 轴+侧的存储行程检查 3 5n3|OVER TRAVEL|-n|超出第 n 轴-侧的存储行程检查 3 5n4|OVER TRAVEL|+n|在 n 轴上的正向出现硬件超程  M 系列 5n5|OVER TRAVEL|-n|在 n 轴上的负向出现硬件超程  M 系列 5n4|OVER TRAVEL|+n|超出第 n 轴+侧的存储行程检查 4|T 系列5n5|OVER TRAVEL|-n|超出第 n 轴-侧的存储行程检查 4|T 系列
+520|OVER TRAVEL|+z|在 z 轴上的正向出现硬件超程  T 系列 
+590|刀架干涉报警 +X 轴|在 X 轴向正向移动中出现刀架干涉报警 
+591|刀架干涉报警  -X 轴|在 X 轴向负向移动中出现刀架干涉报警 
+592|刀架干涉报警 +Z 轴|在 Z 轴向正向移动中出现刀架干涉报警 
+593|刀架干涉报警  -Z 轴|在 Z 轴向负向移动中出现刀架干涉报警 9 宏程序报警和相应措施
+500~
+590|MACRO ALARM|该报警与用户宏程序 宏程序执行器或定制型宏程序  包括会话式程序输入 有关 详情参见相关手册宏程序报警号可能与超程报警号相同 但是它们可以被彼此清楚地区分开 因为超程报警号显示报警说明10|PMC 报警和相应措施
+600|PMC ALARM INVALIDINSTRUCTION|在 PMC 中出现非法指令中断
+601|PMC ALARM RAM PARITY|出现 PMC RAM 奇偶性错误
+602|PMC ALARM SERIALTRANSFER|出现 PMC 串行传输错误
+603|PMC ALARM WATCHDOG|出现 PMC 监控定时器报警 
+604|PMC ALARM ROM PARITY|出现 PMC ROM 奇偶性错误
+605|PMC ALARM OVER STEP|超出允许的最大 PMC 梯形图步数
+606|PMC ALARM I/O MODULEASSIGNMENT|I/O 模块信号的分配不正确 
+607|PMC ALARM I/O LINK|I/O出现 链错误 详情如下编号|PMC 报警 607 号 细节  010|*通讯错误 SLC 主 内部寄存器错误 020|*出现一个 SLC RAM 位错误  检验错误 030|*出现一个 SLC RAM 位错误  检验错误 040|没有连接 I/O 单元 050|连接了 32 个或更多的 I/O 单元060|*数据传输错误  从属设备没有响应 070|*通讯错误  从属设备没有响应 080|*通讯错误  从属设备没有响应 090|出现一个 NMI  对于除 110~160 以外的报警代码的 NMI 130|*出现一个 SLC 主 硬件检测到的  RAM 奇偶性错误140|*出现一个 SLC 从 硬件检测到的  RAM 奇偶性错误160|*SLC  从属设备  通讯错误*AL0 监控定时器接收到 DO 清零信号*IR1|CRC 或成帧错误监控定时器报警奇偶性错误显示硬件故障时带有星号 *11 过热报警和相应措施
+700|OVERHEAT CONTROL UNIT|控制单元过热 查看风扇电机是否正常运行 并清理空气过滤器
+704|OVERHEAT SPINDLET|在主轴波动检测过程中 主轴过热 检查切削条件 系列和相应措施
+899|M-NET INTERFACE ALARM|PLC12|M-NET 报警该报警与外部 的串行接口有关 详情如下编号|M-NET 报警 899 号 的详细情况 0001|接收到异常字符  传输代码以外的字符 0002|EXT 代码错误0003|时间监控器连接错误  参数号 0464 0004|查询时间监控器错误  参数号 0465 0005|检测到垂直奇偶性或成帧错误0257|传输超时错误  参数号 0466 0258|ROM 奇偶性错误0259|检测到超程错误|CPU其他 检测到 中断 13 系统报警 这些报警不能用复位键进行复位 和相应措施|
+910|MAIN RAM PARITY|主 RAM 奇偶性错误  低位字节  更换存储器 PC 板|
+911|MAIN RAM PARITY|主 RAM 奇偶性错误  高位字节  更换存储器 PC 板|
+912|SHARED RAM PARITY|该奇偶性错误与数字伺服电PC|路共享的 RAM 的低位字节有关换轴控制 板|更
+913|SHARED RAM PARITY|该奇偶性错误与数字伺服电PC|路共享的 RAM 的高位字节有关换轴控制 板|更
+914|SERVO RAM PARITY|这是一个数字伺服电路中的局部 RAM 奇偶性错误更换轴控制 PC 板|
+915|LADDER EDITING CASSETTE RAM PARITY|该 RAM 奇偶性错误与梯形图编辑卡的低位字节有关 更换梯形图编辑卡
+916|LADDER EDITING CASSETTE RAM PARITY|该 RAM 奇偶性错误与梯形图编辑卡的高位字节有关 更换梯形图编辑卡
+920|WATCHDOG ALARM|这是 1~PC4 轴的板监控定时器报警或伺服系统报警 更换主 PC 板或轴控制
+921|SUB CPU WATCHDOG ALARM|这是与子 CPU 板相关的监控定时器报警或第 5 或 6 轴的伺服系统报警 更换子 CPU 板或 5/6 轴控制 PC 板
+922|7/8 AXIS SERVO SYSTEM ALARM|这是第 7 或 8 轴的伺服系统报警 更换 7/8 轴控制 PC 板 
+930|CPU ERROR|这是一个 CPU 错误 更换主 CPU 板
+940|PC BOARD INSTALLATION ERROR|PC 板安装不正确 检查 PC 板的规格 
+941|MEMORY PC |BOARDCONNECTION ERROR|存储 PC 板连接不良 确保 PC 板连接牢固 
+945|SERIAL SPINDLECOMMUNICATION ERROR|串行主轴的硬件配置不正确 或发生了一次通讯报警 检查主轴的硬件配置 另外还要确保串行主轴的硬件被牢固连接好
+946|SECOND SERIAL SPINDLE COMMUNICATION ERROR|无法与第二个串行主轴进行通讯 确保第二个串行主轴被牢固连接好
+950|FUSE BLOWN ALARM|保险丝被熔断 更换保险丝  +24E|F14 
+960|SUB CPU ERROR|这是一个子 CPU 错误 更换子 CPU 板
+998|ROM PARITY||ROM|ROM这是一个 奇偶性错误 更换发生错误的14 外部报警和相应措施
+1000|EXTERNAL ALARM|该报警是由 PMC 梯形图检测到的 详细情况参见机床制造厂家提供的有关手册 

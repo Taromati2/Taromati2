@@ -1,0 +1,347 @@
+﻿
+
+OnDoor
+{
+"\0\s[1]%(username)我今天想要出门玩玩\n/
+\w9\w9\1\s[11]我也呆在这里呆到好闷了\n\q[去游乐园,gotoAmusementPark]\n\q[今天我暂时很忙不出门,nogotoAmusementPark]\e"
+}
+
+Select.gotoAmusementPark //----触发事件a
+{"\1\s[12]好耶！\w9\w9出门！\w9\w9出门！\n/
+\0\s[30]\w9猫咪不可以进游乐园\n/
+\1\s[12]\w9\w9...\n/
+\0\s[5]\w9\w9骗你的，\w9斗和走吧！\w9%(Select.入游乐园园门)\e"}
+
+Select.nogotoAmusementPark
+{"\1\s[10]恩...\n/
+\0\s[7]恩...\w9好吧！\w9\w9%(username)请继续忙碌，\w9但要好好休息\e"}
+
+
+
+Select.入游乐园园门
+	{
+	"\![raise,OnPlay,Amusement.Park.mp3]\0\s[7]等一下!%(username)，\w9\w9为何铁门不让我过...\w9\w9\n/
+	\1\s[11]喔！\w9\w9游乐园不可携带武器，\w9\w9老实没收武器吧。\w9\w9\n/
+	\0\s[7]不要!!!!!\w9\w9...为了%(username)的安全......\w9\w9\n/
+	\1\s[10]小公主...\w9\w9你这些武器平时都放哪...?\w9\n/
+	\0\s[7]要你管!!\w9\w9我倒是想问服务员，\w9怎么放你进来了?\w9\w9\n/
+	\0\s[21]%(username)虽然橘花的武器都被没收了，\w9\w9但是我有学徒手夺枪，\w9\w9也学了太极拳、柔拳、空手道黑带...等，\w9不用担心!!\w9\n/
+	\1\s[10].......，\w9\w9快走吧！\w9\n/
+	\0\s[0]那%(username)我们要玩什么好呢？\w9\w9\n\n[half]/
+	\q[◇旋转木马,carouse]\n/
+        \q[◇鬼屋,gosthous]\n/
+	\q[◇云霄飞车,Roller_coaster]\n/
+	\q[◇摩天轮,Ferris_wheel]\n\n[half]/
+	\q[◇不去了,nogo]\e"
+	}
+
+
+Select.gosthous
+{
+"\1\s[10]这间鬼屋原来是一间富豪的别墅，\n\w8不过不知道什么原因\w8\n被荒废了很久\w8\w8\0\s[40]那我们进去探险吧\w8\w8\![raise,OnPlay,se_gost.mp3]这里很阴暗%(username)要注意脚步\w9\w9\w9\1\s[10]\c或许是屋主刻意营造这种气氛\w8\w8\w9\s[12]\c听说这游乐园在兴建的时候\w8\w8\n有工人听到女孩子的哭声\w8以及烧焦的味道\w9\w9\w9\1\s[11]\c而我们现在正走过的地方\w8\w8\n就是工人听到哭声的地方\w9\w9\0\s[8]\c你说的是真的吗？斗和！？\w9\n\q[这种鬼故事是讲给小孩子的吧,gosthous_yes1]\n\q[斗和像这类的故事还是少说为妙,gosthous_no2]\e"
+"\![raise,OnPlay,se_gost.mp3]\1\s[10]一般都是人扮的吧\w9\w9\w9\0\s[2]是吗？\w9\w9\s[7],活体啊..\w5.\w9\w9\s[8]\c那鬼屋不就没意义了吗 ?\w9\w9\w9\0\s[-1]\c啊!!\w9\w9\0\s[99]\b[-1]\c\w9\w9\w9\1\s[11]\c小公主呢？\w9\w9\w9\w9\0\s[40]\c哇！！！！\w9\w9\0\s[0]\w9\w9\c\%(username)有吓到吗？\n\q[◇有,gosthous_yes]\n\q[◇没有,gosthous_no]\e"
+}
+	
+         Select.gosthous_yes1 
+        { 
+         "\1\s[11]你就不要不信邪了%(username)\w9\w9\0\s[20]要说尸体的话\w9\w9\0\s[5]\n我看过满山满谷的尸体\w9\w9\w8\n像斗和说的\w8幽灵阿\w8、鬼魂阿\w9我倒是没见过半个\w8\w9\1\s[13]\c老实说%(username)\w9后面就有一位身穿黑衣的女孩\w8\0\s[32]\c喀擦！\w5\1\s[11]\c等等！！！\w5等等！！！！！！！\w8是我看错了\w8\s[10]\c对不起\w9\w9\w9\0\s[30]\c知道就好\w8\w9\w9\0\s[40]\c%(username)这里还要继续逛吗?\w8\w9\n\q[这里只有阴森而已其他没什么特别的，换下一个地方吧,gosthous_b1]\n\q[后面还有一大段耶，没走完不甘心,gosthous_b2]\e" 
+        } 
+ 
+        Select.gosthous_no2 
+        { 
+         "\0\s[2]所以%(username)是说会有鬼出现啰？\w9\w9\1\s[11]%(username)知道猫眼\w9\n在夜晚中的一切也都可以看得一清二楚\w8\w8\n猫的眼睛跟人相比\w8只需要六分之一左右的光亮\0\s[8]\c斗和 \w8关于这点，我也能在黑暗中看到\w9\w9\n\n[half]\q[◇继续,parkmenu]\e" 
+        } 
+
+
+              Select.gosthous_b1
+                 {
+                   Select.parkmenu
+                 }
+
+              Select.gosthous_b2
+                 {
+                  "\1\s[10]\![raise,OnPlay,se_gost.mp3]一般都是人扮的吧\w9\w9\w9\0\s[2]是吗？\w9\w9\s[20],活体啊..\w5.\w9\w9\s[8]\c那鬼屋不就没意义了吗 ?\w9\w9\w9\0\s[-1]\c啊!!\w9\w9\0\s[99]\b[-1]\c\w9\w9\w9\1\s[11]\c小公主呢？\w9\w9\w9\w9\0\s[40]\c哇！！！！\w9\w9\0\s[0]\w9\w9\c\%(username)有吓到吗？\n\q[有,gosthous_yes]\n\q[没有,gosthous_no]\e" 
+                 }
+
+        Select.gosthous_yes		
+         {        	
+            intimacy += 1
+            "\1\s[12]原来%(username)也会怕鬼啊？\w9\w9\w9\w9\0\s[5]\%(username)还真可爱呢\x\n\n[half]\q[◇继续,parkmenu]\e"        	
+            "\1\s[12]原来橘花也喜欢用这样的方式吓人啊？\w9\w9\w9\0\s[5]\%(username)还真可爱呢\x\n\n[half]\q[◇继续,parkmenu]\e"        	
+           "\0\s[41]这样的%(username)最可爱了\1\s[10]小公主\w8,\5还好意思说\w9\w8\0\s[40]\c你看%(username)那不知所措的样子\w9\1\s[12]\w9\1\s[10]\c我就好心帮你留点子好了\w5,\w8不过\w8说实在%(username)的表情很nice呢!\n\n[half]\q[◇继续,parkmenu]\e"		
+          }	
+        Select.gosthous_no		
+         {        	
+          "\0\s[1]\w9\w9\w9\1\s[12]被吓的人没被吓到,吓人的人却自己害羞起来\n这是什么怪场面啊？\w9\w9\w9\w9\0\s[3]对不起......\x\n\n[half]\q[◇继续,parkmenu]\e"
+          "\1\s[13]技术太差？\w9\w9\w9\0\s[8]真不好意思呢\w9\w9\w9\1\s[10]\n所以要直接消失不见？\w9\w9\0\s[9]\c这就像\w5躲猫猫一样\n被\w8人家找到才有乐趣\w9\w9\1\s[11]\c\w8所以下一次要用更激烈的手段？\w8\w8\w8小公主\w9\w9\0\s[6]\w9\c嗯...\w9\w9\w9\0\s[27]\c所以要像这样？\w8\w8\n%(username)来，我已经准备好了\w8\w8\1\s[11]\c那是会直接死而不是吓死的喂！\n\n[half]\q[◇继续,parkmenu]\e"
+	 }
+
+
+Select.carouse	
+{	
+"\0\s[40]\![raise,OnPlay,se_5.mid]\0\s[40]哇！\w8这就是旋转木马啊？\w8\w8金光闪闪的\w9\w9\1\s[10]确实很适合小~~~公主玩呢\w9\w9\0\s[30]\c斗和\w8，\w8你的意思是我还只是个小孩子？\w9\w9\1\s[13]\c不！我完全没有这个意思．\w5．\w5．\w9\w9\w9\0\s[20]\c对了！\w8猫好像不能上游乐设施？\w9\w9\0\s[40]\c还是让我跟%(username)我们去玩吧\w9\w9\1\s[10]\c OS(小公主这样说的话应该没我的事吧，\n烟瘾又犯了就让%(username)去陪小公主吧)\w9\w9\w9\0\s[30]\c斗和你还在做什么呢？\w8\w8一副想逃走的样子\w9\1\c没\w8.\w8.没有\w8\w8\c\w9\w9噢！\w5还在等什么呢?%(usrname)\w8\n你就跟着橘花一起去骑木马吧。\w9\w9\w9\0\s[3]\c嗯..呜\w8~呣\w5~唔\w5...上不去(卖力地爬)...\w5.\w5.\w9\n\q[◇抱她上去,carouse_chiose1]\n\q[◇看着她,carouse_chiose2]\e"
+"\0\s[2]\![raise,OnPlay,se-5.mid]似乎有这种刑罚\w9\w9\1咦？\w9\w9是什么样的刑罚？\w9\w9\w9\0\s[6]\c满清十大酷刑之一的\w9\w9\_q\c\n木马刑的刑具。\n据说是惩罚古代女性红杏出墙或者不贞用的。\n用刑时，把这个马鞍套在马上，再让女子坐在刑具上，\n马走动时中间的木阴茎就会向上伸，\n长度远远超过女性阴道的深度，一直刺破内脏然后慢慢流血而死。\_q\x\1\s[13]好可怕...\w9\w9\0\s[5]\c放心啦！猫是没有这种刑罚的\1\s[11]\c说的那么好听，我好歹也是女生\w9\w9\n\n[half]\q[◇继续,parkmenu]\e" 
+}	
+
+
+ 
+Select.carouse_chiose1 
+{ 
+"\0\s[9]谢谢%(username)\x\w8\w9\n/
+\1\s[12]真绅士阿%(username)\w9\w9\0\s[8]这样说%(username)会误会\w9\1\s[10]\c误会？\w9\w9\0\s[8]\c在中翻日的翻译绅士=变态\w9\1\s[13]\c哦～\w9\w9，不过我这样说也不为过吧?%(username)\w9\0\s[6]\n\q[你才变态,carouse_c1]\n\q[斗和，何必呢?本是同..,carouse_c2]\e" 
+} 
+ 
+Select.carouse_c1 
+{ 
+"\0\s[30]斗和.\w5.\w5.\w9\1\s[13]是是是！\w9\w9(%(username)心灵之声:什么态度嘛!真没诚意)\w9\w\0\s[26]\c斗和本来就不太信任人类\w9\n所以%(username)就别跟他计较了\n\n[half]\q[◇继续,parkmenu]\e" 
+} 
+Select.carouse_c2 
+{ 
+"\1\s[10]同你个大头鬼\w9\0\s[20]同根生?!\w9\1\s[13]谁跟你一道\w9\w9\0\s[8]\n\n[half]\q[◇继续,parkmenu]\e"
+} 
+Select.carouse_chiose2 
+{ 
+"\0\s[7]亨...\w9\%(username)是大笨蛋\x\n\n[half]\q[◇继续,parkmenu]\e" 
+"\1\s[12]没想到%(username)真没有礼仪\w8\w8\0\s[7]\n\n[half]\q[◇继续,parkmenu]\e"		
+} 
+
+/*
+         Select.carouse_chiose2		
+         {   
+               intimacy -= 1
+		"\0\s[7]哼! ...\w9\%(username)是大笨蛋!!!!!\n\n[half]/
+		\q[◇继续,parkmenu]\e"		
+         }	
+        Select.carouse_chiose1		
+         {		
+                intimacy += 1
+		"\0\s[9]谢谢~~\w9\%(username)最棒了!\n\n[half]/
+		\q[◇继续,parkmenu]\e"		
+         }
+ */        
+Select.Roller_coaster
+   {
+	"\0\s[5]哇！%(username)我们到云霄飞车了。\w9\n/
+	\1\s[10]恩...\w9怎么排队的人都跑光了？\w9\n/
+	\0\s[22]来吧！\w9为了赶行程，拿枪的优先~~\w9\n/
+	\1\s[10]难怪!!!\w9\w9ㄜ...武器不是被没收了?哪来的枪枝????\w9\n/
+	\0\s[21]这就不能说明了，\w9云霄飞车来了。\w9\n/
+	\1\s[10]只有两人座而已%(username)要跟谁坐?\n\n[half]/
+	\q[◇橘花,Kikkaplay]\n/
+	\q[◇斗和,Towaplay]\e"
+   }
+
+	Select.Kikkaplay 
+	{
+	intimacy += 1
+	"\0\s[5]恩...\w9那斗和自己到后面坐。\w9\n/
+	\1\s[10]小公主，\w9你有什么企图...??\w9\n/
+	\0\s[0]嗯?\w9\w9\0\s[21]怎么会有呢~~~\w9\n/
+	\1\s[13]...\w9别偷亲%(username)喔。\w9\n/
+	\0\s[0]%(username)，这次会很刺激，要坐好和绑好安全带喔！\n\n[half]/
+	\q[◇橘花，要开始了你怎么还是站着...,Roller_coaster_start]\e"
+	}
+
+		Select.Roller_coaster_start 
+			{
+			"\0\s[0]我不想坐着，\w9%(username)不用担心~~\w9\n/
+			\0\s[20]我曾经没带装备爬上正在起飞的客机，\w9\0\s[21]说起来那件事，我是来不急搭机硬爬的，\w9\w9哈哈\w9\n/
+			\1\s[10]...\w9...\w9...\w9\n/
+			\0\s[0]注意要上坡了\w9\n/
+			\0\s[0]%(username)有坐过云霄飞车吗？\n\n[half]/
+			\q[◇有,yeson]\n/
+			\q[◇没有,noon]\e"
+			}
+				
+				Select.yeson 
+					{
+					intimacy += 1
+					"\0\s[9]请等一下!\w9\n/
+					\1\s[11]???\w9怎么了??\w9\n/
+					\0\s[1]%(username)抱紧我，\w9\w9我...会害怕...\w9\n/
+					\1\s[13]...............\n\n[half]/
+					\q[◇继续,parkmenu]\e"
+					}
+				Select.noon
+					{
+					"\0\s[1]那如果%(username)害怕的话...\w9\w9\n/
+					\1\s[10]??\w9怎样??\w9\n/
+					\0\s[1]%(username)可以抱紧我喔...\w9\n/
+					\1\s[13]......\w9小公主真主动...\w9\n\n[half]/
+					\q[◇继续,parkmenu]\e"
+					}
+
+	Select.Towaplay 
+	{
+	intimacy -= 1
+	"\0\s[7]讨厌...\w9\n/
+	\1\s[13]不是我的错喔......\n\n[half]/
+	\q[◇继续,parkmenu]\e"
+	}
+
+
+Select.Ferris_wheel
+	{
+	"\0\s[20]上面肯定是很好狙击的地点，\w9\w8\w8\1\s[10]别老说那些%(usermame)听不懂的话...\0\s[0]首先判别狙击点最简单的方法，\w8就是位居不容易发现的位置，\w8例如:\w51.草丛\w52.极远和极高点~~\w8\w8\1\s[11]完全无视我了啊...\w9\w9\w9\0\s[6]\n接下来就是风速以及瞄准的地点，\w9\w9\1\s[10]好了好了\w8\n车厢已经下来，\w8可以搭上去了......\w9\w8\w8\0\s[40]那%(username)想跟谁一起搭上这节车厢呢？\w8\n\q[◇橘花,Ferris_wheel_chico1]\n\q[◇斗和,Ferris_wheel_chico2]\e"
+	}
+
+		Select.Ferris_wheel_chico1
+			{
+			intimacy += 1
+			"\0\s[26]那我就跟%(username)\w8一起乘上车厢吧!\w9\1\s[10]那我就在底下等你们。\w9\1\s[-1]\w9\w9\1\C\s[19]旁白:\n车厢缓缓地向上移动\w9\0\s[2]\c哇～\w9眼前的景物渐渐的变远了!\w9\w8\1\s[-1]\1\c\s[19]旁白:坐在对面的橘花以小小的身躯靠在车厢旁\w9\w9\0\s[30]\c%(username)你看!\w8\w8斗和越来越小只了。\w9\w9\w9\s[0]嗯..\w8...\w9\w8呐！\w5%(username)觉得\w8橘花\w8看起来像小孩子吗？\n\w8\w8\q[◇怎么说呢，确实像小孩子,saysomething1]\n\q[◇怎么会，一点都不像,saysomething2]\e"
+			}
+
+		Select.Ferris_wheel_chico2
+			{
+			"\1\s[10]那我就跟%(username)一起乘上车厢吧。\w9\0\s[0]那么~\w8请稍等一下。\0\s[-1]\w8\w9\w9\0\s[27]不好意思久等了~~\w9\w9\1\s[11]小公主你为什么拿枪......\n\x\q[◇继续,parkmenu]\e"
+			"\1\s[11]跟我ㄧ起？！\w9好吧。\w9\0\s[5]玩得愉快唷~~\w9\1\s[12]小公主不会对我怎样吧???\x\q[◇继续,parkmenu]\e"
+			}
+
+				Select.saysomething1
+					{
+					"\0\s[8]是吗...\w9\1\s[19]旁白:原以为会被橘花枪杀的%(username)不知怎么的松了一口气...\n\n[half]/
+					\q[◇继续,parkmenu]\e"
+					}
+
+				Select.saysomething2
+					{
+					intimacy += 1
+					"\0\s[9]那.....那%(username)...\w9\w9\0\s[1]你喜欢...\w9\w9\1\s[19]旁白:\w9\n阳光随着车厢的缓缓向上从刺眼的黄色，\w9\n转变成偏橘黄色的夕阳\n\0\s[1]喜欢我吗?\n\n[half]/
+					\q[◇当然喜欢!!,saysomething.loveup]\n/
+        				\q[◇嗯...很讨厌。,saysomething.lovedn]\n/
+					\q[◇这...我还不清楚自己的感情...,saysomething.loveno]\e"
+					}
+                                        
+					Select.saysomething.loveup
+
+						{
+        					"\0\s[9]那...\w9\w9\怎样的喜欢!?...\w9\n\n[half]/
+
+       						\q[◇我...这个...嗯....,saysomething.loveup1]\n/
+        					\q[◇喜欢...你的可爱...,saysomething.loveup2]\n/
+        					\q[◇已经...不单单是喜欢了...,saysomething.loveup3]\e"
+						}
+						
+						Select.saysomething.loveup1
+							{
+        						intimacy += 8
+        						"\0\s[40]%(username)害羞了.........\n\n[half]/
+							\q[◇继续,parkmenu]\e"
+							}
+
+							Select.saysomething.loveup2
+							{
+        						intimacy += 10
+       							"\0\s[101]讨厌!!......\w9\w9人家害羞了﹏﹏\n\n[half]/
+							\q[◇继续,parkmenu]\e"
+							}
+
+							Select.saysomething.loveup3
+							{
+        						intimacy += 12
+        						"\0\s[29]%(username)，\w9那...\w9\w9是爱吗...!?\w9\w9好难为情啊.....\w9\w9\n\n[half]/
+							\q[◇继续,parkmenu]\e"
+							}
+
+					
+
+
+
+
+					Select.saysomething.lovedn
+
+						{
+        					"\0\s[35]呜......\w9\w9\为什么!?...\w9\n\n[half]/
+        					\q[◇就...不喜欢你。,saysomething.lovedn1]\n/
+        					\q[◇因为...你很不可爱。,saysomething.lovedn2]\n/
+        					\q[◇反正...就是讨厌。,saysomething.lovedn3]\e"
+						}
+
+						Select.saysomething.lovedn1
+							{
+        						intimacy -= 10
+        						"\0\s[7]...\w9\w9...\w9\w9......\n\n[half]/
+							\q[◇继续,saysomething.lovedn_00]\e"
+							}
+
+						Select.saysomething.lovedn2
+							{
+							intimacy -= 10
+        						"\0\s[23]......\w9\w9橘花哪里不可爱了...?\n\n[half]/
+							\q[◇继续,saysomething.lovedn_00]\e"
+							}
+
+						Select.saysomething.lovedn3
+							{
+        						intimacy -= 10
+        						"\0\s[34]哼!!!\w9找死!?\w9\n以后再也不理%(username)了!.....\w9\w9\1\s[12]......!?\n\n[half]/
+							\q[◇继续,saysomething.lovedn_00]\e"
+							}
+
+						
+
+							Select.saysomething.lovedn_00
+								{
+								"\0\s[19](旁白)于是%(username)和橘花在回家的路上都沉默不语......\w9\w9\n/
+								\1\s[10]这个...\w9\w9到底出了什么事了?\w9\w9\w9\e"
+								}
+
+					Select.saysomething.loveno
+						{
+        					"\0\s[35]这样啊...\w9\w9\0\s[3]没关系...\w9\w9我会一直等着%(username)的答案。\w9\w9\n\n[half]/
+						\q[◇继续,parkmenu]\e"
+						}
+
+
+                                          
+       /*
+				
+Select.parkmenu
+	{
+	"\0\s[0]那%(username)，还要玩什么好呢？\w9\w9\n\n[half]/
+	\q[◇鬼屋,gosthous]\n/
+	\q[◇云霄飞车,Roller_coaster]\n/
+	\q[◇摩天轮,Ferris_wheel]\n/
+	\q[◇旋转木马,carouse]\n\n[half]/
+	\q[◇累了，回家吧,gohome]\e"
+	}
+                        */
+
+
+Select.parkmenu 
+{ 
+"\0\s[0]\![raise,OnPlay,Amusement.Park.mp3]接下来要玩什么呢？\n/
+\q[旋转木马,carouse]\n/
+\q[鬼屋,gosthous]\n/
+\q[摩天轮,Ferris_wheel]\n/
+\q[云霄飞车,Roller_coaster]\n/
+\q[坐下来休息吧,ralx]\n/
+\q[下次再来玩,nexttime]\e" 
+} 
+
+
+Select.nexttime 
+{ 
+"\0\s[0]好的。\w9返营确认\w9\1\s[11]你是想回哪里？\w9\0\s[8]\e" 
+"\0\s[6]原来%(username)是说好玩的\w8\1\s[10]依照汉摩拉比要处以极刑\w8\0\s[22]\n%(username)那就麻烦您吃子弹了\e"
+}
+
+Select.gohome
+	{
+	"\0\s[5]好的。\w9\e"
+	"\0\s[0]嗯?\w9要回去了吗?\w9\e"
+	"\0\s[5]好!以后还要再来玩喔~~\w9\e"
+	}
+
+
+Select.ralx 
+{ 
+"\0\s[8]%(username)耐力不是很好呢\w8\w8\1\s[10]有点想吐...\0\s[20]\c毛球?\w8\1才不是\w9\w8\0\c%(username)打算继续吗 ?\x\q[◇继续,parkmenu]\e" 
+} 
+ 
+
+Select.nogo
+{
+	intimacy -= 2   	
+"\0\s[7]呜....\w9\%(username)不陪橘花.....\e"    
+}

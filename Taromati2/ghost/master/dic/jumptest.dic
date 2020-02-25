@@ -1,0 +1,4600 @@
+﻿///////////////////////////////////////////
+////////// 心理测试辞书V2.0
+////////// written by fancyang 2013.2.1
+///////////////////////////////////////////
+
+
+
+
+Ontestmenu
+{
+	if QuickStartVersion{
+		NeedUpdate
+		return
+	}
+	_test=LoadTestNum;
+	_k=1;
+	_j=1;
+	_l=0;
+	if reference0!=NULL
+		_k=TOINT(reference0);
+	while _test[_j, '◇'] != ""
+	{
+		_j++
+	}
+	_txt="\b[2]\_q";
+     	if _k+20<=_j
+        	_l=_k+20;
+     	 else
+		_l=_j;
+	for _i =_k; _i<_l; _i++ {
+		_txt += '\__q[OnTestSelect,◇'+_i+']◇' + _test[_i, '◇']+'\__q\n';
+	}
+	_Page="";
+	if _j<=20
+		_Page="";
+	elseif _k==1 && _j>20
+		_Page="\_l[60,320]\q[下一页>>,Ontestmenu,%(_k+20)]\n";
+	elseif _k>1 && _k+20>_j
+		_Page="\_l[0,320]\q[上一页<<,Ontestmenu,%(_k-20)]\n";
+	else
+		 _Page="\_l[0,320]\q[<<上一页,Ontestmenu,%(_k-20)]  \_l[60,320]\q[下一页>>,Ontestmenu,%(_k+20)]\n";  
+        _txt+=_Page;
+        _txt+="\q[◇返回上一层,OnOpenMenu,1]";
+	_txt += "\![set,choicetimeout,0]\e";
+	_txt
+}
+
+OnTestSelect
+{
+        _testid=reference0
+        if _argc>0
+             _testid=_argv[0];
+        _temp=LoadTest(_testid)
+        _quest =_temp[0,'#'];
+	_txt += "\_q"+_quest ;
+	for _i = 1; _temp[_i, '#'] != ""; _i++ {
+         _testid=_temp[_i, '#'][1]
+         _testid=REPLACE(_testid,'\n','')
+         _testid=REPLACE(_testid,' ','')
+	_txt += "\__q[OnTestSelect,@%(_testid)]%(_temp[_i, '#'][0])\__q\n";
+	}
+	_txt += "\n\![set,choicetimeout,0]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]";
+
+	_txt;
+	
+
+
+
+
+}
+
+
+
+
+
+LoadTestNum
+{
+	_file = "data\jumptest.txt";
+	_testnum = 0;
+        _test=""
+	_buff = "";
+	if FOPEN(_file,"r") {
+		_buff = FREAD(_file);
+		while _buff != -1  {
+                   if  "◇" _in_ _buff
+                        {
+                           _testnum++
+                           _test+=_buff;
+                         }
+                   _buff = FREAD(_file);
+		}
+	
+	}
+	FCLOSE(_file);
+        _test;
+
+}
+
+
+LoadTest
+{
+        _testid="";
+	_file = "data\jumptest.txt";
+	_testid =reference0;
+        if _argc>0
+        _testid=_argv[0];
+        _test=""
+	_buff = "";
+        _testid=""+_testid+""
+	if FOPEN(_file,"r") {
+		_buff = FREAD(_file);
+		while _buff != -1 && _testid !_in_ _buff  {
+			_buff = FREAD(_file);
+		}
+	           if _testid _in_ _buff
+                    {
+                        _buff = FREAD(_file);
+			while _buff != -1 && _buff != "" {
+				_test += _buff + "\n";_
+                          _buff = FREAD(_file);
+			}
+		}
+	}
+	FCLOSE(_file);
+	_test;
+
+}
+
+
+
+
+
+
+
+
+
+Onjumptest
+{
+"\0\s[40]这里是有趣的心理测试哦,来试试准不准～\n/
+要测试吗?\n/
+\n\q[◇进入列表,Ontestmenu]\n/
+\q[◇不用了,OnOpenMenu,1]\n/
+"
+}
+
+
+
+
+
+Ontestmenu1
+{
+
+"\0\s[40]\b[2]\![set,choicetimeout,0]\q[◇1.测测你是哪种天使,Onjumptest1]\n/
+\q[◇2.测测你的守护神是哪位希腊神V1,Onjumptest2]\n/
+\q[◇3.从吃糖果的种种习惯方式，分析未来最适合你的职业,Onjumptest3]\n/
+\q[◇4.看看你是哪个时代的人,Onjumptest4]\n/
+\q[◇5.测试你的恶魔度，看看你到底是神还是恶魔,Onjumptest5]\n/
+\q[◇6.水果颜色测你的性格,Onjumptest6]\n/
+\q[◇7.你一生会真心爱几个人,Onjumptest7]\n/
+\q[◇8.你想要机器猫借给你什么,Onjumptest8]\n/
+\q[◇9.测测你的守护神是哪位希腊神V2,Onjumptest9]\n/
+\q[◇10.你的心是什么做的？,Onjumptest10]\n/
+\q[◇11.你的速配是哪一型？,Onjumptest11]\n/
+\q[◇12.你多久会厌倦一个人？,Onjumptest12]\n/
+\q[◇13.发掘与你最契合的朋友,Onjumptest13]\n/
+\q[◇14.找出你的幸福关键人,Onjumptest14]\n/
+\q[◇15.你念念不忘的人是谁,Onjumptest15]\n/
+\q[◇16.你会出轨吗？,Onjumptest16]\n/
+\q[◇17.你最适合在国外哪个城市居住 ,Onjumptest17]\n/
+\q[◇18.你在朋友圈中的角色 ,Onjumptest18]\n/
+
+
+\_l[%(0),%(340)]\q[◇返回上一层,OnOpenMenu,1]\n/
+"
+
+}
+
+
+
+Onjumptest1
+{
+"\0\s[40]\![set,choicetimeout,0]测测你是哪种天使\n/
+1.如果你的朋友背叛你你会背叛他吗?\n/
+\q[A.会,Onjumptest1_2]\n/
+\q[B.不会,Onjumptest1_3]\n/
+
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest1_2
+{
+"\0\s[40]\![set,choicetimeout,0]测测你是哪种天使\n/
+2.你认为天使和恶魔是什么关系?\n/
+\q[A.恋人,Onjumptest1_3]\n/
+\q[B.敌人,Onjumptest1_3]\n/
+\q[C.朋友,Onjumptest1_4]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+
+Onjumptest1_3
+{
+"\0\s[40]\![set,choicetimeout,0]测测你是哪种天使\n/
+3.你最宝贵的东西是?\n/
+\q[A.亲人的生命,Onjumptest1_4]\n/
+\q[B.金钱,Onjumptest1_5]\n/
+
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest1_4
+{
+"\0\s[40]\![set,choicetimeout,0]测测你是哪种天使\n/
+4.你在电脑前比较喜欢?\n/
+\q[A.聊天,Onjumptest1_5]\n/
+\q[B.游戏,Onjumptest1_5]\n/
+\q[C.其他,Onjumptest1_6]\n/
+
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+
+Onjumptest1_5
+{
+"\0\s[40]\![set,choicetimeout,0]测测你是哪种天使\n/
+5.你有几个网络朋友?\n/
+\q[A.1个或没有,Onjumptest1_6]\n/
+\q[B.不知道,Onjumptest1_7]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest1_6
+{
+"\0\s[40]\![set,choicetimeout,0]测测你是哪种天使\n/
+6.你的家在\n/
+\q[A.城市,Onjumptest1_7]\n/
+\q[B.乡村,Onjumptest1_A]\n/
+
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest1_7
+{
+"\0\s[40]\![set,choicetimeout,0]测测你是哪种天使\n/
+7.你喜欢动物吗？\n/
+\q[A.我什么动物都喜欢,Onjumptest1_B]\n/
+\q[B.一般一般,Onjumptest1_C]\n/
+
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+
+Onjumptest1_A
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]测测你是哪种天使\n/ 
+结果出来了，%username是A型.纯洁的天使\n/ 
+拥有着纯洁性格的你在友谊方面可能会有小矛盾,但今年你可能会走桃花运,如果平时不努力再怎么祈祷也没用的话可以打开你那纯洁善良的心眼,去看看外面的世界吧!\n/ 
+幸运事物:项链.水晶\n/
+
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest1_B
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]测测你是哪种天使\n/ 
+结果出来了，%username是B型.爱心天使 \n/
+你可是最有爱心的一个了,可爱的你非常有人缘,你的朋友都喜欢和你在一起,连异性也不例外,有爱心的人是最受人喜欢的啦~所以要永远有爱心哦!\n/ 
+幸运事物:球,动物\n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest1_C
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]测测你是哪种天使\n/ 
+结果出来了，%username是C型.典雅的天使\n/ 
+你拥有别人没有的个性,你拥有着别人没有的气质与天分,是个独特的人物.你随身散发着一股神秘的气息,谁都想靠近你接近你.但是你的神秘气息再发展下去会没有人缘的哦!~!~ \n/
+幸运事物:绿色的手帕,酒杯\n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest2
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V1\n/
+1. 週末的街头总是有看不完的情侣，如果有一对在你面前卿卿我我的话，你会有什么感觉？\n/
+\q[A.吼~~是怕人不知道你们感情好吗？看了真碍眼！,Onjumptest2_3]\n/
+\q[B.心酸酸，真希望我也有人可以抱一抱。,Onjumptest2_2]\n/
+\q[C.真甜蜜！这样的画面很正常啊！,Onjumptest2_2]\n/
+\q[D.当街这样搂搂抱抱的成何体统？要抱不会回家抱啊！,Onjumptest2_4]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest2_2
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V1\n/
+2. 如果你的好朋友们要介绍男/女朋友给你，你的反应会是如何？\n/
+\q[A.拜託！都已经民国几年了，谁还玩相亲的把戏啊！,Onjumptest2_4]\n/
+\q[B.有机会总比没机会好，有人介绍当然要把握机会?！,Onjumptest2_4]\n/
+\q[C.这样好吗？如果不成功的话会不会尴尬啊？,Onjumptest2_5]\n/
+\q[D.相亲？我的行情有这么差吗！,Onjumptest2_3]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest2_3
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V1\n/
+3. 你会希望用哪种方式遇见你未来的那个情人呢？\n/
+\q[A.有机会就好，网路交友或是相亲都无所谓啦！,Onjumptest2_4]\n/
+\q[B.顺其自然吧，这种事情当然是靠缘分?！,Onjumptest2_4]\n/
+\q[C.最好是街头不经意地邂逅，感觉才浪漫咩！？,Onjumptest2_6]\n/
+\q[D.最好是朋友间的介绍，品质比较有保障。,Onjumptest2_5]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest2_4
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V1\n/
+4. 如果朋友要帮你举办相亲大会，你希望会是哪种方式？\n/
+\q[A.初次见面，还是中规中矩一点，大家一块吃吃饭吧。,Onjumptest2_6]\n/
+\q[B.找朋友一起制造气氛，去KTV唱唱歌比较容易拉近距离！,Onjumptest2_5]\n/
+\q[C.不要啦！相亲很做作耶！,Onjumptest2_6]\n/
+\q[D.干脆办个烤肉会吧！既可以观察对方又不会感到尴尬。,Onjumptest2_5]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest2_5
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V1\n/
+5. 不管怎么炒气氛，这个相亲对象似乎就是无法进入状况，这时你会怎样？\n/
+\q[A.不会吧！这么难相处，下次也不必再连络了！,Onjumptest2_7]\n/
+\q[B.怎么了？他/她是不是心情不好呢？等下好好地关心一下！,Onjumptest2_6]\n/
+\q[C.这个人很有原则喔！看来应该是个不错的对象。,Onjumptest2_8]\n/
+\q[D.算了！说不定他/她不喜欢这种场合，下次换地方好了。,Onjumptest2_7]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest2_6
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V1\n/
+6. 初次见面之后，你会希望下一次的约会到哪里去呢？\n/
+\q[A.看对方?！我的配合度最高了！,Onjumptest2_8]\n/
+\q[B.最好是静一点的活动，这样才有助于彼此的了解啊！,Onjumptest2_7]\n/
+\q[C.和朋友一起出来也不错啊！感觉比较热闹一点咩。,Onjumptest2_7]\n/
+\q[D.最好是到郊外走走，做做户外运动才容易拉近距离嘛！,Onjumptest2_8]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest2_7
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V1\n/
+7. 如果这个对象实在不合你的口味，你会怎么办？\n/
+\q[A.请介绍的朋友告诉他/她，这样应该比较不伤感情吧？,Onjumptest2_8]\n/
+\q[B.说清楚讲明白?，千万不要浪费彼此宝贵的青春。,Onjumptest2_8]\n/
+\q[C.大家都不是小孩子了，不联络应该就很明白了吧？,Onjumptest2_A]\n/
+\q[D.不怎么办，反正又没交往，继续寻找下一个对象?,Onjumptest2_B]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest2_8
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V1\n/
+8. 如果对方有意无意地透露出：「我前任男/女朋友很优秀喔」的讯息，你会有何感觉？\n/
+\q[A.我也不差啊！时间一久，你一定会发现我比他/她更优秀的啦！,Onjumptest2_C]\n/
+\q[B.搞什么鬼！到现在还念念不忘旧情人，我难道没他/她好吗？,Onjumptest2_D]\n/
+\q[C.果然用情很深啊！应该会是个用情很专一的人吧！,Onjumptest2_E]\n/
+\q[D.你拿我和他/她比较吗？那你回去找他/她啊！啐！,Onjumptest2_F]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest2_A
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V1\n/
+结果出来了，%username是A型.狩猎女神雅典娜 \n/
+老实说，你这个人规矩还挺多的！虽然你个性温和、心肠又好，平常对朋友也一副没脾气的模样，但是你要求完美、做事的标准又比别人高，所以无形之中还真是给了旁人不少压力啊！不只如此，有时候你还会不经意地把规矩套在亲近的人身上，帮帮忙！时间一久，大家都会受不了的啦！\n/
+狩猎女神阿西娜Athena \n/
+
+种类：战争女神\n/ 
+出处：希腊神话\n/ 
+    阿西娜是宙斯的女儿，奥林帕斯十二大神之一，也是战争与技艺的女神，更是一位处女之神。\n/  
+    当泰坦神族女神墨提斯怀有身孕，宙斯听信了预言，认为墨提斯即将生下的孩子，会如同他曾经杀死克罗诺斯（宙斯之父）后窜位一样，这孩子也将会杀死自己的父亲成为新的世界统治者。\n/ 
+    于是宙斯硬把墨提斯给生吞入腹，让小孩留在自己体内。之后这个小孩就住在宙斯的头部。当赫发斯特斯  （火神）用斧头剖开宙斯的头，从中跳出来的那位全副武装的女神，也就是阿西娜。如此一来，阿西娜就不是由墨提斯所生。\n/  
+    阿西娜的盾牌上挂着梅杜莎（Medusa）的首级。希腊神话中有所谓的果尔冈（Gorgon）三姊妹，其中梅杜莎因为炫耀自己的头发比阿西娜美，而激怒了阿西娜。阿西娜便将她变成一个丑陋的妖怪。\n/ 
+    阿西娜并不因此而感到满足。于是又以一双长着翅膀的鞋子、一个包裹首级的袋子、一顶可以隐身的帽子和英雄柏修斯交换条件，请他杀死梅杜莎。结果柏修斯将梅杜莎宰杀，并且将他的首级献给了阿西娜。 \n/ 
+
+\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+
+}
+
+Onjumptest2_B
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V1\n/
+结果出来了，%username是B型.宙斯\n/
+你的世界很单纯，不是黑就是白，虽然你也知道凡事无绝对，但对你来说，清清楚楚、干干脆脆才是你一贯欣赏的态度。不过做你的朋友其实也不是那么容易的，虽然你的规矩很清楚，但往往是希望别人来配合你的步骤，要你去配合?人？啐！等你老大心情好再说吧！\n/ 
+
+宙斯Zeus\n/  
+
+种类：主神、雷神\n/  
+出处：希腊神话 \n/ 
+    宙斯是希腊神话中的主神，克罗诺斯和莉亚的儿子。\n/  
+    克罗诺斯因为预言提到他在天界的王座将被自己的儿子窜位，因此只要有儿子出生，他就立刻将他们生吞到肚子里。可是由于莉亚的机智，让宙斯免于生吞的命运。宙斯后来让克罗诺斯喝下呕吐药，救出了他的兄弟姊妹。因为这个缘故，原本是老么的宙斯，就成了克罗诺斯的长子（依照出生与吐出的顺序）。\n/  
+    随后，克罗诺斯的兄弟们——泰坦神族——与宙斯的兄弟们之间的战争于焉展开。结果泰坦神族战败，宙斯顺利登上主神宝座。\n/  
+    宙斯一向以喜好女色而闻名，他百无禁忌，让众多女神为他生下了众多子孙。其中最重要的子孙有阿波罗、阿蒂蜜斯、戴奥奈索斯，最重要的英雄则属赫拉克勒斯。为了接近女神（或女人），宙斯可谓无所不用其极。他之所以总是偷偷摸摸，主要是因为害怕他的发妻赫拉生气。宙斯曾经将他的情人变成天鹅和母牛，也曾经制造乌云以遮蔽赫拉的视线。\n/  
+
+
+
+\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest2_C
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V1\n/
+结果出来了，%username是C型.性爱之神安格司\n/
+你啊！真是个标准表里不一的傢伙！因为你看起来好像多世故多成熟，其实心里始终存在天真的想法，就像你知道世界上有坏人，但总认为自己不会有那么倒霉的一天；你也明白事情往往会不如预期，但你还是不愿意去设想最坏的结果！所以啊！乐观是好事，但还是得现实一点，免得落差太大啊！\n/ 
+
+种类：性爱之神 \n/ 
+出处：海岛克尔特神话\n/  
+   安格司是众神之父大格达的儿子，负责掌管**，相当于希腊神话里的厄洛斯，别名「青年之神」。安格司的母亲是魔法师艾刻华克的妻子波昂，大格达因为不想让波昂怀孕的消息走漏，于是使用魔法加速波昂怀孕的时间，结果波昂怀孕的第二天就生下了安格司。\n/  
+    安格司是一位翩翩美少年，手里经常拿着一把金色竖琴。安格司的竖琴音色优美，听过的人没有一个不被吸引的。安格司的吻会变成一只小鸟，飞到年轻的男女身边，用非常柔美的声音对他们彼此诉说恋爱的心情与对各自内心的热情。\n/  
+    安格司不只有俊俏的外表，他的聪明才智也是众所周知。有一天，安格司对母亲的丈夫艾刻华克商借宫殿一天一夜。之后艾刻华克同意了，安格司便说：「世界是一天一夜造成的，而我也在一天一夜拥有了这座宫殿」。（→努阿达）\n/  
+
+\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest2_D
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V1\n/
+结果出来了，%username是D型.爱神维纳斯\n/
+嘿嘿！你以为选到维纳斯代表你长得美吗？错了！你的外表虽然不错，看起来也挺有风度，但其实个性极端得很，平时没惹到你的话你可说是好好先生好好小姐，但是一旦惹你不高兴，你的反应可是激烈得很，就算不挑明讲，「总有一天」你也会让对方好看的，真不是个好惹的傢伙啊！\n/ 
+
+爱神维纳斯Venus\n/ 
+种类：庭园女神 \n/ 
+出处：罗马神话 \n/ 
+
+    维纳斯是罗马神话中的庭园女神、耕地女神。她其实等同于希腊神话中的阿芙柔黛蒂。一般人对她名字的英文发音「Venus」较为熟悉。 \n/ 
+    对罗马帝国来说，维纳斯是一位非常重要的女神。因为她的儿子伊尼亚斯（希腊语念成阿伊尼亚斯〔Aineas〕）历经一段放逐之后（光是这段放逐的过程，就占据了罗马神话不少篇幅），最后在意大利定居，成为朱利乌斯（Julius）家族的始祖。伊尼亚斯同时也是特洛伊战争中，特洛伊城的重要战将。后来特洛伊沦陷，伊尼亚斯获得维纳斯的保护，率领生还的将士成为新一代拉丁民族的始祖。\n/  
+    伊尼亚斯的儿子就是阿司卡尼欧斯（Ascanios），别名「伊乌鲁士」。换句话说，「盖乌斯?朱利乌斯?西泽（Gaius Julius Caesar）」就是维纳斯的后代。而且从奥古斯都（Augustus）开始，所有的罗马皇帝都是西泽的养子或后代子孙。\n/ 
+    由此推论，所有的罗马皇帝都是维纳斯的后代子孙。（→罗马十二大神）\n/ 
+
+\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+
+Onjumptest2_E
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V1\n/
+结果出来了，%username是E型.谬思女神\n/
+你是不是想得太多了？你会在意别人的看法、你希望得到别人的认同，这样的生活不是很累吗？其实大部分的朋友都认?你很不错，只是你忘了给自己鼓励罢了！而且话说回来，别人的贊美又不能当饭吃，说好说坏也是别人的嘴，不要太在意啦！想太多，累的可是自己啊！\n/ 
+
+种类：艺术女神 \n/ 
+出处：希腊神话 \n/ 
+    缪思女神是宙斯与泰坦神族女神※尼摩西奈（记忆女神）所生的女儿。因为共有九位，所以常使用复数型「※缪莎伊」称呼她们。\n/  
+    一般认为缪思女神只有九位，而且他们的名字都有个别的涵义，各自也掌管着不同的领域。\n/  
+    缪思女神中最著名的是卡莉欧碧。因为他所掌管的正是诗人们创作叙事诗时最重要的史诗创造力。\n/  
+一般画家都将缪思女神描绘成长着一对翅膀的美女，而且都居住在山中。传说他们的住处位在海林肯（Helicon）山或皮耶利亚（Pieria）。 \n/ 
+
+\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest2_F
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V1\n/
+结果出来了，%username是F型.太阳神阿波罗 \n/
+你是不是想得太多了？你会在意别人的看法、你希望得到别人的认同，这样的生活不是很累吗？其实大部分的朋友都认?你很不错，只是你忘了给自己鼓励罢了！而且话说回来，别人的贊美又不能当饭吃，说好说坏也是别人的嘴，不要太在意啦！想太多，累的可是自己啊！\n/ 
+
+太阳神阿波罗Apollo \n/ 
+
+种类：太阳神 \n/ 
+出处：希腊神话 \n/ 
+    阿波罗是同时出现在希腊和罗马神话中的奥林帕斯十二大神之一。他除了拥有太阳神的身分，同时还有预言、艺术、医术之神的称号。阿波罗是宙斯和乐朵的儿子，和阿蒂蜜斯是双胞胎兄妹。\n/  
+    阿波罗出生几天后便长大成人。为了寻找预言的圣地，他特地前往德尔斐（Delphi）。路途中，他先到达哈利亚多斯，原本打算将宁芙仙子泰尔普沙（Thelpusa）所在的水泉——一个拥有预言能力的水泉——立为圣地，但是泰尔普沙推荐，德尔斐应该更适合阿波罗。事实上泰尔普沙是不希望自己的圣地被夺走，明明知道德尔斐是一只拥有预言能力的母巨蟒毕颂（Python）的地盘，还故意让阿波罗到德尔斐去。 \n/ 
+    最后阿波罗杀死了毕颂，在德尔斐建立了神庙，并且将哈利亚多斯的预言水泉封闭，以报复泰尔普沙的心机险恶。\n/  
+    阿波罗始终未婚，但是他的爱人不断。因为他不只外形俊俏，身体强壮，更是许多女神（甚至男神）愿意投怀送抱的对象。虽然如此，还是有例外；达芙妮（Daphne）因为离开了阿波罗而变成月桂树；女巫希比蕾和马尔贝莎则始终不愿意接受阿波罗的爱。原因也许是因为阿波罗太帅了，许多女神反而对他敬而远之。\n/ 
+
+\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest3
+{
+"\0\s[40]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+1. 你平时喜欢吃？\n/
+\q[A.软糖,Onjumptest3_2]\n/
+\q[B.硬糖,Onjumptest3_3]\n/
+\q[C.棉花糖,Onjumptest3_2]\n/
+\q[D.巧克力,Onjumptest3_4]\n/
+
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest3_2
+{
+"\0\s[40]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+2. 你喜欢的口味是？\n/
+\q[A.薄荷,Onjumptest3_3]\n/
+\q[B.甜味,Onjumptest3_5]\n/
+\q[C.酸口味,Onjumptest3_4]\n/
+
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest3_3
+{
+"\0\s[40]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+3. 你爱吃口香糖吗？\n/
+\q[A.Yes,Onjumptest3_4]\n/
+\q[B.No,Onjumptest3_5]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest3_4
+{
+"\0\s[40]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+4. 你喜欢糖果上有各种花色吗？\n/
+\q[A.Yes,Onjumptest3_5]\n/
+\q[B.No,Onjumptest3_6]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest3_5
+{
+"\0\s[40]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+5. 你爱吃夹心糖吗？\n/
+\q[A.Yes,Onjumptest3_7]\n/
+\q[B.No,Onjumptest3_8]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest3_6
+{
+"\0\s[40]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+6. 你吃过大白兔奶糖吗？\n/
+\q[A.Yes,Onjumptest3_7]\n/
+\q[B.No,Onjumptest3_8]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest3_7
+{
+"\0\s[40]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+7. 你家里通常会放几种糖？\n/
+\q[A.1种,Onjumptest3_9]\n/
+\q[B.2-5种,Onjumptest3_8]\n/
+\q[C.5种以上,Onjumptest3_10]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest3_8
+{
+"\0\s[40]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+8. 你会因为糖纸好看而买糖吗？\n/
+\q[A.Yes,Onjumptest3_9]\n/
+\q[B.No,Onjumptest3_10]\n/
+
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+
+Onjumptest3_9
+{
+"\0\s[40]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+9. 你喜欢收集糖纸吗？\n/
+\q[A.Yes,Onjumptest3_11]\n/
+\q[B.No,Onjumptest3_10]\n/
+
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest3_10
+{
+"\0\s[40]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+10. 你会尝试不同种类的糖吗？\n/
+\q[A.Yes,Onjumptest3_12]\n/
+\q[B.No,Onjumptest3_11]\n/
+
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest3_11
+{
+"\0\s[40]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+11. 你会自己尝试做巧克力吗？\n/
+\q[A.Yes,Onjumptest3_15]\n/
+\q[B.No,Onjumptest3_13]\n/
+
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest3_12
+{
+"\0\s[40]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+12. 你有过把不同种类的糖融化混合起来的经历吗？\n/
+\q[A.Yes,Onjumptest3_14]\n/
+\q[B.No,Onjumptest3_13]\n/
+
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest3_13
+{
+"\0\s[40]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+13. 你经常觉得糖的口味少于你向往的数量？\n/
+\q[A.Yes,Onjumptest3_14]\n/
+\q[B.No,Onjumptest3_15]\n/
+
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+
+Onjumptest3_14
+{
+"\0\s[40]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+14. 你经常买同样的糖吗？\n/
+\q[A.Yes,Onjumptest3_15]\n/
+\q[B.No,Onjumptest3_16]\n/
+
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest3_15
+{
+"\0\s[40]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+15. 你喜欢做的很花样的糖人吗？\n/
+\q[A.Yes,Onjumptest3_17]\n/
+\q[B.No,Onjumptest3_19]\n/
+
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest3_16
+{
+"\0\s[40]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+16. 你买的巧克力经常......\n/
+\q[A.不在乎花样，只在乎口味,Onjumptest3_18]\n/
+\q[B.要好看，不一定要好吃,Onjumptest3_E]\n/
+
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest3_17
+{
+"\0\s[40]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+17. 你吃糖的方式是？\n/
+\q[A.都咬碎了吃,Onjumptest3_18]\n/
+\q[B.慢慢等它自己溶掉,Onjumptest3_19]\n/
+
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+
+Onjumptest3_18
+{
+"\0\s[40]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+18. 如果送情人你会送？\n/
+\q[A.巧克力,Onjumptest3_C]\n/
+\q[B.水果糖果,Onjumptest3_20]\n/
+
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest3_19
+{
+"\0\s[40]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+19.你认为棒棒糖很幼稚吗？\n/
+\q[A.Yes,Onjumptest3_20]\n/
+\q[B.No,Onjumptest3_21]\n/
+
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest3_20
+{
+"\0\s[40]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+20. 你会因为含有色素而拒绝吃这种糖吗？\n/
+\q[A.Yes,Onjumptest3_D]\n/
+\q[B.No,Onjumptest3_E]\n/
+
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest3_21
+{
+"\0\s[40]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+21. 你习惯边吃糖边写作吗？\n/
+\q[A.Yes,Onjumptest3_B]\n/
+\q[B.No,Onjumptest3_22]\n/
+
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest3_22
+{
+"\0\s[40]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+22. 如果白雪公主吃一种口味的糖可以醒来，你觉得她吃的是……\n/
+\q[A.苹果口味,Onjumptest3_C]\n/
+\q[B.荔枝口味,Onjumptest3_E]\n/
+\q[C.兔肉口味,Onjumptest3_A]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest3_A
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+结果出来了，%username是A型.不喜欢死板是你潜意识里的个性\n/ 
+你憎恨枯燥乏味，千篇一律的工作。文书员这类的工作是你的禁忌。有开发创造的空间是你向往的生活，你希望可以把自己的创造力和想象力发挥的淋漓尽致。经理，老板或自己营业的职业会帮助你找到你自己的发挥空间。你可以按自己的嗜好设计自己的公司或小店，给你的生活增添一份格外的乐趣。\n/
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest3_B
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+结果出来了，%username是B型.教师是人类心灵的工程师\n/ 
+　　总喜欢指挥和命令别人的你，比较适合天天和孩子们混在一起。因为你的组织能力很强，所以这种可以带领一个集体，共同达到指定目标的工作最适合你不过。相比之下，在大公司担任主任等可以领导群雄的工作也比较适合你。要是在古代，你是不是要做将军啦？\n/ 
+
+
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+Onjumptest3_C
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+结果出来了，%username是C型.你喜欢古典式的生活和塌实稳定的收入\n/ 
+　　你不喜欢冒险，所以医生，秘书，公务员等从事比较循环工作的职业是很适合你的生活和性格。你只想要平凡的生命，对于你来说，工作便是你经济的来源。你不会很介意自己是怎么样工作的，你只是很介意自己是怎么拿工资的。\n/ 
+
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest3_D
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+结果出来了，%username是D型.虽然说起来有点不够现实，但是可以完全展示自我才华\n/ 
+　　科学家，天文学家，研究员，钢琴师，音乐家，作曲家，娱乐明星等职业是你生命中的焦点。你时时刻刻渴望可以不同于平凡的人类。你向往人们对你的崇拜，羡慕的目光。以上所说的职业可以让你秀出你的所有才华，但需要注意的是，如果没有一定的把握，这些职业中的你也许会毫无成就可言。\n/ 
+
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest3_E
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]从吃糖果的种种习惯方式，分析未来最适合你的职业\n/
+结果出来了，%username是E型.你对艺术和美术方面有着特殊的天赋\n/ 
+　　所以像美术家，美术老师，设计师这方面的专业对你很有利，因为你学起来会觉得得心应手很多。值得考虑的是你自己对艺术的勇气和对自己的信心。因为这种工作是有创意和个性才有收入的。自己好好考虑一下，不要轻易浪费自己的天赋哦~！\n/ 
+
+
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest4
+{
+"\0\s[40]\![set,choicetimeout,0]看看你是哪个时代的人\n1. 你对现在的自己基本满意吗？\n/
+\q[A.Yes,Onjumptest4_2]\n/
+\q[B.No,Onjumptest4_7]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest4_2
+{
+"\0\s[40]\![set,choicetimeout,0]看看你是哪个时代的人\n2. 喜欢战争题材的作品吗？\n/
+\q[A.很喜欢,Onjumptest4_7]\n/
+\q[B.否或一般,Onjumptest4_3]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest4_3
+{
+
+"\0\s[40]\![set,choicetimeout,0]看看你是哪个时代的人\n3. 有过强烈的无奈感、发觉生活中有些事是不得不接受的吗？\n/
+\q[A.Yes,Onjumptest4_5]\n/
+\q[B.No,Onjumptest4_4]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+
+}
+
+Onjumptest4_4
+{
+"\0\s[40]\![set,choicetimeout,0]看看你是哪个时代的人\n4. 相信善有善报、等价交换的说法？\n/
+\q[A.Yes,Onjumptest4_A]\n/
+\q[B.No,Onjumptest4_5]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest4_5
+{
+"\0\s[40]\![set,choicetimeout,0]看看你是哪个时代的人\n5. 你的自我保护意识很强吗？\n/
+\q[A.Yes,Onjumptest4_8]\n/
+\q[B.No,Onjumptest4_6]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest4_6
+{
+"\0\s[40]\![set,choicetimeout,0]看看你是哪个时代的人\n6. 有比起游乐场来更喜欢名胜古迹？\n/
+\q[A.Yes,Onjumptest4_E]\n/
+\q[B.No,Onjumptest4_8]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest4_7
+{
+"\0\s[40]\![set,choicetimeout,0]看看你是哪个时代的人\n7. 更喜欢对抗类的比赛（如篮球、击剑）还是轻松的运动（如游泳、散步）？\n/
+\q[A.对抗类的比赛,Onjumptest4_12]\n/
+\q[B.轻松的运动,Onjumptest4_3]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest4_8
+{
+"\0\s[40]\![set,choicetimeout,0]看看你是哪个时代的人\n8. 你是个喜欢质疑现实的人吗？\n/
+\q[A.Yes,Onjumptest4_10]\n/
+\q[B.No,Onjumptest4_9]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest4_9
+{
+"\0\s[40]\![set,choicetimeout,0]看看你是哪个时代的人\n9. 最近经常有迷茫的感觉吗？\n/
+\q[A.Yes,Onjumptest4_10]\n/
+\q[B.No,Onjumptest4_G]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest4_10
+{
+"\0\s[40]\![set,choicetimeout,0]看看你是哪个时代的人\n10. 你相信只要努力改变自己，自己以后会成为一个更出色的人吗？\n/
+\q[A.Yes,Onjumptest4_F]\n/
+\q[B.No,Onjumptest4_11]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest4_11
+{
+"\0\s[40]\![set,choicetimeout,0]看看你是哪个时代的人\n11. 偶尔会觉得一切都是虚幻？\n/
+\q[A.Yes,Onjumptest4_D]\n/
+\q[B.No,Onjumptest4_G]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest4_12
+{
+"\0\s[40]\![set,choicetimeout,0]看看你是哪个时代的人\n12. 有人说过你太理想主义了吗？\n/
+\q[A.Yes,Onjumptest4_13]\n/
+\q[B.No,Onjumptest4_14]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest4_13
+{
+"\0\s[40]\![set,choicetimeout,0]看看你是哪个时代的人\n13. “肮脏”这个词比“罪恶”更让你讨厌？\n/
+\q[A.Yes,Onjumptest4_B]\n/
+\q[B.No,Onjumptest4_14]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest4_14
+{
+"\0\s[40]\![set,choicetimeout,0]看看你是哪个时代的人\n14. 混乱对你来说意味着什么？\n/
+\q[A.可怕,Onjumptest4_3]\n/
+\q[B.机会,Onjumptest4_C]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+
+Onjumptest4_A
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]看看你是哪个时代的人\n/
+结果出来了，%username是A型.传说中的尧舜时代\n/
+这是个美好和天真的时代，传说那时的人们都纯洁高尚、没有险恶的勾心斗角，大家幸福地生活在一起。相应地，你是个充满梦想的孩子，不管实际年龄如何，至少现在你的心理年龄很年轻，可能在18岁以下。你相信世界的美好，喜欢“从此王子和公主幸福地生活在一起了”的结局，然而世界真的是你想象的那样子吗？ \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest4_B
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]看看你是哪个时代的人\n/
+结果出来了，%username是B型.战国时代 \n/
+战国时代是一个比较复杂的时期，这一时期既充满战乱，又充满各种思想的火花，尽管有许多残酷的事，但高尚与优雅在这一时期依然受到很强的推崇。你是个不安于现状的人，过久的和平让你感到厌倦，也许偶尔你因此会被冠上“好战”的名号，但其实你只是讨厌沉闷罢了。你有脱离现实和在意形式的一面，美丽的事物对你很有吸引力。\n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest4_C
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]看看你是哪个时代的人\n/
+结果出来了，%username是C型.三国时代 \n/
+
+    比起同处战乱年代的战国时期来，这是一个更不择手段的年代。你喜欢竞争，好胜心强，充沛的精力让你对各种有挑战性的事都很感兴趣。但与战国时代不同的是，和“美”这种抽象的东西相比你更注重现实，即使你是一个很道德的人，也不喜欢把道德挂在嘴边，在你看来，能验证一切的只有行动。\n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest4_D
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]看看你是哪个时代的人\n/
+结果出来了，%username是D型.魏晋时代 \n/
+    魏晋时代的特点之一是种种颓废的风气，由于经历的苦难太多，人们变得开始不相信现实，感到在这无常的世界中，一切都是不可靠的。生活在这一时代的你，同样是个喜欢怀疑的人，有时甚至怀疑自己的存在。你对世界持悲观的看法，现实对你来说常常是令人悲哀和无能为力的。但这并不意味着你是个消沉的人，所谓绝望的顶点是乐观，你只是比别人更清楚地看到了世界灰暗的一面而已。 \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest4_E
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]看看你是哪个时代的人\n/
+结果出来了，%username是E型.唐朝 \n/
+    唐朝是安定和繁荣的时代，无论文化还是财富都达到了太平盛世的顶峰。生活在这个时代的你，内心也是安稳的，你喜欢平静的生活，个性温和成熟，具有较强的包容心。你应该经历过一些小的苦恼，但却没有遭受过太大的打击，可以说你是个幸福的人，也会给你身边的人带来幸福。  \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest4_F
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]看看你是哪个时代的人\n/
+结果出来了，%username是F型.五四时代 \n/
+    套用《双城记》里的那句话，这是个光明的年代，也是个黑暗的年代，我们的前方有着一切，我们又一无所有。你或许正处在思想上的转变期，一些事让你对过去的自己发生了怀疑，决定重新调整一下自己的生活方式。走过这段路之后，一切会变得更好的。  \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest4_G
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]看看你是哪个时代的人\n/
+结果出来了，%username是G型.现代 \n/
+    你简直就是为我们的这个时代而生的！你并非不知道这世上有许多不尽人意之处，但你能把它们作为生活的一部分来接受下来，这让你过得很好。你不喜欢纷争，也会尽量避免不必要的纷争。尽管有些事依然会困扰你，但基本上说来你对现代社会里的种种问题多数能应付的比较好，也懂得如何在这纷繁的世界里找到自己的位置，这说明你是个成熟且适应力强的人。\n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest4_H
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]看看你是哪个时代的人\n/
+结果出来了，%username是H型.未来 \n/
+    如果你在做这套测试时做来做去总是回到同一道题目上，那么你是个奇特的未来人…… \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest5
+{
+"\0\s[40]\![set,choicetimeout,0]测试你的恶魔度，看看你到底是神还是恶魔\n1. 吃饭时你先吃喜欢的菜??\n/
+\q[A.Yes,Onjumptest5_2]\n/
+\q[B.No,Onjumptest5_3]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+
+Onjumptest5_2
+{
+"\0\s[40]\![set,choicetimeout,0]测试你的恶魔度，看看你到底是神还是恶魔\n2. 想要的东西即使很贵也会想办法买??\n/
+\q[A.Yes,Onjumptest5_4]\n/
+\q[B.No,Onjumptest5_6]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest5_3
+{
+"\0\s[40]\![set,choicetimeout,0]测试你的恶魔度，看看你到底是神还是恶魔\n3. 如果要变成动物你希望变成猫??\n/
+\q[A.Yes,Onjumptest5_5]\n/
+\q[B.No,Onjumptest5_7]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+
+Onjumptest5_4
+{
+"\0\s[40]\![set,choicetimeout,0]测试你的恶魔度，看看你到底是神还是恶魔\n4. 你常常脚踏数条船??\n/
+\q[A.Yes,Onjumptest5_6]\n/
+\q[B.No,Onjumptest5_7]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest5_5
+{
+"\0\s[40]\![set,choicetimeout,0]测试你的恶魔度，看看你到底是神还是恶魔\n5. 你常收异性送的礼物??\n/
+\q[A.Yes,Onjumptest5_8]\n/
+\q[B.No,Onjumptest5_10]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest5_6
+{
+"\0\s[40]\![set,choicetimeout,0]测试你的恶魔度，看看你到底是神还是恶魔\n6. 你曾碰到不太熟的异性向你示爱物??\n/
+\q[A.Yes,Onjumptest5_8]\n/
+\q[B.No,Onjumptest5_10]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest5_7
+{
+"\0\s[40]\![set,choicetimeout,0]测试你的恶魔度，看看你到底是神还是恶魔\n7. 你常被人说看起来很年轻???\n/
+\q[A.Yes,Onjumptest5_10]\n/
+\q[B.No,Onjumptest5_9]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest5_8
+{
+"\0\s[40]\![set,choicetimeout,0]测试你的恶魔度，看看你到底是神还是恶魔\n8. 你觉得常有贵人帮你??\n/
+\q[A.Yes,Onjumptest5_9]\n/
+\q[B.No,Onjumptest5_11]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest5_9
+{
+"\0\s[40]\![set,choicetimeout,0]测试你的恶魔度，看看你到底是神还是恶魔\n9. 你没什麼金钱观念??\n/
+\q[A.Yes,Onjumptest5_12]\n/
+\q[B.No,Onjumptest5_15]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest5_10
+{
+"\0\s[40]\![set,choicetimeout,0]测试你的恶魔度，看看你到底是神还是恶魔\n10. 你是个很有主见的人??\n/
+\q[A.Yes,Onjumptest5_13]\n/
+\q[B.No,Onjumptest5_14]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest5_11
+{
+"\0\s[40]\![set,choicetimeout,0]测试你的恶魔度，看看你到底是神还是恶魔\n11. 你很难拒绝别人的要求?? \n/
+\q[A.Yes,Onjumptest5_15]\n/
+\q[B.No,Onjumptest5_14]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest5_12
+{
+"\0\s[40]\![set,choicetimeout,0]测试你的恶魔度，看看你到底是神还是恶魔\n12. 你很难拒绝别人的要求?? \n/
+\q[A.Yes,Onjumptest5_15]\n/
+\q[B.No,Onjumptest5_16]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest5_13
+{
+"\0\s[40]\![set,choicetimeout,0]测试你的恶魔度，看看你到底是神还是恶魔\n13. 你长得并不漂亮，但很可爱?? \n/
+\q[A.Yes,Onjumptest5_18]\n/
+\q[B.No,Onjumptest5_17]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest5_14
+{
+"\0\s[40]\![set,choicetimeout,0]测试你的恶魔度，看看你到底是神还是恶魔\n14. 你喜欢捉弄人?? \n/
+\q[A.Yes,Onjumptest5_20]\n/
+\q[B.No,Onjumptest5_16]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest5_15
+{
+"\0\s[40]\![set,choicetimeout,0]测试你的恶魔度，看看你到底是神还是恶魔\n15. 送人礼物时都会很用心挑选?? \n/
+\q[A.Yes,Onjumptest5_19]\n/
+\q[B.No,Onjumptest5_17]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest5_16
+{
+"\0\s[40]\![set,choicetimeout,0]测试你的恶魔度，看看你到底是神还是恶魔\n16. 和异性走路时都比他们快??\n/
+\q[A.Yes,Onjumptest5_19]\n/
+\q[B.No,Onjumptest5_20]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest5_17
+{
+"\0\s[40]\![set,choicetimeout,0]测试你的恶魔度，看看你到底是神还是恶魔\n17. 你不喜欢油炸的食物?? \n/
+\q[A.Yes,Onjumptest5_20]\n/
+\q[B.No,Onjumptest5_19]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+
+Onjumptest5_18
+{
+"\0\s[40]\![set,choicetimeout,0]测试你的恶魔度，看看你到底是神还是恶魔\n18. 你你认为女人的魅力为含蓄?? \n/
+\q[A.Yes,Onjumptest5_19]\n/
+\q[B.No,Onjumptest5_20]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest5_19
+{
+"\0\s[40]\![set,choicetimeout,0]测试你的恶魔度，看看你到底是神还是恶魔\n18. 你是个满迟钝的人?? \n/
+\q[A.Yes,Onjumptest5_B]\n/
+\q[B.No,Onjumptest5_A]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest5_20
+{
+"\0\s[40]\![set,choicetimeout,0]测试你的恶魔度，看看你到底是神还是恶魔\n18. 你自认亲和力很够人?? \n/
+\q[A.Yes,Onjumptest5_D]\n/
+\q[B.No,Onjumptest5_C]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest5_A
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]测试你的恶魔度，看看你到底是神还是恶魔\n结果出来了，%username是A型.超级恶魔\n/ 
+想不到你会混在人里面这麼就，希望你好自为之．天使会找到你的 \n/ 
+
+
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest5_B
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]测试你的恶魔度，看看你到底是神还是恶魔\n结果出来了，%username是B型.无话可说了\n/ 
+凡人一个，平平安安，规规矩矩，活着吧 \n/ 
+
+
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest5_C
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]测试你的恶魔度，看看你到底是神还是恶魔\n结果出来了，%username是C型.你可不好说哦\n/ 
+说你是人，但你比人有灵感，说你是神，神又不愿意，好好想想，你以前是不是有过与常人不同的地方？比如见到听到别人见不到，听不到的？你要注意哦，恶魔和神都在注视着你哦． \n/ 
+
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest5_D
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]测试你的恶魔度，看看你到底是神还是恶魔\n结果出来了，%username是D型.神啊，你是来人间渡假的吗？希望你玩的开心 \n/ 
+
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+
+Onjumptest6
+{
+"\0\s[40]\![set,choicetimeout,0]水果颜色测你的性格\n1. 你喜欢紫色的还是青色的葡萄？\n/
+\q[A.紫色,Onjumptest6_3]\n/
+\q[B.青色,Onjumptest6_2]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest6_2
+{
+"\0\s[40]\![set,choicetimeout,0]水果颜色测你的性格\n2. 你觉得红苹果比绿苹果更好吗？\n/
+\q[A.Yes,Onjumptest6_5]\n/
+\q[B.No,Onjumptest6_4]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest6_3
+{
+"\0\s[40]\![set,choicetimeout,0]水果颜色测你的性格\n3. 你对水果的喜好是根据它的颜色而定吗？\n/
+\q[A.Yes,Onjumptest6_4]\n/
+\q[B.No,Onjumptest6_6]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest6_4
+{
+"\0\s[40]\![set,choicetimeout,0]水果颜色测你的性格\n4. 你相信世上有红色的香蕉吗？\n/
+\q[A.Yes,Onjumptest6_5]\n/
+\q[B.No,Onjumptest6_6]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest6_5
+{
+"\0\s[40]\![set,choicetimeout,0]水果颜色测你的性格\n5.如果苹果是黑的，葡萄是蓝的，那么你觉得橘子是什么颜色的？\n/
+\q[A.绿色,Onjumptest6_8]\n/
+\q[B.紫色,Onjumptest6_7]\n/
+\q[C.其他,Onjumptest6_6]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest6_6
+{
+"\0\s[40]\![set,choicetimeout,0]水果颜色测你的性格\n6.你觉得绿香蕉比黄香蕉更好吃吗？\n/
+\q[A.Yes,Onjumptest6_8]\n/
+\q[B.No,Onjumptest6_9]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest6_7
+{
+"\0\s[40]\![set,choicetimeout,0]水果颜色测你的性格\n7.如果西瓜不是绿色的，你希望是什么颜色的？ \n/
+\q[A.红色,Onjumptest6_12]\n/
+\q[B.褐色,Onjumptest6_9]\n/
+\q[B.蓝色,Onjumptest6_11]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest6_8
+{
+"\0\s[40]\![set,choicetimeout,0]水果颜色测你的性格\n8.苹果红和草莓红，你喜欢哪种？ \n/
+\q[A.苹果红,Onjumptest6_10]\n/
+\q[B.草莓红,Onjumptest6_9]\n/
+\q[B.感觉没区别,Onjumptest6_12]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest6_9
+{
+"\0\s[40]\![set,choicetimeout,0]水果颜色测你的性格\n9.你喜欢哪种水果？ \n/
+\q[A.草莓,Onjumptest6_10]\n/
+\q[B.榴莲,Onjumptest6_14]\n/
+\q[B.石榴别,Onjumptest6_11]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest6_10
+{
+"\0\s[40]\![set,choicetimeout,0]水果颜色测你的性格\n10.你喜欢橘黄色的梨还是黄色的？ \n/
+\q[A.橘黄,Onjumptest6_11]\n/
+\q[B.黄色,Onjumptest6_12]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest6_11
+{
+"\0\s[40]\![set,choicetimeout,0]水果颜色测你的性格\n11.你喜欢吃榴莲吗？ \n/
+\q[A.喜欢,Onjumptest6_14]\n/
+\q[B.不喜欢,Onjumptest6_13]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest6_12
+{
+"\0\s[40]\![set,choicetimeout,0]水果颜色测你的性格\n12.你觉得吃深色水果比浅色水果更健康吗？ \n/
+\q[A.Yes,Onjumptest6_14]\n/
+\q[B.No,Onjumptest6_16]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest6_13
+{
+"\0\s[40]\![set,choicetimeout,0]水果颜色测你的性格\n13.如果你可以改变水果的颜色，你希望芒果是无色透明的吗？ \n/
+\q[A.Yes,Onjumptest6_15]\n/
+\q[B.No,Onjumptest6_14]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest6_14
+{
+"\0\s[40]\![set,choicetimeout,0]水果颜色测你的性格\n14.你喜欢吃樱桃吗？ \n/
+\q[A.喜欢,Onjumptest6_15]\n/
+\q[B.不喜欢,Onjumptest6_A]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest6_15
+{
+"\0\s[40]\![set,choicetimeout,0]水果颜色测你的性格\n15.你相信世界上有黑色的苹果吗？ \n/
+\q[A.相信,Onjumptest6_A]\n/
+\q[B.不信,Onjumptest6_C]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest6_16
+{
+"\0\s[40]\![set,choicetimeout,0]水果颜色测你的性格\n16.你认为绿色的水果就是不成熟的吗？ \n/
+\q[A.Yes,Onjumptest6_B]\n/
+\q[B.No,Onjumptest6_C]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest6_17
+{
+"\0\s[40]\![set,choicetimeout,0]水果颜色测你的性格\n17.如果你是水果，你觉得你会是水果之王吗？ \n/
+\q[A.会,Onjumptest6_D]\n/
+\q[B.不会,Onjumptest6_A]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest6_A
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]水果颜色测你的性格\n结果出来了，%username是A型.高傲：\n/
+表面上的你温柔和蔼，可是内心却充斥着攀比的思想。你的内心不允许你向任何人低头，你总是拼着自己的全力去和对手一比高下，即使平时不会表现出来，但在你成功时的那一瞥笑，就出卖了你内心所有的潜在欲望，不要想太多，因为会很费神经的，克制下自己对成功的渴望吧！  \n/ 
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest6_B
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]水果颜色测你的性格\n结果出来了，%username是B型.自卑：\n/
+你经常不相信自己的魅力，也不相信自己的思考模式，因为你总是怕犯错误，怕被人嘲笑，也怕自己不好意思，所以这样的思想在你的心里让你矛盾，让你不知道该如何去面对面的困难，表面上坚强的你，其实真的觉得自己活得很累，多放松放松，给自己点空间好好想想！  \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest6_C
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]水果颜色测你的性格\n结果出来了，%username是C型.自恋：\n/
+你是那种很喜欢照镜子的类型，你喜欢把自己的美丽展现出来，可是在大众面前却又是毫不在乎的样子，你渴望自己受到关注，同时你也相信自己有那种魅力，无论是外表上还是能力上，你总是默默地觉得自己是最好的，需要注意的是，不要表现的过于露骨，不然容易遭到他人的反感！ \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest6_D
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]水果颜色测你的性格\n结果出来了，%username是D型.疯狂：\n/
+你文静吗？如果回答是YES，那么你就大错特错了，其实年的内心渴望的是一种疯狂，你经常远远地注视那些疯狂的人，却不肯靠近，但你内心的冲动，让你觉得耐不住平静的生活，你渴望轰轰烈烈的生活，渴望翻天覆地的变动，不甘心一生平凡的你，疯狂就是你一直拥有的潜在人格！\n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest7
+{
+"\0\s[40]\![set,choicetimeout,0]你一生会真心爱几个人\n1.当他温柔地看着你，你会说：\n/
+\q[A.你的眼睛大又圆,Onjumptest7_2]\n/
+\q[B.你真好,Onjumptest7_3]\n/
+\q[C.你踩到我的脚了,Onjumptest7_3]\n/
+\q[D.你想什么呢？,Onjumptest7_2]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest7_2
+{
+"\0\s[40]\![set,choicetimeout,0]你一生会真心爱几个人\n2.当你想念他的笑和吻的时候，你会\n/
+\q[A.打电话给他,Onjumptest7_3]\n/
+\q[B.个人呆着，练习眨眼睛,Onjumptest7_4]\n/
+\q[C.找好朋友,Onjumptest7_5]\n/
+\q[D.洗衣服,Onjumptest7_3]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest7_3
+{
+"\0\s[40]\![set,choicetimeout,0]你一生会真心爱几个人\n3.喜欢听浪漫伤感情歌吗？\n/
+\q[A.害怕听,Onjumptest7_4]\n/
+\q[B.非常喜欢,Onjumptest7_4]\n/
+\q[C.厌恶,Onjumptest7_5]\n/
+\q[D.还好,Onjumptest7_6]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest7_4
+{
+"\0\s[40]\![set,choicetimeout,0]你一生会真心爱几个人\n4.有种花的习惯吗？\n/
+\q[A.没有,Onjumptest7_5]\n/
+\q[B.有,Onjumptest7_5]\n/
+\q[C.懒惰,Onjumptest7_6]\n/
+\q[D.咱们看下一道题,Onjumptest7_6]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest7_5
+{
+"\0\s[40]\![set,choicetimeout,0]你一生会真心爱几个人\n5.如果朋友送你一只狗，你会：？\n/
+\q[A.表面高兴，心里想这家伙害死我了！,Onjumptest7_6]\n/
+\q[B.感到太幸福了，早就想要一只,Onjumptest7_7]\n/
+\q[C.接受的时候就面露尴尬,Onjumptest7_8]\n/
+\q[D.顺其自然,Onjumptest7_9]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest7_6
+{
+"\0\s[40]\![set,choicetimeout,0]你一生会真心爱几个人\n6.如果男生跟你夸他自己的能力有多么强，他自己多么帅，你会认为：？\n/
+\q[A.男人都这样。是个男人，他就帅了！,Onjumptest7_7]\n/
+\q[B.他真无聊,Onjumptest7_8]\n/
+\q[C.他挺有意思,Onjumptest7_7]\n/
+\q[D.他喝多了,Onjumptest7_9]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest7_7
+{
+"\0\s[40]\![set,choicetimeout,0]你一生会真心爱几个人\n7.你怎样处理以前情人留下来的东西？ \n/
+\q[A.扔掉,Onjumptest7_8]\n/
+\q[B.留着,Onjumptest7_9]\n/
+\q[C.送回或送人,Onjumptest7_9]\n/
+\q[D.砸烂,Onjumptest7_8]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest7_8
+{
+"\0\s[40]\![set,choicetimeout,0]你一生会真心爱几个人\n8.喜欢去麦当劳点什么东西？ \n/
+\q[A.套餐,Onjumptest7_9]\n/
+\q[B.单品,Onjumptest7_10]\n/
+\q[C.一定要用优惠券,Onjumptest7_9]\n/
+\q[D.不一定,Onjumptest7_11]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest7_9
+{
+"\0\s[40]\![set,choicetimeout,0]你一生会真心爱几个人\n9.喜欢上网做什么？ \n/
+\q[A.查邮件或很简单的事情,Onjumptest7_10]\n/
+\q[B.写文章、灌水,Onjumptest7_11]\n/
+\q[C.狂聊天,Onjumptest7_12]\n/
+\q[D.不喜欢上网,Onjumptest7_11]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest7_10
+{
+"\0\s[40]\![set,choicetimeout,0]你一生会真心爱几个人\n10.信用卡有多少张？ \n/
+\q[A.零,Onjumptest7_11]\n/
+\q[B.一张到三张,Onjumptest7_12]\n/
+\q[C.不知道,Onjumptest7_13]\n/
+\q[D.很多吧,Onjumptest7_12]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest7_11
+{
+"\0\s[40]\![set,choicetimeout,0]你一生会真心爱几个人\n11.怎样修理你的头发？ \n/
+\q[A.去小发廊,Onjumptest7_12]\n/
+\q[B.自己动手,Onjumptest7_13]\n/
+\q[C.我没有头发,Onjumptest7_12]\n/
+\q[D.找个有品位的发廊,Onjumptest7_13]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest7_12
+{
+"\0\s[40]\![set,choicetimeout,0]你一生会真心爱几个人\n12.你的QQ需要身份验证吗？ \n/
+\q[A.当然,Onjumptest7_13]\n/
+\q[B.不用,Onjumptest7_14]\n/
+\q[C.你问哪个QQ,Onjumptest7_15]\n/
+\q[D.不一定或者没QQ，不使用QQ,Onjumptest7_13]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest7_13
+{
+"\0\s[40]\![set,choicetimeout,0]你一生会真心爱几个人\n13.有固定喜欢的明星偶像吗？ \n/
+\q[A.曾经,Onjumptest7_14]\n/
+\q[B.有,Onjumptest7_14]\n/
+\q[C.没有,Onjumptest7_15]\n/
+\q[D.很难说清楚,Onjumptest7_16]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest7_14
+{
+"\0\s[40]\![set,choicetimeout,0]你一生会真心爱几个人\n14.当一个人对你说爱你，想象一下你当时的表情会是： \n/
+\q[A.傻笑,Onjumptest7_15]\n/
+\q[B.惊讶,Onjumptest7_16]\n/
+\q[C.无表情,Onjumptest7_15]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest7_15
+{
+"\0\s[40]\![set,choicetimeout,0]你一生会真心爱几个人\n15.去动物园的时候，请你选择以下你比较喜欢去做的事情： \n/
+\q[A.喂动物,Onjumptest7_16]\n/
+\q[B.摸动物,Onjumptest7_17]\n/
+\q[C.咬动物（如果动物园允许的话）,Onjumptest7_17]\n/
+\q[D.吃动物（仅仅允许幻想）,Onjumptest7_16]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest7_16
+{
+"\0\s[40]\![set,choicetimeout,0]你一生会真心爱几个人\n16.你喜欢跟情人怎样相处？ \n/
+\q[A.拉着,Onjumptest7_17]\n/
+\q[B.搂着,Onjumptest7_18]\n/
+\q[C.压着,Onjumptest7_19]\n/
+\q[D.未成年不宜,Onjumptest7_18]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest7_17
+{
+"\0\s[40]\![set,choicetimeout,0]你一生会真心爱几个人\n17.累的时候喜欢： \n/
+\q[A.睡觉,Onjumptest7_19]\n/
+\q[B.洗澡,Onjumptest7_20]\n/
+\q[C.被按摩,Onjumptest7_18]\n/
+\q[D.其他,Onjumptest7_19]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest7_18
+{
+"\0\s[40]\![set,choicetimeout,0]你一生会真心爱几个人\n18.当你希望跟一个人一辈子在一起，你会选择以下： \n/
+\q[A.跟他说,Onjumptest7_A]\n/
+\q[B.等他说出来,Onjumptest7_19]\n/
+\q[C.让他跟你说,Onjumptest7_20]\n/
+\q[D.别的方式,Onjumptest7_19]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest7_19
+{
+"\0\s[40]\![set,choicetimeout,0]你一生会真心爱几个人\n19.喜欢爱人跟你撒娇吗？\n/
+\q[A.喜欢跟爱人撒娇,Onjumptest7_B]\n/
+\q[B.还好吧，能接受,Onjumptest7_20]\n/
+\q[C.笑，一般吧,Onjumptest7_B]\n/
+\q[D.非常喜欢，觉得这样很可爱,Onjumptest7_20]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest7_20
+{
+"\0\s[40]\![set,choicetimeout,0]你一生会真心爱几个人\n19.当爱人在你面前哭泣：\n/
+\q[A.无奈，不是很喜欢,Onjumptest7_D]\n/
+\q[B.为难，不知道该怎么办,Onjumptest7_C]\n/
+\q[C.哄他，但自己比较清醒,Onjumptest7_B]\n/
+\q[D.跟着心碎,Onjumptest7_A]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest7_A
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你一生会真心爱几个人\n结果出来了，%username是A型.\n/
+你的真心人就是那么一个，永永远远的那一个。从此以后，不论你再遇见谁，跟谁在一起，你再也不会对其他人有以前那个人那样的痴情。人是很奇怪的东西，没有理由的相遇，没有理由的萌生爱意。也许爱一个人很简单，但是总想起的还是他好，还是那个他没有任何毛病。在你心中永远完美。就像《东京爱情故事》中的莉香，永远的微笑着，成为一个美好的标志。  \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest7_B
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你一生会真心爱几个人\n结果出来了，%username是B型.\n/
+你的真心人是谁？你一生会有无数的爱人，少则七八个，多则20多个。你自己都不知道谁是你的最爱。也许有的人会被你记住，但记住不代表爱情。你戏弄红尘，嘲笑爱情，浪逐尘世，也被尘世、爱情、红尘狠狠的报复、惩罚。应该说，这是你自找的。你就像《东邪西毒》的西毒一样，你渴望知道被人喜欢的感觉是这么样的，结果伤害了很多人。现在，看到了这个测试结果，你是不是应该考虑来个结束呢？是你回归单纯的时候了吧？  \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest7_C
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你一生会真心爱几个人\n结果出来了，%username是C型.\n/
+你会有那么两个刻骨铭心的爱人，甚至是一段三角恋爱。你最爱谁？恐怕你也不清楚，一个阶段一个想法。这不是你的错误，更不是他们的错误。当然，也不是我的错误。爱情这东西，公说公有理，婆说婆有理，说来说去说得谁心里也没有底。但愿你现在已经离开了那段乱七八糟的经历。如果现在还没解脱的话，给你一个建议，他们两个谁都别跟随。不够完美的爱情对谁都是一场折磨。不如从头开始。虽然后来的爱人不再是那样的爱了，但是像阳光一样温暖的爱情有什么不好呢？   \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest7_D
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你一生会真心爱几个人\n结果出来了，%username是D型.\n/
+恐怕，你一生也没有最爱的人吧。因为你对自由的渴望，因为你对你所追求的文化的热爱也许远远超过了对爱情的关心。也许朋友对你来说是更加可靠的心理上的中流砥柱。和你这样的人组成家庭应该是很幸福的。因为你能用超出一般的人的眼光来看待事物。因为你太理性还是因为你太独特？找到一个和你身心合璧的人也许真的太难了。所以，恐怕是这样。但是，茫茫人海，谁又能找到真正合适自己的那个人呢？    \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest8
+{
+"\0\s[40]\![set,choicetimeout,0]你想要机器猫借给你什么\n即使是已经三十而立的大人，偶尔也会想要一只万能的机器猫，在机器猫的万能口袋中，什么才是你最想要的礼物呢？你需要机器猫借你什么工具，来测一下就知道了。\n/
+1.如果有两条路可以到达目的地，你会选择哪一条路走？\n/
+\q[A.较近而且有趣的小路,Onjumptest8_2]\n/
+\q[B.舒适有美丽风景的远路,Onjumptest8_3]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest8_2
+{
+"\0\s[40]\![set,choicetimeout,0]你想要机器猫借给你什么\n2.休假的时候怎样的生活更觉得舒适？\n/
+\q[A.拿着相机在野外边散步边拍照,Onjumptest8_4]\n/
+\q[B.在家里躺在沙发里看电视或上网,Onjumptest8_3]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest8_3
+{
+"\0\s[40]\![set,choicetimeout,0]你想要机器猫借给你什么\n3.要是成为童话人物的话，你想要当哪位公主？\n/
+\q[A.人鱼公主,Onjumptest8_5]\n/
+\q[B.白雪公主,Onjumptest8_6]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest8_4
+{
+"\0\s[40]\![set,choicetimeout,0]你想要机器猫借给你什么\n4.你会更在乎那方面的面子？\n/
+\q[A.在爱情上有很多人追求,Onjumptest8_5]\n/
+\q[B.在工作或者学习上比别人出色,Onjumptest8_7]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest8_5
+{
+"\0\s[40]\![set,choicetimeout,0]你想要机器猫借给你什么\n5.逛街的时候最痛苦的是？\n/
+\q[A.看不到适合自己想买的东西,Onjumptest8_8]\n/
+\q[B.看到什么东西都想买,Onjumptest8_9]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest8_6
+{
+"\0\s[40]\![set,choicetimeout,0]你想要机器猫借给你什么\n6.如果下辈子可以做一种动物，你想当什么？\n/
+\q[A.可以在深海里生存的漂亮鱼类,Onjumptest8_7]\n/
+\q[B.可以在天上自由自在飞翔的鸟类,Onjumptest8_14]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest8_7
+{
+"\0\s[40]\![set,choicetimeout,0]你想要机器猫借给你什么\n7.对你来说很困难的是？\n/
+\q[A.起早床,Onjumptest8_9]\n/
+\q[B.背长篇大论的书,Onjumptest8_8]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest8_8
+{
+"\0\s[40]\![set,choicetimeout,0]你想要机器猫借给你什么\n8.你犯错误的原因一般是？\n/
+\q[A.粗心大意,Onjumptest8_10]\n/
+\q[B.忘记理论性的知识,Onjumptest8_11]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest8_9
+{
+"\0\s[40]\![set,choicetimeout,0]你想要机器猫借给你什么\n9.很想做却不能做的事情是?\n/
+\q[A.环游世界,Onjumptest8_10]\n/
+\q[B.买到所有想要的东西,Onjumptest8_12]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest8_10
+{
+"\0\s[40]\![set,choicetimeout,0]你想要机器猫借给你什么\n10.如果让你拥有一片私人空间，你想要怎样的？\n/
+\q[A.一个无人的小岛,Onjumptest8_13]\n/
+\q[B.一座漂亮的依山傍水的小屋,Onjumptest8_14]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest8_11
+{
+"\0\s[40]\![set,choicetimeout,0]你想要机器猫借给你什么\n11.比较不擅长的是？\n/
+\q[A.口头表达,Onjumptest8_15]\n/
+\q[B.书面表达,Onjumptest8_12]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest8_12
+{
+"\0\s[40]\![set,choicetimeout,0]你想要机器猫借给你什么\n12.和恋人约会时最希望的是？\n/
+\q[A.浪漫温馨会长久怀念的经歷,Onjumptest8_B]\n/
+\q[B.疯狂惊险会一辈子记得的经歷,Onjumptest8_E]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest8_13
+{
+"\0\s[40]\![set,choicetimeout,0]你想要机器猫借给你什么\n13.恋人的父母突然到你这里来，你的反映是？\n/
+\q[A.比较慌张，因为家里比较乱,Onjumptest8_A]\n/
+\q[B.能够理所当然的处理问题想办法带他们出去吃饭,Onjumptest8_C]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest8_14
+{
+"\0\s[40]\![set,choicetimeout,0]你想要机器猫借给你什么\n14.如果你碰到一个巫师，你最希望得到什么？\n/
+\q[A.给你一项特殊的技能,Onjumptest8_12]\n/
+\q[B.你知道并改变你未来的命运,Onjumptest8_13]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest8_15
+{
+"\0\s[40]\![set,choicetimeout,0]你想要机器猫借给你什么\n15.最让你觉得尴尬的是？\n/
+\q[A.别人热情的向你打招呼你却不知道对方是谁,Onjumptest8_D]\n/
+\q[B.自己不善的学习或者工作成绩在众人面前被公开,Onjumptest8_E]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest8_A
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你想要机器猫借给你什么\n结果出来了，%username是A型.\n/
+你最想要机器猫借给你的是任意门。你其实是一个有些懒的人，就算想要做什么事情也会因为麻烦而放弃。但是你却又有很强的探索心，能够舒舒服服的完成所有的事情就是你的愿望，所以任意门是你的最需要的工具。\n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest8_B
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你想要机器猫借给你什么\n结果出来了，%username是B型.\n/
+时光机是你最需要的工具。你是一个有些敏感和不安的人，会因为很小的事情丧失安全感。你念旧，同时又对未来感到不安，每当失败的时候就深深的沮丧和懊悔。对于你来说，时光机就能够让你获得最完美的安全感啦。\n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest8_C
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你想要机器猫借给你什么\n结果出来了，%username是C型.\n/
+你最想要的当然就是机器猫口袋里面的实物图鉴了，能够将所有书本里面的漂亮东西全都变成真的让你享用，不想要的时候就塞回书里。这样的礼物，对于很要面子，并且需求很高生活品质的你简直是完美的工具。 \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest8_D
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你想要机器猫借给你什么\n结果出来了，%username是D型.\n/
+无疑你需要的就是记忆面包了，不拘小节的你经常会因为不能记住细节问题而尴尬，却又很在乎别人对你的看法。能够拥有记忆面包的话就能将所有的事情都印在脑袋里避免不必要的麻烦了。 \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest8_E
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你想要机器猫借给你什么\n结果出来了，%username是E型.\n/
+喜欢新奇事物的你，最想要的就是竹蜻蜓，能够到各种各样的地方去经歷新奇的事情。同时你又在乎别人对你的看法，并且碰到问题喜欢先逃避了再说的人，希望竹蜻蜓能够带你去避免所有的不愉快，逃到只有幸福的地方去。 \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest9
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V2\n1.当你到达一个陌生城市，定好了房间，洗澡睡觉休息够了，你最先去的地方一定是 \n/
+\q[A.博物馆,Onjumptest9_3]\n/
+\q[B.那里最闻名的shoping圈,Onjumptest9_2]\n/
+\q[B.当地最负盛名的风景区,Onjumptest9_4]\n/
+\q[B.最具风土人情的街道小巷,Onjumptest9_5]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest9_2
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V2\n2.如果你的男友出车祸，在医院接受抢救，哪种结果使你能够坦然接受的？  \n/
+\q[A.丧失记忆,Onjumptest9_4]\n/
+\q[B.因车祸毁容，恢复容貌后变成了另一张脸,Onjumptest9_3]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest9_3
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V2\n3.在漫画《X战记》中，你比较喜欢哪个主人公？ \n/
+\q[A.天龙神威,Onjumptest9_4]\n/
+\q[B.地龙封真,Onjumptest9_5]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest9_4
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V2\n4.下面哪种解释更接近你对于“生活在别处”这句话的理解？ \n/
+\q[A.存在与意识的偏差,Onjumptest9_7]\n/
+\q[B.身体与灵魂的对立,Onjumptest9_6]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest9_5
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V2\n5.你最喜欢哪个季节？ \n/
+\q[A.春季或夏季,Onjumptest9_6]\n/
+\q[B.秋季或冬季,Onjumptest9_8]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest9_6
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V2\n6.如果你是希腊神话中的英雄赫拉克勒斯，你会选择哪条人生路？  \n/
+\q[A.美德女神指引的光明艰辛之路,Onjumptest9_7]\n/
+\q[B.幸福女神（轻佻女神）指引的享乐罪恶之路,Onjumptest9_9]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest9_7
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V2\n7.你希望以哪种方式遇到你命中的对象？  \n/
+\q[A.在路上或咖啡馆偶然结识,Onjumptest9_10]\n/
+\q[B.在朋友的家中巧遇,Onjumptest9_8]\n/
+\q[B.在工作或谈判中认识,Onjumptest9_9]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest9_8
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V2\n8.哪种赞美之词更得你心？  \n/
+\q[A.漂亮，有气质,Onjumptest9_12]\n/
+\q[B.聪明，有本事,Onjumptest9_10]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest9_9
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V2\n9.当你向异性表白遭到拒绝后，你会？  \n/
+\q[A.就此死心，寻找新的目标,Onjumptest9_11]\n/
+\q[B.在一段时间内，还渴望他（她）的垂青,Onjumptest9_13]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest9_10
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V2\n10.下面哪一项更符合你所追求的人生之乐？  \n/
+\q[A.纵情山水之乐,Onjumptest9_13]\n/
+\q[B.沙场点兵之乐,Onjumptest9_11]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest9_11
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V2\n11.你认为哪种色彩代表了死亡的颜色？   \n/
+\q[A.五彩斑斓的,Onjumptest9_12]\n/
+\q[B.黑色的,Onjumptest9_15]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest9_12
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V2\n12.你认为哪一幕更能展现美人的惊艳？ \n/
+\q[A.回眸一笑，倾国倾城,Onjumptest9_A]\n/
+\q[B.病榻之上，挂着一丝诡异的笑，告别人世,Onjumptest9_14]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest9_13
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V2\n13.你对哪种欲望更加痴迷？ \n/
+\q[A.掌控的欲望,Onjumptest9_B]\n/
+\q[B.独立的欲望,Onjumptest9_15]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest9_14
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V2\n14.你觉得爱情是什么？ \n/
+\q[A.一场抵死缠绵的风月,Onjumptest9_C]\n/
+\q[B.一曲可歌可泣的浪漫,Onjumptest9_D]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest9_15
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V2\n15.你买回来的衣服总免不了要被你自己鼓捣一番吗？ \n/
+\q[A.是的,Onjumptest9_E]\n/
+\q[B.不是,Onjumptest9_F]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest9_A
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V2\n结果出来了，%username是A型.太阳神阿波罗\n/
+阿波罗是主管艺术、医药、预言的神。阿波罗容貌秀丽，俊朗不凡，是众女神倾慕的对象，始终未婚，但身边从不缺少爱人，不过因为丘比特戏弄，他终还是没法赢得达芙妮的芳心。\n/ 
+
+　　你也像阿波罗一样，个性率直坦荡，说话直来直去，从不喜欢拐弯抹角，也讨厌别人那种含糊不清的态度。你很生性高傲，能让你欣赏结为莫逆的人很少，所以，你认定的朋友对你有非凡的意义。而且一旦需要，你绝对可以毫不犹豫地为他们赴汤蹈火，两肋插刀。你的行动力很强，不过，你的性子太急躁，易冲动，记得要注意一下噢，要不有可能被你搞出大乱子的。   \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest9_B
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V2\n结果出来了，%username是B型.主神宙斯\n/
+宙斯是希腊神话中的主神，一向以好色而闻名，只是碍于天后赫拉强烈的嫉妒性而不得不偷偷摸摸地进行。 \n/
+
+　　虽然你也明白凡事没有绝对，但是不管遇到什么事，你对是非黑白的答案还是很执着。对你来讲，明明白白、干干脆脆才是你对待生活的态度。做你的朋友，和你相处是件很麻烦的事，你不但规矩一大堆，而且总喜欢支配别人，希望别人都按照你的想法行事。虽然你偶尔也会对尊重一下别人的意见，听别人说两句，不过，那可是在你百年不遇的好心情突然产生的时候才会有的奇迹。    \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest9_C
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V2\n结果出来了，%username是C型.智慧女神雅典娜 \n/
+ 雅典娜是从宙斯的头顶跳出来的全副武装的女神，掌管战争与技艺，嫉妒心强，而且极为好战，她的盾牌上，挂的就是美杜莎的首级。\n/ 
+
+　　你仪表堂堂，而且看上去很有风度，平时说起话来温和友好。但其实个性极端的很，而且很难相处，要是有谁惹得你不高兴，就算当场没发作，你也是决不会善不甘休的，总有一天要把今天吃得亏向对方连本带利的讨回来。虽然如此，你对待朋友却好得很，只要是你喜欢的人，就可以什么都不计较。说起来，你还真是蛮复杂的呀。 \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest9_D
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V2\n结果出来了，%username是D型.爱神阿弗洛狄忒 \n/
+ 阿弗洛狄特是爱与美的女神，当金发的阿弗洛狄忒从海洋的泡沫中诞生的一刻,她就注定了是爱与美的宠儿。\n/ 
+
+　　说句老实话，你这个人的事还真不少，你极要求完美，无论做什么都会给自己定一个很高的标准。而且你对人很苛刻，有点吹毛求，其他人是很难达到你的要求的，所以，你在无形中可是给人添加了不小的压力。虽然你个性温和，心地又好，平常对朋友又总是一副没脾气的样子，不过，千万别把你逼急了，你可是个不好惹的人。 \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+
+Onjumptest9_E
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V2\n结果出来了，%username是E型.缪斯女神卡利欧碧 \n/
+ 阿弗洛狄特是爱与美的女神，当金发的阿弗洛狄忒从海洋的泡沫中诞生的一刻,她就注定了是爱与美的宠儿。\n/ 
+
+　　缪斯女神共有九位，卡利欧碧是其中最有名的，她所掌管的是诗人创作的灵感，书画家通常会把她描绘成长着翅膀的美丽女子。\n/ 
+
+　　真弄不明白你的脑子到底是怎么长的，你怎么会有那么多奇奇怪怪的想法，你天马行空的想象力，总是会在不经意间让人大吃一惊。你的性格很矛盾，而且很爱嘴硬，从来不肯承认自己错了。明明心里很在意别人的想法，却要装得满不在乎。你只是在表面狂妄不羁，心里其实很没有自信，不过，你所有的软弱无助都不会表现出来，因为你认为让人发现了弱点，就相 当于被抓住了把柄。  \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest9_F
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]测测你的守护神是哪位希腊神V2\n结果出来了，%username是F型.性爱之神安格司  \n/
+ 安格司是一位聪明俊朗的翩翩美少年，手里总拿着一把金色的竖琴，他的吻会变成小鸟为恋爱中的男女传递倾情。 \n/
+
+　　你天生缺少悲天悯人之心，一向只崇拜强者，你认为世界的本质就是弱肉强食，万世的基业也是踏着遍地的骸骨建成的。你为人很精明，看上去成熟世故，不过，你的本质就像是一个天真的孩子。倒不是你对这人心之事还抱有希望，只是想当然的认为那些倒霉事不会平白落在自己的头上。你凡事都会首先想到最坏的一面，但在潜意识里还是觉得事到临头，肯定会出现转机的.  \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest10
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的心是什么做的？\n1.你跟男(女)性朋友能否无所不谈？ \n/
+\q[A.Yes,Onjumptest10_2]\n/
+\q[B.No,Onjumptest10_3]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest10_2
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的心是什么做的？\n2.当恋爱出现问题时，你是否自然就会责备自己，认为是自己的错？ \n/
+\q[A.Yes,Onjumptest10_4]\n/
+\q[B.No,Onjumptest10_5]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest10_3
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的心是什么做的？\n3.你是否很容易便跟人谈恋爱，而且很快就会爱得很投入？ \n/
+\q[A.Yes,Onjumptest10_2]\n/
+\q[B.No,Onjumptest10_5]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest10_4
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的心是什么做的？\n4.你是否不太愿意跟随自己的浪漫直觉行事？ \n/
+\q[A.Yes,Onjumptest10_6]\n/
+\q[B.No,Onjumptest10_7]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest10_5
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的心是什么做的？\n5.如果你心仪的异性答应会致电，但却忘记了，你是否会很伤心？ \n/
+\q[A.Yes,Onjumptest10_4]\n/
+\q[B.No,Onjumptest10_7]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest10_6
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的心是什么做的？\n6.你是否不愿意做一个独身女（男）郎？ \n/
+\q[A.Yes,Onjumptest10_8]\n/
+\q[B.No,Onjumptest10_7]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest10_7
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的心是什么做的？\n7.你是否要经过长时间相处才能够真正信任一个人？  \n/
+\q[A.Yes,Onjumptest10_10]\n/
+\q[B.No,Onjumptest10_8]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest10_8
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的心是什么做的？\n8.你跟前度男(女)朋友分手后，是否要四个月以上才能忘记他？ \n/
+\q[A.Yes,Onjumptest10_9]\n/
+\q[B.No,Onjumptest10_10]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest10_9
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的心是什么做的？\n9.如果跟男(女)友拍拖一切顺利，你会开始计划你们的将来吗？ \n/
+\q[A.Yes,Onjumptest10_11]\n/
+\q[B.No,Onjumptest10_10]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest10_10
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的心是什么做的？\n10.你看见一对情侣在街上手牵手时，会感到妨忌吗？\n/
+\q[A.Yes,Onjumptest10_15]\n/
+\q[B.No,Onjumptest10_12]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest10_11
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的心是什么做的？\n11.在过去的三个月内，你已被异性抛弃三次以上？ \n/
+\q[A.Yes,Onjumptest10_13]\n/
+\q[B.No,Onjumptest10_15]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest10_12
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的心是什么做的？\n12.若男(女)朋友对你很差，你还会跟他继续拍拖吗？ \n/
+\q[A.Yes,Onjumptest10_13]\n/
+\q[B.No,Onjumptest10_14]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest10_13
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的心是什么做的？\n13.你是否认为，把感情埋藏于心里会比较安全，能避免受伤害？ \n/
+\q[A.Yes,Onjumptest10_19]\n/
+\q[B.No,Onjumptest10_17]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest10_14
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的心是什么做的？\n14.你是否宁愿“拍散拖”多于拥有一段认真的恋爱关系？\n/
+\q[A.Yes,Onjumptest10_18]\n/
+\q[B.No,Onjumptest10_16]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest10_15
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的心是什么做的？\n15.你跟男(女)友分手已一年，是否每次听到电台播放情歌就泛起泪光或悲伤？\n/
+\q[A.Yes,Onjumptest10_16]\n/
+\q[B.No,Onjumptest10_13]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest10_16
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的心是什么做的？\n16.如果你的男(女)友说:“我们的性格不合，还是分手吧。”你会哀求他不要抛弃你吗？\n/
+\q[A.Yes,Onjumptest10_17]\n/
+\q[B.No,Onjumptest10_19]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest10_17
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的心是什么做的？\n17.你是否经常怀念旧日情缘，不大放得下？\n/
+\q[A.Yes,Onjumptest10_20]\n/
+\q[B.No,Onjumptest10_19]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest10_18
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的心是什么做的？\n18.如果你跟一个很心仪的异性拍拖，但你着实感到两人合不来， 你有勇气提出分手吗？\n/
+\q[A.Yes,Onjumptest10_B]\n/
+\q[B.No,Onjumptest10_17]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest10_19
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的心是什么做的？\n19.如果你认为改变自己的外貌能令分手的男(女)友回心转意，你会那样做吗？ \n/
+\q[A.Yes,Onjumptest10_A]\n/
+\q[B.No,Onjumptest10_20]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest10_20
+{
+"\0\s[40]\![set,choicetimeout,0]测测你的心是什么做的？\n20.你是否一想到要对一个男(女)人作出承诺便怕得要拔足逃走？ \n/
+\q[A.Yes,Onjumptest10_C]\n/
+\q[B.No,Onjumptest10_B]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest10_A
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]测测你的心是什么做的？\n结果出来了，%username是A型.玻璃造的心\n/
+ 你很容易便堕入爱河，而且每次都是全力以赴，爱得非常投入。 可是，这也注定你在很多时候都以心碎收场。下次当你再度堕入情网时，尝试稍作保留，待加深对他的了解后，认为他值得你去爱时， 再把头载进去也不迟。同时，请记住失恋并不是世界末日，不要太介怀。 \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest10_B
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]测测你的心是什么做的？\n结果出来了，%username是B型.橡皮造的心\n/
+ 你很冷静理智，即使暗恋别人也不会让事情失去控制。 你对恋爱的态度是随遇而安，明白任何事情都不可强求。 若一段感情真的发展不下去，你绝不会勉强维持下去而赔上快乐和自信。一旦真的分手，你会伤心，但很快便会复元，就如一个橡皮球，掉在地上就会反弹，甚至跳得比以前更高。\n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest10_C
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]测测你的心是什么做的？\n结果出来了，%username是C型.铁石造的心 \n/
+ 你不喜欢爱得太认真，因此转换男/女朋友对你来说一点也不困难。你的心偶尔受到伤害，但绝不会表现出来， 你会假装没事一样把感情封锁起来，也会感到痛苦，但长远来说是不健康的。 因为痛苦仍留在心里未被释放出来。而你的铁石心肠及爱理不理的外表，可能会把有心人吓跑。不如放开自己，尽情享受真爱的滋味。\n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest11
+{
+"\0\s[40]\![set,choicetimeout,0]你的速配是哪一型？\n1.你会想和那一种异性约会？\n/
+\q[A.看起来老实又内向的,Onjumptest11_2]\n/
+\q[B.会玩又会懂得打扮的,Onjumptest11_3]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest11_2
+{
+"\0\s[40]\![set,choicetimeout,0]你的速配是哪一型？\n2.有个人边看表边跑，他迟到了5分钟，你觉得他心理怎么想？\n/
+\q[A.才5分不算迟到,Onjumptest11_4]\n/
+\q[B.糟了！迟到了！,Onjumptest11_5]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest11_3
+{
+"\0\s[40]\![set,choicetimeout,0]你的速配是哪一型？\n3.有个家庭主妇正在打扫，你觉得她正在怎么想？\n/
+\q[A.我要扫得一尘不染,Onjumptest11_6]\n/
+\q[B.差不多就行了，做完可以去看小说,Onjumptest11_4]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest11_4
+{
+"\0\s[40]\![set,choicetimeout,0]你的速配是哪一型？\n4.有个女生从你身旁经过，飘来一阵很香的味道，你觉得是哪一种香味？\n/
+\q[A.甜甜的果香,Onjumptest11_7]\n/
+\q[B.清淡的花香,Onjumptest11_9]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest11_5
+{
+"\0\s[40]\![set,choicetimeout,0]你的速配是哪一型？\n5.你和朋友一起去吃饭，付了钱走出餐厅才发现店员少找你10元，这时你会？\n/
+\q[A.折回去向他要回来,Onjumptest11_9]\n/
+\q[B.才10元就算了,Onjumptest11_8]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest11_6
+{
+"\0\s[40]\![set,choicetimeout,0]你的速配是哪一型？\n6.有一只鸟从鸟笼飞走了，你觉得\n/
+\q[A.这只鸟一定会再回来,Onjumptest11_7]\n/
+\q[B.不会回来了,Onjumptest11_10]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest11_7
+{
+"\0\s[40]\![set,choicetimeout,0]你的速配是哪一型？\n7.看到有人顺手把垃圾丢在路上，你有什么感想？\n/
+\q[A.不能原谅这种人,Onjumptest11_12]\n/
+\q[B.没什么感觉,Onjumptest11_10]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest11_8
+{
+"\0\s[40]\![set,choicetimeout,0]你的速配是哪一型？\n8.朋友到你家作客，你喜欢收到哪一种礼物？\n/
+\q[A.鲜花或装饰品,Onjumptest11_16]\n/
+\q[B.蛋糕或食物,Onjumptest11_11]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest11_9
+{
+"\0\s[40]\![set,choicetimeout,0]你的速配是哪一型？\n9.你在半夜边看书边窝在棉被中想事情，后来…\n/
+\q[A.多半会睡着,Onjumptest11_12]\n/
+\q[B.会越来越清醒,Onjumptest11_8]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest11_10
+{
+"\0\s[40]\![set,choicetimeout,0]你的速配是哪一型？\n10.你现在正在逃命，你认为是什么东西在追你呢？\n/
+\q[A.狮子或老虎,Onjumptest11_13]\n/
+\q[B.酷斯拉,Onjumptest11_14]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest11_11
+{
+"\0\s[40]\![set,choicetimeout,0]你的速配是哪一型？\n11.你看到地面上有洞时你会怎么想？\n/
+\q[A.洞里有什么东西？,Onjumptest11_15]\n/
+\q[B.太危险了，还是赶快盖起来吧！,Onjumptest11_A]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest11_12
+{
+"\0\s[40]\![set,choicetimeout,0]你的速配是哪一型？\n12.书架上的书倒了，看起来乱七八糟，这时你会马上整理吗？\n/
+\q[A.会,Onjumptest11_16]\n/
+\q[B.不会，还是赶快盖起来吧！,Onjumptest11_13]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest11_13
+{
+"\0\s[40]\![set,choicetimeout,0]你的速配是哪一型？\n13.有个人正对另一个人说悄悄话，你认为他听了之后的反应是？\n/
+\q[A.忍不住大笑出来,Onjumptest11_17]\n/
+\q[B.皱起眉头一脸沉重,Onjumptest11_18]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest11_14
+{
+"\0\s[40]\![set,choicetimeout,0]你的速配是哪一型？\n14.有个女子拿刀对着一名男子，这女子会对他说什么？ \n/
+\q[A.“我恨你，所以我要杀了你！”,Onjumptest11_18]\n/
+\q[B.“再过来我要刺过去了！”,Onjumptest11_D]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest11_15
+{
+"\0\s[40]\![set,choicetimeout,0]你的速配是哪一型？\n15.你想找工作，下面2家公司你会选那一家？\n/
+\q[A.能让人成长的公司,Onjumptest11_D]\n/
+\q[B.稳定的公司,Onjumptest11_B]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest11_16
+{
+"\0\s[40]\![set,choicetimeout,0]你的速配是哪一型？\n16.朋友请吃晚餐，你已经很饱了，他却一直劝你吃甜点，这时你会？\n/
+\q[A.再饱也会吃,Onjumptest11_17]\n/
+\q[B.很果断的拒绝,Onjumptest11_15]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest11_17
+{
+"\0\s[40]\![set,choicetimeout,0]你的速配是哪一型？\n17.买新电器时，关于说明书，你会？\n/
+\q[A.使用前一定先看仔细,Onjumptest11_C]\n/
+\q[B.根本很少会看,Onjumptest11_B]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest11_18
+{
+"\0\s[40]\![set,choicetimeout,0]你的速配是哪一型？\n18.下面那一种人令你无法忍受？\n/
+\q[A.小气又啰嗦的人,Onjumptest11_D]\n/
+\q[B.做事随便的人,Onjumptest11_C]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest11_A
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你的速配是哪一型？\n结果出来了，%username是B型.你和活泼的健康宝宝最速配\n/
+ 你在爱情的表现上显得相当笨拙，只要在心仪的人面前就会故意装出一副很强悍的样子，这样喜欢逞强的你，正需要一个比你强悍、可靠的伴侣。最好是那种有一点粗鲁、但身体非常健康、性格开朗、体力超好，不会弱不禁风的那一型，最适合你不过啦！  \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest11_B
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你的速配是哪一型？\n结果出来了，%username是B型.你和有气质的文艺青年最速配\n/
+ 最重视的就是两人的性趣和感觉合不合。你比较欣赏重视自己的工作、拥有自己一片天地的异性，希望他对不管是文学、或是艺术，甚至音乐都抱持有高度敏感性，你喜欢两个人可以一起去欣赏电影，或是听听演唱会，享受优闲知性的时光。要找你的另一半，过幸福的婚姻生活的，当然是非这种人莫属啦！ \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest11_C
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你的速配是哪一型？\n结果出来了，%username是C型.你和相敬如宾的人最速配\n/
+ 你是一个很容易一头栽进兴趣之中的人，这样的你需要一个可以尊重你的兴趣和工作、百分之百支持你的伴侣。你不喜欢两个人老是天天腻在一起，希望彼此能保有适当的距离，所以拥有一身专业技术和知识，抱持着就算是两个人在一起也可以彼此拥有自己的空间的异性，是你的最佳人选。 \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest11_D
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你的速配是哪一型？\n结果出来了，%username是D型.你和责任感强的爱家一族最速配\n/
+ 认真和意志坚定的人是你的最佳人选。如果你要结婚，那种对家庭和工作具有强烈的责任感，在公司也很受到上司信赖的人是你的第一选择。在婚前你可能还会很坚持地什么男女平等、提出种种你的原则，一旦结婚之后，你就会为了对方和家庭去做任何的事情。 \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest12
+{
+"\0\s[40]\![set,choicetimeout,0]你多久会厌倦一个人？\n1.你有把零钱放入钱筒的习惯吗？ \n/
+\q[A.Yes,Onjumptest12_3]\n/
+\q[B.No,Onjumptest12_2]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest12_2
+{
+"\0\s[40]\![set,choicetimeout,0]你多久会厌倦一个人？\n2.你就算熬夜也依然光鲜亮丽？ \n/
+\q[A.Yes,Onjumptest12_4]\n/
+\q[B.No,Onjumptest12_7]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest12_3
+{
+"\0\s[40]\![set,choicetimeout,0]你多久会厌倦一个人？\n3.你很想或曾经去过迪斯尼乐园？ \n/
+\q[A.Yes,Onjumptest12_6]\n/
+\q[B.No,Onjumptest12_5]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest12_4
+{
+"\0\s[40]\![set,choicetimeout,0]你多久会厌倦一个人？\n4.你喜欢的异性类都很相似？ \n/
+\q[A.Yes,Onjumptest12_7]\n/
+\q[B.No,Onjumptest12_6]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest12_5
+{
+"\0\s[40]\![set,choicetimeout,0]你多久会厌倦一个人？\n5.最近你很少看电影.只看影带.影碟？ \n/
+\q[A.Yes,Onjumptest12_9]\n/
+\q[B.No,Onjumptest12_8]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest12_6
+{
+"\0\s[40]\![set,choicetimeout,0]你多久会厌倦一个人？\n6.你自认和另一半的母亲能处得来？ \n/
+\q[A.Yes,Onjumptest12_8]\n/
+\q[B.No,Onjumptest12_9]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest12_7
+{
+"\0\s[40]\![set,choicetimeout,0]你多久会厌倦一个人？\n7.你会买新出品的东西来吃？ \n/
+\q[A.Yes,Onjumptest12_11]\n/
+\q[B.No,Onjumptest12_10]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest12_8
+{
+"\0\s[40]\![set,choicetimeout,0]你多久会厌倦一个人？\n8.你不相信超能力？ \n/
+\q[A.Yes,Onjumptest12_12]\n/
+\q[B.No,Onjumptest12_13]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest12_9
+{
+"\0\s[40]\![set,choicetimeout,0]你多久会厌倦一个人？\n9.你家有电暖器？ \n/
+\q[A.Yes,Onjumptest12_12]\n/
+\q[B.No,Onjumptest12_13]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest12_10
+{
+"\0\s[40]\![set,choicetimeout,0]你多久会厌倦一个人？\n10.你认为忠心已经落伍了？  \n/
+\q[A.Yes,Onjumptest12_13]\n/
+\q[B.No,Onjumptest12_14]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest12_11
+{
+"\0\s[40]\![set,choicetimeout,0]你多久会厌倦一个人？\n11.最近你认识了很好的同性朋友？  \n/
+\q[A.Yes,Onjumptest12_13]\n/
+\q[B.No,Onjumptest12_14]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest12_12
+{
+"\0\s[40]\![set,choicetimeout,0]你多久会厌倦一个人？\n12.你的房间塞了很多东西？ \n/
+\q[A.Yes,Onjumptest12_19]\n/
+\q[B.No,Onjumptest12_15]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest12_13
+{
+"\0\s[40]\![set,choicetimeout,0]你多久会厌倦一个人？\n13.内衣裤每天一定换洗？ \n/
+\q[A.Yes,Onjumptest12_16]\n/
+\q[B.No,Onjumptest12_15]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest12_14
+{
+"\0\s[40]\![set,choicetimeout,0]你多久会厌倦一个人？\n14.你没有什么恒心写日记？ \n/
+\q[A.Yes,Onjumptest12_17]\n/
+\q[B.No,Onjumptest12_16]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest12_15
+{
+"\0\s[40]\![set,choicetimeout,0]你多久会厌倦一个人？\n15.你的穿著满随便？ \n/
+\q[A.Yes,Onjumptest12_A]\n/
+\q[B.No,Onjumptest12_18]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest12_16
+{
+"\0\s[40]\![set,choicetimeout,0]你多久会厌倦一个人？\n16.你一定会买排行榜歌曲？ \n/
+\q[A.Yes,Onjumptest12_20]\n/
+\q[B.No,Onjumptest12_19]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest12_17
+{
+"\0\s[40]\![set,choicetimeout,0]你多久会厌倦一个人？\n17.你的东西常遗失？ \n/
+\q[A.Yes,Onjumptest12_E]\n/
+\q[B.No,Onjumptest12_20]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest12_18
+{
+"\0\s[40]\![set,choicetimeout,0]你多久会厌倦一个人？\n18.你有一些绒毛娃娃？ \n/
+\q[A.Yes,Onjumptest12_A]\n/
+\q[B.No,Onjumptest12_B]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest12_19
+{
+"\0\s[40]\![set,choicetimeout,0]你多久会厌倦一个人？\n19.看推理剧时你都能猜到犯人是谁？ \n/
+\q[A.Yes,Onjumptest12_C]\n/
+\q[B.No,Onjumptest12_B]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest12_20
+{
+"\0\s[40]\![set,choicetimeout,0]你多久会厌倦一个人？\n20.你想学滑雪？\n/
+\q[A.Yes,Onjumptest12_E]\n/
+\q[B.No,Onjumptest12_D]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest12_A
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你多久会厌倦一个人？\n结果出来了，%username是A型.\n/
+ 你是个观察力敏锐.感受力丰富的人，季节变化或别人的举手投足都能拨动你的情绪，很容易就跟着别人的旋律起舞，在别人眼中看来是个满情绪化的人。感情方面，由于你敏感度很强，和对方交往一阵子后，就能看清对方的本性，尽管无法忍受对方的缺点及不完美，最后只好说再见了，从认识到分手差不多只有半年！\n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest12_B
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你多久会厌倦一个人？\n结果出来了，%username是B型.\n/
+ 你是个神经很细且温柔体贴的人，对自己的第六感很有自信，凡事都用直觉判断，对于第一次见面的人，如果凭直觉不喜欢的话，就会很主观的拒绝对方，属于好恶感很重的人。\n/  
+这样的你在选择对象时也一样，一见面若看不顺眼，就绝不给对方机会，即使别人告诉你这个人不错，你也宁愿相信自己的第六感，向来是一眼即定对方生死，倦怠期大约是三个月。\n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest12_C
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你多久会厌倦一个人？\n结果出来了，%username是C型.\n/
+你是个安定的人，工作上也不会想出人头地，只要稳定就好。从某些角度来看或许是消极了点，但所谓平凡就是福，这样也没什么不好！找对象时，你也会找那种「一劳永逸」型的人，最好是恋爱谈一谈就可以结婚， 不要分手还要再找别的，这样实在太伤神也太伤心了。你谈恋爱的倦怠期大约是两年，如果想结婚，可要在两年之内喔！\n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest12_D
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你多久会厌倦一个人？\n结果出来了，%username是D型.\n/
+你是个聪明.能够洞察人心的人，不用等别人开口，就可以解读别人的心思帮人把事情做好，这也为你博得许多人的喜爱，彷复是别人肚子里的蛔虫一样。这样的你能够和任何人相处，因为别人要出什么招你都先知道了，这也让你成为恋爱高手。你的恋爱倦怠期视你心情而不同，有长有短。 \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest12_E
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你多久会厌倦一个人？\n结果出来了，%username是E型.\n/
+你对人很和善.亲切，即使是第一次见面的人，都会先和对方打招呼，让别人备感窝心。在公司中，你对新进人员也很好，会尽量照顾.帮助他们，是人人眼中的好前辈。感情方面，你对爱情有很大的憧憬，把爱情想得很美.很甜蜜，只要一谈起恋爱，总会把爱情美化了，但过了一段时间之后就逐渐冷却.褪色。你的恋爱倦怠期大约是一年左右。 \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest13
+{
+"\0\s[40]\![set,choicetimeout,0]发掘与你最契合的朋友\n在没有任何熟人的新班级或新环境时 \n/
+\q[A.仍然充满活力,Onjumptest13_1]\n/
+\q[B.觉得有点可怕,Onjumptest13_2]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest13_1
+{
+"\0\s[40]\![set,choicetimeout,0]发掘与你最契合的朋友\n1.现在的成绩还过得去，但小学时的成绩很好。 \n/
+\q[A.Yes,Onjumptest13_3]\n/
+\q[B.No,Onjumptest13_4]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest13_2
+{
+"\0\s[40]\![set,choicetimeout,0]发掘与你最契合的朋友\n2.每次在外面吃饭时，点菜的速度都很慢。\n/
+\q[A.Yes,Onjumptest13_6]\n/
+\q[B.No,Onjumptest13_5]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest13_3
+{
+"\0\s[40]\![set,choicetimeout,0]发掘与你最契合的朋友\n3.看电视时经常会觉得“这个人好笨，如果是我的话就会这么做。”\n/
+\q[A.Yes,Onjumptest13_7]\n/
+\q[B.No,Onjumptest13_8]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest13_4
+{
+"\0\s[40]\![set,choicetimeout,0]发掘与你最契合的朋友\n4.在家闲来无事的时候你会\n/
+\q[A.看杂志或书,Onjumptest13_8]\n/
+\q[B.看电视,Onjumptest13_9]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest13_5
+{
+"\0\s[40]\![set,choicetimeout,0]发掘与你最契合的朋友\n5.行动电话、无线电、B.B.CALL等通讯器材，你通常会带哪一种？\n/
+\q[A.行动电话,Onjumptest13_7]\n/
+\q[B.无线电,Onjumptest13_8]\n/
+\q[C.B.B.CALL,Onjumptest13_9]\n/
+\q[D.什么都不带,Onjumptest13_10]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest13_6
+{
+"\0\s[40]\![set,choicetimeout,0]发掘与你最契合的朋友\n6.这两年之间内，没有担任过班长、组长——等“长”字辈的干部\n/
+\q[A.Yes,Onjumptest13_10]\n/
+\q[B.No,Onjumptest13_9]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest13_7
+{
+"\0\s[40]\![set,choicetimeout,0]发掘与你最契合的朋友\n7.看到别人的事，经常觉得对方没有抓住要领。\n/
+\q[A.Yes,Onjumptest13_11]\n/
+\q[B.No,Onjumptest13_12]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest13_8
+{
+"\0\s[40]\![set,choicetimeout,0]发掘与你最契合的朋友\n8.下辈子可以选择的话。你想成为\n/
+\q[A.男生,Onjumptest13_12]\n/
+\q[B.女生,Onjumptest13_13]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest13_9
+{
+"\0\s[40]\![set,choicetimeout,0]发掘与你最契合的朋友\n9.猫跟狗，你喜欢哪一种？\n/
+\q[A.狗,Onjumptest13_13]\n/
+\q[B.猫,Onjumptest13_12]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest13_10
+{
+"\0\s[40]\![set,choicetimeout,0]发掘与你最契合的朋友\n10.如果计程车跟捷运的车资相同，你会搭哪一种？\n/
+\q[A.计程车,Onjumptest13_13]\n/
+\q[B.捷运,Onjumptest13_14]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest13_11
+{
+"\0\s[40]\![set,choicetimeout,0]发掘与你最契合的朋友\n将来的梦想是 \n/
+\q[A.有固定职业，努力的工作,Onjumptest13_15]\n/
+\q[B.24岁以后成为专职家庭主妇,Onjumptest13_17]\n/
+\q[C.没有特别的想法,Onjumptest13_16]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest13_12
+{
+"\0\s[40]\![set,choicetimeout,0]发掘与你最契合的朋友\n12.你非常注重流行资讯，随时确认自己的装扮。 \n/
+\q[A.Yes,Onjumptest13_17]\n/
+\q[B.No,Onjumptest13_16]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest13_13
+{
+"\0\s[40]\![set,choicetimeout,0]发掘与你最契合的朋友\n13.你想要一个人去旅行。 \n/
+\q[A.Yes,Onjumptest13_16]\n/
+\q[B.No,Onjumptest13_17]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest13_14
+{
+"\0\s[40]\![set,choicetimeout,0]发掘与你最契合的朋友\n14.不擅长在很多人面前说话。 \n/
+\q[A.Yes,Onjumptest13_18]\n/
+\q[B.No,Onjumptest13_17]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest13_15
+{
+"\0\s[40]\![set,choicetimeout,0]发掘与你最契合的朋友\n15.觉得自己常常是朋友模仿的对象。 \n/
+\q[A.Yes,Onjumptest13_A]\n/
+\q[B.No,Onjumptest13_B]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest13_16
+{
+"\0\s[40]\![set,choicetimeout,0]发掘与你最契合的朋友\n16.认为歌手应该“以课业为重，即使暂时淡出演艺圈也无所谓”。 \n/
+\q[A.Yes,Onjumptest13_B]\n/
+\q[B.No,Onjumptest13_C]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest13_17
+{
+"\0\s[40]\![set,choicetimeout,0]发掘与你最契合的朋友\n17.就算参加升旗时突然头晕，也不会告诉旁人。\n/
+\q[A.Yes,Onjumptest13_D]\n/
+\q[B.No,Onjumptest13_C]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+
+Onjumptest13_18
+{
+"\0\s[40]\![set,choicetimeout,0]发掘与你最契合的朋友\n18.不管是功课方面或玩乐方面，遇到不懂的事情时，不太敢向其他人请教。\n/
+\q[A.Yes,Onjumptest13_C]\n/
+\q[B.No,Onjumptest13_B]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest13_A
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]发掘与你最契合的朋友\n结果出来了，%username是A型的人.\n/
+轻松自在地生活， 经常被人依赖，跟喜欢的撒娇的人较合得来你希望自己成为团体当中的领导者，讨厌被朋友差遣；不过你又非常害怕独处，不喜欢落单，能够跟这样的你相处甚欢的，是喜欢撒娇、凡事优柔寡断的女孩，如果他无法自己下决定，处然会向你求助，请你帮忙。听到他对人说：“还好有你在！”你的心情就会觉得十分高兴，这样的朋友总是能够让你获得心灵上的满足。 \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest13_B
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]发掘与你最契合的朋友\n结果出来了，%username是B型的人.\n/
+不希望彼此干涉，个性豪爽，跟抱持个人主义的人较合得来你不喜欢跟朋友在一起，有强烈的个人主义；这不是讨厌朋友，只是不喜欢总是和大家粘在一起而已，能跟你合得来的，是像你一样重视私人时间，抱持个人主义的女孩，只在想见面的时候见面，不干涉彼此的生活。在周围的眼里看来，允免怀疑你们的感情一定不好吧！别在意周围眼光，做你自己就可以。\n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest13_C
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]发掘与你最契合的朋友\n结果出来了，%username是C型的人.\n/
+喜欢跟几个好朋友腻在一起，跟拥有同样兴趣的人较合得来“所谓好朋友就要一直在一起”你会跟随朋友谈论同一部电视剧、或流行的话题，这样的你最适合跟拥有同样兴趣、喜欢腻在一起的女孩当朋友，如果对方跟自己同一个牌子的用品，话题就会滔滔不绝，也会加深你们的感情。你很擅长处理事情，即使两人整天腻在一起也不会发生冲突。 \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest13_D
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]发掘与你最契合的朋友\n结果出来了，%username是C型的人.\n/
+希望和领导型人物在一起！跟踏实、开朗活泼的人较合得来个性优柔寡断、胆小的你，在团体中很不显眼；由于你的个性较被动，如果别人没约，你会一整天关在家，而其实内心却很想出去。做事果断的领导型大姐最适合你，他可以帮忙判断你无法决定的事，并为你打理一切。对方会再当中获得满足感，而你也觉得十分快乐，这样的速配组合会让你们的友情更加坚定！\n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest14
+{
+"\0\s[40]\![set,choicetimeout,0]找出你的幸福关键人\n1.你决定到远方自助旅行约一个月的时间，请问让你有这个想法的主因是什么？\n/
+\q[A.太久没有旅行了,Onjumptest14_2]\n/
+\q[B.感情或工作出现烦人的问题,Onjumptest14_3]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest14_2
+{
+"\0\s[40]\![set,choicetimeout,0]找出你的幸福关键人\n2.你终于确定要到哪一个国家旅行，请问这个国家属于？\n/
+\q[A.热带国家,Onjumptest14_4]\n/
+\q[B.寒带国家,Onjumptest14_5]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest14_3
+{
+"\0\s[40]\![set,choicetimeout,0]找出你的幸福关键人\n3.请问你到旅游地点所做的第一件事是什么？ \n/
+\q[A.到处逛一逛、看一看,Onjumptest14_6]\n/
+\q[B.先到住宿的地方小憩一会儿,Onjumptest14_5]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest14_4
+{
+"\0\s[40]\![set,choicetimeout,0]找出你的幸福关键人\n4.休息一个晚上的你，一大早就起床了，并以无比期待的心情向旅程的第一站出发，没想到才走没多久，你就迷路了，请问这时候你会怎么做？ \n/
+\q[A.拿出地图仔细研究,Onjumptest14_7]\n/
+\q[B.不断地询问路人儿,Onjumptest14_5]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest14_5
+{
+"\0\s[40]\![set,choicetimeout,0]找出你的幸福关键人\n5.好不容易到达你要去的目的地，请问那是什么地方？ \n/
+\q[A.一家全球闻名的美食餐厅,Onjumptest14_8]\n/
+\q[B.一处颇具历史意义的古迹,Onjumptest14_7]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest14_6
+{
+"\0\s[40]\![set,choicetimeout,0]找出你的幸福关键人\n6.玩了一整天，你大约八点左右回到住宿的地方，梳洗一番之后，你倒了一杯红酒独酌，静静地坐在阳台上看夜景，请问这时候你心里想起了谁？ \n/
+\q[A.家人或同性朋友,Onjumptest14_5]\n/
+\q[B.情人或异性朋友,Onjumptest14_8]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest14_7
+{
+"\0\s[40]\![set,choicetimeout,0]找出你的幸福关键人\n7.第二天，你准备去拜访一位好久不见的老朋友，可是一到达笔记本上所抄的地址，才发现对方根本不住这里，请问发生了什么事？\n/
+\q[A.对方已搬家,Onjumptest14_9]\n/
+\q[B.自己抄错地址,Onjumptest14_10]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest14_8
+{
+"\0\s[40]\![set,choicetimeout,0]找出你的幸福关键人\n8.好不容易连络上老朋友，请问你们约在哪里见面叙旧？ \n/
+\q[A.咖啡厅,Onjumptest14_10]\n/
+\q[B.对方的家,Onjumptest14_11]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest14_9
+{
+"\0\s[40]\![set,choicetimeout,0]找出你的幸福关键人\n9.与老朋友道别之后，你正准备往下一个目的地前进，走着走着，忽然看到街角围着一群人，请问那群人在做什么？\n/
+\q[A.欣赏街头艺人的表演,Onjumptest14_12]\n/
+\q[B.围观一位发生意外的伤者,Onjumptest14_10]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest14_10
+{
+"\0\s[40]\![set,choicetimeout,0]找出你的幸福关键人\n10.当你参观完今天最后一个景点，正要回住宿的地方时，肚子竟然开始绞痛，请问这时候你会怎么做？ \n/
+\q[A.求助于身边的陌生路人,Onjumptest14_12]\n/
+\q[B.撑回住的地方找服务人,Onjumptest14_13]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest14_11
+{
+"\0\s[40]\![set,choicetimeout,0]找出你的幸福关键人\n11.经过一番折腾，体力慢慢恢复，但你的心里却闪过一阵只身在异乡的孤独感，请问你会如何渲泄自己的情绪？\n/
+\q[A.大哭一场,Onjumptest14_13]\n/
+\q[B.将心情记录在日记本里,Onjumptest14_10]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest14_12
+{
+"\0\s[40]\![set,choicetimeout,0]找出你的幸福关键人\n12.正当你走得很累，一个人坐在公园的椅子上发呆时，突然有位高大帅气的男士跟你说了一句话，请问他说什么？ \n/
+\q[A.「你好迷人！」,Onjumptest14_14]\n/
+\q[B.「你的东西掉了！」,Onjumptest14_15]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest14_13
+{
+"\0\s[40]\![set,choicetimeout,0]找出你的幸福关键人\n13.连着几天的晚餐，你都是以面包果腹，今天你打算好好犒赏自己，请问你去吃了什么？ \n/
+\q[A.顶级牛排,Onjumptest14_15]\n/
+\q[B.海鲜全餐,Onjumptest14_16]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest14_14
+{
+"\0\s[40]\![set,choicetimeout,0]找出你的幸福关键人\n14.饱餐一顿之后，你因为肚子实在很撑，又加上用餐的餐厅离住宿的地方不远，所以决定散步回去，请问你走了多久的时间？ \n/
+\q[A.不到一个小时,Onjumptest14_17]\n/
+\q[B.一个小时以上,Onjumptest14_18]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest14_15
+{
+"\0\s[40]\![set,choicetimeout,0]找出你的幸福关键人\n15.回到住宿的地方，发生一件让你惊喜万分的事，请问是什么事？ \n/
+\q[A.情人传真问候信给你,Onjumptest14_18]\n/
+\q[B.有爱慕者送花给你,Onjumptest14_19]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest14_16
+{
+"\0\s[40]\![set,choicetimeout,0]找出你的幸福关键人\n16.你自助旅行已有两个多星期的时间了，请问到目前为止你的心情如何？\n/
+\q[A.有点儿后悔没有参加旅行团,Onjumptest14_19]\n/
+\q[B.虽然疲累，但很充实、愉快,Onjumptest14_20]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest14_17
+{
+"\0\s[40]\![set,choicetimeout,0]找出你的幸福关键人\n17.某天，你到一个小城镇游玩，因为玩得太尽兴而错过最后一班火车的时间，请问你会怎么做？ \n/
+\q[A.找一家当地旅馆投宿,Onjumptest14_A]\n/
+\q[B.想尽办法回到原来住宿的地方,Onjumptest14_B]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest14_18
+{
+"\0\s[40]\![set,choicetimeout,0]找出你的幸福关键人\n18.你经过一处跳蚤市场，买到一件非常喜爱的商品，请问那是什么？ \n/
+\q[A.戴在身上的饰品,Onjumptest14_B]\n/
+\q[B.摆在家里的家饰,Onjumptest14_C]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest14_19
+{
+"\0\s[40]\![set,choicetimeout,0]找出你的幸福关键人\n19.请问你对于这趟自助旅行印象最深刻的是什么？ \n/
+\q[A.风土民情,Onjumptest14_D]\n/
+\q[B.自然景观,Onjumptest14_C]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest14_20
+{
+"\0\s[40]\![set,choicetimeout,0]找出你的幸福关键人\n20.终于要结束这次的自助旅行了，你现在的感觉是什么？ \n/
+\q[A.乐不思蜀,Onjumptest14_D]\n/
+\q[B.好想家啊！,Onjumptest14_E]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest14_A
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]找出你的幸福关键人\n结果出来了，%username是A型.黄色幸福人 \n/
+你的性格十分随和，即使有人误会你或是指着你的鼻子骂，你也不会轻易动怒，总认为就算天塌下来也有高个子顶着，很懂得善用轻松、乐观的人生哲学。你没有什么金钱概念，不是一个唯利是图的人。某些时候，可能有人会认为你表现得过于轻浮，好象什事都不在乎，难以被托付重任，一些有利于你的好机会也容易因此而被错过。\n/ 
+Happy Point：婚姻伴侣．晚辈 \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest14_B
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]找出你的幸福关键人\n结果出来了，%username是B型.蓝色幸福人\n/
+或许你的行为还能在世俗的标准里被认同，但是你的想法和逻辑却怪得可以，你有自己找快乐的方法、有自己生活的模式，对于没有创意的人事物总是不屑一 顾。你时而超脱、时而实际，全身散发独特且自我的气质，十分适合生存在充满无限可能的二十一世纪。你的社交能力还算不错，但却往往表现得过于夸张，让人觉得有些浮华不实。 \n/ 
+Happy Point：同事．长辈 \n/ 
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest14_C
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]找出你的幸福关键人\n结果出来了，%username是C型.绿色幸福人\n/
+你讨厌一变再变的做事方式，最好事前做好周详而充份的准备，然后一气呵成地完成所有任务，因为突发的问题会让你觉得烦躁且不知所措，简直是痛恨至极。你喜欢帮助别人，但不会刻意主动，不致于让人有太过热情的感觉。你的情绪平和而稳定，虽然不太喜欢交际，可是诚恳待你的知心好朋友却不算少，是你这一生中很珍贵的宝藏。 \n/
+Happy Point：兄弟姐妹．同学 \n/
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest14_D
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]找出你的幸福关键人\n结果出来了，%username是D型.红色幸福人\n/
+你绝不会被淹没在人群之中，容易成为众人目光的焦点，一旦找到属于自己的表演舞台，想不成为名人都难。偶尔，你也会有缺乏自信的时候，但是只要别人随便赞美你两句，你立刻就能从一只胆怯的猫咪变成骄傲的孔雀，光芒无人能敌。你从不 知道计划是什么，喜欢有机会就去试、有乐子就去玩的生活模式，当然尝到失败的机率也比别人高。\n/ 
+Happy Point：主管．朋友 \n/
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest14_E
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]找出你的幸福关键人\n结果出来了，%username是E型.橙色幸福人\n/
+从外表看来，你像是一个没有主见的人，但是其实你比谁都还要倔强，幸好你 的本性善良，并不会因为好强而伤害别人。你具有异于常人的艺术潜能，如果能从事 相关的行业，必定会有不错的成就。你常有思虑过多的毛病，一件再简单不过的事都能被你复杂化，若无法作适当的调整，不仅自己会深陷痛苦的泥沼，就连身旁的人都陷入痛苦中。\n/ 
+Happy Point：父母．情人 \n/
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest15
+{
+"\0\s[40]\![set,choicetimeout,0]你念念不忘的人是谁？\n人一生中会碰到很多人，有的人是和你有缘会一生陪伴的，有的人却只是你生命中的过客，短暂出现然后消失。而在这些人中，谁才是让你念念不忘的那个人，是在你心中挥之不去的美丽风景，那么下面就来测一下吧。\n/
+1.假如你现在非常疲劳，但是又有很多工作没有完成，你会？\n/ 
+\q[A.喝咖啡来提神,Onjumptest15_3]\n/
+\q[B.和别人聊感兴趣的话题来让自己振奋一些,Onjumptest15_2]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest15_2
+{
+"\0\s[40]\![set,choicetimeout,0]你念念不忘的人是谁？\n2.同学聚会你一般都会参加吗？\n/ 
+\q[A.一定会去参加,Onjumptest15_4]\n/
+\q[B.有空的话就去,Onjumptest15_5]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest15_3
+{
+"\0\s[40]\![set,choicetimeout,0]你念念不忘的人是谁？\n3.身边的人借了你的什么东西你会一直记得？\n/ 
+\q[A.书,Onjumptest15_4]\n/
+\q[B.钱,Onjumptest15_5]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest15_4
+{
+"\0\s[40]\![set,choicetimeout,0]你念念不忘的人是谁？\n4.如果你在路上迷路了，你会想怎么样的方法回来？\n/ 
+\q[A.打电话找朋友们求救,Onjumptest15_7]\n/
+\q[B.直接找出租车开到熟悉的地方去,Onjumptest15_6]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest15_5
+{
+"\0\s[40]\![set,choicetimeout,0]你念念不忘的人是谁？\n5.你现在手机里有小时候认识的人的联系方式吗？ \n/ 
+\q[A.有一些,Onjumptest15_7]\n/
+\q[B.完全没有,Onjumptest15_6]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest15_6
+{
+"\0\s[40]\![set,choicetimeout,0]你念念不忘的人是谁？\n6.每次到一个新的地方，你首先关注的是？  \n/ 
+\q[A.当地的美食,Onjumptest15_8]\n/
+\q[B.当地的风景名胜,Onjumptest15_9]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest15_7
+{
+"\0\s[40]\![set,choicetimeout,0]你念念不忘的人是谁？\n7.你比较喜欢下面哪种水果？\n/ 
+\q[A.橙子,Onjumptest15_8]\n/
+\q[B.草莓,Onjumptest15_9]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest15_8
+{
+"\0\s[40]\![set,choicetimeout,0]你念念不忘的人是谁？\n8.你到现在为止喜欢的人很多吗？\n/ 
+\q[A.的确是比较多,Onjumptest15_9]\n/
+\q[B.不过，是很专一的类型,Onjumptest15_11]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest15_9
+{
+"\0\s[40]\![set,choicetimeout,0]你念念不忘的人是谁？\n9.现在纸上有很多形状图案给你选择，你觉得你会选择哪一种图案\n/ 
+\q[A.圆形，弧形等柔和的封闭曲线,Onjumptest15_10]\n/
+\q[B.三角形，菱形或者未封闭曲线,Onjumptest15_14]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest15_10
+{
+"\0\s[40]\![set,choicetimeout,0]你念念不忘的人是谁？\n10.你会看自己小时候写的日记吗？看的时候是怎样的感想？\n/ 
+\q[A.看得比较少，会觉得太幼稚了，每次看到都会爆笑,Onjumptest15_12]\n/
+\q[B.会偶尔拿出来看，觉得小时候是很有意思的,Onjumptest15_11]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest15_11
+{
+"\0\s[40]\![set,choicetimeout,0]你念念不忘的人是谁？\n11.你曾经想过要找到小学同学聚会吗？\n/ 
+\q[A.想过要主办小学同学聚会,Onjumptest15_12]\n/
+\q[B.没有这么想过，但是如果邀请你大概会去,Onjumptest15_13]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest15_12
+{
+"\0\s[40]\![set,choicetimeout,0]你念念不忘的人是谁？\n12.你觉得怎样的人你会想要和他们做朋友？ \n/ 
+\q[A.很单纯没有心计的人,Onjumptest15_15]\n/
+\q[B.和你性情相投最重要,Onjumptest15_14]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest15_13
+{
+"\0\s[40]\![set,choicetimeout,0]你念念不忘的人是谁？\n13.你对于小时候事情的记忆主要来源于？ \n/ 
+\q[A.自己记得的,Onjumptest15_15]\n/
+\q[B.家人说的一些有趣的事情,Onjumptest15_14]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest15_14
+{
+"\0\s[40]\![set,choicetimeout,0]你念念不忘的人是谁？\n14.你会以结婚为前提来恋爱吗？ \n/ 
+\q[A.会,Onjumptest15_B]\n/
+\q[B.不会,Onjumptest15_A]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest15_15
+{
+"\0\s[40]\![set,choicetimeout,0]你念念不忘的人是谁？\n15. 你觉得现在生活中让你不愉快的事情是什么？\n/ 
+\q[A.人际关系很冷淡,Onjumptest15_D]\n/
+\q[B.人们交往功利性太强,Onjumptest15_C]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest15_A
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你念念不忘的人是谁？\n结果出来了，%username是A型.\n/
+你最念念不忘的人是你没有追到的人，或者两个人友达以上，却偏偏恋爱未满。这样的人是最让你着迷的，可能你在有了新的交往对象以后也会对这个人念念不忘。因为你是一个完美主义者，而且对于爱情或者对于任何事情，是因为得不到所以才不知道缺陷在哪里，于是对你来说就会在自己的意识里不断的美化对方和这段感情，于是在自己的臆想中完美起来的爱让你留念不已。\n/
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest15_B
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你念念不忘的人是谁？\n结果出来了，%username是B型.\n/
+你是一个失去以后就会觉得后悔的类型的人，所以你最念念不忘的人不是别人，是最近的失去的人。例如上一个恋人，你会因为失去而懊恼不已，但凡是因为你自己的原因而失去的人，你就会一直记挂着他们，却忽略了在你身边的人。经常会顾此失彼，你是在交往和分开的时候没有想到，分开后才知道自己多么在乎的人。 \n/
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest15_C
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你念念不忘的人是谁？\n结果出来了，%username是C型.\n/
+最让你念念不忘的人是你第一次喜欢的人，对你来说爱情一旦长久了就会变得失去了最开始的滋味。你所喜欢的爱情是朦胧而若即若离的，所以第一次喜欢的人带给你的感受是任何人都没有办法取代的，就算你忘记了他的姓名他的长相，却会一直记得那时的事情和那样的感觉，是真正让你念念不忘的人。\n/
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest15_D
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你念念不忘的人是谁？\n结果出来了，%username是D型.\n/
+你念念不忘的人是你小时候的玩伴，你是一个有感情洁癖但是又很害怕孤独的人，你经常会因为周围的一些小事情而感到失望，最害怕的就是自己的热情去贴了别人的冷漠。所以对于你来说，小时候玩伴那种毫无心迹的坦白的友情是最珍贵的。你是一个很珍惜身边的人的人，但是也要懂得选择值得信任的人才对啊 \n/
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest16
+{
+"\0\s[40]\![set,choicetimeout,0]你会出轨吗？\n橘花提醒，此测试仅供娱乐，请不要把它当成男女朋友是否出轨的依据 \n/ 
+你会出轨吗？\n 有一个小女孩的名字叫芭比，因为家里很穷，所以玩具只有一个：一只小绒布做的玩具小熊。你认为芭比是如何得到这个玩具的呢？\n/ 
+
+\q[A.从垃圾场捡来的,Onjumptest16_1]\n/
+\q[B.妈妈帮她做的,Onjumptest16_2]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest16_1
+{
+"\0\s[40]\![set,choicetimeout,0]你会出轨吗？\n1.有一天，芭比的爸爸回家，高兴地对家人说:“我赚到一笔大钱了!” 你认为芭比的爸爸导师是怎样得到这笔钱的呢? \n/ 
+
+\q[A.买公益奖券中了大奖,Onjumptest16_3]\n/
+\q[B.他所发明的东西大卖,Onjumptest16_4]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest16_2
+{
+"\0\s[40]\![set,choicetimeout,0]你会出轨吗？\n2.有一天,芭比的爸爸回家，高兴地对家人说:“我赚到一笔大钱了!” 你认为这笔钱的金额大约会是多少?  \n/ 
+
+\q[A.可以一辈子不工作，到处游山玩水,Onjumptest16_4]\n/
+\q[B.可以5年不工作,Onjumptest16_5]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest16_3
+{
+"\0\s[40]\![set,choicetimeout,0]你会出轨吗？\n3.结果芭比变成了有钱人家的小姐，她的爸爸妈妈买了许多玩具给她。你想他会最喜欢下面那一个玩具呢?  \n/ 
+
+\q[A.法国洋娃娃,Onjumptest16_6]\n/
+\q[B.家家酒游戏组,Onjumptest16_7]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest16_4
+{
+"\0\s[40]\![set,choicetimeout,0]你会出轨吗？\n4.芭比变成了有钱人家的小姐，爸爸妈妈买了许多玩具给她。站在一堆新玩具前，芭比喃喃自语说了哪句话?  \n/ 
+
+\q[A.应该先玩那个呢?,Onjumptest16_6]\n/
+\q[B.真不敢相信，好象在做梦,Onjumptest16_8]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest16_5
+{
+"\0\s[40]\![set,choicetimeout,0]你会出轨吗？\n5.芭比变成了有钱人家的小姐，爸爸妈妈买了很多玩具给她,不过其实她还有一个愿望。你想会是下面那一个呢?   \n/ 
+
+\q[A.想买新衣服,Onjumptest16_7]\n/
+\q[B.全家一起到高级餐厅用餐,Onjumptest16_8]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest16_6
+{
+"\0\s[40]\![set,choicetimeout,0]你会出轨吗？\n6.有一天晚上，当芭比正在漂亮的新家睡得香甜的时候,被放在房里角落的熊宝宝突然站了起来，慢慢走向芭比。你觉得当时熊宝宝脸上的表情会是如何的呢?   \n/ 
+
+\q[A.笑的很悲伤,Onjumptest16_9]\n/
+\q[B.哭泣着,Onjumptest16_10]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest16_7
+{
+"\0\s[40]\![set,choicetimeout,0]你会出轨吗？\n7.有一天晚上,当芭比正在漂亮的新家睡得香甜的时候,被放在房里角落的熊宝宝突然站了起来，慢慢走向芭比，突然摸了一下她。你觉得它会摸哪个部位呢? \n/ 
+
+\q[A.脸颊,Onjumptest16_9]\n/
+\q[B.肩膀,Onjumptest16_11]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest16_8
+{
+"\0\s[40]\![set,choicetimeout,0]你会出轨吗？\n8.有一天晚上,当芭比正在漂亮的新家睡得香甜的时候,被放在房里角落的熊宝宝突然站了起来，慢慢走向芭比，对她说了一句话。它说了什么话?  \n/ 
+
+\q[A.太好了，芭比,Onjumptest16_10]\n/
+\q[B.太过分了，芭比,Onjumptest16_11]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest16_9
+{
+"\0\s[40]\![set,choicetimeout,0]你会出轨吗？\n9.当芭比醒来时，熊宝宝已经不在了。之后你想芭比会怎么做? \n/ 
+
+\q[A.她并没发现,所以什么也没做,Onjumptest16_A]\n/
+\q[B.赶紧跑出去找熊宝宝,Onjumptest16_B]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest16_10
+{
+"\0\s[40]\![set,choicetimeout,0]你会出轨吗？\n10.当芭比醒来时，熊宝宝已经不在了。你认为熊宝宝的真正身份是什么？ \n/ 
+
+\q[A.能为主人带来好运的魔法熊宝宝,Onjumptest16_C]\n/
+\q[B.天使化身的熊宝宝,Onjumptest16_D]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+
+Onjumptest16_11
+{
+"\0\s[40]\![set,choicetimeout,0]你会出轨吗？\n11.当芭比醒来时，熊宝宝已经不在了。你认为芭比的家会变成什么样子呢？\n/ 
+
+\q[A.依旧很有钱，但家人关系变的很坏，经常吵架,Onjumptest16_E]\n/
+\q[B.又恢复到原来破旧的小屋,Onjumptest16_F]\n/
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest16_A
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你会出轨吗？\n结果出来了，%username是A型.出轨是家常便饭\n/
+你是个容易见异思迁的人，花心或移情别恋对你乃是天经地义的事，而且也不会有什么罪恶感。就算有了正式的男友，还会跟别人来往，你还乐此不疲。因为你的本性喜欢冒险，所以才会喜欢这种刺激的感觉 \n/
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest16_B
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你会出轨吗？\n结果出来了，%username是B型.你很容易被诱惑 \n/
+你的花心程度较高，你意志不够坚定，如果对方热情的邀请你，你一定会陷下去。不过，你会觉得有罪恶感，所以不会主动去勾引别人。你的理由就是“不好意思拒绝他” \n/
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest16_C
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你会出轨吗？\n结果出来了，%username是C型.你没勇气这么做 \n/
+你很想移情别恋，但是没有勇气这么做。这并不是你的罪恶感在作祟，而是你太胆小没有勇气这么做，只好将强烈的欲望压抑下来，所以老是听到你在说：“我才不会花心呢！”其实你还是有点心不甘情不愿的  \n/
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest16_D
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你会出轨吗？\n结果出来了，%username是D型.错将友情当爱情 \n/
+你的花心程度很低，不过有时也会有移情别恋的念头，但是你并不想背上背叛情人的罪名，所以不会这么做。但是你很容易错将友情当爱情，容易因关心而发展出爱情，所以你要事实理清感觉，别把友情与爱情混淆了 \n/
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest16_E
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你会出轨吗？\n结果出来了，%username是E型.怕麻烦所以不会花心\n/
+你的花心程度极低，只要有了情人，就不会和别的异**往。这并不是因为你是个专情的人，而是因为你很怕麻烦。万一偷偷跟别人交往，东窗事发了还得找一大堆理由解释会很累，所以怕麻烦的你绝对不会自找麻烦 \n/
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest16_F
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你会出轨吗？\n结果出来了，%username是F型.只对自己的情人感兴趣\n/
+你的花心程度等于零，简直可以说是世上最专情的人。你的眼里只有情人一个，根本容不下其他的异性。就算有人想追你，你都可以视若无睹不为所动。不过你也要求情人和你一样的忠心，万一他变心，你绝对不会放过他 \n/
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest17
+{
+"\0\s[40]\![set,choicetimeout,0]你最适合在国外哪个城市居住\n熟悉的地方没有风景-你是否对你每天生活的城市已经感到些许的厌倦，你又是否为那些缤纷的异域风情所着迷？你是否身体还在这里，但精神上却幻想着生活在别处？做一做下面这个测试，看看哪里才是最适合你的异国都市？ \n/
+1.你崇尚简约，反感那些过于繁琐的社交礼仪吗？\n/
+\q[A.Yes,Onjumptest17_3]\n/
+\q[B.No,Onjumptest17_2]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest17_2
+{
+"\0\s[40]\![set,choicetimeout,0]你最适合在国外哪个城市居住\n2.你喜欢快节奏的生活方式吗？ \n/
+\q[A.Yes,Onjumptest17_4]\n/
+\q[B.No,Onjumptest17_3]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest17_3
+{
+"\0\s[40]\![set,choicetimeout,0]你最适合在国外哪个城市居住\n3.你认为那些太过正式的服装对人身体是一种束缚，而喜欢穿相对舒适的便装吗？ \n/
+\q[A.Yes,Onjumptest17_4]\n/
+\q[B.No,Onjumptest17_6]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest17_4
+{
+"\0\s[40]\![set,choicetimeout,0]你最适合在国外哪个城市居住\n4.你喜欢鲜花或清新的空气胜于现代化的高层建筑吗？ \n/
+\q[A.Yes,Onjumptest17_6]\n/
+\q[B.No,Onjumptest17_5]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest17_5
+{
+"\0\s[40]\![set,choicetimeout,0]你最适合在国外哪个城市居住\n5.你更热衷于物质的享受还是金钱的积累？\n/
+\q[A.物质的享受,Onjumptest17_7]\n/
+\q[B.金钱的积累,Onjumptest17_8]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest17_6
+{
+"\0\s[40]\![set,choicetimeout,0]你最适合在国外哪个城市居住\n6.周围人的热情友善会比冷漠阴险更令你感到舒服吗？\n/
+\q[A.Yes,Onjumptest17_9]\n/
+\q[B.No,Onjumptest17_7]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest17_7
+{
+"\0\s[40]\![set,choicetimeout,0]你最适合在国外哪个城市居住\n7.对于酒或食品，你更加重视品质还是品牌？\n/
+\q[A.品质,Onjumptest17_8]\n/
+\q[B.品牌,Onjumptest17_10]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest17_8
+{
+"\0\s[40]\![set,choicetimeout,0]你最适合在国外哪个城市居住\n8.你对人对事都比较有耐心吗？\n/
+\q[A.Yes,Onjumptest17_11]\n/
+\q[B.No,Onjumptest17_9]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest17_9
+{
+"\0\s[40]\![set,choicetimeout,0]你最适合在国外哪个城市居住\n9.你向往生活在海边吗？\n/
+\q[A.Yes,Onjumptest17_10]\n/
+\q[B.No,Onjumptest17_11]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest17_10
+{
+"\0\s[40]\![set,choicetimeout,0]你最适合在国外哪个城市居住\n10.你是一个很守时的人吗？ \n/
+\q[A.Yes,Onjumptest17_12]\n/
+\q[B.No,Onjumptest17_14]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest17_11
+{
+"\0\s[40]\![set,choicetimeout,0]你最适合在国外哪个城市居住\n11.你偏向于把读书理解为一件严肃的事还是一种消遣? \n/
+\q[A.严肃的事,Onjumptest17_12]\n/
+\q[B.消遣,Onjumptest17_13]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest17_12
+{
+"\0\s[40]\![set,choicetimeout,0]你最适合在国外哪个城市居住\n12.你有那种花一上午为自己准备一餐精美食物的闲情逸致吗？ \n/
+\q[A.有,Onjumptest17_13]\n/
+\q[B.没有,Onjumptest17_14]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest17_13
+{
+"\0\s[40]\![set,choicetimeout,0]你最适合在国外哪个城市居住\n13.你喜欢逛博物馆吗？ \n/
+\q[A.Yes,Onjumptest17_17]\n/
+\q[B.No,Onjumptest17_15]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest17_14
+{
+"\0\s[40]\![set,choicetimeout,0]你最适合在国外哪个城市居住\n14.在你看来，任何东西都是越贵越好的吗？\n/
+\q[A.Yes,Onjumptest17_16]\n/
+\q[B.No,Onjumptest17_15]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest17_15
+{
+"\0\s[40]\![set,choicetimeout,0]你最适合在国外哪个城市居住\n15.你认同“人的高贵在于灵魂的自由”这个观点吗？ \n/
+\q[A.Yes,Onjumptest17_17]\n/
+\q[B.No,Onjumptest17_16]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest17_16
+{
+"\0\s[40]\![set,choicetimeout,0]你最适合在国外哪个城市居住\n16.你喜欢独处，而不会觉得闷吗？ \n/
+\q[A.Yes,Onjumptest17_18]\n/
+\q[B.No,Onjumptest17_19]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest17_17
+{
+"\0\s[40]\![set,choicetimeout,0]你最适合在国外哪个城市居住\n17.你的性观念开放吗？ \n/
+\q[A.Yes,Onjumptest17_19]\n/
+\q[B.No,Onjumptest17_18]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest17_18
+{
+"\0\s[40]\![set,choicetimeout,0]你最适合在国外哪个城市居住\n18.你很有贵族情结，认为人总是分高低贵贱的吗？ \n/
+\q[A.Yes,Onjumptest17_20]\n/
+\q[B.No,Onjumptest17_22]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest17_19
+{
+"\0\s[40]\![set,choicetimeout,0]你最适合在国外哪个城市居住\n19.你会去做一件赚钱很多但不够体面的事吗？\n/
+\q[A.Yes,Onjumptest17_21]\n/
+\q[B.No,Onjumptest17_20]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest17_20
+{
+"\0\s[40]\![set,choicetimeout,0]你最适合在国外哪个城市居住\n20.你喜欢的色彩是哪一类？\n/
+\q[A.黑、白、灰、咖啡色,Onjumptest17_21]\n/
+\q[B.蓝、绿、紫、红色,Onjumptest17_22]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest17_21
+{
+"\0\s[40]\![set,choicetimeout,0]你最适合在国外哪个城市居住\n21.你比较喜欢哪种类型的音乐？\n/
+\q[A.流行乐,Onjumptest17_A]\n/
+\q[B.摇滚乐,Onjumptest17_C]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest17_22
+{
+"\0\s[40]\![set,choicetimeout,0]你最适合在国外哪个城市居住\n22.你比较喜欢看哪类电影？ \n/
+\q[A.主色调以“喜”为主，夹杂一些很感人的情节,Onjumptest17_B]\n/
+\q[B.主色调以“悲”为主，但结局会让人感到一丝温暖,Onjumptest17_D]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest17_A
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你最适合在国外哪个城市居住\n结果出来了，%username是A型.\n/
+代表城市：纽约-站着的城市 发生任何事都不必感到惊奇，因为这里是纽约。纽约是一个可以时时给你惊喜的城市，一切现代物质与精神的产物，都在这里肆意展示地它们最为极端的形态。它的活力与激情以及快节奏的生活方式往往会令人窒息，但这恰好是你最想要的，纽约是创业者的天堂，在这里，只要你敢去做，并且足够勤奋，那么，你就可能实现一切的梦想。 候补城市：东京  \n/
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest17_B
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你最适合在国外哪个城市居住\n结果出来了，%username是B型.\n/
+代表城市：奥克兰-南太平洋之子 奥克兰是一座包裹着神奇海洋世界的现代都市-它一半是都市，一半是海景。从天空城向下眺望，蓝色的海洋泛着金色的阳光，葱绿的树木环绕着各个山头。它会令你忘记尘世的喧嚣，心灵自由的飞翔，渴望宁静与简单的你一定能够在这里寻到你精神的故乡。 候补城市：普罗旺斯  \n/
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest17_C
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你最适合在国外哪个城市居住\n结果出来了，%username是C型.\n/
+代表城市：伦敦-历史背后的优雅身影 曾经风光的历史和无上的权势早已不在，但留给伦敦城的却是刻进骨子里的骄傲。 今天的伦敦，是古典与现代的完美结合，是一个矛盾却和谐的存在。而你体现的也是冰与火两种完全对立的性格，也只有伦敦才能与你相融。“当你对伦敦厌倦之际，就是对人生也已经厌倦了，因为伦敦有你人生的一切”，英国作家约翰逊如是说，伦敦，绝对是一个值得你用一生去品味的城市。 候补城市：柏林  \n/
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+
+Onjumptest17_D
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你最适合在国外哪个城市居住\n结果出来了，%username是D型.\n/
+代表城市：巴黎-光之城 光在西方人心目中一向是上帝的化身，也许巴黎人认为自己离上帝更近一些。但巴黎确是一座有着无限奢华与享乐的梦想天堂，“如果你够幸运，在年轻的时候呆过巴黎，那么巴黎将永远跟着你，因为巴黎是一席流动的筵席”.钟爱高端物质生活的你定可以在这里享受到一切人间的美好，美酒、美食、美景，最昂贵的奢侈和最纯粹的艺术。 候补城市：米兰 \n/
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18
+{
+"\0\s[40]\![set,choicetimeout,0]你在朋友圈中的角色\n1.你每天都吃早餐？\n/
+\q[A.Yes,Onjumptest18_2]\n/
+\q[B.No,Onjumptest18_3]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_2
+{
+"\0\s[40]\![set,choicetimeout,0]你在朋友圈中的角色\n2.你养过宠物吗？\n/
+\q[A.Yes,Onjumptest18_7]\n/
+\q[B.No,Onjumptest18_3]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_3
+{
+"\0\s[40]\![set,choicetimeout,0]你在朋友圈中的角色\n3.你有打过工的经验吗？\n/
+\q[A.Yes,Onjumptest18_7]\n/
+\q[B.No,Onjumptest18_4]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_4
+{
+"\0\s[40]\![set,choicetimeout,0]你在朋友圈中的角色\n4.你的运动细胞很好？\n/
+\q[A.Yes,Onjumptest18_8]\n/
+\q[B.No,Onjumptest18_5]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_5
+{
+"\0\s[40]\![set,choicetimeout,0]你在朋友圈中的角色\n5.你正在减肥？\n/
+\q[A.Yes,Onjumptest18_9]\n/
+\q[B.No,Onjumptest18_6]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_6
+{
+"\0\s[40]\![set,choicetimeout,0]你在朋友圈中的角色\n6.你认为在戏院看电影的时候，一定要吃喝东西才过？\n/
+\q[A.Yes,Onjumptest18_9]\n/
+\q[B.No,Onjumptest18_10]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_7
+{
+"\0\s[40]\![set,choicetimeout,0]你在朋友圈中的角色\n7.你觉得世上没有外星人？\n/
+\q[A.Yes,Onjumptest18_11]\n/
+\q[B.No,Onjumptest18_8]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_8
+{
+"\0\s[40]\![set,choicetimeout,0]你在朋友圈中的角色\n8.你有很多异性朋友？\n/
+\q[A.Yes,Onjumptest18_12]\n/
+\q[B.No,Onjumptest18_9]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_9
+{
+"\0\s[40]\![set,choicetimeout,0]你在朋友圈中的角色\n9.你很少看漫画？\n/
+\q[A.Yes,Onjumptest18_13]\n/
+\q[B.No,Onjumptest18_10]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_10
+{
+"\0\s[40]\![set,choicetimeout,0]你在朋友圈中的角色\n10.你一到卡拉ＯＫ就会唱不停？\n/
+\q[A.Yes,Onjumptest18_17]\n/
+\q[B.No,Onjumptest18_14]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_11
+{
+"\0\s[40]\![set,choicetimeout,0]你在朋友圈中的角色\n11.你喜欢吃三文治？\n/
+\q[A.Yes,Onjumptest18_14]\n/
+\q[B.No,Onjumptest18_12]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_12
+{
+"\0\s[40]\![set,choicetimeout,0]你在朋友圈中的角色\n12.你擅长自创不同菜式？\n/
+\q[A.Yes,Onjumptest18_15]\n/
+\q[B.No,Onjumptest18_13]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_13
+{
+"\0\s[40]\![set,choicetimeout,0]你在朋友圈中的角色\n13.你懂得画漫画？\n/
+\q[A.Yes,Onjumptest18_16]\n/
+\q[B.No,Onjumptest18_14]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_14
+{
+"\0\s[40]\![set,choicetimeout,0]你在朋友圈中的角色\n14.你喜欢格子图案？\n/
+\q[A.Yes,Onjumptest18_16]\n/
+\q[B.No,Onjumptest18_18]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_15
+{
+"\0\s[40]\![set,choicetimeout,0]你在朋友圈中的角色\n15.从小到大你都很想到海外去读书 ？\n/
+\q[A.Yes,Onjumptest18_19]\n/
+\q[B.No,Onjumptest18_16]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_16
+{
+"\0\s[40]\![set,choicetimeout,0]你在朋友圈中的角色\n16.你曾经参加过某个艺人的影迷会或流连于其网站？\n/
+\q[A.Yes,Onjumptest18_20]\n/
+\q[B.No,Onjumptest18_17]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest18_17
+{
+"\0\s[40]\![set,choicetimeout,0]你在朋友圈中的角色\n17.你容易被感动及因而哭泣？\n/
+\q[A.Yes,Onjumptest18_21]\n/
+\q[B.No,Onjumptest18_18]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_18
+{
+"\0\s[40]\![set,choicetimeout,0]你在朋友圈中的角色\n18.你曾处于一脚踏两船的感情状态？\n/
+\q[A.Yes,Onjumptest18_21]\n/
+\q[B.No,Onjumptest18_22]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_19
+{
+"\0\s[40]\![set,choicetimeout,0]你在朋友圈中的角色\n19.生活中如果没有手电，你觉得非常不方便，甚至是困扰？\n/
+\q[A.Yes,Onjumptest18_23]\n/
+\q[B.No,Onjumptest18_20]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_20
+{
+"\0\s[40]\![set,choicetimeout,0]你在朋友圈中的角色\n20.你每日都会看报纸经济版名电视财经新闻？\n/
+\q[A.Yes,Onjumptest18_24]\n/
+\q[B.No,Onjumptest18_21]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_21
+{
+"\0\s[40]\![set,choicetimeout,0]你在朋友圈中的角色\n21.你很怕看恐怖片？\n/
+\q[A.Yes,Onjumptest18_22]\n/
+\q[B.No,Onjumptest18_25]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_22
+{
+"\0\s[40]\![set,choicetimeout,0]你在朋友圈中的角色\n22.你喜欢喝咖啡？\n/
+\q[A.Yes,Onjumptest18_26]\n/
+\q[B.No,Onjumptest18_25]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_23
+{
+"\0\s[40]\![set,choicetimeout,0]你在朋友圈中的角色\n22.你爱喷香水？\n/
+\q[A.Yes,Onjumptest18_A]\n/
+\q[B.No,Onjumptest18_B]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest18_24
+{
+"\0\s[40]\![set,choicetimeout,0]你在朋友圈中的角色\n24.你的家中有５瓶以上的护肤品？\n/
+\q[A.Yes,Onjumptest18_C]\n/
+\q[B.No,Onjumptest18_D]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_25
+{
+"\0\s[40]\![set,choicetimeout,0]你在朋友圈中的角色\n25.你是一个不怕麻烦的人？\n/
+\q[A.Yes,Onjumptest18_E]\n/
+\q[B.No,Onjumptest18_F]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest18_26
+{
+"\0\s[40]\![set,choicetimeout,0]你在朋友圈中的角色\n25.你常被朋友邀请去参加不同类型的活动？\n/
+\q[A.Yes,Onjumptest18_G]\n/
+\q[B.No,Onjumptest18_H]\n/
+
+
+\_l[%(0),%(135)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest18_A
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你在朋友圈中的角色\n结果出来了，%username是A型.领导人\n/
+你很有大将之风，不管是在熟悉或陌生的环境，你都会主动跟别人打招呼；有问题>发生时，你也总是毫不犹豫地第一时间冲上前去解决，喜欢享受别人赞赏。你天生就>具有领导才能，在团体中常处于指挥的地位，容易获得别人的信任。 \n/
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+Onjumptest18_B
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你在朋友圈中的角色\n结果出来了，%username是B型.开心果\n/
+你善于搞气氛，没事也会找事做，没话也会找话讲，有你在的地方就有笑声。你的>人际关系不错，大家都喜欢和你相处，而你也总是开朗大方，所以朋友很多，但小心>那些参加不完的聚> > 会让你疲于奔命。 \n/
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_C
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你在朋友圈中的角色\n结果出来了，%username是C型.潮流人\n/
+你很注意流行信息，只要有人和你倾这类型的话题，你一定可以马上和他成为 无所>不谈的好朋友。同时你是很有原则的人，只要不与你的原则有冲突，你就万事好商量，可是一旦违背你的原则，那就毫无商量余地！ \n/
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_D
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你在朋友圈中的角色\n结果出来了，%username是D型.乖乖女\n/
+非常自律的你，很守规矩，自我要求很高，相对地，对别人也不会放松，你喜欢自我约束力高的人，个性散漫的人是无法和你成为朋友的。你非常努力，是别人眼中的>乖仔乖女，为太专注于学习，而忽略了人际关系。  \n/
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_E
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你在朋友圈中的角色\n结果出来了，%username是E型.十三点\n/
+你对人没有什么特别的好恶，不过，如果有人能和你聊聊有兴趣的话题，你会欲罢不能地和他马上混熟，毫无心机。别人和你相处的感觉得很舒服，所以你很容易交朋友，就算你不积极拓展人际关系，朋友也会自动走埋身。  \n/
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_F
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你在朋友圈中的角色\n结果出来了，%username是F型.独家村\n/
+在团体中，你的话并不多，样样有所保留，别人对你的印象是「神秘」。其实你并>不是不喜欢和人群在一起，只是你喜欢躲在一边观察，所以你非常能看出别人心裹在想甚么你喜欢和别人讨论命理、星座、占卜之类的话题\n/
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_G
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你在朋友圈中的角色\n结果出来了，%username是G型.小天真\n/
+你是一个没心机的人，想法单纯，凡事都不会有计划或想太远，属于有酒今朝醉的>类型。原则上， 你的朋友都会喜欢你，可是有时候你的天真可能会为别人带来一些不必要的麻烦。 \n/
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+Onjumptest18_H
+{
+"\0\s[40]\b[2]\![set,choicetimeout,0]你在朋友圈中的角色\n结果出来了，%username是H型.小天使\n/
+你是一个很随和的人，不会带给别心压力，对朋友很体 贴， 具有同情心。任何人来>找你帮忙，你都会尽你所能提供帮助，不求回报，也不会不耐 烦，所以你的人际关系>很好，是许多人的心灵急救站。 \n/
+
+\_l[%(0),%(340)]\q[◇返回上一层,Ontestmenu]    \q[◇结束,OnOpenMenu,1]\n/
+"
+}
+
+
+

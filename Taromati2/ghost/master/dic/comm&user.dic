@@ -1,0 +1,508 @@
+﻿///////// 文
+///////// User与Ghost对话部分(包括对话教学)
+///////// written by KikkaAIdb.[2009-01-27初版]★
+
+//字段scope 为2时的数据为正常的对话内容,scope为-1时是被删除了的内容(其实是想用做对橘花[0]或对斗和[1]的谈话内容的);
+//obligate1和2 为保留字段
+
+//*************************************************************************************
+//[2009-01-27初版]
+//查询: ①完全匹配
+//      ②反向模糊查询 (数据库中字串存在于输入的字串时输出)
+//                      A: 最长匹配原则
+//                      B: 当单条件匹配和多条件匹配长度相等时,多条件匹配优先
+//                      C: 存在相等的多条件匹配,则随机输出
+//                      D: 存在相等的单条件匹配,随机输出
+//      ③正向模糊查询 (数据库中存在输入的字串则输出,符合记录不唯一时随机输出)
+//
+//*************************************************************************************
+
+
+//----添加---------------------------
+
+Select.Teaching
+{
+	temp01="提问";
+	Teach00;
+}
+//(我||你)&&(喜欢||爱)&&吗
+Teach00
+{
+	"\0\s[0]\_q"
+	--
+	if temp01=="橘花这时要回答的" {
+		"已设置提问内容：%(formattemp(temp02))\n[150]"
+	}
+	--
+	"请输入“%(temp01)内容”!\n"
+	--
+	if temp01=="提问" {
+		"如果需要设置问题同义词(句),\n请在同义词(句)之间用“|”符号分隔开来!\n如果需要设置多个关键词(句),\n请在各关键词(句)之间用“&”分隔开来!\n【注意:“&”优先度高于“|”】"
+	}
+	else {
+		"提示:如果需要设置多种回答方案,\n请使用“|”符号分隔开来！提问时会随机输出喔~\n表情和延时可以用代码如\_?\s[22]\w9\_?（表情请在右键-便利机能-开发专用介面-表情测试选取surface前的代号，\_?\s[22]\_?代表选surface22(橘花P90)，\_?\w9\_?等待延时9毫秒，大于9无效，但可重复使用），也可以用“表情<序号>”，“<等待>时间”\n，如需加声音可将声音文件如sound.wav放在\_?master\sounds\kikkavoice\内，然后增加\![sound,play,sounds\kikkavoice\sound.wav]\_?"
+	}
+	--
+	"\n\n\![set,choicetimeout,0]\![*]\q[取消,OnoverTeach,OnTeach0]\![open,inputbox,OnTeach0,-1]\e"
+}
+
+formattemp//输出显示时如有同义词句则把同义词句括起来
+{
+	_a=_argv[0];
+ /* SETDELIM(_a,"|");
+	_x="";
+	_y=0;
+	while _a[_y+1]!=null {
+		if _y==0 {
+			_x=_a[0]+"（";
+		}
+		else {
+			_x+=_a[_y]+"/";
+		}
+		_y++;
+	}
+	_x+=_a[_y]+"）";
+	if _y==0 {
+		_x=_a[0];
+	}
+	_x;*/
+	_a;
+}
+
+OnTeach0
+{
+  _a=CUTSPACE(reference0);
+  _a=REPLACE(_a,",","<英文逗号>");
+  _a=REPLACE(_a,"(","<");
+  _a=REPLACE(_a,")",">");
+  _a=REPLACE(_a,"%<username>","%(username)");
+  _a=REPLACE(_a,"<","(");
+  _a=REPLACE(_a,">",")");
+if (_t=LogicError(_a))!=""
+   {
+  "\0\s[0]\_q"+_t+"\n\n\![set,choicetimeout,0]\![*]\q[取消,OnoverTeach,OnTeach0]\![open,inputbox,OnTeach0,-1]\e"
+return;
+
+}
+  if _a=="" {
+    Teach00;
+  }
+  else {
+    if temp01=="提问" {
+      temp02=_a;
+      _g=IARRAY;
+      _c=0;
+      _c=SQLite("-j","SELECT ID FROM KikkaAIdb WHERE 提问='%(_a)' AND scope!=-1");//是否存在完全符合"提问"的记录
+      if _c>0 {
+        _g[0]=_c;//_g=_c;
+      }
+      else {//输入的句子中是否包含有数据库"提问"字段的词语,有的话取出符合的答案,将ID保存在数组_g
+		_g=Talksearch(_a);
+      }
+      if _g[0]==null {
+		temp01="橘花这时要回答的";
+		Teach00;
+      }
+      else {
+		_i=0;
+		_m="";
+		while _g[_i]!=null {
+			_b=SQLite("-j","SELECT * FROM KikkaAIdb WHERE ID='%(_g[_i])' AND scope!=-1");
+			_i++;
+			_b=REPLACE(_b,"\1","斗和：");
+			_x=_b[2];
+			_y=_b[3];
+			_z=_b[0];
+
+			_m +="ID:"+_z+"\n提问: "+formattemp(_x)+"\n回答: "+formattemp(_y)+"\n[200]";
+		}
+		"\0\s[0]\b[2]\![set,choicetimeout,0]\![quicksession,true]已经存在下面的提问哦~继续吗?\n\n/
+		%(_m)"
+		--
+		if _c<=0 {
+			"\![*]\q[继续,GoonTeaching]\n"
+		}
+		--
+		"\![*]\q[重新设置提问,Teaching]\n/
+		\![*]\q[取消,OnoverTeach]\e"
+      }
+    }
+	elseif temp01=="橘花这时要回答的" {
+		temp03=_a;
+		_i=SQLite.total("KikkaAIdb");
+		_i++;
+		_b=write01(_i);
+		if _b==0
+			"\0\s[0]\b[2]记录完毕,现共有%(SQLite.Size('KikkaAIdb'))条教学对话...\n这次增加的为:\n[200]提问: %(formattemp(temp02))\n[150]回答: %(formattemp(temp03))\n[200]\![set,choicetimeout,0]\![*]\q[继续教橘花对话,教学]\n\![*]\q[暂时就这样了,OnoverTeach]\e"
+		else
+			BUGNow
+	}
+  }  
+}
+
+Select.GoonTeaching
+{
+	temp01="橘花这时要回答的";
+	Teach00;
+}
+
+write01
+{ 
+	_a=SQLite("-r","SELECT ID FROM KikkaAIdb WHERE scope=-1");
+	_b=valueex0;
+	if _a>0 {
+		SQLite("UPDATE KikkaAIdb SET scope=2,提问='%(temp02)',回答='%(temp03)' WHERE ID=%(_b)");
+	}
+	else {
+		SQLite("INSERT INTO KikkaAIdb VALUES ('%(_argv[0])','2','%(temp02)','%(temp03)','（空）','（空）')");
+	}
+}
+
+OnoverTeach
+{
+	ERASvalueex;
+	"\![close,inputbox,%(reference0)]"
+	--
+	"\0\s[0]好的。\e"
+	"\0\s[3]啊、\w9好的。\e"
+	"\0\s[3]…\w9是这样啊。\e"
+	"\0\s[9]…\w9…\w9…\e"
+	"\0\s[0]…\w9\s[9]怎么了？\e"
+}
+
+Talksearch//在教学、修改、删除查询时用
+{
+  _a=_argv[0];
+  _g=IARRAY;
+  _e=0;
+  _n=0;
+  _i=SQLite.total("KikkaAIdb");
+  for _d=1;_d<=_i;_d++ {
+    _f=SQLite("-j","SELECT 提问 FROM KikkaAIdb WHERE ID='%(_d)' AND scope!=-1");
+    SETDELIM(_f,"|");
+    _y=0;
+    while _f[_y]!=null {
+      _m=0;
+      if "&" _in_ _f[_y] {//判断"提问"中有&时,各个关键字是否都存在于_a中
+        _j=_f[_y];
+        SETDELIM(_j,"&");
+        _n=ARRAYSIZE(_j);
+        _k=0;
+        for _l=0,_m=1;_l<_n && _m==1;_l++ {
+          _m=(_j[_l] _in_ _a);
+        } 
+        if _m==1 {
+          _g[_e]=_d;
+          _e++;
+        }
+      }
+      if _f[_y] _in_ _a {
+        _g[_e]=_d;
+        _e++;
+      }
+      _y++;
+    }
+  }
+  _g;
+}
+
+Talksearchleng
+{
+  _a=_argv[0];
+  _g=IARRAY;
+  _e=0;
+  _n=0;
+  _lastm=0;
+  _i=SQLite.total("KikkaAIdb");
+  for _d=1;_d<=_i;_d++ {
+    _f=SQLite("-j","SELECT 提问 FROM KikkaAIdb WHERE ID='%(_d)' AND scope!=-1");
+    SETDELIM(_f,"|");
+    _y=0;
+    while _f[_y]!=null {
+      _m=0;
+      if "&" _in_ _f[_y] {
+        _j=_f[_y];
+        SETDELIM(_j,"&");
+        _n=ARRAYSIZE(_j);
+        _k=0;
+        //_m=1;
+        for _l=0,_m=1;_l<_n && _m==1;_l++ {
+          _m=(_j[_l] _in_ _a);
+          _k+=STRLEN(_j[_l]);
+        } 
+        if _m==1 && _k==_e && _lastm==1 {
+          _o=ARRAYSIZE(_g);
+          _g[_o]=_d;
+        }
+        elseif _m==1 && _k>_e {
+          _lastm=1;
+          _e=_k;
+          _g=IARRAY;
+          _g[0]=_d;
+        }
+      }
+
+      if _f[_y] _in_ _a && STRLEN(_f[_y])==_e && _lastm==0 {
+        _o=ARRAYSIZE(_g);
+        _g[_o]=_d;
+      }
+      elseif _f[_y] _in_ _a && STRLEN(_f[_y])>_e {//当上次最大长度匹配＞这次,不管是何种保留都放弃
+        _lastm=0;
+        _e=STRLEN(_f[_y]);
+        _g=IARRAY;
+        _g[0]=_d;
+      }
+      _y++;
+    }
+  }
+  _g;
+}
+
+//---- 删除&修改 -------------------------------------------------------
+Select.TalkDelete
+{
+  "\q[◇按“提问”关键字搜索进行删除,TalkDeletesearch]\n/
+  \q[◇全部列表,TalkAllDel]\n\n/
+  \![*]\q[返回,OnUserDatabase,,Return]\n\![*]\q[取消,MenuCancel]\e"
+}
+
+Select.TalkUpdate
+{
+  "\q[◇按“提问”关键字搜索进行修改,TalkAmendesearch]\n/
+  \q[◇全部列表,TalkAllAmend]\n\n/
+  \![*]\q[返回,OnUserDatabase,,Return]\n\![*]\q[取消,MenuCancel]\e"
+}
+
+Select.TalkDeletesearch
+{
+  temp01="删除该词条";
+  "\0\s[0]\![set,choicetimeout,0]请输入“提问”关键字!\n在这里不会启用正向模糊查询!\n\n\![*]\q[返回,TalkDelete]\n\![*]\q[取消,OnoverTeach,OnTalksearch]\![open,inputbox,OnTalksearch,-1]\e"
+}
+
+Select.TalkAmendesearch
+{
+  temp01="修改该词条";
+  "\0\s[0]\![set,choicetimeout,0]请输入“提问”关键字!\n在这里不会启用正向模糊查询!\n\n\![*]\q[返回,TalkUpdate]\n\![*]\q[取消,OnoverTeach,OnTalksearch]\![open,inputbox,OnTalksearch,-1]\e"
+}
+
+Select.TalkAllDel
+{
+  temp01="删除该词条";
+  UPDateshow("#-1","1");
+}
+
+Select.TalkAllAmend
+{
+  temp01="修改该词条";
+  UPDateshow("#-1","1");
+}
+//------------------------------------------------------------------
+
+OnTalksearch
+{
+  _a=CUTSPACE(reference0);
+  if _a=="" {
+    "\0\s[0]请输入内容喔~\e"
+    "\0\s[0]%(username)请说话喔~\e"
+    "\0\s[0]%(username)怎么不说话,橘花不知道怎么做的哦...\e"
+  }
+  else {
+    _g=IARRAY;
+    _c=0;
+    _c=SQLite("-j","SELECT ID FROM KikkaAIdb WHERE 提问='%(_a)' AND scope!=-1");
+    if _c>0 {
+      _g[0]=_c;
+    }
+    else {
+      _g=Talksearch(_a);
+    }
+    if _g[0]==null {
+        "\0\s[0]\![set,choicetimeout,0]没有符合的记录!\n\n\![*]\q[返回,OnUserDatabase,,Return]           \![*]\q[取消,OnoverTeach]\e"
+    }
+    else {
+      UPDateshow(_g);
+    }
+  }
+}
+
+
+UPDateshow
+{
+  _m="";
+  _pag="";
+  if _argv[0]=="#-1" {
+    _i=TOINT(_argv[1]);
+    _p=(_i+9)/10;
+    _next=TOINT(_argv[1])+10;
+    _front=TOINT(_argv[1])-10;
+    _tola=(TOINT(SQLite.total("KikkaAIdb"))+9)/10;
+    if _i==1 {
+      _pag="\_l[20,-]<<上一页\_l[93,-]\q[第1页,Onselepag]    共%(_tola)页\_l[200,-]\q[下一页>>,OnAIdbPage,%(_next)]"
+    }
+    elseif _next>SQLite.total("KikkaAIdb") {
+      _pag="\_l[20,-]\q[<<上一页,OnAIdbPage,%(_front)]\_l[93,-]\q[第%(_tola)页,Onselepag]    共%(_tola)页\_l[200,-]下一页>>"
+    }
+    else {
+      _pag="\_l[20,-]\q[<<上一页,OnAIdbPage,%(_front)]\_l[93,-]\q[第%(_p)页,Onselepag]    共%(_tola)页\_l[200,-]\q[下一页>>,OnAIdbPage,%(_next)]"
+    }
+	_t=SQLite.total("KikkaAIdb")
+    while _i<_next && _i<=_t {
+      _b=SQLite("-j","SELECT * FROM KikkaAIdb WHERE ID='%(_i)' AND scope!=-1");
+      _i++;
+     _b=REPLACE(_b,"\1","斗和：");
+     _b=REPLACE(_b,"\w","[等待]");
+     _b=REPLACE(_b,"\s","[表情]");
+     _b=REPLACE(_b,"[","<");
+     _b=REPLACE(_b,"]",">");
+     _x="\_?"+_b[2]+"\_?";
+      _y="\_?"+_b[3]+"\_?";
+      _z="\_?"+_b[0]+"\_?";
+
+
+      _x=_b[2];
+      _y=_b[3];
+      _z=_b[0];
+      if _b!=null {
+        _m +="ID:"+_z+"\_l[150,-]\![*]\q[%(temp01),OnAIdbUpdate,%(_z)]"+"\n提问: "+formattemp(_x)+"\n回答: "+formattemp(_y)+"\n[150]";
+      }
+    }
+  }
+  else {
+    _g=_argv;
+    _i=0;
+    while _g[_i]!=null {
+      _b=SQLite("-j","SELECT * FROM KikkaAIdb WHERE ID='%(_g[_i])' AND scope!=-1");
+      _i++;
+     _b=REPLACE(_b,"\,","，");
+      _b=REPLACE(_b,"\1","斗和：");
+      _b=REPLACE(_b,"\w","[等待]");
+      _b=REPLACE(_b,"\s","[表情]");
+      _b=REPLACE(_b,"[","<");
+      _b=REPLACE(_b,"]",">");
+      _x=_b[2];
+      _y=_b[3];
+      _z=_b[0];
+      _m +="ID:"+_z+"\_l[150,-]\![*]\q[%(temp01),OnAIdbUpdate,%(_z)]"+"\n提问: "+formattemp(_x)+"\n回答: "+formattemp(_y)+"\n[150]";
+    }
+  }
+  "\0\s[0]\b[2]\_q\![set,choicetimeout,0]所有符合条件的词条~\n\n%(_m)\n[130]%(_pag)\n[130]/
+  \![*]\q[返回,OnUserDatabase,,Return]\n\![*]\q[取消,OnoverTeach]\e"
+}
+
+OnAIdbPage
+{
+  UPDateshow("#-1",reference0);
+}
+
+Onselepag
+{
+  _a=(TOINT(SQLite.total("KikkaAIdb"))+9)/10;
+  "\0\s[0]\_q\![set,choicetimeout,20000]请输入页数（半角数字）,共有 %(_a)页!\n[200]\![*]\q[取消,OnoverTeach,Onsp]\![open,inputbox,Onsp,20000]\e"
+}
+
+Onsp//选页
+{
+  _a=CUTSPACE(reference0);
+  _b = RE_REPLACE(_a,"[0123456789]",null);
+  if _b!=null || _a==null {
+    Onselepag;
+  }
+  else {
+    _a=TOINT(_a);
+    if _a>(TOINT(SQLite.total("KikkaAIdb"))+9)/10
+      "\0\s[0]输入的页数大于总页数,请重新输入~\w8\w8\c%(Onselepag)\e"
+    elseif _a<=0 {
+      Onselepag;
+    }
+    else {
+      _a=_a*10-9;
+      UPDateshow("#-1",_a);
+    }
+  }
+}
+
+OnAIdbUpdate
+{
+  _a=1;
+  if temp01=="删除该词条" {
+    _a=SQLite("UPDATE KikkaAIdb SET scope=-1 WHERE ID=%(reference0)");
+    if _a==0
+    "\0\s[0]删除成功!现共有%(SQLite.Size('KikkaAIdb'))条教学对话喔~\n[200]\![*]\q[返回,TalkDelete]\n\![*]\q[取消,OnoverTeach]\e"
+    else
+		BUGNow
+  }
+  elseif temp01=="修改该词条" {
+    temp01=null;
+    _b=SQLite("-j","SELECT * FROM KikkaAIdb WHERE ID=%(reference0)");
+    _b=REPLACE(_b,"\1","斗和：");
+    _b=REPLACE(_b,"\w","[等待]");
+    _b=REPLACE(_b,"\s","[表情]");
+    _b=REPLACE(_b,"[","<");
+    _b=REPLACE(_b,"]",">");
+    
+   
+    _x=_b[2];
+    _y=_b[3];
+    "\0\s[0]\![set,choicetimeout,0]\b[2]\_q该词条ID为%(reference0),请问要修改哪一部分?\n[150]/
+    \![*]\q[提问:,OnAIdbUpdate,＆,%(reference0),提问,%(formattemp(_x))]%(formattemp(_x))\__q\n/
+    \![*]\q[回答:,OnAIdbUpdate,＆,%(reference0),回答,%(formattemp(_y))]%(formattemp(_y))\__q\n/
+    \![*]\q[返回列表,TalkAllAmend]\n/
+    \n\![*]\q[放弃,OnoverTeach]\n[200]提示:如果需要设置多种回答方案,\n请使用“|”符号分隔开来！\n【注意:“&”优先度高于“|”】提问时会随机输出喔~\n表情和延时可以用代码如\_?\s[22]\w9\_?（表情请在右键-便利机能-开发专用介面-表情测试选取surface前的代号，\_?\s[22]\_?代表选surface22(橘花P90)，\_?\w9\_?等待延时9毫秒，大于9无效，但可重复使用），也可以用“表情<序号>”，“<等待>时间”\n，如需加声音可将声音文件如sound.wav放在\_?master\sounds\kikkavoice\内，然后增加\![sound,play,sounds\kikkavoice\sound.wav]\_?\_q\e"
+  }
+
+
+  elseif reference0=="＆" {
+    temp01=reference1;
+    temp02=reference2;
+    temp03=reference3;
+      "\0\s[0]\![set,choicetimeout,0]\_q%(username)要把%(reference2)改成?\n[200]\![*]\q[放弃,OnoverTeach,OnAIdbUpdate]\n/
+\![*]\q[返回列表,TalkAllAmend]\n[200]\n/
+提示:如果需要设置多种回答方案,\n请使用“|”符号分隔开来！\n【注意:“&”优先度高于“|”】提问时会随机输出喔~\n表情和延时可以用代码如\_?\s[22]\w9\_?（表情请在右键-便利机能-开发专用介面-表情测试选取surface前的代号，\_?\s[22]\_?代表选surface22(橘花P90)，\_?\w9\_?等待延时9毫秒，大于9无效，但可重复使用），也可以用“表情<序号>”，“<等待>时间”\n，如需加声音可将声音文件如sound.wav放在\_?master\sounds\kikkavoice\内，然后增加\![sound,play,sounds\kikkavoice\sound.wav]\_?\![open,inputbox,OnAIdbUpdate,-1,%(temp03)]\_q\e"
+  }
+  else {
+    reference0=REPLACE(reference0,",","<英文逗号>");
+    reference0=REPLACE(reference0,"斗和：","\1");
+    reference0=REPLACE(reference0,"<","[");
+    reference0=REPLACE(reference0,">","]");
+    reference0=REPLACE(reference0,"(","<");
+    reference0=REPLACE(reference0,")",">");
+    reference0=REPLACE(reference0,"%<username>","%(username)");
+    reference0=REPLACE(reference0,"<","(");
+    reference0=REPLACE(reference0,">",")");
+    reference0=REPLACE(reference0,"[表情]","\s",);
+    reference0=REPLACE(reference0,"[等待]","\w");
+ 
+   
+   
+    _c=0;
+    _a=0;
+    _m="";
+    _b=temp01;
+    temp01="修改该词条";
+    if temp02=="提问" {
+      _c=SQLite("-j","SELECT ID FROM KikkaAIdb WHERE 提问='%(reference0)' AND scope!=-1");
+    }
+    if _c==_b {
+      _m="修改后的提问内容为“%(formattemp(reference0))”与修改前一样,不用变更吗？"
+    }
+    elseif _c>0 {
+      _m="已存在提问内容为“%(formattemp(reference0))”的词条了喔,\n不可修改成重复的提问哦~。"
+    }
+    elseif (_t=LogicError(reference0))!=""
+     _m=_t+"，更改失败。"
+    else {
+      _a=SQLite("UPDATE KikkaAIdb SET %(temp02)='%(reference0)' WHERE ID=%(_b)");
+
+      _m="任务完成!已把%(temp02)内容改为“%(formattemp(reference0))”。"
+    }
+
+    if _a==0 {
+    "\0\s[0]\b[2]\_q%(_m)\n[150]返回该词条继续修改吗?\n[200]/
+    \![*]\![set,choicetimeout,0]\q[返回继续修改,OnAIdbUpdate,%(_b)]   \![*]\q[返回列表,TalkAllAmend]     \![*]\q[不用了,OnoverTeach]\e"
+    }
+    else {
+		BUGNow
+    }
+  }
+}
+

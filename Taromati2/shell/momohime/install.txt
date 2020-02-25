@@ -1,0 +1,4 @@
+charset,UTF-8
+type,shell
+name,momohime
+directory,momohime

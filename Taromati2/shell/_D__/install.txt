@@ -1,0 +1,5 @@
+charset,Shift_JIS
+type,shell
+name,Remilia Scarlet
+accept,‹k‰Ô
+directory,¹D¤Æ

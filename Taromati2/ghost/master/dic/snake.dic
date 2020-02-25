@@ -1,0 +1,414 @@
+﻿OnSnake
+{
+	if QuickStartVersion{
+		NeedUpdate
+		return
+	}
+	playsnake = 1;
+        running="playsnake"
+	Started = 1;
+	GameOver=0;
+	Paused=0;
+	
+	Left  = 1;
+	Right = 2;
+	Up =    3; 
+	Down  = 4;
+	
+	SDirect=Right;
+	Score = 0;
+	food.yes=1;/*1表示需要出现新食物,0表示已经存在食物*/ 
+	snake.life=0;/*活着*/ 
+	//if snake.speed==NULL
+	snake.speed=1;
+	//if snake.speed>9
+	//snake.speed=9
+	if snake.timespeed==NULL
+		snake.timespeed=250;
+	NumScores=5;
+	SMapX=28;
+	SMapY=28;
+	snake.node=3;
+	snake.x=IARRAY;
+	snake.y=IARRAY;
+	snake.x[0]=12;snake.y[0]=10;/*蛇头*/ 
+	snake.x[1]=11;snake.y[1]=10;
+	snake.x[2]=10;snake.y[2]=10;
+	// snake.x[3]=13;snake.y[3]=10;
+	//snake.x[4]=14;snake.y[4]=10;
+	Snake=IARRAY;
+	Snake_=IARRAY;
+	PaintSnake;
+}
+
+
+OnSnakeTimer
+{
+	_txt="\C\![quicksession,true]\c\b[2]";
+	
+	
+	if !GameOver && Started && !Paused
+	{ 
+        _txt+=Snake.Move(SDirect);
+        _txt+=CheckSnakeStatus;  
+        
+	}
+	_txt+PaintSnake;
+	
+	
+}
+
+
+
+
+
+SnakeKey
+{
+	
+	_txt = "\C\![quicksession,true]\c";
+	if reference0 == "n"  {   _txt+=OnSnake ;}
+	elseif reference0 == "l"  {  _txt+=OnShowSnakeHighScores;}
+	elseif reference0 == "e"  {  OnSnakeGameOver; break}
+	elseif reference0 == "p"  {   Paused=TOINT(Paused+1)%2;}
+	
+	
+	if !GameOver && Started && !Paused
+	{
+		
+		// SDirect = 0;
+		
+		case reference0
+		{
+            if reference0 =="left" &&SDirect!=2 {  SDirect=Left ;  }
+			elseif reference0 =="right" &&SDirect!=1{  SDirect=Right;}
+			elseif reference0 =="up" &&SDirect!=4    {SDirect=Up;}
+			elseif reference0 =="down" &&SDirect!=3{  SDirect=Down ; }
+			
+			
+			
+			
+			
+			
+			
+		}
+			if SDirect
+			{
+				_txt+=Snake.Move(SDirect);
+				_txt+=CheckSnakeStatus;
+			}
+	}
+	if playsnake
+		_txt+PaintSnake;
+	else 
+		_txt;
+	
+}
+
+
+PaintSnake
+{
+	_txt="\C\![quicksession,true]\c\b[2]\![set,choicetimeout,%(snake.timespeed)]";
+	_txt+="游戏操作:\n左，右，上，下移光标键。键盘N：新游戏。键盘L：排行榜。键盘P：暂停继续游戏。键盘E：退出游戏";
+	_txt+="\n\节数：%(snake.node)   \_l[80,-]速度：%(snake.speed)   \_l[160,-]得分：%(Score)    \_l[240,-]\q[◇终了,OnSnakeGameOver]";
+	
+	
+	
+	for _y=0;_y<SMapY;_y++
+	{
+		for _x=0;_x<SMapX;_x++
+		{
+			if _y==0||_y==SMapY-1
+				_txt+="\_l[%(_x*10+5),%(_y*10+60)]\_b[data/BallRed10.png,inline]";
+            else
+			{
+				
+                if _x==0||_x==SMapX-1
+					_txt+="\_l[%(_x*10+5),%(_y*10+60)]\_b[data/BallRed10.png,inline]";
+			}
+			
+			
+		}
+	}
+	
+	for _i=0;_i<snake.node;_i++
+	{
+		_x=snake.x[_i];_y=snake.y[_i];
+        _txt+="\_l[%(_x*10+5),%(_y*10+60)]\_b[data/BallGreen10.png,inline]";
+		
+	}
+	
+	if food.yes==0 /*画面上有食物了就要显示*/ 
+	{ 
+		_x=food.x;_y=food.y;
+		_txt+="\_l[%(_x*10+5),%(_y*10+60)]\_b[data/BallGreen10.png,inline]";
+		
+		
+	}
+	
+	
+	_txt;
+	
+}
+
+Snake.shape
+{
+/*
+for _i=0;_i<node;_i++
+{
+for _j=0; _j<node; _j++
+{ 
+if Snake[(Snake.y+_i-1)*SMapX+_j-1+Snake.x]
+Snake[(Snake.y+_i)*SMapX+_j+Snake.x]=Snake[(Snake.y+_i-1)*SMapX+_j-1+Snake.x]
+}
+}
+
+	*/  
+	
+	
+	for i=snake.node-1;i>0;i--  
+	{ 
+		snake.x[i]=snake.x[i-1]; 
+		snake.y[i]=snake.y[i-1]; 
+	} 
+	
+}
+
+Snake.Move
+{
+	
+	Snake.shape     
+		
+		if food.yes==1/*需要出现新食物*/ 
+		{ 
+                      _exit=1;
+                      while _exit
+                      {
+     	                    food.x=RAND(SMapX-2)+1;
+		            food.y=RAND(SMapY-2)+1;  
+                            _exit = 0;
+                       	    for _i=3;_i<snake.node;_i++
+                           {
+                                 if snake.x[_i] == food.x && snake.y[_i] ==food.y
+	                         _exit++;
+	                    } 
+                      }		
+	              food.yes=0;/*画面上有食物了*/ 
+		      x=snake.x[0];y=snake.y[0];
+                 }
+		 case SDirect
+		 {
+			if SDirect==Left       
+                                x--;
+                        elseif SDirect==Right 
+                               x++; 
+			elseif SDirect==Up   
+                               y--;
+                        elseif SDirect==Down 
+                               y++;  
+			snake.x[0]=x; snake.y[0]=y; 		
+		 } 
+			
+			
+			for _i=3;_i<snake.node;_i++/*从蛇的第四节开始判断是否撞到自己了，因为蛇头为两节，第三节不可能拐过来*/ 
+			{ 
+				if snake.x[_i]==snake.x[0]&&snake.y[_i]==snake.y[0]
+				{ 
+					GameOver=1;
+					snake.life=1; 
+					
+				} 
+			} 
+			
+			
+			if snake.x[0]<1||snake.x[0]>SMapX-2||snake.y[0]<1||snake.y[0]>SMapY-2/*蛇是否撞到墙壁*/ 
+			{ 
+				GameOver=1;/*本次游戏结束*/ 
+				snake.life=1; /*蛇死*/ 
+			} 
+			
+			
+			if snake.x[0]==food.x&&snake.y[0]==food.y/*吃到食物以后*/ 
+			{ 	
+				snake.x[snake.node]=-20;snake.y[snake.node]=-20;  /*新的一节先放在看不见的位置,下次循环就取前一节的位置*/ 
+				snake.node++;/*蛇的身体长一节*/ 
+				food.yes=1;/*画面上需要出现新的食物*/ 
+				Score+=TOINT(10*snake.speed); 
+				PrScore();/*输出新得分*/ 
+			} 
+			
+			
+			
+}
+
+CheckSnakeStatus           //游戏状态
+{
+	
+	
+	if snake.speed==1 && snake.node>=10
+		snake.speed=2;
+	elseif snake.speed==2 && snake.node>=15
+		snake.speed=3;
+	elseif snake.speed==3 && snake.node>=25
+		snake.speed=4;
+	elseif snake.speed==4 && snake.node>=40
+		snake.speed=5;
+	elseif snake.speed==5 && snake.node>=60
+		snake.speed=6;
+	elseif snake.speed==6 && snake.node>=85
+		snake.speed=7;
+	elseif snake.speed==7 && snake.node>=115
+		snake.speed==8;
+	elseif snake.speed==8 && snake.node>=150
+		snake.speed=9;
+	
+	snake.timespeed=snakespeed2(snake.speed)
+		
+		if GameOver
+		{
+			if Score>0
+				"\c\b[2]获得奖励金钱%(TOINT(2*Score))\x";
+			--
+				money+=TOINT(2*Score);
+			iChanged = -1;
+			//LoadParams();
+			for i=0; i<NumScores; i++
+			{
+				if Score>Snake.Scores[i]
+				{
+					for m=NumScores-1; m>i; m--
+					{
+						Snake.Scores[m] = Snake.Scores[m-1];
+					}
+					iChanged = i;
+					break;
+				}
+			}
+			if iChanged>=0
+			{
+				Snake.Scores[iChanged] = Score;
+			}
+			// OnShowHighScores;
+		}
+		
+}
+
+
+OnShowSnakeHighScores           //显示排行榜
+{
+	_s="\b[0]";
+	for i=0; i<NumScores; i++
+	{
+		if Snake.Scores[i]
+		{
+			_s+="第%(i+1)名: %(Snake.Scores[i])分\n";
+		}
+		else
+		{
+			break;
+			PaintSnake;
+		}
+	}
+	if _s==""
+	{
+		_s = "没有记录";
+	}
+	_s+="\x";
+	_s;
+	
+}
+
+
+
+Onsnakeoption
+{
+	_txt="\_q\b[2]\![set,choicetimeout,0]";
+	_txt+="游戏速度：当前为%(snake.speed)\n\q[1,Onsnakeoption,1] \q[2,Onsnakeoption,2] \q[3,Onsnakeoption,3] \q[4,Onsnakeoption,4] \q[5,Onsnakeoption,5] \q[6,Onsnakeoption,6] \q[7,Onsnakeoption,7] \q[8,Onsnakeoption,8] \q[9,Onsnakeoption,9]";
+	
+	/*
+	if reference0!=NULL;
+	snake.speed=reference0
+	if reference1!=NULL;
+	snake.timespeed=reference1
+	*/
+	if reference0!=NULL
+		snake.speed=reference0;
+	snake.timespeed=snakespeed(snake.speed);
+	
+	
+	_txt+="\n\n\q[◇返回,OnSnakeTimer]\n\q[◇终了,OntetrisgameOver]";
+	
+	
+	_txt;
+}
+
+snakespeed
+{
+	_snake.timespeed=250;
+	if TOINT(_argv[0])==1
+		_snake.timespeed=250;
+	elseif TOINT(_argv[0])==2
+		_snake.speed=168;
+	elseif TOINT(_argv[0])==3
+		_snake.timespeed=112;
+	elseif TOINT(_argv[0])==4
+		_snake.timespeed=75;
+	elseif TOINT(_argv[0])==5
+		_snake.timespeed=50;
+	elseif TOINT(_argv[0])==6
+		_snake.timespeed=33;
+	elseif TOINT(_argv[0])==7
+		_snake.timespeed=22;
+	elseif TOINT(_argv[0])==8
+		_snake.timespeed=15;
+	elseif TOINT(_argv[0])==9
+		_snake.timespeed=10;
+	else
+		_snake.timespeed=250;
+	_snake.timespeed;
+	
+}
+snakespeed2
+{
+	_snake.timespeed=250-0.3*snake.node*snake.speed;
+	if _snake.timespeed<=0
+		_snake.timespeed=30;
+	_snake.timespeed;
+}
+
+
+OnSnakeGameOver        //游戏结束
+{
+	"\0\s[0]\b[0]不玩了吗。";
+	
+	playsnake=0;
+	ClearSnakeVar;
+	
+	--
+		"\e";
+	
+	
+}
+
+
+
+ClearSnakeVar
+{
+	ERASEVAR("playsnake");
+	ERASEVAR("snake.x");
+	ERASEVAR("snake.y");
+	ERASEVAR("Snake.x");
+	ERASEVAR("Snake.y");
+	ERASEVAR("node");
+	ERASEVAR("Snake");
+	ERASEVAR("Snake_");
+	ERASEVAR("SDirect");
+	ERASEVAR("food.yes");
+	ERASEVAR("snake.life");
+	ERASEVAR("snake.speed");
+	ERASEVAR("SMapX");
+	ERASEVAR("SMapY");
+	ERASEVAR("snake.node");
+	ERASEVAR("food.x");
+	ERASEVAR("food.y");
+
+}

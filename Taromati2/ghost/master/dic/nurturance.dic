@@ -1,0 +1,827 @@
+﻿///////////////////////////////////////////
+////////// 橘花养成功能辞书
+////////// written by forjane 2009.09.21
+///////////////////////////////////////////
+
+//需要lunar.dic,clock.dic和aya_communicate.dic的部分功能
+//------------------------------------------------------
+
+#define				RPGPATH		data\rpg
+
+
+KikkaVar
+{
+
+	萌度=TOINT(headtouchnum/10+5*KikkaItemNum[1])           //火
+	腹黑度=TOINT(facetouchnum/10+2*KikkaItemNum[0]+2*KikkaItemNum[2])     //金
+	依赖度=TOINT(hugnum/10+5*KikkaItemNum[3])          //木
+	亲密度=TOINT(kissnum/10+2*KikkaItemNum[4])         //水
+	幸福度=TOINT(leadhandnum/10+5*KikkaItemNum[5])     //土
+
+
+	kikkaexpmax = kikkalvl * 20 + 20;
+	kikkapowmax = kikkalvl * 5 + 5+腹黑度+kikkamood;
+	kikkawizmax = kikkalvl * 5 + 5+TOINT(5*SQRT(talkcount))+100+kikkamood;
+	kikkachmmax = kikkalvl * 5 + 5+HaveShellCount*5+TOINT(幸福度*0.5)+kikkamood;
+	kikkastmmax = kikkalvl * 20 + 220;
+	KikkaItem=("0,电锯,%(KikkaItemNum[0]),%(KikkaItemtime[0])","1,P90,%(KikkaItemNum[1]),%(KikkaItemtime[1])","0,派克笔,%(KikkaItemNum[2]),%(KikkaItemtime[2])","0,电脑,%(KikkaItemNum[3]),%(KikkaItemtime[3])","0,香水,%(KikkaItemNum[4]),%(KikkaItemtime[4])","0,钻戒,%(KikkaItemNum[5]),%(KikkaItemtime[5])")
+
+	//萌度=500
+	//腹黑度=500
+	//依赖度=500
+	//亲密度=500
+	//幸福度=500
+
+
+	_能量=亲密度+依赖度+萌度+幸福度+腹黑度+0.0;
+	_能量指数=TOINT(_能量);
+	力量=5*TOREAL(幸福度)*腹黑度*腹黑度/_能量/萌度-敏捷*(萌度/_能量);
+	智力=5*TOREAL(腹黑度)*亲密度*亲密度/_能量/幸福度-幸运*(幸福度/_能量);
+	意志=5*TOREAL(亲密度)*依赖度*依赖度/_能量/腹黑度-力量*(腹黑度/_能量);
+	敏捷=5*TOREAL(依赖度)*萌度*萌度/_能量/亲密度-智力*(亲密度/_能量);
+	幸运=5*TOREAL(萌度)*幸福度*幸福度/_能量/依赖度-意志*(依赖度/_能量);
+
+	//力量*=幸运/敏捷
+	//智力*=力量/幸运;
+	//意志*=智力/力量;
+	//敏捷*=意志/智力;
+	//幸运*=敏捷/意志;
+
+
+
+
+
+//	力量=abs(幸运*(力量)/敏捷)-敏捷*(萌度/_能量);
+//	智力=abs(力量*(智力)/幸运)-幸运*(幸福度/_能量);
+//	意志=abs(智力*(意志)/力量)-力量*(腹黑度/_能量);
+//	敏捷=abs(意志*(敏捷)/智力)-智力*(亲密度/_能量);
+//	幸运=abs(敏捷*(幸运)/意志)-意志*(依赖度/_能量);
+
+	力量=TOINT(力量);
+	智力=TOINT(智力);
+	意志=TOINT(意志);
+	敏捷=TOINT(敏捷);
+	幸运=TOINT(幸运);
+	kikkamoodmax = TOINT((力量+智力+意志+敏捷+幸运)/5)+100
+	if kikkamood > kikkamoodmax {
+			kikkamood = kikkamoodmax;
+		}
+	popKikkaItem
+	popUseritem
+}
+
+
+popKikkaItem
+{
+                _array=IARRAY
+                   if ARRAYSIZE(KikkaIteminfo)>=16
+                    {
+                 
+                   _s=ARRAYSIZE(KikkaIteminfo)
+
+                     for _i=0;_i<_s-1;_i++
+                       {
+
+                        _array=(KikkaIteminfo[_i],_array)
+
+                         }
+                      KikkaIteminfo=IARRAY
+                      foreach _array;_i
+                        {
+                        KikkaIteminfo=(_i,KikkaIteminfo)
+
+                        }
+
+
+                    }
+}
+
+
+popUseritem
+{
+                _array=IARRAY
+                   if ARRAYSIZE(Useriteminfo)>=13
+                    {
+                 
+                   _s=ARRAYSIZE(Useriteminfo)
+
+                     for _i=0;_i<_s-1;_i++
+                       {
+
+                        _array=(Useriteminfo[_i],_array)
+
+                         }
+                      Useriteminfo=IARRAY
+                      foreach _array;_i
+                        {
+                        Useriteminfo=(_i,Useriteminfo)
+
+                        }
+
+
+                    }
+}
+
+
+KikkaMenu
+{
+	if showkikka==1 {
+                 
+		"\_l[0,210]" + ColorText("\__q[OnKikkaMenu,2]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]─────────橘花养成系统↓────────\f[cursorstyle,default]\f[cursorfontcolor,default]\__q\n[140]","color=160,160,200");
+		--
+		"\_l[82]\![*]\q[购买物品  ,OnKikkaItemList,0]\![*]\q[日程安排  ,OnKikkaClass,%(weekday)]\![*]\q[礼物盒子,Ongiftbox]\n";
+		--
+//		"\_l[176,347]\q[Reset,OnKikkaReset]"
+		--
+                infomode=0
+		KikkaStatus;
+              
+   
+               
+	}
+	elseif showkikka==2 {
+                 
+		"\c\![set,choicetimeout,0]\_l[0,0]" + ColorText("\__q[OnKikkaMenu,0]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]─────────橘花养成系统↓────────\f[cursorstyle,default]\f[cursorfontcolor,default]\__q\n[140]","color=160,160,200");
+		--
+
+		--
+//		"\_l[176,347]\q[Reset,OnKikkaReset]"
+		--
+                infomode=0
+		KikkaStatusMain;
+      
+   
+               
+	}
+	else {
+		"\_l[0,342]" + ColorText("\__q[OnKikkaMenu,1]\f[cursorstyle,none]\f[cursorfontcolor,65,203,214]─────────橘花养成系统↑────────\f[cursorstyle,default]\f[cursorfontcolor,default]\__q\n","color=160,160,200");
+		--
+                  infomode=1;
+		  KikkaInfo;
+	}
+}
+
+
+OnKikkaMenu
+{
+	showkikka = reference0;
+	OpenMenu(menu,menuex);
+}
+
+
+
+KikkaStatusChange
+{
+	_ref = _argv[0];
+	if ISVAR("kikkaexp") <= 0 {
+		OnKikkaReset;
+	}
+	if "exp=" _in_ _ref {
+		_tmp = _ref[1,"exp="];
+		kikkaexp += EVAL(_tmp[0]);
+		if kikkaexp >= kikkaexpmax {
+			kikkalvl ++;
+			kikkaexp -= kikkaexpmax;
+			KikkaVar;
+		}
+	}
+	if "pow=" _in_ _ref {
+		_tmp = _ref[1,"pow="];
+		kikkapow += EVAL(_tmp[0]);
+		if kikkapow > kikkapowmax {
+			kikkapow = kikkapowmax;
+		}
+		elseif kikkapow < 0 {
+			kikkapow = 0;
+		}
+	}
+	if "wiz=" _in_ _ref {
+		_tmp = _ref[1,"wiz="];
+		kikkawiz += EVAL(_tmp[0]);
+		if kikkawiz > kikkawizmax {
+			kikkawiz = kikkawizmax;
+		}
+		elseif kikkawiz < 0 {
+			kikkawiz = 0;
+		}
+	}
+	if "chm=" _in_ _ref {
+		_tmp = _ref[1,"chm="];
+		kikkachm += EVAL(_tmp[0]);
+		if kikkachm > kikkachmmax {
+			kikkachm = kikkachmmax;
+		}
+		elseif kikkachm < 0 {
+			kikkachm = 0;
+		}
+	}
+	if "stm=" _in_ _ref {
+		_tmp = _ref[1,"stm="];
+		kikkastm += EVAL(_tmp[0]);
+		if kikkastm > kikkastmmax {
+			kikkastm = kikkastmmax;
+		}
+		elseif kikkastm < 0 {
+			kikkastm = 0;
+		}
+	}
+	if "money=" _in_ _ref {
+		_tmp = _ref[1,"money="];
+		money += EVAL(_tmp[0]);
+	}
+	if "love=" _in_ _ref {
+		_tmp = _ref[1,"love="];
+		intimacy += EVAL(_tmp[0]);
+	}
+	if "mood=" _in_ _ref {
+		_tmp = _ref[1,"mood="];
+		kikkamood += EVAL(_tmp[0]);
+		if kikkamood > kikkamoodmax {
+			kikkamood = kikkamoodmax;
+		}
+		if kikkamood <-kikkamoodmax {
+			kikkamood=-kikkamoodmax;
+			intimacy--;
+		}
+	}
+}
+
+
+KikkaInfo
+{
+	Lunar;
+	_ampm = TimeName;
+        _hour=hour12
+        if TOINT(timehour[0])==0
+        {
+          _ampm="";
+          _hour=(hour+timehour[1])%24
+        }
+	_color = "default";
+	_hostname=FUNCTIONEX("saori\saori_ip.dll","host");
+	_ipaddress=FUNCTIONEX("saori\saori_ip.dll","ip");
+	_tmp = FOPEN("var/ip.php","r");
+	_ipaddress2 = FREAD("var/ip.php");
+	FCLOSE("var/ip.php");
+	if _ipaddress2 == -1 || _ipaddress2 == "" || '<' _in_ _ipaddress2 {
+		_ipaddress2 = "未知";
+	}
+
+	if weekday == 0 || weekday == 6 {
+		_color = "238,50,95";
+	}
+	_kikkaonline=",（已连线）"[TOINT(kikkaonline)];
+	_KID=",KID：%(kikkaid)%(_kikkaonline)"[TOINT(kikkaid/kikkaid)]
+	if infofresh
+        "\![set,choicetimeout,1000]"
+	--
+	"\_l[0,204]\f[bold,true]系统资讯----\f[bold,default]\n[150]/
+        \![]%(year)年%(month)月%(day)日  \f[color,%(_color)]星期%(lunardata[3])\f[color,default]   %(_ampm)\![]%(_hour)点%(minute)分%(second)秒\n/
+	农历 %(lunardata[4])年 %(lunardata[5])月%(lunardata[6])  \![]%(WeatherToday)  \f[color,238,50,95]%(lunardata[10])\f[color,default]\n/
+	\_l[0,270]系统启动：%(systemuphour)小时%(systemupminute)分\![]  %(ShowEventInfo)\n/
+	\_l[0,285]人格启动：%(ghostuptime/3600)小时%(ghostuptime/60%60)分     用户呢称：%(username)\n/
+	内存使用：%(memoryload)\%           %(Cpuusage)\n/ 
+	内网IP：%(_ipaddress)  %(_KID) \n/
+	外网IP：%(_ipaddress2)  \__q[OnRefleshKikkaInfo]\[查询外网IP\]\__q\__q[OnGetOnlineUser]  \[在线列表\]\__q";
+
+}
+
+Cpuusage
+{
+
+if _t=FUNCTIONEX('saori\cpuusage.dll','get')
+"CPU使用：%(_t)%";
+}
+
+
+OnRefleshKikkaInfo
+{
+	"\b[2]\![execute,http-get,http://usada.sakura.vg/ip.php,--param-charset=UTF-8,--timeout=50,--async=kikkagetip]"
+}
+
+KikkaStatus
+{
+	KikkaVar;
+	_txt ="";
+	_txt += "\_l[0,226]";
+	_txt += ColorText("等级：%(kikkalvl)","bold,height=16,name=Arial,color=%(ColorIdx(6))");
+	if QuickStartVersion{
+		_txt += "\n[150]属性查看功能在线上更新后可用"
+	}else{
+		_txt += ColorText("\n[150]\_l[120,-]经验：\_l[0,-]萌度：%(萌度)","bold,color=%(ColorIdx(3))") + ColorBar(3,175,kikkaexp,kikkaexpmax,,"colortxt=178");
+		_txt += ColorText("\n\_l[120,-]身手：\_l[0,-]腹黑度：%(腹黑度)","bold,color=%(ColorIdx(9))") + ColorBar(9,175,kikkapow,kikkapowmax,,"colortxt=178");
+		_txt += ColorText("\n\_l[120,-]学识：\_l[0,-]依赖度：%(依赖度)","bold,color=%(ColorIdx(4))") + ColorBar(4,175,kikkawiz,kikkawizmax,,"colortxt=178");
+		_txt += ColorText("\n\_l[120,-]魅力：\_l[0,-]亲密度：%(亲密度)","bold,color=%(ColorIdx(5))") + ColorBar(5,175,kikkachm,kikkachmmax,,"colortxt=178");
+		_txt += ColorText("\n\_l[120,-]体力：\_l[0,-]幸福度：%(幸福度)","bold,color=%(ColorIdx(1))") + ColorBar(1,175,kikkastm,kikkastmmax,,"colortxt=178");
+		_txt += ColorText("\n\_l[0,-]心情：%(TOINT(kikkamood))","bold,color=%(ColorIdx(8))") + ColorBar(8,175,kikkamood,kikkamoodmax);
+		
+		_txt += ColorText("\n好感度：%(intimacy)","bold,color=%(ColorIdx(6))");
+		_heart = "\_l[103]";
+		for _i = TOINT(log(1.584893,intimacy,)) / 3; _i > 0; _i -- {//POW(intimacy,0.39208)
+			_heart += "\_b[RPGPATH\heart2.gif,inline]";
+		}
+		for _i = TOINT(log(1.584893,intimacy)) % 3; _i > 0; _i -- {
+			_heart += "\_b[RPGPATH\heart1.gif,inline]";
+		}
+		_txt += _heart;
+	}
+	_txt += ColorText("\n金钱：￥%(money)","bold,color=244,190,0");
+	_txt;
+}
+
+KikkaStatusMain
+{
+	if QuickStartVersion{
+		NeedUpdate
+		return
+	}
+	STRADD=1;
+	DEFADD=1;
+	IGN=1;
+	DEFMINUS=1;
+	KikkaVar;
+	RpgGameVar;
+	_txt ="";
+	_txt += "\_l[0,-]";
+	_txt += ColorText("\q[头衔：%(KikkaTitle),OnKikkaTitle]","bold,height=16,name=Arial,color=%(ColorIdx(6))")
+	_txt+=ColorText("\n[20]\_l[160,-]总经验：%(KikkaTotleExp(kikkalvl))","bold,color=%(ColorIdx(6))")
+	_txt += ColorText("\n等级：%(kikkalvl)","bold,height=16,name=Arial,color=%(ColorIdx(6))");
+	_txt += ColorText("\n[20]\_l[130,-]经验：","bold,color=%(ColorIdx(3))") + ColorBar(3,175,kikkaexp,kikkaexpmax,,"colortxt=178");
+	_txt += ColorText("\n[half]\n\_l[0,-]生命值：%(hp0)/%(hpmax0)\_l[240]\q[◇任务,OnRpgGame,5]","bold,color=%(ColorIdx(6))") + ColorBar(6,130,hp0,hpmax0)
+	_txt += ColorText("\n\_l[0,-]魔法值：%(ep0)/%(epmax0)\_l[240]\q[◇装备,OnRpgGame,1]","bold,color=%(ColorIdx(3))") + ColorBar(3,130,ep0,epmax0)
+	_txt += ColorText("\n\_l[0,-]战技值：%(cp0)/%(cpmax)\_l[240]\q[◇交易,OnRpgGame,4]","bold,color=%(ColorIdx(9))") + ColorBar(9,130,cp0,cpmax)
+	_txt += ColorText("\n\_l[0,-]身手：%(kikkapow)/%(kikkapowmax) \_l[240]\q[◇购物,OnKikkaItemList,0]","bold,color=%(ColorIdx(2))") + ColorBar(2,130,kikkapow,kikkapowmax)
+	_txt += ColorText("\n\_l[0,-]学识：%(kikkawiz)/%(kikkawizmax) \_l[240]\q[◇日程,OnKikkaClass,%(weekday)]","bold,color=%(ColorIdx(4))") + ColorBar(4,130,kikkawiz,kikkawizmax)
+	_txt += ColorText("\n\_l[0,-]魅力：%(kikkachm)/%(kikkachmmax) \_l[240]\q[◇礼物,Ongiftbox]","bold,color=%(ColorIdx(5))") + ColorBar(5,130,kikkachm,kikkachmmax)
+	_txt += ColorText("\n\_l[0,-]体力：%(kikkastm)/%(kikkastmmax) \_l[240]\q[◇说明,OnRPGintro]","bold,color=%(ColorIdx(1))") + ColorBar(1,130,kikkastm,kikkastmmax)
+	_txt += ColorText("\n\_l[0,-]心情：%(TOINT(kikkamood))/%(kikkamoodmax)","bold,color=%(ColorIdx(8))") + ColorBar(8,130,kikkamood,kikkamoodmax);
+	_能量=亲密度+依赖度+萌度+幸福度+腹黑度+0.0;
+	_txt += ColorText("\n[half]\n\_l[0,-]物理攻击：%(str0)    \_l[130,-]武器：%(weapon0)","bold,color=%(ColorIdx(3))") 
+	_txt += ColorText("\n\_l[0,-]物理防御：%(def0)    \_l[130,-]防具（体）：%(armor0)","bold,color=%(ColorIdx(3))") 
+	_txt += ColorText("\n\_l[0,-]魔法攻击：%(ats0)    \_l[130,-]防具（脚）：%(boots0)","bold,color=%(ColorIdx(1))") 
+	_txt += ColorText("\n\_l[0,-]魔法防御：%(adf0) ","bold,color=%(ColorIdx(1))") 
+	_txt += ColorText("\n[half]\n\_l[0,-]金能量指数：%(SUBSTR(100*腹黑度/_能量,0,5))%  \_l[134]腹黑度：%(腹黑度)  \_l[220]力量：%(力量)","bold,color=%(ColorIdx(4))") 
+	_txt += ColorText("\n\_l[0,-]水能量指数：%(SUBSTR(100*亲密度/_能量,0,5))%  \_l[134]亲密度：%(亲密度)  \_l[220]智力：%(智力)","bold,color=%(ColorIdx(3))") 
+	_txt += ColorText("\n\_l[0,-]木能量指数：%(SUBSTR(100*依赖度/_能量,0,5))%  \_l[134]依赖度：%(依赖度)  \_l[220]意志：%(意志)","bold,color=%(ColorIdx(1))") 
+	_txt += ColorText("\n\_l[0,-]火能量指数：%(SUBSTR(100*萌度/_能量,0,5))%  \_l[134]萌度：%(萌度)\_l[220]敏捷：%(敏捷)","bold,color=%(ColorIdx(6))") 
+	_txt += ColorText("\n\_l[0,-]土能量指数：%(SUBSTR(100*幸福度/_能量,0,5))%  \_l[134]幸福度：%(幸福度)  \_l[220]幸运：%(幸运)","bold,color=%(ColorIdx(9))") 
+
+
+	_txt += ColorText("\n[half]\n\_l[0,-]金钱：%(money)       服装装量：%(HaveShellCount)","bold,color=%(ColorIdx(2))") 
+	_txt += ColorText("\n\_l[0,-]好感度：%(intimacy)      \q[对话装量,OnGetTalkCount]：%(talkcount)","bold,color=%(ColorIdx(6))") 
+	_txt;
+
+}
+OnGetTalkCount
+{
+talkcount=AILoad("对话","qnum")
+--
+OpenMenu
+}
+
+OnRPGintro
+{
+	_txt="\0\![quicksession,true]\![set,choicetimeout,0]\b[2]"; 
+	_txt+="■说明■\n[150]";
+	_txt+="/
+	1.新版养成系统界面整合了人物属性的信息。\n/
+	2.增加养成系统人物能力对人物属性的影响。\n/
+	力量-物理攻击(STR)加成\n/
+	智力-魔法攻击(ATS)加成\n/
+	意志-魔法防御(ADF)加成\n/
+	敏捷-物理防御(DEF)加成\n/
+	幸运-物品掉落率加成\n/
+	3.五行能量对应属性如下：\n/
+	五行名称-人物属性-人物能力\n/
+	金-腹黑度-力量\n/
+	水-亲密度-智力\n/
+	木-依赖度-意志\n/
+	火-萌度-敏捷\n/
+	土-幸福度-幸运\n/
+	相生（顺位）：金生水，水生木，木生火，火生土，土生金\n/
+	相克（隔位）：金克木，木克土，土克水，水克火，火克金\n/
+	人物属性和人物能力同五行，提高其值对应人物能力增加\n/
+	人物属性和人物能力所在五行之间相生，提高其值对应人物能力增加\n/
+	人物属性和人物能力所在五行之间相克，提高其值人物能力对应减少\n/
+	3.增加几个橘花属性上限的影响，增加心情系统，心情和腹黑度影响身手上限，心情和对话数量影响学识上限、心情和幸福度及服装数量影响魅力上限。注意一直让橘花学习或打工会降低心情值。\n/
+	心情提高方法：\n/
+	1.迷你播放器播放音乐每播放结束，心情值+10\n/
+	2.每对话一句，心情值加5\n/
+	3.使用“\\teach”指令增加一条对话教学，心情值+20\n/
+	心情上限值由力量、智力、意志、敏捷、幸运共同决定\n/
+	"
+	_txt+="\n[half]\q[◇返回,OnKikkaMenu,2]"
+	_txt;
+}
+
+
+KikkaTotleExp
+{
+	_exp=0;
+	_lvl=_argv[0];
+	for _i=1;_i<_lvl+1;_i++
+	{
+		_exp+=_i * 20 + 20;
+	}
+	_exp+=kikkaexp;
+	_exp;
+}
+
+KikkaTitle
+{
+	//10009980;
+	_exp=KikkaTotleExp(kikkalvl);
+	//if ISVAR("kikkatitle")==0
+		kikkatitle="零,1KB,废弃软体,失败品,短路机器,人格雏形,电子人偶,最初的心,人造灵魂,绯红回路,“8”,迷途黑猫,银发少女,Towa,KiKKa,约定之语,斗和,橘花,Towa&KiKKa,斗和&橘花"
+	//_title="%(kikkatitle[0]),%(kikkatitle[1]),%(kikkatitle[2]),%(kikkatitle[3]),%(kikkatitle[4]),%(kikkatitle[5]),%(kikkatitle[6]),%(kikkatitle[7]),%(kikkatitle[8]),%(kikkatitle[9]),%(kikkatitle[10]),%(kikkatitle[11]),%(kikkatitle[12]),%(kikkatitle[13]),%(kikkatitle[14]),%(kikkatitle[15]),%(kikkatitle[16]),%(kikkatitle[17])"
+	_level=(1,5,15,30,50,100,200,500,1000,2000,3000,6000,10000,18000,30000,60000,100000,300000,600000,1000000)
+	_id=0;
+	for _i=0;_i<20;_i++
+	{
+		if _exp>_level[_i]
+		{	
+			_id=_i;
+		}
+
+	}
+
+	kikkatitle[_id];
+}
+
+OnKikkaTitle
+{
+	_txt="\C\![quicksession,true]\c\0\b[2]\![set,choicetimeout,0]"
+	_txt+="■橘花养成头衔经验说明■\n\n[half]"
+	_txt+="级别 \_l[80]头衔 \_l[160]所需经验值   \_l[240]\n"
+	_s=0;
+	_level=(1,5,15,30,50,100,200,500,1000,2000,3000,6000,10000,18000,30000,60000,100000,300000,600000,1000000)
+	for _i=0;_i<20;_i++
+	{
+		_txt+="%(_i+1)   \_l[80]%(kikkatitle[_i])   \_l[160]%(_level[_i])   \_l[240]\n"
+	}
+	_txt+="\n[half]\q[◇返回,OnKikkaMenu,2]"
+	_txt;
+}
+
+
+KikkaGrow
+{
+	kikkatick ++;//309553
+	KikkaStatusChange("exp=1");
+	_class = kikkaclass[weekday];
+	_lvl = kikkalvl / 30 + 1;
+	if kikkatick % 5 == 0 && _class != "休息" {
+		KikkaStatusChange("stm=-%(_lvl)");
+		if kikkastm == 0 {
+			kikkaangry ++;
+			"\c\0\s[3]橘花好饿喔，\w9有什么东西吃吗……\w9";
+			if kikkaangry >= 12 {
+				kikkaangry = 0;
+				intimacy --;
+			}
+		}
+		else {
+			kikkaangry = 0;
+		}
+	}
+	if kikkatick % 30 == 0 && kikkastm > 0 && _class != "休息" {
+		case _class {
+			when "枪械" {
+				KikkaStatusChange("pow=%(3 * _lvl),mood=-%(TOINT(_lvl/3))");
+			}
+			when "语言" {
+				KikkaStatusChange("wiz=%(3 * _lvl),mood=-%(TOINT(_lvl/3))");
+			}
+			when "艺术" {
+				KikkaStatusChange("chm=%(3 * _lvl),mood=-%(TOINT(_lvl/3))");
+			}
+			when "外卖" {
+				KikkaStatusChange("pow=-%(_lvl),money=%(kikkapow),mood=-%(_lvl)");
+			}
+			when "翻译" {
+				KikkaStatusChange("wiz=-%(_lvl),money=%(kikkawiz),mood=-%(_lvl)");
+			}
+			when "广告" {
+				KikkaStatusChange("chm=-%(_lvl),money=%(kikkachm),mood=-%(_lvl)");
+			}
+		}
+	}
+	if kikkamood > kikkamoodmax {
+			kikkamood = kikkamoodmax;
+		}
+	if kikkamood <-kikkamoodmax {
+		kikkamood=-kikkamoodmax;
+		intimacy--;
+	}
+
+
+}
+
+OnKikkaReset:void
+{
+	kikkalvl =1;
+	kikkaexp = 0;
+	kikkapow = 0;
+	kikkawiz = 0;
+	kikkachm = 0;
+	kikkastm = 240;
+	money = 1000;
+	kikkatick = 0;
+//	intimacy = 0;
+	kikkaclass = ("休息","休息","休息","休息","休息","休息","休息");
+//	OpenMenu(0);
+}
+
+OnKikkaItemList
+{
+	KikkaItemTalk(reference0);
+	--
+	"\b[2]\n\n\_q食物：\n/
+	\![*]\__q[OnKikkaItem,2,-300,stm=150,exp=5,mood=5]馒头 \_l[64]￥300 \_l[108]体力 150 \_l[168]经验 5  \_l[228]心情 5\__q\n/
+	\![*]\__q[OnKikkaItem,3,-600,stm=300,exp=10,mood=10]鸡腿汉堡 \_l[64]￥600 \_l[108]体力 300 \_l[168]经验 10 \_l[228]心情 10\__q\n/
+	\![*]\__q[OnKikkaItem,4,-1200,stm=600,exp=20,mood=20]花式蛋糕 \_l[64]￥1200 \_l[108]体力 600 \_l[168]经验 20 \_l[228]心情 20\__q\n/
+	\![*]\__q[OnKikkaItem,5,-2000,stm=1000,exp=40,mood=40]龙虾大餐 \_l[64]￥2000 \_l[108]体力 1000 \_l[168]经验 40 \_l[228]心情 40\__q\n"
+	--
+	"礼物：\n/
+	\![*]\__q[OnKikkaItem,6,-1250,pow=4,love=1,g,0]电锯 \_l[64]￥1250 \_l[118]身手 4 \_l[168]好感 1 腹黑度 2\__q\n/
+	\![*]\__q[OnKikkaItem,7,-6000,pow=20,love=5,g,1]P90 \_l[64]￥6000 \_l[118]身手 20 \_l[168]好感 5 萌度 5\__q\n/
+	\![*]\__q[OnKikkaItem,8,-1250,wiz=4,love=1,g,2]派克笔 \_l[64]￥1250 \_l[118]学识 4 \_l[168]好感 1 腹黑度 2\__q\n/
+	\![*]\__q[OnKikkaItem,9,-6000,wiz=20,love=5,g,3]电脑 \_l[64]￥6000 \_l[118]学识 20 \_l[168]好感 5 依赖度 5\__q\n/
+	\![*]\__q[OnKikkaItem,10,-1250,chm=4,love=1,g,4]香水 \_l[64]￥1250 \_l[118]魅力 4 \_l[168]好感 1 亲密度 2\__q\n/
+	\![*]\__q[OnKikkaItem,11,-6000,chm=20,love=5,g,5]钻戒 \_l[64]￥6000 \_l[118]魅力 20 \_l[168]好感 5 幸福度 5\__q\n"
+	--
+	"\n[half]\q[◇返回,OnKikkaMenu,1]    \q[◇终了,OnKikkaEnd]"
+	--
+	KikkaStatus;
+}
+
+
+
+
+KikkaItemTalk
+{
+	_tmp = _argv[0];
+	("\0\s[40]\b[2]\要买什么东西给橘花呢？",/
+	"\0\s[8]\b[2]哎……钱不够呀！！\w9",/
+	"\0\s[3]\b[2]嗯……\w9嗯，好难吃啊……\w9\1要不要喝水啊？\0",/
+	"\0\s[5]\b[2]嗯……\w9好好吃哦~~\w9\1真的么？\w9难道是肯德基？\0",/
+	"\0\s[5]\b[2]是草莓味的，\w9还是巧克力的？……\w9好好吃~",/
+	"\0\s[5]\b[2]嗯……\w9嗯……\w9吃的好饱啊~~\w9\1有鱼吗？\0",/
+	"\0\s[27]\b[2]好沉……\w9\1\s[11]喂喂，别乱挥呀！\0",/
+	"\0\s[22]\b[2]新玩具？\w9给我的吗？\w9我保证……\1\s[13]不要用XT002的口气说话= =\0",/
+	"\0\s[2]\b[2]好贵的钢笔……\w9",/
+	"\0\s[5]\b[2]电脑正好需要升级了，\w9谢谢%(username)^^\w9\1才刚用过没多久吧……\0",/
+	"\0\s[26]\b[2]哇……\w9是我喜欢的香味呢……\w9",/
+	"\0\s[28]\b[2]好漂亮……\w9那个…\w9谢谢你……\w9",/
+	)[_tmp];
+}
+
+POP
+{
+array=_argv[0]
+_s=ARRAYSIZE(_argv[0])
+
+for _i=0;_i<_s-1;_i++
+{
+
+array=(_argv[0][_i],_array)
+
+}
+
+array
+}
+
+OnKikkaItem
+{
+	if TOINT(reference1) + money < 0 {
+		reference0 = 1;
+	}
+	else {
+             if reference4=="g"
+                 {
+              KikkaItemNum[reference5]=TOINT(KikkaItemNum[reference5])+1      
+              KikkaItemtime[reference5]="%(year)年%(month)月%(day)日%(hour)时%(minute)分"
+              KikkaIteminfo=("%(year)年%(month)月%(day)日%(hour)时%(minute)分收到%(KikkaItem[reference5][1])。" , KikkaIteminfo)
+             
+           
+
+                 }
+		KikkaStatusChange("money=%(reference1),%(reference2),%(reference3),%(reference4)");
+	}		
+	--
+    reference0=TOINT(reference0)
+	OnKikkaItemList;
+}
+
+
+OnKikkaClass
+{
+	_txt = "";
+	_day = reference0;
+	_class = kikkaclass;
+	_class[_day] = ColorText(_class[_day],"color=50,80,225");
+	for _i = 0; _i < 7; _i ++ {
+		_txt += "\_l[%(_i * 36)]" + _class[(_i + 1) % 7];
+	}
+	_lvl = kikkalvl / 30 + 1;
+	_txt = "\0\b[2]\_q安排橘花的日程：\n\n━━━━━━━━━━━━━━━━━━\n/
+	周一  周二  周三  周四  周五  \f[color,238,50,95]周六  周日\f[color,default]\n/
+	──────────────────\n" + _txt + "\n━━━━━━━━━━━━━━━━━━";
+	_txt += "\n\n课程：\n/
+			\![*]\__q[OnKikkaClassSet,%(_day),枪械]枪械课(lv.%(_lvl))\_l[86]身手 +%(_lvl * 3)\__q\n/
+			\![*]\__q[OnKikkaClassSet,%(_day),语言]语言课(lv.%(_lvl))\_l[86]学识 +%(_lvl * 3)\__q\n/
+			\![*]\__q[OnKikkaClassSet,%(_day),艺术]艺术课(lv.%(_lvl))\_l[86]魅力 +%(_lvl * 3)\__q\n/
+			打工：\n/
+			\![*]\__q[OnKikkaClassSet,%(_day),外卖]送外卖(lv.%(_lvl))\_l[86]身手 %(0 - _lvl)\_l[134]薪水=身手值\__q\n/
+			\![*]\__q[OnKikkaClassSet,%(_day),翻译]做翻译(lv.%(_lvl))\_l[86]学识 %(0 - _lvl)\_l[134]薪水=学识值\__q\n/
+			\![*]\__q[OnKikkaClassSet,%(_day),广告]拍广告(lv.%(_lvl))\_l[86]魅力 %(0 - _lvl)\_l[134]薪水=魅力值\__q\n/
+			休息：\n/
+			\![*]\__q[OnKikkaClassSet,%(_day),休息]休息\_l[50]体力不会随时间下降\__q\n"
+	_txt += "\n[150]\q[◇返回,OnKikkaMenu,1]    \q[◇终了,OnKikkaEnd]"
+	_txt;
+}
+
+OnKikkaClassSet
+{
+	kikkaclass[reference0] = reference1;
+	reference0 = (reference0 + 1) % 7;
+	OnKikkaClass;
+}
+
+ColorIdx
+{
+	_coloridx = "|93,188,91|194,243,99|108,129,182|165,203,214|216,67,179|238,50,95|255,197,52|216,233,40|229,134,82|231,171,109|228,193,159|212,137,63|255,216,103";
+	_coloridx[_argv[0],'|'];
+}
+
+
+ColorText
+{
+	_txt = _argv[0];
+	_mode = _argv[1];
+	if "bold" _in_ _mode {
+		_txt = "\f[bold,true]" + _txt + "\f[bold,default]";
+	}
+	if "italic" _in_ _mode {
+		_txt = "\f[italic,true]" + _txt + "\f[italic,default]";
+	}
+	if "name" _in_ _mode {
+		_tmp = _mode[1,"name="];
+		_tmp = _tmp[0];
+		_txt = "\f[name,%(_tmp)]" + _txt + "\f[name,default]";
+	}
+	if "height" _in_ _mode {
+		_tmp = _mode[1,"height="];
+		_tmp = _tmp[0];
+		_txt = "\f[height,%(_tmp)]" + _txt + "\f[height,default]";
+	}
+	if "color" _in_ _mode {
+		_tmp = _mode[1,"color="];
+		_tmp = _tmp[0] + "," + _tmp[1] + "," + _tmp[2];
+		_txt = "\f[color,%(_tmp)]" + _txt + "\f[color,default]";
+	}
+	_txt;
+}
+
+
+//ColorBar(_Color,_XPos,_Num,_MaxNum{default=100},_MaxLen{default=100},_Mode{"txt=textwidth,colortxt=textwidth,nobg"})
+//----------------------------------------------------------------------------------------------------------------------------
+ColorBar
+{
+	_color = _argv[0];
+	_xpos = _argv[1];
+	_maxlen = 100;
+	_percent = _argv[2];
+	_max = 100;
+	_mode = _argv[5];
+	_txt = "\_l[%(_xpos)]";
+	_len = 0;
+        _w=""
+	if _argv[3] != "" {
+		_max = _argv[3];
+	}
+	if _argv[4] != "" {
+		_maxlen = _argv[4];
+	}
+	if "txt" _in_ _mode {
+		_tmp = 0;
+		if "txt=" _in_ _mode {
+			_tmp = EVAL(_mode[1,'txt=']);
+		}
+		else {
+			_tmp = 14 * STRLEN(TOSTR(_max)) + 6 ;
+		}
+		_w +="\_l[%(_tmp)]";
+		if GETTYPE(_tmp)==1
+		_w += "\f[height,12]\f[color,255,255,255]%(_percent)/%(_max)\f[color,default]\f[height,default]";
+	}
+	if "colortxt" _in_ _mode {
+		_colorstr = "|93,188,91|194,243,99|108,129,182|165,203,214|216,67,179|238,50,95|255,197,52|216,233,40|229,134,82|231,171,109";
+		_txt = "\f[color,%(_colorstr[_color,'|'])]" + _txt + "\f[color,default]";
+	}
+	_length = _percent * _maxlen / _max;
+	_txt += "\_b[RPGPATH\colorbar.bmp,inline,--option=opaque,--clipping=0 %(_color * 10) 2 %(_color * 10 + 10)]";
+	if _length > 0 {
+		if _length > _maxlen {
+			_length = _maxlen;
+		}
+		if  _max/_percent<10000;
+		_txt += "\_b[RPGPATH\colorbar.bmp,inline,--option=opaque,--clipping=%(159 - _length) %(_color * 10) 159 %(_color * 10 + 10)]";
+	}
+		if  _max/_percent<10000;
+	_txt += "\_b[RPGPATH\colorbar.bmp,inline,--option=opaque,--clipping=159 %(_color * 10) 160 %(_color * 10 + 10)]";
+	if _length < _maxlen && "nobg" !_in_ _mode {
+		_txt += "\_b[RPGPATH\colorbar.bmp,inline,--option=opaque,--clipping=0 0 %(_maxlen - _length) 10]";
+	}
+	_txt+=_w;
+	_txt;
+}
+
+
+Ongiftbox
+{
+
+"■礼物盒子■\n[150]/
+\q[%(username)的礼物盒子,Onusergift]\n/
+\q[橘花的礼物盒子,Onkikkagift]\n/
+\n\n\n\n\n\q[◇返回,OnOpenMenu,0]\n/
+"
+}
+
+Onusergift
+{
+gift
+_txt="\b[2]\![set,choicetimeout,0]\![quicksession,true]"
+_txt+="%(username)的礼物盒子\n"
+_txt+="\_l[0,-]礼物名称    \_l[70,-]数量 \_l[110,-]最后一次收到时间 \n"
+
+
+foreach Userspitem;_i
+            {
+                    if _i[2] > 0
+                             {
+      _txt += "\_l[0,-]\__q[Oniteminfo,usersp,%(_i[4])]%(_i[1])\__q \_l[80,-]%(_i[2])  \_l[100,-]%(_i[3])\n"
+                 
+                              }
+		 }
+
+
+foreach Useritem; _i {
+                       if _i[2] > 0
+                             {
+      _txt += "\_l[0,-]%(_i[1]) \_l[80,-]%(_i[2])  \_l[100,-]%(_i[3])\n"
+                 
+                              }
+		 }
+
+
+
+ foreach Useriteminfo;_i
+                        {
+                           _txt += _i + "\n"
+
+                        }
+ _txt += "\n\n\n\q[◇返回,OnOpenMenu,0]"
+_txt
+
+}
+
+
+Onkikkagift
+{
+KikkaVar
+_txt="\b[2]\![set,choicetimeout,0]\![quicksession,true]"
+_txt+="橘花的礼物盒子\n"
+_txt+="\_l[0,-]礼物名称    \_l[65,-]数量 \_l[130,-]最后一次收到时间 \n     "
+foreach KikkaItem; _i {
+                       if _i[2] > 0
+                             {
+      _txt += "\_l[0,-]%(_i[1]) \_l[65,-]%(_i[2])  \_l[130,-]%(_i[3])  \n"
+                 
+                              }
+		 }
+ foreach KikkaIteminfo;_i
+                        {
+                           _txt += _i + "\n"
+
+                        }
+ _txt +=  "\_l[0,340]\q[◇返回,OnOpenMenu,0]"
+_txt
+
+}
+
+Oniteminfo
+{
+
+if reference0=="usersp"
+{
+"%(reference1)\x"
+--
+Onusergift
+}
+
+
+
+
+}
+

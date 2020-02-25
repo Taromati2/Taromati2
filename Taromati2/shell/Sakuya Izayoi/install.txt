@@ -1,0 +1,5 @@
+charset,Shift_JIS
+type,shell
+name,Sakuya Izayoi
+accept,‹k‰Ô
+directory,Sakuya Izayoi

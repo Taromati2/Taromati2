@@ -1,0 +1,5 @@
+charset,Shift_JIS
+type,shell
+name,Momizi Inubashiri
+accept,‹k‰Ô
+directory,Momizi Inubashiri

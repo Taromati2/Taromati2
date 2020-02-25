@@ -1,0 +1,5 @@
+charset,Shift_JIS
+type,shell
+name,Youmu Konpaku
+accept,‹k‰Ô
+directory,Youmu Konpaku

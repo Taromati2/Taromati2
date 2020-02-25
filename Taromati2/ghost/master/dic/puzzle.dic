@@ -1,0 +1,162 @@
+﻿/*拼圖遊戲1.1 by Pygmalion  --2009.8.27*/
+
+
+
+#define PUZZLE_PIC_SIZE		180
+#define FILE_PATH			data\puzzle_img
+
+OnPuzzlePlay //拼圖開始
+{
+	if QuickStartVersion{
+		NeedUpdate
+		return
+	}
+	MapIdx = reference0
+	PUZZLE_X = reference1
+	PUZZLE_SIZEX = PUZZLE_PIC_SIZE / PUZZLE_X
+	PlayPuzzleReset
+	PlayPuzzleShuffle
+	PlayPuzzleShow
+}
+
+OnPuzzleList
+{
+	_txt = "\0\s[40]\b[2]\![set,autoscroll,disable]";
+	_filelist = FENUM("FILE_PATH");
+	_txt += "选择图片和难度：\n[150]";
+//	_txt += _filelist;
+	foreach _filelist; _tmp {
+		if _tmp[1,'.'] != "" && _tmp[1,'.'] == "jpg" && _tmp != "blank.bmp" && _tmp != "border.bmp" && "_small" !_in_ _tmp {
+			_txt += "\q[◇简单,OnPuzzlePlay,%(_tmp),3]  \q[◇一般,OnPuzzlePlay,%(_tmp),4]  \q[◇困难,OnPuzzlePlay,%(_tmp),5]\n";
+			_icon = _tmp[0,'.'] + "_small." + _tmp[1,'.'];
+			_txt += "\_b[FILE_PATH/%(_icon),inline,--option=opaque]\n[150]";
+		}
+	}
+	_txt += "\n\n\q[◇返回游戏列表,OnOpenMenu,2]\n\q[◇终了,PuzzleEnd]\n[150]\e"
+	_txt;
+}
+
+Select.PuzzleShow //拼圖進行
+{
+	if _argv[0]==iPuzzleBlank+1 || _argv[0]==iPuzzleBlank-1 || _argv[0]==iPuzzleBlank+PUZZLE_X || _argv[0]==iPuzzleBlank-PUZZLE_X {
+		PlayPuzzleChange(_argv[0])
+		iPuzzleStep++
+	}
+	PlayPuzzleShow
+}
+
+Select.PuzzleEnd //拼圖結束
+{
+	PlayPuzzleErase
+	"\0\s[0]不玩了吗？\e"
+}
+
+PlayPuzzleReset //拼圖初始化
+{
+	arrPuzzle = IARRAY
+	for _i = 0; _i < PUZZLE_X*PUZZLE_X; _i++ {
+		arrPuzzle[_i] = _i
+	}
+	iPuzzleBlank = PUZZLE_X*PUZZLE_X-1 //空位位置
+	iPuzzleStep = 0 //步數
+}
+
+PlayPuzzleShow //拼圖顯示
+{
+        "\C\![quicksession,true]\c"
+       --
+	_tempstr = ""
+	for _i = 0; _i < PUZZLE_X; _i++ { //行
+		for _j = 0; _j < PUZZLE_X; _j++ { //列
+			_temp = _i * PUZZLE_X + _j
+			_x = arrPuzzle[_temp]%PUZZLE_X
+			_y = arrPuzzle[_temp]/PUZZLE_X
+			if _temp == iPuzzleBlank {//空位
+//				_tempstr = _tempstr + "\_b[data/puzzle_img/blank.bmp,inline,--option=opaque,--clipping=0 0 %(PUZZLE_SIZEX)  %(PUZZLE_SIZEX)]"
+				_tempstr += "\_l[%(_j * PUZZLE_SIZEX + 14),%(_i * PUZZLE_SIZEX + 26)]";
+				_tempstr += "\_b[FILE_PATH/blank.bmp,inline,--option=opaque,--clipping=0 0 %(PUZZLE_SIZEX) %(PUZZLE_SIZEX)]";
+			}
+			else {
+//				_tempstr = _tempstr + "\__q[PuzzleShow("+_temp+")]\_b[data/puzzle_img/%(MapIdx),inline,--option=opaque,--clipping=%(_x*PUZZLE_SIZEX) %(_y*PUZZLE_SIZEX) %(_x*PUZZLE_SIZEX+PUZZLE_SIZEX)  %(_y*PUZZLE_SIZEX+PUZZLE_SIZEX)]\__q"
+				_tempstr += "\_l[%(_j * PUZZLE_SIZEX + 14),%(_i * PUZZLE_SIZEX + 26)]";
+				_tempstr += "\_b[FILE_PATH/border.bmp,inline,--option=opaque,--clipping=0 %(60 - PUZZLE_SIZEX) %(PUZZLE_SIZEX) 60]";
+				_tempstr += "\_l[%(_j * PUZZLE_SIZEX + 15),%(_i * PUZZLE_SIZEX + 27)]";
+				_tempstr +=	"\__q[PuzzleShow("+_temp+")]\_b[FILE_PATH/%(MapIdx),inline,--option=opaque,--clipping=%(_x * PUZZLE_SIZEX + 1) %(_y * PUZZLE_SIZEX + 1) %(_x * PUZZLE_SIZEX + PUZZLE_SIZEX - 1) %(_y * PUZZLE_SIZEX + PUZZLE_SIZEX - 1)]\__q";
+			}
+
+		}
+		_tempstr = _tempstr + "\n"
+	}
+	if PlayPuzzleWin == 1 {//獲勝
+		"\0\s[5]\b[2]拼图完成！共用了%(iPuzzleStep)步。\_l[14,26]\_b[FILE_PATH/%(MapIdx),inline,--option=opaque]"
+		--
+ 		"\n[150]%(username)好厉害～\n"
+	}
+	else {
+		"\![set,choicetimeout,0]\![set,autoscroll,disable]\0\s[40]\b[2]第%(iPuzzleStep)步\n[150]%(_tempstr)"
+		--
+		if ShowPuzzleMap {
+			"\n\q[◇关闭原图,OnShowPuzzleMap,0]\n[50]"
+			--
+			_icon = MapIdx[0,'.'] + "_small." + MapIdx[1,'.'];
+			"\n\_b[FILE_PATH/%(_icon),inline,--option=opaque]\n[150]"
+		}
+		else {
+			"\n\q[◇显示原图,OnShowPuzzleMap,1]\n[150]"
+		}
+	}
+	--
+	"\n\n\q[◇新游戏,OnPuzzleList]\n[150]\q[◇返回游戏列表,OnOpenMenu,2]\n\q[◇终了,PuzzleEnd]\n[150]\e"
+}
+
+OnShowPuzzleMap
+{
+	ShowPuzzleMap = reference0;
+	PlayPuzzleShow;
+}
+
+
+PlayPuzzleChange //拼圖移動
+{
+	arrPuzzle[iPuzzleBlank] = arrPuzzle[_argv[0]]
+	iPuzzleBlank = _argv[0]
+	arrPuzzle[iPuzzleBlank] = PUZZLE_X*PUZZLE_X-1
+}
+
+PlayPuzzleShuffle //拼圖打亂
+{
+	_step = RAND(500);
+	for _i = 0; _i < _step; _i++ {
+		_temp = RAND(4) //方向
+		if _temp==0 && iPuzzleBlank - PUZZLE_X >= 0 //上
+			PlayPuzzleChange(iPuzzleBlank - PUZZLE_X)
+		elseif _temp==1 && iPuzzleBlank % PUZZLE_X < PUZZLE_X - 1 //右
+			PlayPuzzleChange(iPuzzleBlank + 1)
+		elseif _temp==2 && iPuzzleBlank / PUZZLE_X < PUZZLE_X - 1 //下
+			PlayPuzzleChange(iPuzzleBlank + PUZZLE_X)
+		elseif _temp==3 && iPuzzleBlank % PUZZLE_X > 0 //左
+			PlayPuzzleChange(iPuzzleBlank - 1)
+	}
+}
+
+PlayPuzzleWin //判斷獲勝
+{
+	_temp = 1
+	for _i = 0; _i < PUZZLE_X*PUZZLE_X; _i++ {
+		if arrPuzzle[_i] != _i {
+			_temp = 0
+			break
+		}
+	}
+	_temp
+}
+
+PlayPuzzleErase	//消除變數
+{
+	ERASEVAR("MapIdx")
+	ERASEVAR("PUZZLE_SIZEX")
+	ERASEVAR("PUZZLE_X")
+	ERASEVAR("arrPuzzle")
+	ERASEVAR("iPuzzleBlank")
+	ERASEVAR("iPuzzleStep")
+}

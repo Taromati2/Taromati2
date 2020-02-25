@@ -1,0 +1,84 @@
+﻿///////////////////////////////////////////
+////////// 英汉词典辞书
+////////// written by forjane 2009.08.30
+///////////////////////////////////////////
+
+
+OnSearchDict
+{
+	if QuickStartVersion{
+		NeedUpdate
+		return
+	}
+	_txt = "\0\s[40]\b[1]要查询什么单词呢？\![open,inputbox,OnWordsInputFinish,0,%(dictkeyword)]\x\e";
+	_txt;
+}
+
+
+OnWordsInputFinish
+{
+	dictwordsfound = IARRAY;
+	dictwordsnum = 0;
+	_txt = "\0\s[40]\b[2]";
+	dictkeyword = reference0
+	SearchDict(dictkeyword);
+	for _i = 0; _i < dictwordsnum; _i++ {
+		_temp = dictwordsfound[_i];
+		_txt +='\f[bold,true]' + _temp[0,'|'] + '\f[bold,false]\n' + _temp[1,'|'] + '\n[150]';
+	}
+	_txt += "\_q";
+	if dictwordsnum == 40 {
+		_txt += "（符合条件的单词太多，只显示前40个）\n[150]"
+	}
+	elseif dictwordsnum == 0 {
+		_txt += "\s[8]没有查询到符合条件的单词……\n[150]"
+	}
+	_txt += ""
+	if dictmode == 0 {
+		_txt += "\n[150]开启模糊查询吗？（可查询单词的一部分，亦可通过中文解释反查单词喔～）\n[150]\q[◇是,OnDictModeChange,1]・\q[◆否,OnDictModeChange,0]"
+	}
+	else {
+		_txt += "\n[150]开启模糊查询吗？（可查询单词的一部分，亦可通过中文解释反查单词喔～）\n[150]\q[◆是,OnDictModeChange,1]・\q[◇否,OnDictModeChange,0]"
+	}
+	_txt += "\n\n\q[◇继续查询,OnSearchDict]\n[150]\q[◇返回上一层,OnDictBack]\n\q[◇终了,OnDictEnd]\x\e";
+	_txt;
+
+}
+
+OnDictModeChange
+{
+	dictmode = reference0;
+	reference0 =dictkeyword;
+	OnWordsInputFinish;
+}
+
+OnDictBack
+{
+	OpenMenu;
+}
+
+OnDictEnd
+{
+	"\0\s[26]查到你想要的了吗？\e"
+}
+
+SearchDict
+{
+	_keyword = _argv[0];
+	_dictfile = "data\dict.dat";
+	_buff = "";
+	_keybuff = "";
+	if FOPEN(_dictfile,"r") {
+		for _buff = FREAD(_dictfile);_buff != -1 && dictwordsnum < 40; _buff = FREAD(_dictfile) {
+			if dictmode == 0 && _buff[0,'|'] == _keyword {
+				dictwordsfound[dictwordsnum] = _buff;
+				dictwordsnum ++;
+			}
+			elseif dictmode == 1 && STRSTR(_buff, _keyword, 0) >= 0 {
+				dictwordsfound[dictwordsnum] = _buff;
+				dictwordsnum ++;
+			}
+		}
+	}
+	FCLOSE(_dictfile);
+}

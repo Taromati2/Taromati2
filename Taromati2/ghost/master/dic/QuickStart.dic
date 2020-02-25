@@ -1,0 +1,16 @@
+﻿//by steve02081504
+#globaldefine	QuickStartVersion	0
+NeedUpdate{
+	"\1\s[10]\0\s[8]很遗憾\w9，这个功能需要线上更新后才能使用\w9\w9\n/
+	\q[◇并不需要,UpdateCancel]\n/
+	\q[◇开始更新,UpdateNow]\e"
+}
+NeedUpdateText{
+	"线上更新后可用"
+}
+Select.UpdateCancel{
+	"\0\s[6]好的\e"
+}
+Select.UpdateNow{
+	"\![updatebymyself]\e"
+}

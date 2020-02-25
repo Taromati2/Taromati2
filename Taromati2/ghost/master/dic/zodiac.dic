@@ -1,0 +1,795 @@
+﻿Onzodiac
+{
+"\0\q[星座全解析,OnastroList]\n/
+     \q[星座生日,OnastrobirthList]\n/
+     \q[星座生日2,OnastrobirthList2]\n/
+     \q[星座血型,OnastrobloodList]\n/
+     \q[星座速配,OnastromatchList]\n/
+     \q[趣味星座,OnhappyastroList]\n/
+     \q[生肖全解析,OnshxList]\n/
+     \q[生肖速配,OnshxmatchList]\n/
+     \q[◇返回上一层,OnOpenMenu,1]\n\q[◇终了,OnzodiacEnd]\e"
+
+
+
+}
+
+
+
+OnastroList
+{
+	_txt = "\0\s[26]想看哪个星座的信息？\w9\n[150]\_q";
+	_table =("","白羊座","金牛座","双子座","巨蟹座","狮子座","处女座","天秤座","天蝎座","射手座","摩羯座","水瓶座","双鱼座")
+	_a = "";
+	_i = 0;
+	for _i = 1 ; _i <= 12; _i ++ {
+		_a = _table[_i];
+		_txt += "\_l[%((_i - 1) % 3 * 100 + 24 )]";
+		_txt += "\q[%(_a),Onastromenu,%(_a)]";
+		if _i % 3 == 0 {
+			_txt += "\n";
+		}
+	}
+        _txt += "\n\q[◇我是哪个星座,whichastro]";
+	_txt += "\n[150]\q[◇返回上一层,Onzodiac]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+}
+
+
+
+Select.whichastro{
+  "请输入日期！年份随便输入\![open,dateinput,Onastrosearch,%(reference0[1]),%(reference0[2])]\n[300]"}
+
+Onastrosearch
+{
+_month = reference0[1];
+_day = reference0[2]
+
+if (_month == 3 && _day >=21 ) || (_month == 4 && _day <= 20)
+{ "\0\s[40]%(username)是白羊座\n%(OnastroList)\e"}
+
+elseif (_month == 4 && _day >=21 ) || (_month ==5 && _day <= 20)
+{ "\0\s[40]%(username)是金牛座\n%(OnastroList)\n%(OnastroList)\e"}
+
+elseif (_month == 5 && _day >=21 ) || (_month ==6 && _day <= 21)
+{ "\0\s[40]%(username)是双子座\n%(OnastroList)\e"}
+
+elseif (_month == 6 && _day >=22 ) || (_month == 7 && _day <= 22)
+{ "\0\s[40]%(username)是巨蟹座\n%(OnastroList)\e"}
+
+elseif (_month == 7 && _day >=23 ) || (_month == 8 && _day <= 22)
+{ "\0\s[40]%(username)是狮子座\n%(OnastroList)\e"}
+
+elseif (_month == 8 && _day >=23 ) || (_month == 9 && _day <= 22)
+{ "\0\s[40]%(username)是处女座\n%(OnastroList)\e"}
+
+elseif (_month == 9 && _day >=23 ) || (_month == 10 && _day <= 22)
+{ "\0\s[40]%(username)是天秤座\n%(OnastroList)\e"}
+
+elseif (_month == 10 && _day >=23 ) || (_month == 11 && _day <= 21)
+{ "\0\s[40]%(username)是天蝎座\n%(OnastroList)\e"}
+
+elseif (_month == 11 && _day >=22 ) || (_month == 12 && _day <= 21)
+{ "\0\s[40]%(username)是射手座\n%(OnastroList)\e"}
+
+elseif (_month == 12 && _day >=22 ) || (_month == 1 && _day <= 19)
+{ "\0\s[40]%(username)是摩羯座\n%(OnastroList)\e"}
+
+
+elseif (_month == 1 && _day >=20 ) || (_month == 2 && _day <= 18)
+{ "\0\s[40]%(username)是水瓶座\n%(OnastroList)\e"}
+
+elseif (_month == 2 && _day >=19 ) || (_month == 3 && _day <= 20)
+{ "\0\s[40]%(username)是双鱼座\n%(OnastroList)\e"}
+
+
+}
+
+
+Onastromenu
+{
+_a = reference0;
+	_txt = "\0\b[2]\s[26]想看哪个信息？\w9\n[150]\_q";
+	_menu =("","◇1、概况","◇2、总而言之","◇3、神话","◇4、克星","◇5、外形","◇6、特点","◇7、优点","◇8、缺点","◇9、性格","◇10、心智表现","◇11、爱情","◇12、恋爱要诀","◇13、爱情与面包","◇14、事业","◇15、友谊","◇16、工作","◇17、休闲","◇18、父母","◇19、子女","◇20、儿童","◇21、男人","◇22、女人","◇23、理想出路","◇24、生日性格","◇25、著名人士","◇26、性格特色","◇27、小秘密","◇28、魅力","◇29、理想情人","◇30、财运","◇31、互动","◇32、成功学","◇33、个人作风","◇34、黑暗面","◇35、合适男名","◇36、合适女名")
+	_b = "";
+	_j = 0;
+	for _j = 1 ; _j <= 36; _j ++ {
+		_b = _menu[_j];
+		_txt += "\_l[%((_j - 1) % 2 * 112 + 24 )]";
+		_txt += "\q[%(_b),Onastro,%(_a),%(_b)]";
+		if _j % 2 == 0 {
+			_txt += "\n";
+		}
+	}
+
+        _txt += "\n[150]\q[◇返回上一层,OnastroList]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+}
+
+OnzodiacEnd
+{
+        "\0\s[0]好的。\w9\w9\e"
+        "\0\s[26]好的，需要时再叫我\w9\w9\e" 
+	"\0\s[0]这样有帮上你的忙吗？\w9\w9\e" 
+
+}
+
+Onastro
+{
+_a = reference0;
+_b = reference1;
+
+_str = _a + _b;
+_next = _a + "◇";
+_file = "data\astro.txt";
+_buff = "";
+_txt = "\b[2]\![quicksession,true]\![set,choicetimeout,0]";
+
+
+if FOPEN(_file, "r") {
+		_buff = FREAD(_file);
+		while _buff != -1 && _str !_in_ _buff {
+			_buff = FREAD(_file);
+		}
+		if _str _in_ _buff {
+			_txt += _str + "的信息：\n\n";
+                  _buff = FREAD(_file);  while _buff != -1 && _next !_in_ _buff {_txt += _buff + "\n";_buff = FREAD(_file);}
+			 //REPLACE(_buff,_del,"");
+			
+		}
+	}
+
+     
+	_txt += "\n\n\n\q[◇返回,Onastromenu,%(_a)]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+	FCLOSE(_file);
+}
+
+OnshxList
+{
+	_txt = "\0\s[26]想看哪个生肖的信息？\w9\n[150]\_q";
+	_table =("","子鼠","丑牛","寅虎","卯兔","辰龙","巳蛇","午马","未羊","申猴","酉鸡","戌狗","亥猪")
+	_a = "";
+	_i = 0;
+	for _i = 1 ; _i <= 12; _i ++ {
+		_a = _table[_i];
+		_txt += "\_l[%((_i - 1) % 3 * 100 + 24 )]";
+		_txt += "\q[%(_a),Onshxmenu,%(_a)]";
+		if _i % 3 == 0 {
+			_txt += "\n";
+		}
+	}
+	_txt += "\n[150]\q[◇返回上一层,Onzodiac]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+}
+
+
+Onshxmenu
+{
+_a = reference0;
+	_txt = "\0\s[26]想看哪个信息？\w9\n[150]\_q";
+	_menu =("","◇1、概况","◇2、出生年月日","◇3、性格","◇4、优点","◇5、缺点","◇6、流年运势","◇7、事业","◇8、爱情","◇9、财运","◇10、健康","◇11、造字因缘","◇12、生肖血型","◇13、养生秘方","◇14、成语俗语","◇15、民俗","◇16、与其它生肖关系","◇17、相配属相","◇18、相忌属相")
+	_b = "";
+	_j = 0;
+	for _j = 1 ; _j <= 18; _j ++ {
+		_b = _menu[_j];
+		_txt += "\_l[%((_j - 1) % 2 * 112 + 24 )]";
+		_txt += "\q[%(_b),Onshx,%(_a),%(_b),%(_j)]";
+		if _j % 2 == 0 {
+			_txt += "\n";
+		}
+	}
+
+        _txt += "\n[half]\q[◇返回上一层,OnshxList]     \q[◇终了,OnzodiacEnd]\e";
+	_txt;
+}
+
+
+
+
+
+Onshx
+{
+_a = reference0;
+_b = reference1;
+_j = reference2;
+_str = _a + _b;
+_next = _a + "◇";
+
+_file = "data\shengxiao.txt";
+_buff = "";
+_txt = "\b[2]\![quicksession,true]\![set,choicetimeout,0]";
+
+if _j == 12
+{
+Onshxbloodtype;
+}
+
+else {
+if FOPEN(_file, "r") {
+		_buff = FREAD(_file);
+		while _buff != -1 && _str  !_in_ _buff {
+			_buff = FREAD(_file);
+		}
+		if _str _in_ _buff {
+			_txt += _str + "的信息：\n\n";
+			
+
+                     _buff = FREAD(_file);  while _buff != -1 && _next !_in_ _buff {_txt += _buff + "\n";_buff = FREAD(_file);}
+			   
+                          
+                     
+                        // _txt += TextBetween(_buff,'',_next);
+			//_txt += FREAD(_file) + "\n[150]" + FREAD(_file) + "\n[150]" + FREAD(_file) + "\n";
+		}
+	}
+     
+	_txt += "\n\n\n\q[◇返回上一层,Onshxmenu,%(_a)]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+	FCLOSE(_file);
+}
+}
+
+
+Onshxbloodtype
+{
+_a = reference0;
+_b = reference1;
+        _a = reference0;
+	_txt = "\0\s[26]请选择血型\w9\n[150]\_q";
+	_type =("","◇A型","◇B型","◇O型","◇AB型");
+	_c = "";
+	_i = 0;
+	for _i = 1 ; _i <= 4; _i ++ {
+		_c = _type[_i];
+		//_txt += "\_l[%((_i - 1) % 3 * 100 + 24 )]";
+		_txt += "\q[%(_c),Onshxblood,%(_a),%(_b),%(_c)]";
+		if _i % 1 == 0 {
+			_txt += "\n";
+		}
+	}
+	_txt += "\n[150]\q[◇返回上一层,Onshxmenu,%(_a)]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+}
+
+Onshxblood
+{
+        _a = reference0;
+	_b = reference1;
+        _c = reference2;
+	_str = _a + _b;
+	_file = "data\shengxiao.txt";
+	_buff = "";
+	_txt = "\b[2]\![quicksession,true]\![set,choicetimeout,0]";
+	if FOPEN(_file, "r") {
+		_buff = FREAD(_file);
+		while _buff != -1 && _str !_in_ _buff {
+              _buff = FREAD(_file);
+		}
+                while _c !_in_ _buff {
+              _buff = FREAD(_file);
+		}
+
+		if _c _in_ _buff {
+	                 
+			_txt += _c + _a + "的信息\n";
+			_buff = FREAD(_file);  while _buff != -1 && "◇" !_in_ _buff {_txt += _buff + "\n";_buff = FREAD(_file);}
+			
+		}
+	}
+	_txt += "\n\n\n\q[◇返回上一层,Onshxbloodtype,%(_a),%(_b)]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+	FCLOSE(_file);
+}
+
+
+
+
+
+OnastrobirthList
+{
+	_txt = "\0\s[26]想看几月份的？\w9\n[150]\_q";
+	_table =("零","一","二","三","四","五","六","七","八","九","十","十一","十二");
+	_smonth = "";
+	_month = 0;
+	for _month = 1; _month <= 12; _month ++ {
+		_smonth = _table[_month] + '月';
+		_txt += "\_l[%((_month - 1) % 3 * 100 + 24 - (_month - 1)/ 10 * 12)]";
+		_txt += "\q[%(_smonth),OnastrobirthDays,%(_month)]";
+		if _month % 3 == 0 {
+			_txt += "\n";
+		}
+	}
+	_txt += "\n[150]\q[◇返回上一层,Onzodiac]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+}
+
+
+OnastrobirthDays
+{
+	_month = reference0;
+	_day = 0;
+	_sum = (31,31,29,31,30,31,30,31,31,30,31,30,31)[_month];
+	_sday = "";
+	_txt = _month + "月的哪一天呢？\n[150]\_q";
+	for _day = 1; _day <= _sum; _day ++ {
+		_sday = _day + "日";
+		_txt += "\_l[%((_day - 1) % 6 * 32 + 60 - (_day + 20) / 30 * 7)]"
+		_txt += "\q[%(_sday),Onastrobirthmenu,%(_month),%(_day)]";
+		if _day % 6 == 0 && _day < _sum {
+			_txt += "\n";
+		}
+	}
+	_txt += "\n[150]\q[◇返回上一层,OnastrobirthList]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+}
+
+
+Onastrobirthmenu
+
+{
+        _month = reference0;
+	_day = reference1;
+	_txt = "\0\s[26]想看哪个信息\w9\n[150]\_q";
+	_table =("","◇1、星座生日","◇2、星座运程","◇3、花语占卜");
+	_a = "";
+	_i = 0;
+	for _i = 1 ; _i <= 3; _i ++ {
+		_a = _table[_i];
+		//_txt += "\_l[%((_i - 1) % 3 * 100 + 24 )]";
+		_txt += "\q[%(_a),Onastrobirth,%(_month),%(_day),%(_table[_i])]";
+		if _i % 1 == 0 {
+			_txt += "\n";
+		}
+	}
+	_txt += "\n[150]\q[◇返回,OnastrobirthList]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+}
+
+Onastrobirth
+
+{
+	_month = reference0;
+	_day = reference1;
+         _table[_i] = reference2;
+	_str = "◇" + _month + "月" + _day + "日";
+	_file = "data\astrobirth.txt";
+	_buff = "";
+	_txt = "\b[2]\![quicksession,true]\![set,choicetimeout,0]";
+	if FOPEN(_file, "r") {
+		_buff = FREAD(_file);
+		while _buff != -1 && _str  !_in_ _buff {
+              _buff = FREAD(_file);
+		}
+              while _buff != -1 && _table[_i] !_in_ _buff {
+              _buff = FREAD(_file);
+		}
+
+		if _table[_i] _in_ _buff {
+	
+                      _txt += _table[_i] + "\n";
+			_buff = FREAD(_file);  while _buff != -1 && "◇" !_in_ _buff {_txt += _buff + "\n";_buff = FREAD(_file);}
+
+			//_txt += FREAD(_file) + "\n" + FREAD(_file) + "\n" + FREAD(_file) + "\n" + FREAD(_file) + "\n" + FREAD(_file) + "\n" + FREAD(_file) + "\n"  ;
+		}
+	}
+	_txt += "\n\n\n\q[◇返回,Onastrobirthmenu,%(_month),%(_day)]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+	FCLOSE(_file);
+}
+
+OnastrobloodList
+{
+	_txt = "\0\s[26]请选择星座？\w9\n[150]\_q";
+	_table =("","白羊座","金牛座","双子座","巨蟹座","狮子座","处女座","天秤座","天蝎座","射手座","摩羯座","水瓶座","双鱼座")
+	_a = "";
+	_i = 0;
+	for _i = 1 ; _i <= 12; _i ++ {
+		_a = _table[_i];
+		_txt += "\_l[%((_i - 1) % 3 * 100 + 24 )]";
+		_txt += "\q[%(_a),Onastrobloodtype,%(_a)]";
+		if _i % 3 == 0 {
+			_txt += "\n";
+		}
+	}
+        _txt += "\n\q[◇我是哪个星座,whichastro]";
+	_txt += "\n[150]\q[◇返回上一层,Onzodiac]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+}
+
+
+Onastrobloodtype
+
+{
+        _a = reference0;
+	_txt = "\0\s[26]请选择血型\w9\n[150]\_q";
+	_type =("","◇A型","◇B型","◇O型","◇AB型");
+	_b = "";
+	_i = 0;
+	for _i = 1 ; _i <= 4; _i ++ {
+		_b = _type[_i];
+		//_txt += "\_l[%((_i - 1) % 3 * 100 + 24 )]";
+		_txt += "\q[%(_b),Onastrobloodmenu,%(_a),%(_b)]";
+		if _i % 1 == 0 {
+			_txt += "\n";
+		}
+	}
+	_txt += "\n[150]\q[◇返回上一层,OnastrobloodList]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+}
+
+Onastrobloodmenu
+{
+
+        _a = reference0;
+	_b = reference1;
+	_txt = "\0\s[26]想看哪个信息\w9\n[150]\_q";
+	_menu =("","◇1、特征","◇2、爱与性的倾向","◇3、婚姻及家庭","◇4、事业及成功","◇5、金钱及财运");
+	_c = "";
+	_i = 0;
+	for _i = 1 ; _i <= 5; _i ++ {
+		_c = _menu[_i];
+		//_txt += "\_l[%((_i - 1) % 3 * 100 + 24 )]";
+		_txt += "\q[%(_c),Onastroblood,%(_a),%(_b),%(_c),%(_i)]";
+		if _i % 1 == 0 {
+			_txt += "\n";
+		}
+	}
+	_txt += "\n[150]\q[◇返回上一层,OnastrobloodList]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+}
+
+Onastroblood
+{
+        _a = reference0;
+	_b = reference1;
+        _c = reference2;
+        _i = reference3;
+	_str = "◇" + _a;
+	_file = "data\astroblood.txt";
+	_buff = "";
+	_txt = "\b[2]\![quicksession,true]\![set,choicetimeout,0]";
+	if FOPEN(_file, "r") {
+		_buff = FREAD(_file);
+		while _buff != -1 && _str !_in_ _buff {
+              _buff = FREAD(_file);
+		}
+           while _b !_in_ _buff {
+             _buff = FREAD(_file);
+		}
+                while _c !_in_ _buff {
+              _buff = FREAD(_file);
+		}
+
+		if _c _in_ _buff {
+	                 
+			_txt += _b + _a + "的" + _c + "信息\n";
+			_buff = FREAD(_file);  while _buff != -1 && "◇" !_in_ _buff {_txt += _buff + "\n";_buff = FREAD(_file);}
+			
+                  // if _i == 1 {  _txt += FREAD(_file) + "\n" + FREAD(_file) + "\n" + FREAD(_file) + "\n" + FREAD(_file) + "\n" + FREAD(_file) + "\n" + FREAD(_file) + "\n"  + FREAD(_file) + "\n"  ;}
+                  // elseif _i == 2 {  _txt += FREAD(_file) + "\n" + FREAD(_file) + "\n" + FREAD(_file) + "\n" + FREAD(_file) + "\n"  ;}
+                 //  elseif _i == 3 {  _txt += FREAD(_file) + "\n" + FREAD(_file) + "\n" + FREAD(_file) + "\n" + FREAD(_file) + "\n" + FREAD(_file) + "\n"  ;}
+                //  elseif _i == 4 {  _txt += FREAD(_file) + "\n" + FREAD(_file) + "\n" + FREAD(_file) + "\n" + FREAD(_file)  ;}
+                //  elseif _i == 5 {  _txt += FREAD(_file) + "\n" + FREAD(_file) + "\n" + FREAD(_file) + "\n" + FREAD(_file) + "\n"  ;}
+		}
+	}
+	_txt += "\n\n\n\q[◇返回上一层,Onastrobloodmenu,%(_a),%(_b)]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+	FCLOSE(_file);
+}
+
+
+OnastromatchList
+{
+	_txt = "\0\s[26]请选择女方的星座？\w9\n[150]\_q";
+	_table =("","白羊座","金牛座","双子座","巨蟹座","狮子座","处女座","天秤座","天蝎座","射手座","摩羯座","水瓶座","双鱼座")
+	_a = "";
+	_i = 0;
+	for _i = 1 ; _i <= 12; _i ++ {
+		_a = _table[_i];
+		_txt += "\_l[%((_i - 1) % 3 * 100 + 24 )]";
+		_txt += "\q[%(_a),OnastromatchList2,%(_a)]";
+		if _i % 3 == 0 {
+			_txt += "\n";
+		}
+	}
+        _txt += "\n\q[◇我是哪个星座,whichastro]";
+	_txt += "\n[150]\q[◇返回上一层,Onzodiac]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+}
+
+
+OnastromatchList2
+{
+        _a = reference0;
+	_txt = "\0\s[26]请选择男方的星座？\w9\n[150]\_q";
+	_table =("","白羊座","金牛座","双子座","巨蟹座","狮子座","处女座","天秤座","天蝎座","射手座","摩羯座","水瓶座","双鱼座")
+	_b = "";
+	_i = 0;
+	for _i = 1 ; _i <= 12; _i ++ {
+		_b = _table[_i];
+		_txt += "\_l[%((_i - 1) % 3 * 100 + 24 )]";
+		_txt += "\q[%(_b),Onastromatch,%(_a),%(_b)]";
+		if _i % 3 == 0 {
+			_txt += "\n";
+		}
+	}
+        _txt += "\n\q[◇我是哪个星座,whichastro]";
+	_txt += "\n[150]\q[◇返回上一层,OnastromatchList]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+}
+
+
+Onastromatch
+{
+	_a = reference0;
+	_b = reference1;
+	_str = "男" + _b +".vs." + "女" + _a ;
+	_file = "data\astromatch.txt";
+	_buff = "";
+	_txt = "\b[2]\![quicksession,true]\![set,choicetimeout,0]";
+	if FOPEN(_file, "r") {
+		_buff = FREAD(_file);
+		while _buff != -1 && _str  !_in_ _buff {
+              _buff = FREAD(_file);
+		}
+
+		if _str _in_ _buff {
+	                _txt +=_str + "的速配结果如下\n"
+			_buff = ERASE(_buff, 0, STRLEN(_str));
+			_txt += _buff + "\n[150]";
+			_txt += FREAD(_file) + "\n" + FREAD(_file) + "\n" + FREAD(_file) + "\n" + FREAD(_file) + "\n";
+		}
+	}
+	_txt += "\n\n\n\q[◇返回,OnastromatchList]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+	FCLOSE(_file);
+}
+
+
+OnhappyastroList
+{
+	_txt = "\0\s[26]想看哪个星座的信息？\w9\n[150]\_q";
+	_table =("","白羊座","金牛座","双子座","巨蟹座","狮子座","处女座","天秤座","天蝎座","射手座","摩羯座","水瓶座","双鱼座")
+	_a = "";
+	_i = 0;
+	for _i = 1 ; _i <= 12; _i ++ {
+		_a = _table[_i];
+		_txt += "\_l[%((_i - 1) % 3 * 100 + 24)]";
+		_txt += "\q[%(_a),Onhappyastromenu,%(_a)]";
+		if _i % 3 == 0 {
+			_txt += "\n";
+		}
+	}
+        _txt += "\n\q[◇我是哪个星座,whichastro]";
+	_txt += "\n[150]\q[◇返回上一层,Onzodiac]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+}
+
+
+Onhappyastromenu
+{
+_a = reference0;
+	_txt = "\0\b[2]\s[26]想看哪个信息？\w9\n[150]\_q";
+	_menu =("","◇1、办公室星座守则","◇2、当你爱上了她","◇3、当你爱上了他","◇4、酒杯中有只苍蝇","◇5、被主管骂时的心态","◇6、最爱吃醋的男人","◇7、对自己魅力的信心","◇8、BABY特色","◇9、奥运大拼杀","◇10、成功格言","◇11、美食佳肴","◇12、收藏喜好","◇13、网上情缘","◇14、孝顺星","◇15、负心汉","◇16、公司部门大分工","◇17、面对第三者","◇18、女生报复你","◇19、起床时间排行榜","◇20、求爱挑逗秘语","◇21、伤脑筋","◇22、失业大补丸","◇23、暑期电影","◇24、所感兴趣的事","◇25、桃花劫","◇26、偷心绝招","◇27、心太软","◇28、病毒","◇29、交通事故","◇30、旅行","◇31、糖","◇32、兴奋剂","◇33、致命打击语录","◇33、致命打击语录","◇35、自我解析","◇36、如何选择男友","◇37、约会选时间","◇38、考试奇迹","◇39、分手面面观","◇40、考生精神错乱指数","◇41、老板的带兵之道","◇42、脸红一族","◇43、男人爱听的枕边话","◇44、男人的息怒法","◇45、女孩的爱情命脉","◇46、女孩解析","◇47、情人说再见的时候","◇48、周一症候群")
+	_b = "";
+	_j = 0;
+	for _j = 1 ; _j <= 48; _j ++ {
+		_b = _menu[_j];
+		_txt += "\_l[%((_j - 1) % 2 * 140 + 10)]";
+		_txt += "\q[%(_b),Onhappyastro,%(_a),%(_b)]";
+		if _j % 2 == 0 {
+			_txt += "\n";
+		}
+	}
+
+        _txt += "\n[150]\q[◇返回上一层,OnhappyastroList]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+}
+
+
+Onhappyastro
+{
+	_a = reference0;
+	_b = reference1;
+	_str = "◇" + _a ;
+	_file = "data\happyastro.txt";
+	_buff = "";
+	_txt = "\b[2]\![quicksession,true]\![set,choicetimeout,0]";
+	if FOPEN(_file, "r") {
+		_buff = FREAD(_file);
+		while _buff != -1 && _str !_in_ _buff {
+              _buff = FREAD(_file);
+		}
+             while _buff != -1 && _b !_in_ _buff {
+              _buff = FREAD(_file);
+		}
+
+		if _b _in_ _buff {
+                  _txt +=_a + _b +"：\n";
+              _buff = FREAD(_file); while _buff != -1 && "◇" !_in_ _buff {
+             _txt += _buff + "\n"; _buff = FREAD(_file);
+	                                             }   
+		
+			
+			
+		}
+	}
+	_txt += "\n\n\n\q[◇返回,Onhappyastromenu,%(_a)]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+	FCLOSE(_file);
+}
+
+
+OnastrobirthList2
+{
+	_txt = "\0\s[26]想看几月份的？\w9\n[150]\_q";
+	_table =("零","一","二","三","四","五","六","七","八","九","十","十一","十二");
+	_smonth = "";
+	_month = 0;
+	for _month = 1; _month <= 12; _month ++ {
+		_smonth = _table[_month] + '月';
+		_txt += "\_l[%((_month - 1) % 3 * 100 + 24 - (_month - 1)/ 10 * 12)]";
+		_txt += "\q[%(_smonth),OnastrobirthDays2,%(_month)]";
+		if _month % 3 == 0 {
+			_txt += "\n";
+		}
+	}
+	_txt += "\n[150]\q[◇返回上一层,Onzodiac]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+}
+
+
+OnastrobirthDays2
+{
+	_month = reference0;
+	_day = 0;
+	_sum = (31,31,29,31,30,31,30,31,31,30,31,30,31)[_month];
+	_sday = "";
+	_txt = _month + "月的哪一天呢？\n[150]\_q";
+	for _day = 1; _day <= _sum; _day ++ {
+		_sday = _day + "日";
+		_txt += "\_l[%((_day - 1) % 6 * 32 + 60 - (_day + 20) / 30 * 7)]"
+		_txt += "\q[%(_sday),Onastrobirthmenu2,%(_month),%(_day)]";
+		if _day % 6 == 0 && _day < _sum {
+			_txt += "\n";
+		}
+	}
+	_txt += "\n[150]\q[◇返回上一层,OnastrobirthList]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+}
+
+
+Onastrobirthmenu2
+
+{
+        _month = reference0;
+	_day = reference1;
+	_txt = "\0\s[26]想看哪个信息\w9\n[150]\_q";
+	_table =("","◇1、概况","◇2、幸运数字和守护星","◇3、健康","◇4、建议","◇5、名人","◇6、塔罗牌","◇7、静思语","◇8、优点","◇9、缺点");
+	_a = "";
+	_i = 0;
+	for _i = 1 ; _i <= 9; _i ++ {
+		_a = _table[_i];
+		_txt += "\_l[%((_i - 1) % 2 * 100 + 24 )]";
+		_txt += "\q[%(_a),Onastrobirth2,%(_month),%(_day),%(_table[_i])]";
+		if _i % 2 == 0 {
+			_txt += "\n";
+		}
+	}
+	_txt += "\n[150]\q[◇返回,OnastrobirthList2]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+}
+
+Onastrobirth2
+
+{
+	_month = reference0;
+	_day = reference1;
+         _table[_i] = reference2;
+	_str = "◇" + _month + "月" + _day + "日";
+	_file = "data\astrobirth2.txt";
+	_buff = "";
+	_txt = "\b[2]\![quicksession,true]\![set,choicetimeout,0]";
+	if FOPEN(_file, "r") {
+		_buff = FREAD(_file);
+		while _buff != -1 && _str  !_in_ _buff {
+              _buff = FREAD(_file);
+		}
+              while _buff != -1 && _table[_i] !_in_ _buff {
+              _buff = FREAD(_file);
+		}
+
+		if _table[_i] _in_ _buff {
+	
+                      _txt += _table[_i] + "\n";
+			_buff = FREAD(_file);  while _buff != -1 && "◇" !_in_ _buff {_txt += _buff + "\n";_buff = FREAD(_file);}
+
+			//_txt += FREAD(_file) + "\n" + FREAD(_file) + "\n" + FREAD(_file) + "\n" + FREAD(_file) + "\n" + FREAD(_file) + "\n" + FREAD(_file) + "\n"  ;
+		}
+	}
+	_txt += "\n\n\n\q[◇返回,Onastrobirthmenu2,%(_month),%(_day)]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+	FCLOSE(_file);
+}
+
+
+OnshxmatchList
+{
+	_txt = "\0\s[26]请选择您的生肖？\w9\n[150]\_q";
+	_table =("","鼠","牛","虎","兔","龙","蛇","马","羊","猴","鸡","狗","猪")
+	_a = "";
+	_i = 0;
+	for _i = 1 ; _i <= 12; _i ++ {
+		_a = _table[_i];
+		_txt += "\_l[%((_i - 1) % 3 * 100 + 24 )]";
+		_txt += "\q[%(_a),OnshxmatchList2,%(_a)]";
+		if _i % 3 == 0 {
+			_txt += "\n";
+		}
+	}
+
+	_txt += "\n[150]\q[◇返回上一层,Onzodiac]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+}
+
+OnshxmatchList2
+{
+        _a = reference0;
+	_txt = "\0\s[26]请选择对方的生肖？\w9\n[150]\_q";
+	_table =("","鼠","牛","虎","兔","龙","蛇","马","羊","猴","鸡","狗","猪")
+	_b = "";
+	_i = 0;
+	for _i = 1 ; _i <= 12; _i ++ {
+		_b = _table[_i];
+		_txt += "\_l[%((_i - 1) % 3 * 100 + 24 )]";
+		_txt += "\q[%(_b),Onshxmatch3,%(_a),%(_b)]";
+		if _i % 3 == 0 {
+			_txt += "\n";
+		}
+	}
+      
+	_txt += "\n[150]\q[◇返回上一层,OnshxmatchList]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+}
+
+Onshxmatch3
+{
+	_a = reference0;
+	_b = reference1;
+        _txt="\0\s[26]您为：\n/
+            \q[男性,Onshxmatch,%(_a),%(_b),0]\n/
+            \q[女性,Onshxmatch,%(_a),%(_b),1]\n/
+              "
+        _txt += "\n[150]\q[◇返回上一层,OnshxmatchList2]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+
+
+
+}
+
+Onshxmatch
+{
+	_a = reference0;
+	_b = reference1;
+        _c = reference2;
+	_str = ("男" + _a +"＋" + "女" + _b,"女" + _a +"＋" + "男" + _b)[_c]
+str=_str
+	_file = "data\shengxiaomatch.txt";
+	_buff = "";
+	_txt = "\b[2]\![quicksession,true]\![set,choicetimeout,0]";
+	if FOPEN(_file, "r") {
+		_buff = FREAD(_file);
+		while _buff != -1 && _str  !_in_ _buff {
+              _buff = FREAD(_file);
+		}
+
+		if _str _in_ _buff {
+	                _txt +=_str + "的速配结果如下\n"
+			_txt += _buff;
+		}
+	}
+	_txt += "\n\n\n\q[◇返回,OnshxmatchList]\n\q[◇终了,OnzodiacEnd]\e";
+	_txt;
+	FCLOSE(_file);
+}

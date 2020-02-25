@@ -1,0 +1,280 @@
+﻿///////////////////////////////////////////
+////////// 课程表功能辞书 v2.0
+////////// written by forjane 2009.09.02
+///////////////////////////////////////////
+
+
+ClassTableVarInit
+{
+	classdata = IARRAY(56);
+	classdetail = IARRAY(56);
+	classday = 0;
+	classtime = 0;
+	classfullweek = 0;
+	classcollege = 0;
+	
+}
+
+OnClassTable
+{
+	classtimerm=5
+	if classtableinitialized == 1 {
+		ClassTable(0);
+	}
+	else {
+		ClassTableVarInit;
+		classtableinitialized = 1;
+		"\0\s[26]第一次使用课程表吗？\w9\w9\n点击课程可以查看和修改。\w9\w9那么，\w9先把课程填好吧…\w9…\w9\n\w9\w9\c"
+		--
+		ClassTable(0);
+	}		
+}
+
+ClassTable
+{
+	_days = 0;
+	_times = 0;
+	_txt ="";
+	_title = "";
+	_classtxt = "\n\n\n\n\n[150]";
+	_tempclassdata = "<无>";
+	_tempclassdetail = "<无>";
+	_button1 = "添加";
+	_button2 = "添加";
+	if _argv[0] == 1 {
+		if classdata[classtime * 7 + classday] != "" {
+			_tempclassdata = classdata[classtime * 7 + classday];
+			_tempclassdata = "\f[bold,true]" + _tempclassdata[0,'='] + "\f[bold,default]";
+			_button1 = "修改";
+		}
+		if classdetail[classtime * 7 + classday] != "" {
+			_tempclassdetail = classdetail[classtime * 7 + classday];
+			_button2 = "修改";
+		}
+		_classtxt = "\n课程名称：                        " + '\q[◇' + _button1 + '课程,OnSetClass,' + classtime +','+ classday + ']\n' + _tempclassdata + "\n[150]";
+		_classtxt += "备注（时间地点等）：         " + '\q[◇' + _button2 + '备注,OnSetClassDetail,' + classtime +','+ classday + ']\n' + _tempclassdetail +"\n"
+	}
+
+	_outform = "\0\b[2]\s[40]\n\_q%(year)年%(month)月%(day)日（星期%(DayofWeek_w)） %(hour)点 %(minute)分\n[150]";
+	if classcollege == 1 {
+		_times = 6;
+		_outform += "\q[◆大学模式,OnCheckCollege,1]・\q[◇中学模式,OnCheckCollege,0]   ";
+	}
+	else {
+		_times = 8;
+		_outform += "\q[◇大学模式,OnCheckCollege,1]・\q[◆中学模式,OnCheckCollege,0]   ";
+	}
+	if classfullweek {
+		_days = 7;
+		_title = "周一  周二  周三  周四  周五  \f[color,255,0,128]周六  周日\f[color,default]";
+		_outform += "\q[◆七天,OnCheckFullWeek,1]・\q[◇五天,OnCheckFullWeek,0]\n";
+	}
+	else {
+		_days = 5;
+		_title = "星期一  星期二  星期三  星期四  星期五";
+		_outform += "\q[◇七天,OnCheckFullWeek,1]・\q[◆五天,OnCheckFullWeek,0]\n";
+	}
+
+	for _j = 0;_j < _times;_j++ {
+		for _i = 0;_i < _days;_i++ {
+			_colortxt = ModifyData(classdata[_j * 7 + _i], _j, _i);
+			if classdetail[_j * 7 + _i] != "" {
+				_colortxt = "\f[underline,true]" + _colortxt + "\f[underline,default]";
+			}
+			if _argv[0] == 1 && _i == classday && _j == classtime {
+				_colortxt = "\f[bold,true]" + _colortxt + "\f[bold,default]";
+			}
+			_txt += _colortxt;
+		}
+		if _j == 3 || _j == 1 && classcollege == 1 {
+			_txt += '\n┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈';
+		}
+		_txt += '\n';
+	}
+		
+	_outform += "━━━━━━━━━━━━━━━━━━\n/
+		%(_title)\n──────────────────\n/
+		%(_txt)━━━━━━━━━━━━━━━━━━"
+
+	_outform += _classtxt;
+
+	_outform += "\n\q[◇返回上一层,OnOpenMenu,0]\n/
+	\q[◇终了,OnClassEnd]\_q\*\e";
+	_outform;
+}
+
+OnClassEnd
+{
+	"\0<微笑>好的。那么…学习上、也请多多加油喔。\e"
+}
+
+OnCheckFullWeek
+{
+	classfullweek = reference0;
+	ClassTable(0);
+}
+
+OnCheckCollege
+{
+	classcollege = reference0;
+	ClassTable(0);
+}	
+
+OnShowDetail
+{
+	classday = reference1;
+	classtime = reference0;
+	ClassTable(1);
+}
+
+ModifyData
+{
+	_txt = _argv[0];
+	_posx = 0;
+	_txtout = "";
+	if _txt[1,'='] != "" {
+		_txt = _txt[1,'='];
+	}
+	if classfullweek == 1 {
+		if _txt == "" {
+			_txt = "<无>";
+			_posx = _argv[2] * 36 - 3;
+		}
+		else {
+			_txt = SUBSTR(_txt,0,2);
+			_posx = _argv[2] * 36 + 12 - STRLEN(_txt) * 6;
+		}
+	}
+	else {
+		if _txt == "" {
+			_txt = "<无>";
+			_posx = _argv[2] * 46 + 3;
+		}
+		else {
+			_txt = SUBSTR(_txt,0,3);
+			_posx = _argv[2] * 46 + 18 - STRLEN(_txt) * 6;
+		}
+	}
+	_txtout += '\_l[' + _posx + ']';
+	_txtout += '\q[' + _txt + ',OnShowDetail,' + _argv[1] +','+ _argv[2] +']';
+	_txtout;
+}
+
+OnSetClass
+{
+	classday = reference1;
+	classtime = reference0;
+	_dayOfWeek = ('一','二','三','四','五','六','日');
+	_when = ('上午','下午','晚上','第1','第2','第3','第4','1-2','3-4');
+	_ampm = _when[classtime / (4 - 2 * classcollege)];
+	_num = _when[classtime % (4 - 2 * classcollege) + 3 + 4 * classcollege];
+	_temp = classdata[classtime * 7 + classday];
+	"\0\s[40]要修改星期%(_dayOfWeek[classday])" + _ampm + _num + "节课的内容吗？\n请输入课程名称（可以用“全称=缩写”格式来指定课程缩写，不指定缩写则默认显示前几个字符）…/
+	\![open,inputbox,OnSetClassFinish,0,%(_temp)]"
+}
+
+
+OnSetClassDetail
+{
+	classday = reference1;
+	classtime = reference0;
+	_dayOfWeek = ('一','二','三','四','五','六','日');
+	_when = ('上午','下午','晚上','第1','第2','第3','第4','1-2','3-4');
+	_ampm = _when[classtime / (4 - 2 * classcollege)];
+	_num = _when[classtime % (4 - 2 * classcollege) + 3 + 4 * classcollege];
+	_temp = classdata[classtime * 7 + classday];
+	if _temp != "" {
+		_temp = _temp[0,'='];
+		_temp2 = classdetail[classtime * 7 + classday];
+		"\0\s[40]要修改星期%(_dayOfWeek[classday])" + _ampm + _num + "节%(_temp)课的说明吗？\n[150]请输入课程说明（时间，地点，授课老师，注意事项等）…/
+		\![open,inputbox,OnSetClassDetailFinish,0,%(_temp2)]"
+	}
+	else {
+		"\0\s[3]请先填好课程名称……\w9\w9\c";
+		--
+		ClassTable(1);
+	}
+}
+
+OnSetClassFinish
+{
+	classdata[classtime * 7 + classday]	= SUBSTR(reference0, 0, 12);
+	if reference0 == "" {
+		classdetail[classtime * 7 + classday] = "";
+	}
+	ClassTable(1);
+}
+
+OnSetClassDetailFinish
+{
+	classdetail[classtime * 7 + classday] = SUBSTR(reference0, 0, 35);
+	ClassTable(1);
+}
+
+OnClassDetailTimeCheck
+{
+	_timetick=secondnowtime(hour,minute,second);
+	_days = 0;
+	_times = 0;
+	if classcollege == 1 {
+		_times = 6;
+	}
+	else {
+		_times = 8;
+	}
+	if classfullweek {
+		_days = 7;
+	}
+	else {
+		_days = 5;
+	}
+	_week="一,二,三,四,五,六,日";
+	_txt="";
+	_rmflag=0;
+	for _j = 0;_j < _times;_j++ {
+		for _i = 0;_i < _days;_i++ {
+			if classdetail[_j * 7 + _i] != "" &&DayofWeek_w==_week[ _i]{
+				ct=1
+				_classdetail=SPLIT(classdetail[_j * 7 + _i],",");
+					ct=_classdetail
+					if ':' _in_ _classdetail[0] {
+					_time=SPLIT(_classdetail[0],':')
+					_hour=_time[0]
+					_minute=_time[1]
+					_second=_time[2]
+						
+					_timeleft=secondnowtime(_hour,_minute,_second)
+					
+			
+					if  abs(_timeleft-_timetick) <= classtimerm*60 && _timeleft - _timetick>0
+					{
+					CT=_timeleft
+						_rmflag=1
+						_txt+="马上开始上课咯。科目："+classdata[_j * 7 + _i]+"，备注："+classdetail[_j * 7 + _i]+""
+					}
+					elseif  abs(_timeleft-_timetick) <= classtimerm*60&& _timeleft - _timetick<=0
+					{
+						CT=_timeleft
+						_rmflag=1
+						_txt+="已经开始上课咯。科目："+classdata[_j * 7 + _i]+"，备注："+classdetail[_j * 7 + _i]+""
+					}
+			
+					
+				}
+			}
+		}
+	}
+		if _rmflag==1
+		{
+			_txt	
+		}
+
+}
+secondnowtime
+{
+	_hour=TOINT(_argv[0]);
+	_minute=TOINT(_argv[1]);
+	_second=TOINT(_argv[2]);
+	_hour*3600+_minute*60+_second;
+
+}

@@ -1,0 +1,491 @@
+﻿OnKikkaStockMenu
+{
+	Option.InputCreat("查询","OnStockSearch");
+	--
+	Option.Creat("自选","OnKikkaStockFound");
+	--
+	Option.Creat("自选中心","OnKikkaStockSelect");
+	--
+	Option.Creat("退出","OnKikkaStockOver");
+	kikkastock=1;
+	running="kikkastock";
+--
+//"\![sound,loop,var/qq空间flash改.swf]";
+--
+//"\![sound,play,var/1.mp3]";
+
+}
+ClearKikkaStockVar{
+	ERASEVAR("stockmode");
+	ERASEVAR("stockid");
+	ERASEVAR("kikkastock");
+	ERASEVAR("t");
+}
+OnKikkaStockOver
+{
+	running="";
+	ClearKikkaStockVar();
+}
+
+Option.Creat
+{
+	_name=_argv[0];
+	_function=_argv[1];
+	"\q[◇%(_name),%(_function)]";
+}
+
+Option.InputCreat
+{
+	_name=_argv[0];
+	_function=_argv[1];
+	"\b[2]\q[◇%(_name),OnOption.Input,%(_function)]";
+}
+
+OnOption.Input
+{
+	stockmode=1;
+	stockid=0
+	if reference0=="OnStockSearch"
+		 kikkastock=3;
+	"\![open,inputbox,%(reference0),-1,请输入股票数字代码] ";
+
+}
+
+OnStockSearch
+{
+	_name=reference0;
+	if _argc>0
+		_name=_argv[0];
+	_stocks="";
+	if _argv[1]=="list"
+	{
+		stocklist="";
+		SETDELIM(_name,'*');
+		_n=ARRAYSIZE(_name)-1;
+
+		for  _i=0;_i<_n;_i++
+		{
+			_股票代码=SUBSTR(_name[_i],STRLEN(_name[_i])-8,8);
+			if _股票代码!=""
+			{
+				stocklist=stocklist+","+_股票代码;
+			}		
+		}
+
+		//_n=ARRAYSIZE(stocklist);
+		stocklist[0]=IARRAY;
+		_stocklist=REPLACE(stocklist,',','\,');
+			//_stocks="sh600325\,sh601007\,sh601008";
+			_stocks=_stocklist;
+	}
+ 	elseif _argv[1]=='stock'||stockmode
+	{
+			_stocks=OnStockNameCheck(_name);t=_name
+			 if stockmode==1
+			{
+				stock=_stocks
+				 stockmode=2
+			}
+	}
+	
+	_needIndex=0;
+	_showapi_appid="6489"
+	_showapi_sign="5a4e4e1793d24add8550ee2a8060147e"
+	_month=OnNumberAddZero(month,2);
+	_day=OnNumberAddZero(day,2);
+	_hour=OnNumberAddZero(hour,2);
+	_minute=OnNumberAddZero(minute,2);
+	_second=OnNumberAddZero(second,2);
+	_showapi_timestamp=""+year+_month+_day+_hour+_minute+_second;
+	//_stocks="sh600325\,sh601007\,sh601008";
+	//_name="http://route.showapi.com/131-46?needIndex=%(_needIndex)&showapi_appid=%(_showapi_appid)&showapi_timestamp=%(_showapi_timestamp)&&stocks=%(_stocks)&showapi_sign=%(_showapi_sign)"
+	
+	//_key="ca8820239f98bfff2ffd647c70b24141"
+
+	//_name="http://web.juhe.cn:8080/finance/stock/hs?gid=sh600325&key=ca8820239f98bfff2ffd647c70b24141"
+	//_name="http://web.juhe.cn:8080/finance/stock/hs?gid=%(_stocks)&key=%(_key)"
+	_stocks="sh600325\,sh601007\,sh601008";
+	_name="http://hq.sinajs.cn/list=%(_stocks)"
+
+
+//	"minurl":"http://image.sinajs.cn/newchart/min/n/sh601009.gif",/*分时K线图*/
+ //       "dayurl":"http://image.sinajs.cn/newchart/daily/n/sh601009.gif",/*日K线图*/
+  //      "weekurl":"http://image.sinajs.cn/newchart/weekly/n/sh601009.gif",/*周K线图*/
+   //     "monthurl":"http://image.sinajs.cn/newchart/monthly/n/sh601009.gif"/*月K线图*/
+
+
+	if _stocks!=""
+	"\C\0\b[2]\![excute,http-get,%(_name),--param-charset=UTF-8,--file=kikkastock.kst,--timeout=200,--async=kikkastock]";
+	elseif (hour>9&&(hour<=11&&minute<=30))||(hour>=13&&hour<15)||reference1=='get'
+"\C\0\b[2]\![excute,http-get,%(_name),--param-charset=UTF-8,--file=kikkastock.kst,--timeout=200,--async=kikkastock]";
+		//else
+	//	"\C\0\b[2]";		
+
+
+
+}
+
+OnStockNameCheck
+{
+	_name=_argv[0];
+	_name=TOSTR(_name);
+	_len=STRLEN(_name);
+		
+	for _i=_len;_i<6;_i++
+	{
+		_name='0'+_name;
+	}	
+	if SUBSTR(_name,0,1)=='6'
+		_name='sh'+_name;
+	elseif SUBSTR(_name,0,1)=='3'||SUBSTR(_name,0,1)=='0'
+		_name='sz'+_name;
+
+	
+	_name
+}
+
+
+OnKikkaStockSelect
+{
+
+	_txt=OnKikkaStockList.Read;
+	_stocklist=_txt;
+	if kikkastock!=2
+	{
+		kikkastock=2;
+		OnStockSearch(_stocklist,'list');
+		return;
+	}
+	kikkastock=2;
+	_t="\C\![quicksession,true]\c\b[2]\![set,choicetimeout,15000]";
+	_t+="               最新：   涨幅：   涨跌：   今开：   昨收：\n";
+	OnStockSearch(_stocklist,'list');
+	_buff=OnKikkaStockFile.Read;
+	_buff=REPLACE(_buff,'"','');
+	_bufftemp=_buff
+	_buff=_buff[1,'|']
+	SETDELIM(_buff,'*');
+	_i=0;
+	_n=ARRAYSIZE(_buff)-2;
+	foreach _buff;_txt
+	{
+		_股票代码=_txt[0,'='];
+		_股票代码=SUBSTR(_股票代码,0,8);
+		_股票代码=_txt[11];
+		 _股票名字=_txt[18];
+		_涨幅=_txt[16];
+		_涨跌=_txt[15];
+		_今日开盘价=_txt[20];
+		_昨日收盘价=_txt[10];
+		_当前价格=_txt[19];
+		_今日最高价=_txt[30];
+		_今日最低价=_txt[31];
+		_竞买价=_txt[12];
+		_竞卖价=_txt[13];
+		_成交量=TOINT(_txt[33])/1000000.0;
+		_成交量=OnDelFloatIndex(_成交量,2)
+		_成交金额=TOINT(_txt[32])/100000000.0;
+		_成交金额=OnDelFloatIndex(_成交金额,2)
+		if _i<_n
+		_t+="\__q[OnKikkaStockFound,%(_股票代码),$,%(_i)]"+_股票名字+"\__q"+"\_l[%(20+1*45)]"+_当前价格+"\_l[%(20+2*45)]"+_涨幅+"%\_l[%(20+3*45)]"+_涨跌+"\_l[%(20+4*45)]"+_今日开盘价+"\_l[%(20+5*45)]"+_昨日收盘价+"\n";
+		_i++;
+	
+	}
+
+			_股票代码=reference0
+	_t+="\q[返回,OnKikkaStockMenu]     \q[刷新,OnKikkaStockSelect,'fresh']      ";
+	_t+=Option.InputCreat("查询","OnStockSearch");
+	_t;
+}
+
+
+OnKikkaStockFound
+ {
+
+	kikkastock=3;
+	_br="\n";
+	_stocklist=OnKikkaStockFile.Read;
+
+	_股票代码=_stocklist[stockid];
+	if reference1=="$"
+	{
+		stockid=0;
+		_股票代码=reference0;a=_股票代码
+		stock=OnStockNameCheck(_股票代码)
+		stockmode=2
+	}
+	if stockmode
+		OnStockSearch(stock,'stock');
+	_stocklist=_stocklist[1,'|'];
+	_stocklist=REPLACE(_stocklist,'"',''); 
+	SETDELIM(_stocklist,'*');
+	_stock=_stocklist[stockid];
+	_txt=_stock;
+
+	 _股票名字=_txt[18];
+	_涨幅=_txt[16];
+	_涨跌=_txt[15];
+	_今日开盘价=_txt[20];
+	_昨日收盘价=_txt[10];
+	_当前价格=_txt[19];
+	_今日最高价=_txt[33];
+	_今日最低价=_txt[34];
+	_竞买价=_txt[12];
+	_竞卖价=_txt[13];
+	_成交量=TOINT(_txt[36])/1000000.0;
+	_成交量=OnDelFloatIndex(_成交量,2)
+	_成交金额=TOINT(_txt[35])/100000000.0;
+	_成交金额=OnDelFloatIndex(_成交金额,2)
+	_name=_txt[11];
+	_name=OnStockNameCheck(_name);
+
+
+	_股票代码=_name;
+	_买一数=TOINT(_txt[1]/100.0);
+	_买一=_txt[0];
+	_买二数=TOINT(_txt[3]/100.0);
+	_买二=_txt[2];
+	_买三数=TOINT(_txt[5]/100.0);
+	_买三=_txt[4];
+	_买四数=TOINT(_txt[7]/100.0);
+	_买四=_txt[6];
+	_买五数=TOINT(_txt[9]/100.0);
+	_买五=_txt[8];
+	_卖一数=TOINT(_txt[22]/100.0);
+	_卖一=_txt[21];
+	_卖二数=TOINT(_txt[24]/100.0);
+	_卖二=_txt[23];
+	_卖三数=TOINT(_txt[26]/100.0);
+	_卖三=_txt[25];
+	_卖四数=TOINT(_txt[28]/100.0);
+	_卖四=_txt[27];
+	_卖五数=TOINT(_txt[30]/100.0);
+	_卖五=_txt[29];
+
+	_txt="\C\![quicksession,true]\c\b[2]\![set,choicetimeout,15000]";
+	_txt+=_股票名字+_股票代码+_br;
+	_txt+=_当前价格+"   最高： "+_今日最高价+"   开盘： "+_今日开盘价+"   成交量： "+_成交量+"万"+_br;
+	_txt+="   最低： "+_今日最低价+"   收盘： "+_昨日收盘价+"   成交额： "+_成交金额+"亿"+_br;
+	_txt+="卖"+_br;
+	_txt+="5  "+_卖五+"      "+_卖五数+_br;
+	_txt+="4  "+_卖四+"      "+_卖四数+_br;
+	_txt+="3  "+_卖三+"      "+_卖三数+_br;
+	_txt+="2  "+_卖二+"      "+_卖二数+_br;
+	_txt+="1  "+_卖一+"      "+_卖一数+_br;
+	_txt+="买"+_br;
+	_txt+="1  "+_买一+"      "+_买一数+_br;
+	_txt+="2  "+_买二+"      "+_买二数+_br;
+	_txt+="3  "+_买三+"      "+_买三数+_br;
+	_txt+="4  "+_买四+"      "+_买四数+_br;
+	_txt+="5  "+_买五+"      "+_买五数+_br;
+	_txt+="\q[返回,OnKikkaStockMenu]            \q[刷新,OnKikkaStockFound,,'get']";
+	_buff=OnKikkaStockList.Read;
+	_arr=_股票代码;
+	if IsExistArray(_buff,_arr,"*")==0
+		_txt+="\q[加自选,OnKikkaStockAdd,%(_股票代码)]";
+	else
+		_txt+="\q[删自选,OnKikkaStockDel,%(_股票代码)]";
+	_txt;
+}
+
+IsExistArray
+{
+	_buff=_argv[0]
+	_arr=_argv[1]
+	_str=_argv[2]
+	_buff=SPLIT(_buff,_str);
+	_n=ARRAYSIZE(_buff);
+	_repeat=0
+	for _i=0;_i<_n;_i++
+	{
+		if _buff[_i]==_arr
+		{
+			_repeat=1
+		}
+	}
+
+	_repeat;
+
+}
+OnDelRepeatArray
+{
+
+	_buff=_argv[0]
+	_str=_argv[1]
+	SETDELIM(_buff,_str);
+	_n=ARRAYSIZE(_buff)-1;
+
+	for _i=0;_i<_n;_i++
+	{
+		for _j=_i+1;_j<=_n;_j++
+		{    
+			if _buff[_i]==_buff[_j]
+			{
+				_buff[_j]=IARRAY;
+				_n=ARRAYSIZE(_buff);
+			}
+	
+		}
+	}
+
+	_buff;
+
+}
+
+
+
+OnKikkaStockAdd
+{
+	_股票代码=reference0;
+	_kikkastocklist="";
+	_stocklist="";
+	_buff=OnKikkaStockList.Read;
+	SETDELIM(_buff,'*');
+	foreach _buff;_i
+	{
+		_自选代码=SUBSTR(_i,0,8);
+		_kikkastocklist+=_自选代码+'*';
+		_stocklist,=_自选代码
+	}
+
+	_kikkastocklist+=_股票代码+'*';
+	_buff=_kikkastocklist;
+	SETDELIM(_buff,'*');
+	_n=ARRAYSIZE(_buff)-1
+	for _i=0;_i<_n;_i++
+	{
+		for _j=_i+1;_j<=_n;_j++
+		{    
+			if _buff[_i]==_buff[_j]
+			{
+				_buff[_j]=IARRAY;
+				_n=ARRAYSIZE(_buff);
+			}
+	
+		}
+	}
+	_kikkastocklist=_buff;
+	_stocklist,=_股票代码;
+	OnKikkaStockList.Write(_kikkastocklist);
+	if kikkastock==3
+		OnKikkaStockFound
+	else
+		OnKikkaStockSelect;
+
+
+
+}
+OnKikkaStockDel
+{
+	_股票代码=reference0;
+	_kikkastocklist="";
+	_stocklist="";
+	_buff=OnKikkaStockList.Read;
+	SETDELIM(_buff,'*');
+	_n=ARRAYSIZE(_buff)-1
+	for _i=0;_i<_n;_i++
+	{
+		if _buff[_i]==_股票代码
+		{
+			_buff[_i]=IARRAY;
+		}
+	}
+	_kikkastocklist=_buff;
+	OnKikkaStockList.Write(_kikkastocklist);
+	OnKikkaStockFound
+}
+
+OnKikkaStockFile.Read
+{
+	_file="var/kikkastock.kst";
+	_txt="";
+//	_charset=GetTxtCharset(_file);
+//	_id=CharsetToId(_charset);
+	FCHARSET(1); 
+	if FOPEN(_file,'r') 
+	{
+   
+		while 	(_buff = FREAD(_file))!= -1 
+		{
+	
+			_L=SPLIT(_buff,'[')
+			_l=ARRAYSIZE(_L)
+			for _j=0;_j<_l;_j++
+			{		
+				_i=TextBetween(_buff,'[',']',_j);
+				_t=SPLIT(_i,'{')
+				_n=ARRAYSIZE(_t);
+				for _b=0;_b<_n;_b++
+				{
+
+					_temp=TextBetween(_i,'{','}',_b);
+					_m=ARRAYSIZE(_temp)
+					for _a=0;_a<_m;_a++
+					{	
+						_txt+=_temp[_a][1,':']+",";
+					}
+					_txt+='*';
+				}
+			_txt+='|';
+			}
+		}
+		
+	}
+	FCLOSE(_file);
+	FCHARSET(1);
+	_txt;
+}
+
+OnKikkaStockList.Read
+{
+	_file="var/kikkastock.lst";
+	_txt="";
+//	_charset=GetTxtCharset(_file);
+//	_id=CharsetToId(_charset);
+//	FCHARSET(_id); 
+	FCHARSET(1); 
+	if FOPEN(_file,'r') 
+	{
+
+		while 	(_buff = FREAD(_file))!= -1 
+		{
+			_txt+=_buff+'*';
+		}
+
+	}
+	FCLOSE(_file);
+	FCHARSET(1);
+	_txt;
+}
+
+OnKikkaStockList.Write
+{
+	_file="var/kikkastock.lst";
+	_txt=_argv[0];
+	FCHARSET(1); 
+	_t= FOPEN(_file,'w') 
+
+	SETDELIM(_txt,'*');
+	/*
+	_n=ARRAYSIZE(_txt)-1;
+	for _i=0;_i<_n;_i++
+	{
+		for _j=_i+1;_j<=_n;_j++
+		{    
+			if TOINT(_txt[_i])==TOINT(_txt[_j])
+			{
+				_txt[_j]=IARRAY;
+				_n=ARRAYSIZE(_txt);
+			}		
+		}
+	}
+*/
+	FWRITE(_file,_buff);
+	foreach _txt;_buff
+	{
+		if _buff!=""&&_buff!=-1
+		FWRITE(_file,_buff);
+	}
+	FCLOSE(_file);
+	FCHARSET(1); 
+}

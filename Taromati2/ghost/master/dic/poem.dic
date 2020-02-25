@@ -1,0 +1,512 @@
+﻿/////////
+///////// 诗歌
+///////// written by KikkaAIdb.[2010-1-2]★
+
+//**************************************************************************************************
+
+OnResearchPoesy
+{
+  "\0\s[9]请问%username是要查找诗歌吗？橘花可以帮助查找哦～/
+  \n\n[half]\q[◇按标题查找诗歌,OnResP_1,标题]\n/
+  \q[◇按内容查找诗歌,OnResP_1,正文]\n/
+  \q[◇按作者查找诗歌,OnResP_1,作者]\n[130]/
+  \q[◇诗歌全列表,OnResP,全_标题〓]\n/
+  \q[◇作者全列表,OnResP,All_Author]\n/
+  \n[half]\q[◇返回,OnOpenMenu,1]\n\q[◇结束,OnverPoesy]\e"
+}
+
+OnverPoesy
+{
+  ERASvalueex;
+  "好的,橘花知道了...\![close,inputbox,%(reference0)]\e"
+  "好的...\![close,inputbox,%(reference0)]\e"
+}
+
+//---- 查找诗歌 ------------------------------------------------------------------------------------
+OnResP_1
+{
+  if _argv[0]==null
+  Poesyscope=reference0;
+  "\0\s[9]请输入%(Poesyscope)关键字!(阿拉伯数字和英文字母将被忽略)\![set,choicetimeout,0]\![open,inputbox,OnResP,-1]\n[180]\![*]\q[取消,OnverPoesy,OnResP]\e"
+}
+
+OnResP
+{
+  _str=CUTSPACE(reference0);
+  _str=RE_REPLACE(_str,"[abcdefghijklmnopqrstuvwxyz1234567890-]",null);
+  _w="";
+  _page="";
+  _p=1;
+  _d=0;
+  _Acount=0;
+  if _argv[0]!=null
+    _p=TOINT(_argv[0]);
+  if reference1=="eras〓"
+    ERASEVAR("Poesyscope");
+  if reference0=="All_Author" {
+    _d=SQLite("-f","SELECT 作者 FROM Poesy");
+    for _i=0;_i<_d;_i++ {
+      _t=EVAL("valueex" + _i);
+      _tx=_t;
+      if STRLEN(_tx)==2
+        _tx="%(SUBSTR(_tx,0,1))　%(SUBSTR(_tx,1,1))";
+      if _t !_in_ _w {
+        _n="";
+        _l=5+70*(_Acount%4)
+        if _Acount%4==3
+          _n="\n";
+        _Acount++;
+        _w+="\_l[%(_l),-]◇ \q[%(_tx),OnResP,%(_t),eras〓]%(_n)";
+      }
+    }
+  }
+  else
+  {
+    if reference0=="全_标题〓"
+      _d=SQLite("-f","SELECT TA FROM Poesy");
+    elseif Poesyscope!=null
+      _d=ResSQL(_str,Poesyscope);
+    else
+      _d=ResSQL(_str,"作者");
+    for _i=(_p-1)*20;_i<_d && _i<(_p-1)*20+20;_i++ {
+      _t=EVAL("valueex" + _i);
+      _A=_t[1,"|"];
+      _B=_A;
+      _t=_t[0,"|"];
+      if STRLEN(_A)==2
+        _A="%(SUBSTR(_A,0,1))　%(SUBSTR(_A,1,1))";
+      _w+="◇ \f[color,110,110,110]\__q[OnResP,%(_B),eras〓][%(_A)]\__q\f[default] \q[%(_t),OnPoesyShow,%(_t),%(_B),%(_A)]\n";
+    }
+    _tola=(_d+19)/20;
+    if _p==1 && _d>20
+      _page="\_l[20,-]<<上一页\_l[93,-]第%(FontCPage(1))页    共%(_tola)页\_l[200,-]\q[下一页>>,OnPoesyPage,%(_str),%(_p+1)]"
+    elseif _p==1
+      _page=""
+    elseif (_p-1)*20+20>_d
+      _page="\_l[20,-]\q[<<上一页,OnPoesyPage,%(_str),%(_p-1)]\_l[93,-]第%(FontCPage(_p))页    共%(_tola)页\_l[200,-]下一页>>"
+    else 
+      _page="\_l[20,-]\q[<<上一页,OnPoesyPage,%(_str),%(_p-1)]\_l[93,-]第%(FontCPage(_p))页    共%(_tola)页\_l[200,-]\q[下一页>>,OnPoesyPage,%(_str),%(_p+1)]"
+  }
+  if _str==null
+    OnResP_1(Poesyscope);
+  else {
+    _a="共找到诗歌%(_d)首:\_q";
+    if reference0=="All_Author"
+      _a="诗歌作者全列表,共%(_Acount)位哦:\_q\n[40]"
+    if _d==0
+      _a="橘花没有找到相关资料呢..."                         
+    "\0\s[0]\b[2]%(_a)\n[120]%(_w)\n[50]%(_page)\n[150]\![*]\q[返回,OnResearchPoesy]\![set,choicetimeout,0]\n\![*]\q[退出,OnverPoesy]"
+  }
+}
+
+ResSQL
+{
+  SQLite("-f","SELECT TA FROM Poesy WHERE %(_argv[1]) LIKE'%%(_argv[0])%'");  
+}
+
+OnPoesyPage
+{
+  OnResP(reference1);
+}
+
+FontCPage
+{
+  "\f[color,250,0,0]%(_argv[0])\f[default]";
+}
+
+
+//---- 显示诗歌 ------------------------------------------------------------------------------------
+OnPoesyShow
+{
+_t = reference0;
+_B = reference1;
+_A = reference2;
+  "\0\s[26]\b[2]\![set,autoscroll,disable]\![set,choicetimeout,0]\_q\f[bold,true]《%(reference0[0,'|'])》\f[bold,false]\n[120] 作者:%(ShowPoesySQL('作者'))\f[color,111,111,111]\_l[115,-]◇\__q[OnResP,%(_B),eras〓][%(_A)]\_l[180,-]\q[◇返回,OnResearchPoesy]\_l[235,-]\q[◇退出,OnverPoesy]\f[default]\n[140]%(ShowPoesySQL('正文'))\n%(ShowPoesySQL('注译'))\e"
+}
+ShowPoesySQL
+{
+  SQLite("-j","SELECT %(_argv[0]) FROM Poesy WHERE 标题='%(reference0[0,'|'])'");
+}
+//---- 谈话中显示诗歌 ------------------------------------------------------------------------------
+TalkPoesyShow
+{
+  _w=IARRAY;
+  while _w[0]==null || _w[1]==null {
+    _r=RAND(310)+1;
+    _w=SQLite("-j","SELECT 正文 FROM Poesy WHERE ID='%(_r)'");
+    SETDELIM(_w,"\n");
+    _w=ANY(_w);
+    SETDELIM(_w,"，");
+  }
+  if _argv[0]=="〓"
+   Poesywrite=(_w[0],_w[1]);
+ else
+    TalkPoesy(_w[0],_w[1]);
+}
+
+TalkPoesy
+{
+    "\0\s[30]下面来接诗歌喔...~\w9\w9\1\s[12].....\w9\0\s[40]\w9\w9\w9\c『%(_argv[0])』\w9\w9\1\s[12]\n等下\w9\w9\s[19]\w9\w5\0\n啊？\w9\w9不会是去翻书吧？\w9\w9\1\s[12]  呼....知道了\n\w9\w5\w9『%(_argv[1])』\w9\w9\0\s[30]\n啊，虽然很可疑,\w9不过,对了呢...\e"
+  "\0\s[30]『%(_argv[0])』\n下一句是什么哦？\w8\1\s[12]『%(_argv[1])』\w8\w8\0......\e"
+}
+//---- 诗歌默写 ------------------------------------------------------------------------------------
+OnPoesywrite
+{
+  if Poesywritedegree==null
+    _t=TalkPoesyShow("〓");
+  Poesywritedegree+=1;
+  _a=Poesywrite[0];
+  _b=Poesywrite[1];
+  _b=REPLACE(_b,"。",null);
+  _w="________________，%(_b)。〓〓%(_a)，________________。"
+  if Poesywritemode==null
+    Poesywritemode=ANY(1,2);
+  _w=_w[Poesywritemode-1,"〓〓"];
+  "\0\s[26]请%username在空白处填上正确诗句哦~\n[150]问题：\_q%(_w)\n[200]第%(Poesywritedegree)次回答本题。\![set,choicetimeout,0]\![open,inputbox,OnPoesywrite_1,-1]\n[180]\![*]\q[以后回答,OnlatPoesywrite]\n\![*]\q[放弃本题,OnverPoesywrite]\e"
+}
+
+OnPoesywrite_1
+{
+  _str=CUTSPACE(reference0);
+  _a=REPLACE(Poesywrite[Poesywritemode-1],"。",null);
+  if _str==_a {
+    ERASEVAR("Poesywrite");
+    ERASEVAR("Poesywritedegree");
+    ERASEVAR("Poesywritemode");
+    "\0\s[1]对了哦,%username好厉害呢,橘花好开心!"
+    "\0\s[1]对啦,%username真的好厉害呢,\w9\1难道不是去查书了吗?\w9\0\n斗和真是的,\w9%username才不会那样呢..."
+    "\0\s[1]对啦,%username真的好厉害呢,\w9\1难道不是去查书了吗?\w9\0\n斗和真是的,\w9%username才不会那样呢...\w9\n%username最多是去百度一下而已啦..\w9\1\n这难道有什么不同吗...."
+    "\0\s[1]怎么说呢,\w9对了呢,%username好厉害呢,\w9没有去查资料吧?\w9\w9\n就算查了橘花也好开心!\w9\1喂喂,\w9你没在做什么奇怪的幻想吧..."
+    --
+    if Poesywritedegree==1 {
+      intimacy++;
+      "\0\n[150]好感度 +1 哦,\w9%username请继续加油~"
+    }
+  }
+  else {
+    _w="";
+    _n=0;
+    for _i=0;_i<STRLEN(_a);_i++ {
+      if SUBSTR(_a,_i,1)==SUBSTR(_str,_i,1) {
+        _n=1;
+        _w+=SUBSTR(_a,_i,1);
+      }
+      else
+        _w+="__";
+    }
+    "\0\s[8]%username,\w9那个..\w9错了哦..\w[1000]\n"
+    "\0\s[8]%username,\w9那个..\w9错了哦..\w9\1这很正常吧..\w[1000]\n"
+    "\0\s[6]%username,\w9没对呢,\w9继续加油哦~\w[1000]\n"
+    --
+    if _n=0 {
+      OnPoesywrite;
+    }
+    else {
+      "\0\c\s[7]不过还是有答对的部分哦,\w5看下面哦\n[150]%(_w)\w[1000]\n[150]%(OnPoesywrite)"
+    }
+  }
+}
+
+OnverPoesywrite
+{
+  ERASEVAR("Poesywrite");ERASEVAR("Poesywritedegree");ERASEVAR("Poesywritemode");
+  Poesywriteerror+=1;
+  "\0\s[26]好的, 请下次继续加油哦～\n[150]累计放弃次数: %(Poesywriteerror)\![close,inputbox,OnPoesywrite_1]"
+  --
+  if Poesywriteerror==10 {
+    //intimacy--;
+    Poesywriteerror=0;
+    "\0\s[1]\n[150]\n[150]\w9清空累计放弃次数, \w9%username请继续加油~"
+  }
+}
+OnlatPoesywrite
+{
+  "\0\s[30]嗯嗯,好的哦\![close,inputbox,OnPoesywrite_1],记得一定要回答出来哦~\w9\1要是去查书的话应该很快吧..."
+}
+
+
+
+
+
+
+
+
+
+
+
+///////////////////////////////////////////
+////////// 诗词阅读辞书
+////////// written by forjane 2009.10.27
+///////////////////////////////////////////
+
+
+OnPoemMenu
+{
+	NeedRewrite
+	if QuickStartVersion{
+		NeedUpdate
+		return
+	}
+    LoadPoemTitle;
+	_txt = "\0\s[26]想要怎样阅读诗歌呢？\n\n";
+	_txt += "\_q\q[◇诗歌列表,OnPoemList]\n[150]诗歌查询：\n\q[◇按作者,OnSearchPoem,0]      \q[◇按标题,OnSearchPoem,1]      \q[◇按内容,OnSearchPoem,2]";
+	_txt += "\n\n\n\q[◇返回上一层,OnOpenMenu,1]\n\q[◇终了,OnPoemEnd]"
+	_txt;
+}
+
+OnPoemList
+{
+	_txt = "\0\s[26]\_q\b2\![set,autoscroll,disable]";
+	_blank = "　　　　　　　　　　　　　　　";
+	_title = "";
+	_line = 0;
+	for _i=0; _i<poemnum; _i++ {
+		_temp = poemtitle[_i];
+		_title = _temp[1,':'];
+		_len = STRLEN(_title);
+		if _i > 0 && _len > 8 {
+			_line = 1;
+			_txt += '\n'; 
+		}
+		elseif _i > 0 && _line % 2 == 0 {
+			_txt +='\n';
+		}
+		_line ++;
+		_txt += '\q[◇' + _title + ',OnPoemTitle,' + _i + ',OnPoemList]' + SUBSTR(_blank, 0, 8 - _len);
+	}
+	_txt += "\n[150]\n\n共%(poemnum)首诗";
+	_txt += "\n[150]\q[◇返回上一层,OnPoemMenu]\n\q[◇终了,OnPoemEnd]\x\e"
+	_txt;
+}
+
+
+LoadPoemTitle
+{
+	_line = 0;
+	_poemfile = "data\poem.txt";
+	poemtitle = IARRAY;
+	poemnum = 0;
+	_buff = "";
+	if FOPEN(_poemfile,"r") {
+		while (_buff = FREAD(_poemfile)) != -1 {
+			_line ++;
+			_buff = _buff[0,'//'];
+			if '[title]' _in_ _buff {
+				poemtitle[poemnum] = _line + ':' + FREAD(_poemfile);
+				poemnum ++;
+				_line ++;
+			}
+		}
+	}	
+	FCLOSE(_poemfile);
+}
+
+OnPoemTitle
+{
+	_txt ="\0\b[2]";
+	_poemtitle = poemtitle[reference0];
+	_line = TOINT(_poemtitle[0,':']);
+	_poemfile = "data\poem.txt";
+	_buff = "";
+	_poem = "";
+	_poemtips = "";
+	if FOPEN(_poemfile,"r") {
+		for _i = 0; _i <= _line; _i ++ {
+			_buff = FREAD(_poemfile);
+		}
+		while '[end]' !_in_ _buff && '[tips]' !_in_ _buff {
+			_buff = FREAD(_poemfile);
+			_poem += _buff + '\n';
+		}
+		if '[tips]' _in_ _buff {
+			while '[end]' !_in_ _buff {
+				_buff = FREAD(_poemfile);
+				_poemtips += _buff + '\n';
+			}
+		}	
+	}	
+	FCLOSE(_poemfile);
+
+	_txt += '《' + _poemtitle[1,':'] + '》\n[150]\w9';
+	if _poemtitle[2,':'] != "" {
+		_txt += '作者：' + _poemtitle[2,':'] + '\n[150]\w9';
+	}
+	_txt += _poem + "\_q\n\n" + _poemtips;
+	_txt += "\n\n\n\q[◇返回上一层,%(reference1)]\n\q[◇终了,OnPoemEnd]\x\e";
+	_txt;
+}
+
+
+OnSearchPoem
+{
+	poemsearchmode = reference0;
+	_txt = "请输入要查询的关键词……\![open,inputbox,OnPoemInputFinish,0,%(poemkeywords)]"
+	_txt;
+}
+
+OnPoemInputFinish
+{
+	poemkeywords = reference0;
+	if poemsearchmode == 2 {
+		OnPoemSearchDetail;
+	}
+	else {
+		OnPoemSearch;
+	}
+}
+
+OnPoemSearchDetail
+{
+	_txt = "\0\s[26]\_q\b2";
+	_blank = "　　　　　　　　　　　　　　　";
+	_line = 0;
+	_title = "";
+	_count = 0;
+
+	_flag = 0;
+	_poemfile = "data\poem.txt";
+	_buff = "";
+	_n = -1;
+	if FOPEN(_poemfile,"r") {
+		while (_buff = FREAD(_poemfile)) != -1 {
+			_buff = _buff[0,'//'];
+			if '[title]' _in_ _buff {
+				_buff = FREAD(_poemfile);
+				_buff = FREAD(_poemfile);
+				_flag = 1;
+				_n ++;
+			}
+			if '[tips]' _in_ _buff || '[end]' _in_ _buff {
+				_flag = 0;
+			}
+			if _flag == 1 && poemkeywords _in_ _buff {
+				_flag = 0;
+				_temp = poemtitle[_n];
+				_count ++;
+				_title = _temp[1,':'];
+				_len = STRLEN(_title);
+	
+				if _n > 0 && _len > 8 {
+					_line = 1;
+					_txt += '\n'; 
+				}
+				elseif _n > 0 && _line % 2 == 0 {
+					_txt +='\n';
+				}
+				_line ++;
+				_txt += '\q[◇' + _title + ',OnPoemTitle,' + _n + ',OnPoemSearchDetail]' + SUBSTR(_blank, 0, 8 - _len);
+			}			
+		}
+	}	
+	_txt += "\n[150]\n\n共找到%(_count)首符合条件的诗喔～";
+	_txt += "\n[150]\n\q[◇返回上一层,OnPoemMenu]\n\q[◇终了,OnPoemEnd]\x\e"
+	_txt;
+	FCLOSE(_poemfile);
+}
+
+OnPoemSearch
+{
+	_txt = "\0\s[26]\_q\b2";
+	_blank = "　　　　　　　　　　　　　　　";
+	_line = 0;
+	_title = "";
+	_count = 0;
+	for _i = 0; _i < poemnum; _i++ {
+		_temp = poemtitle[_i];
+		if poemsearchmode == 0 && _temp[2,':'] == poemkeywords /
+		|| poemsearchmode == 1 && poemkeywords _in_ _temp[1,':'] {
+			_count ++;
+			_title = _temp[1,':'];
+			_len = STRLEN(_title);
+
+			if _i > 0 && _len > 8 {
+				_line = 1;
+				_txt += '\n'; 
+			}
+			elseif _i > 0 && _line % 2 == 0 {
+				_txt +='\n';
+			}
+			_line ++;
+			_txt += '\q[◇' + _title + ',OnPoemTitle,' + _i + ',OnPoemSearch]' + SUBSTR(_blank, 0, 8 - _len);
+		}
+	}
+	_txt += "\n[150]\n\n共找到%(_count)首符合条件的诗喔～";
+	_txt += "\n[150]\n\q[◇返回上一层,OnPoemMenu]\n\q[◇终了,OnPoemEnd]\x\e"
+	_txt;
+}
+
+OnPoemAnswer   //OnPoemAnswer("床前明月光")=="疑是地上霜"
+{
+_file="data\poem.txt"
+_str=CUTSPACE(reference0);
+if _argc>0
+_str=CUTSPACE(_argv[0]);
+_found=IARRAY;
+if FOPEN(_file,"r")
+{
+             for _buff = FREAD(_file); _buff != -1; _buff = FREAD(_file) 
+        {
+                 _table=0;
+                            while '[title]' !_in_  _buff  && _buff!= -1
+                            {
+                             _buff = FREAD(_file) 
+                            }
+                            while '[tips]' !_in_  _buff && _buff!= -1
+                           {
+for _i=0; _buff[_i,'，']!="";_i++
+{
+                        	if _str _in_ _buff&&_str!=""
+				{
+                                 _tmp= _buff;
+                                 _s=_tmp[_i+1,'，'];
+                                 _s=_s[0,'。'];
+                                 if _tmp[_i,'，'] _in_ _str 
+                                    {
+                                       
+                                       _found,=BeginToEnd(_tmp,'，',_i+1,0);
+                                    }
+                                 elseif _s _in_ _str&&STRLEN(_s)>=3
+                                   {
+                                       _found,=_str+"的上一句是"+BeginToEnd(_tmp,'，',0,_i+1)
+                                   }
+				}
+}
+                              _buff = FREAD(_file) ;
+
+                           }
+                     
+         }
+}
+	FCLOSE(_file);
+if ARRAYSIZE(_found)>1
+{
+_found=ANY(_found);
+_found=_found+"\n"
+}
+elseif ARRAYSIZE(_found)==1
+_found=_found+"\n"
+else
+_found=""
+_found
+}
+
+
+CleanVarOfPoem
+{
+	ERASEVAR("poemtitle");
+	ERASEVAR("poemnum");
+	ERASEVAR("poemkeywords");
+	ERASEVAR("poemsearchmode");
+}
+
+OnPoemEnd
+{
+	CleanVarOfPoem;
+	"\0\s[0]好的，那就这样吧。\e"
+}
+
+
+
+
+
+

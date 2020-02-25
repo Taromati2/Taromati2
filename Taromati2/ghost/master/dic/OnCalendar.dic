@@ -1,0 +1,1445 @@
+﻿///////// UTF-8
+///////// Other
+///////// 日历
+///////// by KikkaAIdb.
+///////// rewrited by fancyang.
+
+
+
+
+//lunar.dll 插件请放到 saori 下;
+//调用OnCalendar即可;
+
+//---- 日历[2011-4-3_by KikkaAIdb] -------------------------------------------------------------------------------------
+OnCalendar
+{
+  _year=year;
+  _m=month;
+  _d=day;
+  if _argv[0]!=null {
+  _year=TOINT(_argv[0]);
+  _m=TOINT(_argv[1]);
+  _d=TOINT(_argv[2]);
+  }
+  if reference4=="##" {
+  _year=reference1;
+  _m=reference2;
+  _d=reference3;
+  }
+  _xF=5;//初始
+  _x=_xF;
+  _y=45;//初始
+  _w="";
+  _week=("日,一,二,三,四,五,六");
+  _mon=(31,28,31,30,31,30,31,31,30,31,30,31);
+  if _year % 4 == 0 && _year % 100 != 0 || _year % 400 == 0
+    _mon[1]=29;
+  Lunartime(_year,_m,1);
+  Lunardata(_year,_m,_d);
+  for _i=0;_i<7;_i++ {
+    if _i==0 || _i==6
+      _w+="\_l[%(_x),%(_y)]\f[color,255,0,0]%(_week[_i])\f[color,default]"
+    else
+      _w+="\_l[%(_x),%(_y)]"+_week[_i];
+    _x+=25;
+  }
+  _x=_xF+3+25*lunartime[17];
+  _y+=16;
+  for _i=0;_i<_mon[_m-1];_i++ {
+    if lunartime[0]!=calendar[_i,":"][0] || lunartime[1]!=calendar[_i,":"][1] {
+      Lunartime(_year,_m,_i+1);
+      calendar[_i,":"]=lunartime;
+    }
+    if _i+1==10
+      _x-=3;
+    _lunar=calendar[_i,":"];
+    _jieqi="";
+    if _lunar[11]!=null
+      _jieqi="%(_lunar[11])　"
+    _l="%(_lunar[0])年%(_lunar[1])月%(_lunar[2])日　%(_lunar[7])\n%(_lunar[4])(%(_lunar[3]))年 %(_lunar[5])月%(_lunar[6])\n%(_jieqi)%(_lunar[12])(%(_lunar[13])月%(_lunar[14])日)\n%(_lunar[9])\n%(_lunar[10])";
+    if _i+1==_d
+      _w+="\_l[%(_x-5),%(_y)][\q[%(_i+1),OnCalendar,%(_l),%(_year),%(_m),%(_i+1),##]]";
+    elseif _i+1==day && _m==month && _year==year
+      _w+="\_l[%(_x),%(_y)]\f[color,110,110,110]\f[underline,1]\q[%(_i+1),OnCalendar,%(_l),%(_year),%(_m),%(_i+1),##]\f[default]\f[sup,1]◀\f[default]";
+    elseif _lunar[17]==0 ||  _lunar[17]==6
+      _w+="\f[color,255,0,0]\_l[%(_x),%(_y)]\q[%(_i+1),OnCalendar,%(_l),%(_year),%(_m),%(_i+1),##]\f[color,default]"
+    elseif _lunar[9]!=null ||  _lunar[10]!=null
+      _w+="\f[color,110,110,110]\_l[%(_x),%(_y)]\q[%(_i+1),OnCalendar,%(_l),%(_year),%(_m),%(_i+1),##]\f[default]"
+    else
+      _w+="\_l[%(_x),%(_y)]\q[%(_i+1),OnCalendar,%(_l),%(_year),%(_m),%(_i+1),##]";
+    _x+=25;
+    if calendar[_i,":"][17] % 7==6 {
+      _x=_xF+3;
+      if _i+1>=10
+        _x=_xF;
+      _y+=14;
+    }
+  }
+  _yl=_year;
+  _yn=_year;
+  _ml=TOINT(_m)-1;
+  if _ml==0 {
+    _yl-=1;
+    _ml=12;
+  }
+  _mn=TOINT(_m)+1;
+  if _mn==13 {
+    _yn+=1;
+    _mn=1;
+  }
+  _w+="\_l[%(_xF+2),20]\q[<<上个月,OnCalendar,%(_yl)年%(_ml)月,%(_yl),%(_ml),1,##] \q[输入日期,OnINCalendar,%(_l)] \q[下个月>>,OnCalendar,%(_yn)年%(_mn)月,%(_yn),%(_mn),1,##]";
+  _lunar=calendar[_d-1,":"];
+  _jieqi="";
+  if _lunar[11]!=null
+      _jieqi="\f[color,255,0,0]%(_lunar[11]) \f[color,default]"
+  _jieri=_lunar[10];
+  if _lunar[9]!=null
+    _jieri=_lunar[9]+"/"+_lunar[10];
+  SETDELIM(_jieri, "/")
+  _x=180;//初始
+  _y=27;//初始
+  "\C\![quicksession,true]\c\b[0]\_n橘花的日历♪	\q[日程显示,OnAgenda,%(_year),%(_m),%(_d),inter]\n[120]/
+  \_l[%(_x),0]%(_lunar[0])年%(_lunar[1])月%(_lunar[2])日/
+  \_l[%(_x),%(_y)]%(_lunar[5])月%(_lunar[6])/
+  \_l[%(_x),%(_y+15)]%(lunardata[7])年%(lunardata[8])月%(lunardata[9])日/
+  \_l[%(_x),%(_y+15*2)]属%(_lunar[3]) %(_lunar[7])/
+  \_n\_l[%(_x),%(_y+15*3)]%(_jieqi)%(_lunar[12])[%(_lunar[13])月%(_lunar[14])日]\_n/
+  \_l[%(_x),%(_y+15*4)]%(_jieri[0])/
+  \_l[%(_x),%(_y+15*5)]%(_jieri[1])/
+  \_l[%(_x),%(_y+15*6)]%(_jieri[2])/
+  \_l[%(_x),%(_y+15*7)]%(_jieri[3])/
+  \_l[%(_x+40),%(_y+15*7)]\q[退出,OnoverCalendar]/
+  %(_w)\![set,choicetimeout,0]"
+agenda=(1,"OnCalendar(%(_year),%(_m),%(_d))");
+running="agenda";
+}
+
+
+//-----------------------------橘花日程提醒-----------------------------------
+//-------------------------------by fancyang----------------------------------
+//--------------------------------版本1.13------------------------------------
+
+OnAgenda
+{
+ _year=year;
+  _m=month;
+  _d=day;
+_mode=reference3;
+  if _argv[0]!=null {
+  _year=TOINT(_argv[0]);
+  _m=TOINT(_argv[1]);
+  _d=TOINT(_argv[2]);
+_mode=_argv[3]
+  }
+  Lunartime(_year,_m,1);
+  Lunardata(_year,_m,_d);
+if _mode=="inter"
+markmode=0;
+  if reference4=="##" {
+  _year=reference1;
+  _m=reference2;
+  _d=reference3;
+  }
+  if reference3=="show"|| reference3=="inter"|| reference3=="add"{
+  _year=reference0;
+  _m=reference1;
+  _d=reference2;
+  }
+  if TOINT(reference5)==1 {
+ 	OnEventWrite(_year,_m,_d,markmode[0],markmode[1])
+  }
+  if reference3=='show'&&TOINT(reference4)==2 {
+ 	OnEventWrite(_year,_m,_d,markmode[0],,reference5)
+  }
+  if reference3=='show'&&TOINT(reference4)==0 {
+ 	OnEventEdit(_year,_m,_d,markmode[1],"inter");
+	return;
+  }
+  if reference3=='add'{
+	markmode=(1,0);
+	OnEventWrite(_year,_m,_d,markmode[0],markmode[1])
+ 	OnEventEdit(_year,_m,_d,markmode[1],'inter');
+	return;
+}
+  _xF=5;//初始
+  _x=_xF;
+  _y=45;//初始
+  _w="";
+  _week=("日,一,二,三,四,五,六");
+  _mon=(31,28,31,30,31,30,31,31,30,31,30,31);
+  if _year % 4 == 0 && _year % 100 != 0 || _year % 400 == 0
+    _mon[1]=29;
+	_eventname="假日,工作,生活,学习,会议,外出,约会,其他"
+  Lunartime(_year,_m,1);
+  Lunardata(_year,_m,_d);
+  for _i=0;_i<7;_i++ {
+    if _i==0 || _i==6
+      _w+="\_l[%(_x),%(_y)]\f[color,255,0,0]%(_week[_i])\f[color,default]"
+    else
+      _w+="\_l[%(_x),%(_y)]"+_week[_i];
+    _x+=41;
+  }
+  _x=_xF+3+39*lunartime[17];
+  _y+=16;
+
+	_eventtemp=OnEventRead(,,,"all")
+	_events="";
+	SETDELIM(_eventtemp,"|");
+	foreach _eventtemp;_event
+	{
+		_eventrepeat=TOINT(_event[19,'	']);
+		_eventbegindate=(_event[1,'	'],_event[2,'	'],_event[3,'	'],_event[4,'	'],_event[5,'	'])
+		_eventenddate=(_event[7,'	'],_event[8,'	'],_event[9,'	'],_event[10,'	'],_event[11,'	'])
+		_ta=GETSECCOUNT(_eventbegindate[0],_eventbegindate[1],_eventbegindate[2],0,hour,minute,0)
+		_tb=GETSECCOUNT(_eventenddate[0],_eventenddate[1],_eventenddate[2],0,hour,minute,0)
+		if _eventrepeat||_tb>=_ta+24*60*60
+		_events+=_event+'|'
+	}
+	
+
+  for _i=0;_i<_mon[_m-1];_i++ {
+    if lunartime[0]!=calendar[_i,":"][0] || lunartime[1]!=calendar[_i,":"][1] {
+      Lunartime(_year,_m,_i+1);
+      calendar[_i,":"]=lunartime;
+    }
+    if _i+1==10
+      _x-=3;
+    _lunar=calendar[_i,":"];
+    _jieqi="";
+    if _lunar[11]!=null
+      _jieqi="%(_lunar[11])　"
+  _jieri=_lunar[10];
+  if _lunar[9]!=null
+    _jieri=_lunar[9]+"/"+_lunar[10];
+  SETDELIM(_jieri, "/")
+    _l="%(_lunar[0])年%(_lunar[1])月%(_lunar[2])日　%(_lunar[7])\n%(_lunar[4])(%(_lunar[3]))年 %(_lunar[5])月%(_lunar[6])\n%(_jieqi)%(_lunar[12])(%(_lunar[13])月%(_lunar[14])日)\n%(_lunar[9])\n%(_lunar[10])";
+	_w+="\f[height,16]"
+    if _i+1==_d
+      _w+="\_l[%(_x-5),%(_y)][\q[%(_i+1),OnAgenda,%(_l),%(_year),%(_m),%(_i+1),##,%(markmode[0])]]";
+    elseif _i+1==day && _m==month && _year==year
+      _w+="\_l[%(_x),%(_y)]\f[color,110,110,110]\f[underline,1]\q[%(_i+1),OnAgenda,%(_l),%(_year),%(_m),%(_i+1),##,%(markmode[0])]\f[default]\f[sup,1]◀\f[default]";
+    elseif _lunar[17]==0 ||  _lunar[17]==6
+      _w+="\f[color,255,0,0]\_l[%(_x),%(_y)]\q[%(_i+1),OnAgenda,%(_l),%(_year),%(_m),%(_i+1),##,%(markmode[0])]\f[color,default]"
+    elseif _lunar[9]!=null ||  _lunar[10]!=null
+      _w+="\f[color,110,110,110]\_l[%(_x),%(_y)]\q[%(_i+1),OnAgenda,%(_l),%(_year),%(_m),%(_i+1),##,%(markmode[0])]\f[default]"
+    else
+      _w+="\_l[%(_x),%(_y)]\q[%(_i+1),OnAgenda,%(_l),%(_year),%(_m),%(_i+1),##]";
+	if _lunar[6]=="初一"
+		_lunar[6]=_lunar[5]+"月"
+	elseif _jieqi!=""
+		_lunar[6]=_jieqi
+
+	_w+="\f[height,default]"
+	_w+="\f[height,10]"
+	_w+="\_l[%(_x+16),%(_y+4)]%(_lunar[6])"
+	if _jieri[1]!=""
+	{
+
+		if STRLEN(_jieri[1])<=4
+				_w+="\_l[%(_x),%(_y+15)]%(_jieri[1])"
+		else
+		{
+				_w+="\_l[%(_x),%(_y+15)]%(SUBSTR(_jieri[1],0,4))"
+				_w+="\_l[%(_x),%(_y+15+10)]%(SUBSTR(_jieri[1],4,4))"
+		}
+	}
+	else
+	{
+		
+		if STRLEN(_jieri[0])<=4
+				_w+="\_l[%(_x),%(_y+15)]%(_jieri[0])"
+		else
+		{
+				_w+="\_l[%(_x),%(_y+15)]%(SUBSTR(_jieri[0],0,4))"
+				_w+="\_l[%(_x),%(_y+15+10)]%(SUBSTR(_jieri[0],4,4))"
+		}
+	}
+_eventtemp=OnEventRead(_lunar[0],_lunar[1],_lunar[2]);
+_eventid=-1;
+  SETDELIM(_eventtemp, "|")
+_n=0;
+foreach _eventtemp;_event
+{
+	_eventsort=_event[0,'	']
+	_eventid=OnEventNameToId(_eventsort)
+	_eventbegindate=(_event[1,'	'],_event[2,'	'],_event[3,'	'],_event[4,'	'],_event[5,'	'])
+	_eventenddate=(_event[7,'	'],_event[8,'	'],_event[9,'	'],_event[10,'	'],_event[11,'	'])
+	_eventplace=_event[13,'	'];
+	_eventagenda=_event[14,'	'];
+	_t="事件种类："+_eventsort+"\n"
+	_t+="标题："+_eventtitle+"\n"
+	_t+="时间开始："+_eventbegindate[0]+"年"+_eventbegindate[1]+"月"+_eventbegindate[2]+"日"+_eventbegindate[3]+"时"+_eventbegindate[4]+"分"+"\n"
+	_t+="时间结束："+_eventenddate[0]+"年"+_eventenddate[1]+"月"+_eventenddate[2]+"日"+_eventenddate[3]+"时"+_eventenddate[4]+"分"+"\n"
+	_t+="地点："+_eventplace+"\n"
+	_t+="备忘："+_eventagenda+"\n"
+	if _eventid!=-1
+	_w+=ColorText("\_l[%(_x+_eventid%4*10),%(_y+15+10-10*TOINT(_eventid/4))]\q[●,OnAgenda,%(_year),%(_m),%(_i+1),show,%(markmode[0]),%(_n),%(_t)\n点击进入记事设置]","bold,height=10,color=%(ColorIdx(_eventid+1))")
+_n++
+}
+if _events!=""
+{
+	SETDELIM(_events,'|')
+	foreach _events;_event
+	{
+		_eventbegindate=(TOINT(_event[1,'	']),TOINT(_event[2,'	']),TOINT(_event[3,'	']),TOINT(_event[4,'	']),TOINT(_event[5,'	']))
+		_eventenddate=(TOINT(_event[7,'	']),TOINT(_event[8,'	']),TOINT(_event[9,'	']),TOINT(_event[10,'	']),TOINT(_event[11,'	']))
+		_eventrepeat=TOINT(_event[19,'	']);
+		_eventrepeatend=TOINT(_event[20,'	']);
+		_eventrepeatenddate=(_event[21,'	'],_event[22,'	'],_event[23,'	'])
+		_eventnday=TOINT(_event[26,'	']);
+		_l=_eventnday;
+		_mode=0;
+		_t=(0,1,7,14,GETSECCOUNT(_lunar[0],_lunar[1],_eventbegindate[2],0,hour,minute,0),GETSECCOUNT(_lunar[0],_eventbegindate[1],_eventbegindate[2],0,hour,minute,0),_l)[_eventrepeat]
+		_ta=GETSECCOUNT(_eventbegindate[0],_eventbegindate[1],_eventbegindate[2],0,hour,minute,0)
+		_tb=GETSECCOUNT(_eventenddate[0],_eventenddate[1],_eventenddate[2],0,hour,minute,0)
+		_tc=GETSECCOUNT(_lunar[0],_lunar[1],_lunar[2],0,hour,minute,0)
+		_td=GETSECCOUNT(_lunar[0],_lunar[1],_lunar[2],0,hour,minute,0);
+		if _eventrepeatend
+		_td=GETSECCOUNT(_eventrepeatenddate[0],_eventrepeatenddate[1],_eventrepeatenddate[2],0,hour,minute,0)
+		if _ta<=_tb+24*60*60&&_tc<=_tb&&_tc>_ta
+			_mode=2;
+		if _eventrepeat<4&&(_tc-_ta)%(_t*24*60*60)<=(_tb-_ta)%(_t*24*60*60)&&_tc-_ta>0&&_tc<=_td
+		{
+			_mode=1;
+		}
+		elseif 	_eventrepeat==6
+		{
+			if (_tc-_ta)%(_t*24*60*60)<=(_tb-_ta)%(_t*24*60*60)&&_tc-_ta>0&&_tc<=_td
+				_mode=1;
+		}
+		elseif _eventrepeat==4
+		{
+			_te=GETSECCOUNT(_lunar[0],_lunar[1],_eventenddate[2],0,hour,minute,0);
+			if _tc>_ta&&(_tc>=_t&&_tc<=_t+_tb-_ta||_tc<=_te&&_tc>=_te-_tb+_ta)&&_tc<=_td
+				_mode=1;
+		}
+		else
+		{
+			if _lunar[0]>_eventbegindate[0]&&_lunar[1]==_eventbegindate[1]&&_lunar[2]==_eventbegindate[2]&&_tc<=_td
+				_te=GETSECCOUNT(_lunar[0],_eventenddate[1],_eventenddate[2],0,hour,minute,0);
+			if _tc>_ta&&(_tc>=_t&&_tc<=_t+_tb-_ta||_tc<=_te&&_tc>=_te-_tb+_ta)&&_tc<=_td
+				_mode=1
+		}
+
+		if _mode
+		{
+			_eventsort=_event[0,'	']
+			_eventid=OnEventNameToId(_eventsort)
+			_eventbegindate=(_event[1,'	'],_event[2,'	'],_event[3,'	'],_event[4,'	'],_event[5,'	'])
+			_eventenddate=(_event[7,'	'],_event[8,'	'],_event[9,'	'],_event[10,'	'],_event[11,'	'])
+			_eventplace=_event[13,'	'];
+			_eventagenda=_event[14,'	'];
+			_t="事件种类："+_eventsort+"\n"
+			_t+="标题："+_eventtitle+"\n"
+			_t+="时间开始："+_eventbegindate[0]+"年"+_eventbegindate[1]+"月"+_eventbegindate[2]+"日"+_eventbegindate[3]+"时"+_eventbegindate[4]+"分"+"\n"
+			_t+="时间结束："+_eventenddate[0]+"年"+_eventenddate[1]+"月"+_eventenddate[2]+"日"+_eventenddate[3]+"时"+_eventenddate[4]+"分"+"\n"
+			_t+="地点："+_eventplace+"\n"
+			_t+="备忘："+_eventagenda+"\n"
+			if _eventid!=-1
+			_w+=ColorText("\_l[%(_x+_eventid%4*10),%(_y+15+10-10*TOINT(_eventid/4))]\q[●,OnAgenda,%(_eventbegindate[0]),%(_eventbegindate[1]),%(_eventbegindate[2]),show,%(markmode[0]),%(_n),%(_t)\n点击进入记事设置]","bold,height=10,color=%(ColorIdx(_eventid+1))")
+
+		}
+	}
+}
+
+
+	_w+="\f[height,default]"
+    _x+=41;
+    if calendar[_i,":"][17] % 7==6 {
+      _x=_xF+3;
+      if _i+1>=10
+        _x=_xF;
+      _y+=35
+    }
+  }
+  _yl=_year;
+  _yn=_year;
+  _ml=TOINT(_m)-1;
+  if _ml==0 {
+    _yl-=1;
+    _ml=12;
+  }
+  _mn=TOINT(_m)+1;
+  if _mn==13 {
+    _yn+=1;
+    _mn=1;
+  }
+  _w+="\_l[%(_xF+2),30]\q[<<上一年,OnAgenda,%(_year-1)年%(_m)月,%(_year-1),%(_m),1,##] \q[<<上个月,OnAgenda,%(_yl)年%(_ml)月,%(_yl),%(_ml),1,##] \q[输入日期,OnINCalendar,%(_l)] \q[下个月>>,OnAgenda,%(_yn)年%(_mn)月,%(_yn),%(_mn),1,##]   \q[<<下一年,OnAgenda,%(_year+1)年%(_m)月,%(_year+1),%(_m),1,##]";
+  _lunar=calendar[_d-1,":"];
+  _jieqi="";
+  if _lunar[11]!=null
+      _jieqi="\f[color,255,0,0]%(_lunar[11]) \f[color,default]"
+  _jieri=_lunar[10];
+  if _lunar[9]!=null
+    _jieri=_lunar[9]+"/"+_lunar[10];
+  SETDELIM(_jieri, "/")
+  _x=0;//初始
+  _y=27;//初始  
+_temp="";
+for _i=0;_i<8;_i++
+{
+_t=_eventname[_i];
+_temp+=ColorText("\q[●,OnAgendaEvent,%(_year),%(_m),%(_d),%(_i),%(_t)]","bold,height=10,color=%(ColorIdx(_i+1))") 
+
+
+}
+_mark=IARRAY;
+if markmode
+_mark[TOINT(markmode)]="\f[color,%(ColorIdx(6))]"
+  "\C\![quicksession,true]\c\b[2]\_n橘花的日程♪	\q[日历显示,OnCalendar,%(_year),%(_m),%(_d)]	\q[◆今天,OnAgenda,%(year),%(month),%(day)]\n[120]/
+%(_lunar[0])年%(_lunar[1])月%(_lunar[2])日     %(_mark[1])\q[标记模式,OnAgendaMark,%(_year),%(_m),%(_d),请选择颜色分类后点击日期]%(_temp)\f[color,default]\_l[250]%(_mark[2])\q[标记删除,OnAgendaMarkDel,%(_year),%(_m),%(_d),请点击日期下面的标记删除]\f[color,default]\n[150]/
+  \_l[[%(_x),%(_y+260+15)]\q[◆新增事件,OnAgenda,%(_year),%(_m),%(_d),add,1,%(_n),%(_t)\n点击进入记事设置]/
+  \_l[%(_x),%(_y+260+15*2)]%(_lunar[3])年%(_lunar[5])月%(_lunar[6])（%(lunardata[7])年%(lunardata[8])月%(lunardata[9])日）%(_jieqi)/
+  \_l[%(_x),%(_y+260+15*3)]"+ColorText("%(_lunar[7])","bold,color=%(ColorIdx(6))")+"    %(_jieri[0])%(_jieri[1])%(_jieri[2])%(_jieri[3])/
+  \_l[%(_x),%(_y+260+15*4)]%(WeatherToday2)/
+  \_l[%(_x+100),%(_y+260+15*4)]\q[退出,OnoverCalendar]/
+  %(_w)\![set,choicetimeout,0]"
+agenda=(1,"OnAgenda(%(_year),%(_m),%(_d),%(_mode))");
+}
+
+ClearAgendaVar
+{
+	ERASEVAR("eventtemp");
+	ERASEVAR("agenda");
+}
+
+
+OnAgendaMark
+{
+_eventname="假日,工作,生活,学习,会议,外出,约会,其他"
+_w="";
+ _year=reference0;
+  _m=reference1;
+  _d=reference2;
+markmode=(TOINT(markmode)+1)%2
+OnAgenda(_year,_m,_d)
+}
+
+OnEventEdit
+{
+
+	_year=TOINT(reference0);
+	_m=TOINT(reference1);
+	_d=TOINT(reference2);
+	_id=TOINT(reference3)
+	_mode=reference4
+	_j=TOINT(reference5)
+	_t=reference7
+	if _argv[0]!=null 
+	{
+		_year=TOINT(_argv[0]);
+		_m=TOINT(_argv[1]);
+		_d=TOINT(_argv[2]);
+		_id=TOINT(_argv[3])
+		_mode=_argv[4];
+		_j=TOINT(_argv[5]);
+		_t=_argv[7]
+	}
+	if _mode=="inter"||_mode=="eventselect"||_mode=="add"||_mode=="alter"
+	eventtemp=OnEventRead(_year,_m,_d);
+  	SETDELIM(eventtemp, "|");
+	if _mode=='eventsort'
+	{	
+		_temp=eventtemp[_id];
+		_temp[0,'	']=_t
+		eventtemp[_id]=_temp
+	}
+	if _mode=="inter"||_mode=="add"
+	{
+		if ARRAYSIZE(eventtemp)>1
+		_id=ARRAYSIZE(eventtemp)-1
+		markmode=3
+	}
+	if _mode=="eventselect"
+		markmode=0
+	if _mode=="newevent"
+		markmode=1;
+	_txt="\C\![quicksession,true]\c\b[2]记事薄：%(_year).%(_m).%(_d)\_l[120]\_n橘花的日程♪ - 事件设置\n[120]"
+	_n=0;
+	_timetxt="";
+	_x=0;_y=15;
+	foreach eventtemp;_i
+	{
+		_select="";
+		if _n==_id
+		_select="\f[color,%(ColorIdx(6))]"
+		_c=_i[12,'	']
+		if _i!=""&&_n>=_j && _n<_j+20&&(markmode==3&&_n!=_id||markmode==0)
+		_timetxt+="\_l[%(_x),%(_y+15*(_n%20))]\__q[OnEventEdit,%(_year),%(_m),%(_d),%(_n),eventselect,%(_j)]"+_select+_i[4,'	']+":"+_i[5,'	']+' '+SUBSTR(_c,0,GETPOSNUM(_c,12))+"\f[color,default]\__q"
+
+		_n++
+
+	}
+
+	  _page+="\_l[105,%(_y)]\q[▲,OnEventEditPage,%(_year),%(_m),%(_d),%(_id),%(_mode),%(_j-20),%(_n)]   \_l[105,%(_y+15*19)]\q[▼,OnEventEditPage,%(_year),%(_m),%(_d),%(_id),%(_mode),%(_j+20),%(_n)]"; 
+	_txt+=_page;
+
+	_x=120;
+	_txt+=_timetxt;
+	_event=IARRAY;
+	if _mode!="inter"
+	_event=eventtemp[_id]
+
+	_eventname="假日,工作,生活,学习,会议,外出,约会,其他"
+	if _event[0,'	']==""
+	_event[0,'	']=_eventname[0];
+	_ta=GETSECCOUNT(_event[7,'	'],_event[8,'	'],_event[9,'	'],0,_event[10,'	'],_event[11,'	'],0)
+	_tb=GETSECCOUNT(_event[1,'	'],_event[2,'	'],_event[3,'	'],0,_event[4,'	'],_event[5,'	'],0)
+	_mon=(31,28,31,30,31,30,31,31,30,31,30,31);
+				if (_i==3||_i==23)&&TOINT(_name)>_mon[TOINT(_m)-1]
+					_name=_mon[TOINT(_m)-1]
+	if TOINT(_event[1,'	'])<=0
+		_event[1,'	']=_year
+	if TOINT(_event[1,'	'])%4==0 && TOINT(_event[1,'	']) % 100 != 0 ||TOINT(_event[1,'	']) % 400 == 0
+		_mon[1]=29
+	if TOINT(_event[2,'	'])<=0
+		_event[2,'	']=_m
+	if TOINT(_event[3,'	'])<=0
+		_event[3,'	']=_d
+	if TOINT(_event[3,'	'])>_mon[TOINT(_event[2,'	'])-1]
+		_event[3,'	']=_mon[TOINT(_event[2,'	'])-1]
+	if TOINT(_event[4,'	'])<0||TOINT(_event[4,'	'])>24||_event[4,'	']==""
+		_event[4,'	']=hour
+	if TOINT(_event[5,'	'])<0||TOINT(_event[5,'	'])>60||_event[5,'	']==""
+		_event[5,'	']=minute
+	if TOINT(_event[7,'	'])<=0
+		_event[7,'	']=_year
+	if _ta<_tb
+		_event[7,'	']=_event[1,'	']
+	if TOINT(_event[8,'	'])<=0||TOINT(_event[8,'	'])>12
+		_event[8,'	']=_m
+	if _ta<_tb
+		_event[8,'	']=_event[2,'	']
+	if TOINT(_event[9,'	'])<=0 ||TOINT(_event[9,'	'])>_mon[TOINT(_event[8,'	'])-1]     //结束日
+		_event[9,'	']=_mon[TOINT(_event[8,'	'])-1];
+	if _ta<_tb
+		_event[9,'	']=_event[3,'	']    
+	if TOINT(_event[9,'	'])>_mon[TOINT(_event[8,'	'])-1]
+		_event[9,'	']=_mon[TOINT(_event[8,'	'])-1]
+	if  _ta<_tb       //结束时
+		_event[10,'	']=TOINT(_event[4,'	'])+1
+	if  _ta<_tb       //结束分
+		_event[11,'	']=_event[5,'	']
+
+
+	if TOINT(_event[10,'	'])>=24    //结束时超出检测
+		_event[10,'	']=0
+	if TOINT(_event[11,'	'])>=60   //结束分超出检测
+		_event[11,'	']=0
+
+	if TOINT(_event[10,'	'])<0||_event[10,'	']==""     //结束时无效检测
+		_event[10,'	']=TOINT(_event[4,'	'])+1
+	if TOINT(_event[11,'	'])<0||_event[11,'	']==""    //结束分无效检测
+		_event[11,'	']=TOINT(_event[5,'	'])
+
+
+	if TOINT(_event[23,'	'])>_mon[TOINT(_event[22,'	'])-1]
+		_event[23,'	']=_mon[TOINT(_event[22,'	'])-1]
+	_eventsort=_event[0,'	'];
+	_eventbegindate=(_event[1,'	'],_event[2,'	'],_event[3,'	'],_event[4,'	'],_event[5,'	'])
+	_eventrange=TOINT(_event[6,'	']);
+	_eventenddate=(_event[7,'	'],_event[8,'	'],_event[9,'	'],_event[10,'	'],_event[11,'	'])
+	_eventtitle=_event[12,'	'];
+	_eventplace=_event[13,'	'];
+	_eventagenda=_event[14,'	'];
+	_eventremind=TOINT(_event[15,'	']);
+	_eventseremind=TOINT(_event[16,'	']);
+	_eventasakura=_event[17,'	'];
+	_event[18,'	']=REPLACE(_event[18,'	'],'/','\');
+	_eventsound=_event[18,'	']
+	_eventrepeat=TOINT(_event[19,'	']);//s=_eventrepeat
+	_eventrepeatend=TOINT(_event[20,'	']);
+	_eventrepeatenddate=(_event[21,'	'],_event[22,'	'],_event[23,'	'])
+	_eventcount=TOINT(_event[24,'	'])
+	_eventcpp=_event[25,'	'];
+	_eventnday=_event[26,'	'];
+	_eventnyear=_event[27,'	'];
+	if eventtemp==""
+	{
+		for _i=0;_i<12;_i++
+		{
+			eventtemp+=_event[_i]+'	'
+		}
+		eventtemp+='|'
+		SETDELIM(eventtemp, "|");
+		_event=eventtemp[_id];
+	}
+	if TOINT(reference6)==7||_argv[6]==7
+	{
+	_txt+="\_l[%(_x),%(_y)]\__q[OnEventInput,%(_year),%(_m),%(_d),%(_id),eventsort,%(_j),%(_eventsort),0,7]种类："+_eventsort+"\__q"
+	}
+	else
+	_txt+="\_l[%(_x),%(_y)]种类：%(_eventsort)"
+	_w="\_l[200]";
+	for _i=0;_i<8;_i++
+	{
+	_t=_eventname[_i];
+	_w+=ColorText("\q[●,OnEventEdit,%(_year),%(_m),%(_d),%(_id),eventsort,%(_j),%(_i),%(_t)]","bold,height=10,color=%(ColorIdx(_i+1))") 
+	}
+	_txt+=_w;
+	_txt+="\_l[%(_x),%(_y+15)]\__q[OnEventInput,%(_year),%(_m),%(_d),%(_id),eventtitle,%(_j),%(_eventtitle),12]标题："+_eventtitle+"\__q"
+	_txt+="\_l[%(_x),%(_y+15*2)]\__q[OnEventInput,%(_year),%(_m),%(_d),%(_id),eventplace,%(_j),%(_eventplace),13]位置："+_eventplace+"\__q"
+	_txt+="\_l[%(_x),%(_y+15*3)]\__q[OnEventEditSet,%(_year),%(_m),%(_d),%(_id),eventrange,%(_j),%((_eventrange+1)%2),6]全天："+"否,是"[_eventrange]+"\__q"
+	_txt+="\_l[%(_x),%(_y+15*4)]开始：\q[%(_eventbegindate[0]),OnEventInput,%(_year),%(_m),%(_d),%(_id),eventbegindate,%(_j),%(_eventbegindate[0]),1]年\q[%(_eventbegindate[1]),OnEventInput,%(_year),%(_m),%(_d),%(_id),eventbegindate,%(_j),%(_eventbegindate[1]),2]月\q[%(_eventbegindate[2]),OnEventInput,%(_year),%(_m),%(_d),%(_id),eventbegindate,%(_j),%(_eventbegindate[2]),3]日  \q[%(_eventbegindate[3]),OnEventInput,%(_year),%(_m),%(_d),%(_id),eventbegindate,%(_j),%(_eventbegindate[3]),4]:\q[%(_eventbegindate[4]),OnEventInput,%(_year),%(_m),%(_d),%(_id),eventbegindate,%(_j),%(_eventbegindate[4]),5]"
+	_txt+="\_l[%(_x),%(_y+15*5)]结束：\q[%(_eventenddate[0]),OnEventInput,%(_year),%(_m),%(_d),%(_id),eventenddate,%(_j),%(_eventenddate[0]),7]年\q[%(_eventenddate[1]),OnEventInput,%(_year),%(_m),%(_d),%(_id),eventenddate,%(_j),%(_eventenddate[1]),8]月\q[%(_eventenddate[2]),OnEventInput,%(_year),%(_m),%(_d),%(_id),eventenddate,%(_j),%(_eventenddate[2]),9]日  \q[%(_eventenddate[3]),OnEventInput,%(_year),%(_m),%(_d),%(_id),eventenddate,%(_j),%(_eventenddate[3]),10]:\q[%(_eventenddate[4]),OnEventInput,%(_year),%(_m),%(_d),%(_id),eventenddate,%(_j),%(_eventenddate[4]),11]"
+	_repeatmode="永不,每天,每周,每两周,每月,每年,每%(_eventnday)天,每%(_eventnyear)周年";
+	_txt+="\_l[%(_x),%(_y+15*6)]重复：\__q[OnEventEditSet,%(_year),%(_m),%(_d),%(_id),repeatmode,%(_j)]\f[underline,ture] "+_repeatmode[_eventrepeat]+"\f[underline,false]\__q"
+_n=0;
+	if _eventrepeat>0
+	{
+		if _eventrepeatend==0
+	_txt+="\_l[%(_x),%(_y+15*7)]结束重复：\__q[OnEventEditSet,%(_year),%(_m),%(_d),%(_id),repeatendmode,%(_j),%(_eventrepeatend),20]\f[underline,ture]"+_repeatmode[_eventrepeatend]+"\f[underline,false]\__q"
+		else
+		_txt+="\_l[%(_x),%(_y+15*7)]结束重复：\__q[OnEventEditSet,%(_year),%(_m),%(_d),%(_id),repeatendmode,%(_j),%(_eventrepeatend),20]\f[underline,ture]"+_eventrepeatenddate[0]+"年"+_eventrepeatenddate[1]+"月"+_eventrepeatenddate[2]+"日"+"\f[underline,false]\__q"
+	_n=1;
+	}
+	_remindmode="无,事件发生时,5分钟前,15分钟前,30分钟前,1小时前,2小时前,1天前,2天前,1周前,2周前,1月前（4周）"
+	if _eventrange
+		_remindmode="无,事件发生当天（8:30),1天前（8:30),2天前（8:30),1周前（8:30)"
+	_txt+="\_l[%(_x),%(_y+15*(7+_n))]提醒：\__q[OnEventEditSet,%(_year),%(_m),%(_d),%(_id),remindmode,%(_j)]"+_remindmode[_eventremind]+"\__q"
+if _eventremind>0
+{
+	_txt+="\_l[%(_x),%(_y+15*(8+_n))]二次提醒：\__q[OnEventEditSet,%(_year),%(_m),%(_d),%(_id),remindmode,%(_j),1]"+_remindmode[_eventseremind]+"\__q"
+	_n++
+}
+	_txt+="\_l[%(_x),%(_y+15*(8+_n))]\__q[OnEventEditSet,%(_year),%(_m),%(_d),%(_id),soundmode,%(_j),%(_eventsound),18]声音："+SPLITPATH(_eventsound)[2]+SPLITPATH(_eventsound)[3]+"\__q  \q[删,OnEventEditSet,%(_year),%(_m),%(_d),%(_id),sounddel,%(_j),%(_eventsound),18]"
+	_txt+="\_l[%(_x),%(_y+15*(9+_n))]\__q[OnEventEditSet,%(_year),%(_m),%(_d),%(_id),appmode,%(_j),%(_eventcpp),25]打开文件："+SPLITPATH(_eventcpp)[2]+SPLITPATH(_eventcpp)[3]+"\__q  \q[删,OnEventEditSet,%(_year),%(_m),%(_d),%(_id),appdel,%(_j),%(_eventsound),25]"
+	_countmode="无,秒显示,分秒显示,时分秒显示,天时分秒显示"
+	_txt+="\_l[%(_x),%(_y+15*(10+_n))]\__q[OnEventEditSet,%(_year),%(_m),%(_d),%(_id),countmode,%(_j),%(_eventcount),24]系统资讯倒计时："+_countmode[_eventcount]+"\__q  "
+	_txt+="\_l[%(_x),%(_y+15*(11+_n))]\__q[OnEventInput,%(_year),%(_m),%(_d),%(_id),eventagenda,%(_j),%(_eventagenda),14]备忘："+AreaTxt(_eventagenda,26,13+_n,47,16+_n)+"\__q"
+	_txt+="\_l[%(_x),%(_y+15*(15+_n))]\__q[OnEventInput,%(_year),%(_m),%(_d),%(_id),eventasakura,%(_j),%(_eventasakura),17]橘花提醒："+AreaTxt(_eventasakura,30,17+_n,47,21)+"\__q"
+	if _mode=="inter"||_mode=="add"||markmode==3
+	{
+	_txt+="\_l[%(_x),315]\__q[OnEventEditSet,%(_eventbegindate[0]),%(_eventbegindate[1]),%(_eventbegindate[2]),%(_id),add,%(_j),%(_event)]加入"+_eventasakura+"\__q\_l[200,315]\f[color,192,192,192]新增  删除\f[color,default]"
+	markmode=3
+	}
+	else
+	{
+		_txt+="\_l[%(_x),315]\q[修改,OnEventEditSet,%(_eventbegindate[0]),%(_eventbegindate[1]),%(_eventbegindate[2]),%(_id),alter,%(_j),%(_event)]\_l[200,315]\q[新增,OnEventEdit,%(_year),%(_m),%(_d),%(_n-1),add,%(_j)]  \q[删除,OnEventEditSet,%(_year),%(_m),%(_d),%(_id),del,%(_j)]"
+	}
+	_txt+="\_l[240,340]\q[确定,OnAgenda,%(_year),%(_m),%(_d),inter]      \_l[160,340]\q[查看修改,OnAgenda,%(_eventbegindate[0]),%(_eventbegindate[1]),%(_eventbegindate[2]),inter]"
+	_txt;
+	agenda=(1,"OnEventEdit(%(_year),%(_m),%(_d),%(_id),'%(_mode)',%(_j))");
+
+}
+
+
+AgendaSysInfo
+{
+	_eventtemp="";
+	_txt="";
+	_events=OnEventRead(,,,"all")
+	SETDELIM(_events,"|");
+	foreach _events;_event
+	{
+		_eventcount=TOINT(_event[24,'	']);
+		if _eventcount
+		_eventtemp+=_event+'|'
+	}
+	
+	SETDELIM(_eventtemp,"|");
+	_tc=0;
+	_tb=GETSECCOUNT(year,month,day,0,hour,minute,second)
+	_n=0;
+	_id=-1;
+	_mode=0;
+	foreach _eventtemp;_event
+	{
+		_s=EventRemindCheck(_event,"getrepeat")
+		_ta=_s[1];
+		if _n==0
+			_tc=_ta;
+		if _ta>=_tb&&_tc<=_ta
+		{
+			_tc=_ta
+			_id=_n;
+			_mode=1;
+			break;
+		}
+		_n++
+	}
+	
+	_event=_eventtemp[_id];
+	_eventsort=_event[0,'	'];
+	_eventtitle=_event[12,'	'];
+	_eventcount=TOINT(_event[24,'	']);
+	_eventbegindate=(_event[1,'	'],_event[2,'	'],_event[3,'	'],_event[4,'	'],_event[5,'	'])
+	_eventenddate=(_event[7,'	'],_event[8,'	'],_event[9,'	'],_event[10,'	'],_event[11,'	'])
+	_eventplace=_event[13,'	'];
+	_eventagenda=_event[14,'	'];
+	_w="\n"
+	_w+="事件种类："+_eventsort+"\n"
+	_w+="标题："+_eventtitle+"\n"
+	_w+="时间开始："+_eventbegindate[0]+"年"+_eventbegindate[1]+"月"+_eventbegindate[2]+"日"+_eventbegindate[3]+"时"+_eventbegindate[4]+"分"+"\n"
+	_w+="时间结束："+_eventenddate[0]+"年"+_eventenddate[1]+"月"+_eventenddate[2]+"日"+_eventenddate[3]+"时"+_eventenddate[4]+"分"+"\n"
+	_w+="地点："+_eventplace+"\n"
+	_w+="备忘："+_eventagenda+"\n"
+	_t=""
+	case _eventcount
+	{
+		when 1
+		{
+			_t=_tc-_tb+"秒";
+		}
+
+		when 2
+		{
+			_t=(_tc-_tb)/60+"分"+(_tc-_tb)%60+"秒";
+		}
+
+		when 3
+		{
+			_t=(_tc-_tb)/3600+"时"+(((_tc-_tb)%(3600*24))%3600)/60+"分"+(_tc-_tb)%60+"秒";
+		}
+
+		when 4
+		{
+			_t=(_tc-_tb)/(3600*24)+"天"+((_tc-_tb)%(3600*24))/3600+"时"+(((_tc-_tb)%(3600*24))%3600)/60+"分"+((_tc-_tb)%(3600*24))%60+"秒";
+		}
+
+
+	}
+	_txt+="距离%(_eventsort)%(_eventtitle)还有%(_t)"
+	if TOINT(_tc-_tb)<=1&&_mode
+	{
+		_txt="\![raise,OnEventCountOver,事件已发生%(_w)\x]"
+		(1,_txt)
+		return;
+	}
+	elseif _mode
+	_txt
+
+
+
+}
+
+ShowEventInfo
+{
+	if TOINT(eventinfo)==0
+	{
+		_t=AgendaSysInfo
+		if _t[0]==1
+		{
+			_t[1];t2=_t
+		}
+		else
+			AreaTxt(_t,24,19,47,20);
+	}
+}
+
+
+OnEventCountOver
+{
+_txt="\c"+reference0;
+_txt
+}
+
+
+AreaTxt
+{
+	_txt=_argv[0];
+	_x=_argv[1];
+	_y=_argv[2];
+	_X=_argv[3];
+	_Y=_argv[4];
+	_n=STRLEN(_txt);
+	if _X==0
+		_X=48
+	if _Y==0
+		_Y=40
+	_w=""
+	_j=0;
+	_k=0;
+	for _i=0;_i<_n;_i++
+	{
+		_a=SUBSTR(_txt,_i,1);
+		_p=(_x+_j%(_X-_x))*6;
+		_q=(_y-1+_j/(_X-_x))*15;
+		if _j/(_X-_x)<=_Y-_y
+			_w+="\_l[%(_p),%(_q)]"+_a;
+		_j+=CASECHECK(_a)
+	}
+	_w
+
+}
+
+GETCASENUM
+{
+	_txt=_argv[0];
+	_n=STRLEN(_txt);
+	_j=0;
+	for _i=0;_i<_n;_i++
+	{
+		_a=SUBSTR(_txt,_i,1);
+		_j+=CASECHECK(_a)
+	}
+	_j
+}
+
+GETPOSNUM
+{
+	_txt=_argv[0];
+	_POS=TOINT(_argv[1])
+	_n=STRLEN(_txt);
+	_j=0;
+	_k=0;
+	for _i=0;_i<_n&&_j<_POS;_i++
+	{
+		_a=SUBSTR(_txt,_i,1);
+		_j+=CASECHECK(_a)
+	}
+	_i;
+}
+
+
+CASECHECK
+{
+	_str=_argv[0];
+	if CHRCODE(_str)>261
+		2;
+	else
+		1;
+
+}
+
+
+OnEventEditPage
+{
+	_year=reference0;
+	_m=reference1;
+	_d=reference2;
+	_id=TOINT(reference3)
+	_mode=reference4
+	_j=TOINT(reference5)
+	_n=TOINT(reference6)
+	_p=(_j+20)/20;
+	if _p>_n/20
+	_p=_n/20+1
+	elseif _p<=0
+	_p=1;
+	_j=_p*20-20
+	OnEventEdit(_year,_m,_d,_id,_mode,_j)
+
+}
+
+
+
+
+OnEventEditSet
+{
+	_txt="\C\![quicksession,true]\c\b[2]"
+	_year=reference0;
+	_m=reference1;
+	_d=reference2;
+	_id=TOINT(reference3);
+	_mode=reference4;
+	_j=reference5;
+	_t=reference6;   //传回内容值
+	_k=TOINT(reference7);  //_k行间列数的索引号
+	_l=TOINT(reference8);  //_l重复天数的列数 
+	_name=TOINT(reference8);//_name重复天数的值
+	if _argc>0
+	{
+		_year=TOINT(_argv[0]);
+		_m=TOINT(_argv[1]);
+		_d=TOINT(_argv[2]);
+		_id=_argv[3]
+		_mode=_argv[4];
+		_j=TOINT(_argv[5]);
+		_t=_argv[6];
+		_k=TOINT(_argv[7]);
+		_l=TOINT(_argv[8]);
+		_name=TOINT(_argv[9]);
+	}
+	_txt+="\q[编辑<-,OnEventEdit,%(_year),%(_m),%(_d),%(_id)]\n[120]"
+	case _mode
+	{
+		when "repeatmode"
+		{
+			SETDELIM(eventtemp,"|");
+			_event=eventtemp[_id];
+			_eventrepeat=TOINT(_event[19,'	']);sss=_eventrepeat
+			_eventnday=_event[26,'	'];
+			_eventnyear=_event[27,'	'];
+			_l=TOINT(_eventnday);
+			_k=TOINT(_eventnyear);
+			_repeatmode="永不,每天,每周,每两周,每月,每年,每%(_l)天,每%(_k)周年";
+			_n=ARRAYSIZE(_repeatmode);
+			_txt+="橘花的日程♪ - 事件重复设置\n[150]";
+			for _i=0;_i<_n;_i++
+			{
+				if _t==_i
+					_txt+="\f[color,%(ColorIdx(6))]";//rr
+				if _i==6
+					_txt+="\__q[OnEventEditSet,%(_year),%(_m),%(_d),%(_id),repeatmodeNday,%(_j),%(_i),19,26]"+_repeatmode[_i]+"\__q\n";
+				elseif _i==7
+					_txt+="\__q[OnEventEditSet,%(_year),%(_m),%(_d),%(_id),repeatmodeNyear,%(_j),%(_i),19,27]"+_repeatmode[_i]+"\__q\n";
+				else
+					_txt+="\__q[OnEventEditSet,%(_year),%(_m),%(_d),%(_id),repeatmodeselect,%(_j),%(_i),19]"+_repeatmode[_i]+"\__q\n";
+
+				_txt+="\f[color,default]";
+			}
+			
+		}
+		when "repeatmodeselect"
+		{
+			SETDELIM(eventtemp, "|");
+			_temp=eventtemp[_id];
+			_temp[_k,'	']=_t;
+			eventtemp[_id]=_temp
+			_txt+=OnEventEditSet(_year,_m,_d,_id,"repeatmode",_j,_t,_k,_l,_name);
+		}
+
+
+		when "repeatmodeNday"
+		{
+			SETDELIM(eventtemp,"|");
+			_event=eventtemp[_id];
+			_eventnday=_event[26,'	'];
+			_name=TOINT(_eventnday);
+			temp=(_year,_m,_d,_id,_mode,_j,_t,_k,_l);
+			_txt+="请输入要重复的天数\![open,inputbox,OnEventInputOver,-1,%(_name)]";
+		}
+		when "repeatmodeNyear"
+		{
+			SETDELIM(eventtemp,"|");
+			_event=eventtemp[_id];
+			_eventnday=_event[27,'	'];
+			_name=TOINT(_eventnday);
+			temp=(_year,_m,_d,_id,_mode,_j,_t,_k,_l);
+			_txt+="请输入要重复的周年数\![open,inputbox,OnEventInputOver,-1,%(_name)]";
+		}
+		when "repeatendmode"
+		{
+			_repeatmode="永不,于日期";
+			_txt+="橘花的日程♪ - 结束重复设置\n[150]";
+			if TOINT(_t)==0
+			{
+				SETDELIM(eventtemp, "|");
+				_temp=eventtemp[_id];
+				_temp[_k,'	']=_t
+				eventtemp[_id]=_temp
+				_txt+="\__q[OnEventEditSet,%(_year),%(_m),%(_d),%(_id),repeatendmode,%(_j),0,20]"+_repeatmode[0]+"\__q\_l[240]■\n";
+				_txt+="\__q[OnEventEditSet,%(_year),%(_m),%(_d),%(_id),repeatendmode,%(_j),1,20]"+_repeatmode[1]+"\__q\n";
+			
+			}
+			else
+			{
+				SETDELIM(eventtemp, "|");
+				_temp=eventtemp[_id];
+				_temp[_k,'	']=_t
+				eventtemp[_id]=_temp
+				_event=eventtemp[_id]
+				_mon=(31,28,31,30,31,30,31,31,30,31,30,31);
+				if TOINT(_event[21,'	'])<=0
+				{
+					_event[21,'	']=year
+					_temp=eventtemp[_id];
+					_temp[21,'	']=_event[21,'	']
+					eventtemp[_id]=_temp
+				}
+				if TOINT(_event[22,'	'])<=0
+				{
+					_event[22,'	']=month+1
+					_temp=eventtemp[_id];
+					_temp[22,'	']=_event[22,'	']
+					eventtemp[_id]=_temp
+				}
+				if TOINT(_event[21,'	'])%4==0 && TOINT(_event[21,'	']) % 100 != 0 ||TOINT(_event[21,'	']) % 400 == 0
+				_mon[1]=29
+				if TOINT(_event[23,'	'])<=0
+				{
+					_event[23,'	']=day
+					_temp=eventtemp[_id];
+					_temp[23,'	']=_event[23,'	']
+					eventtemp[_id]=_temp
+				}
+				if TOINT(_event[23,'	'])>_mon[TOINT(_event[22,'	'])-1]
+					_event[23,'	']=_mon[TOINT(_event[22,'	'])-1]
+				_eventrepeatenddate=(_event[21,'	'],_event[22,'	'],_event[23,'	'])
+				_txt+="\__q[OnEventEditSet,%(_year),%(_m),%(_d),%(_id),repeatendmode,%(_j),0,20]"+_repeatmode[0]+"\__q\n";
+				_txt+="\__q[OnEventEditSet,%(_year),%(_m),%(_d),%(_id),repeatendmode,%(_j),1,20]"+_repeatmode[1]+"\__q\_l[240]■\n";
+				_txt+="\q[%(_eventrepeatenddate[0]),OnEventInput,%(_year),%(_m),%(_d),%(_id),eventrepeatenddate,%(_j),%(_eventrepeatenddate[0]),21]年\q[%(_eventrepeatenddate[1]),OnEventInput,%(_year),%(_m),%(_d),%(_id),eventrepeatenddate,%(_j),%(_eventrepeatenddate[1]),22]月\q[%(_eventrepeatenddate[2]),OnEventInput,%(_year),%(_m),%(_d),%(_id),eventrepeatenddate,%(_j),%(_eventrepeatenddate[2]),23]日"
+			
+			}
+
+
+		}
+
+		when "eventrange"
+		{
+			SETDELIM(eventtemp, "|");
+			_temp=eventtemp[_id];
+			_temp[_k,'	']=_t
+			_temp[15,'	']=0;
+			_temp[16,'	']=0;
+			eventtemp[_id]=_temp
+			OnEventEdit(_year,_m,_d,_id);
+			return;
+
+		}
+		when "remindmode"
+		{
+			SETDELIM(eventtemp, "|");
+			_eventrange=TOINT(eventtemp[_id][6,'	']);
+			_remindmode="无,事件发生时,5分钟前,15分钟前,30分钟前,1小时前,2小时前,1天前,2天前,1周前,2周前,1月前（4周）"
+			if _eventrange
+				_remindmode="无,事件发生当天（8:30),1天前（8:30),2天前（8:30),1周前（8:30)"
+			_txt+="橘花的日程♪ - 事件提醒设置\n[150]";
+			_n=ARRAYSIZE(_remindmode)
+			for _i=0;_i<_n;_i++
+			{
+				_txt+="\__q[OnEventEditSet,%(_year),%(_m),%(_d),%(_id),remindmodeselect,%(_j),%(_i),%(15+reference6)]"+_remindmode[_i]+"\__q\n";
+
+			}
+
+		}
+
+		when "countmode"
+		{
+			SETDELIM(eventtemp, "|");
+			_eventcount=TOINT(eventtemp[_id][24,'	']);
+			_countmode="无,以XX秒显示,以XX分XX秒显示,以XX时XX分XX秒显示,以XX天XX时XX分XX秒显示"
+			_txt+="橘花的日程♪ - 事件资讯倒计时设置\n[150]";
+			_n=ARRAYSIZE(_countmode)
+			for _i=0;_i<_n;_i++
+			{
+				_txt+="\__q[OnEventEditSet,%(_year),%(_m),%(_d),%(_id),countmodeselect,%(_j),%(_i),24]"+_countmode[_i]+"\__q\n";
+
+			}	
+		}
+
+		when "remindmodeselect","soundpathsave","countmodeselect","apppathsave"
+		{
+			SETDELIM(eventtemp, "|");
+			_temp=eventtemp[_id];
+			_temp[_k,'	']=_t
+			eventtemp[_id]=_temp
+			OnEventEdit(_year,_m,_d,_id);
+			return;
+		}
+
+		when "soundmode"
+		{
+			_txt="\C\![open,dialog,open,--id=remindsound,--title=请选择提醒声音]";
+			temp=(_year,_m,_d,_id,'soundpathsave',_j,_t,_i)
+		}
+		
+		when "appmode"
+		{
+			_txt="\C\![open,dialog,open,--id=eventapp,--title=请选择要打开的文件]";
+			temp=(_year,_m,_d,_id,'apppathsave',_j,_t,_k)
+		}
+
+		when "sounddel","appdel"
+		{
+			SETDELIM(eventtemp, "|");
+			_temp=eventtemp[_id];
+			_temp[_k,'	']=''
+			eventtemp[_id]=_temp
+			OnEventEdit(_year,_m,_d,_id);
+			return;
+		}
+
+		when "add"
+		{
+			SETDELIM(eventtemp,"|");
+			eventtemp[_id]=_t
+			OnEventWrite(_year,_m,_d,3,,_id)
+			OnEventEdit(_year,_m,_d,_id,_mode,_j);
+			return;
+		}
+
+		when "alter"
+		{
+			SETDELIM(eventtemp,"|");
+			eventtemp[_id]=_t
+			OnEventWrite(_year,_m,_d,4,eventid+_id,_id)
+			OnEventEdit(_year,_m,_d,_id,"add",_j);
+			return;
+		}
+
+		when "del"
+		{
+			OnEventWrite(_year,_m,_d,2,,_id)
+			OnEventEdit(_year,_m,_d,_id,"add",_j);
+			return;
+		}
+	}
+
+
+
+
+	_txt
+}
+
+
+OnEventInput
+{
+	_year=reference0;
+	_m=reference1;
+	_d=reference2;
+	_id=reference3;
+	_mode=reference4;
+	_j=reference5;
+	_name=reference6;
+	_i=reference7;
+	"\C\![open,inputbox,OnEventInputOver,-1,%(_name)]"
+	temp=(_year,_m,_d,_id,_mode,_j,_i,reference8)
+	if _mode=="eventsort"
+	temp=(_year,_m,_d,_id,_mode,_j,_i,reference8)
+}
+
+OnEventInputOver
+{
+	_year=temp[0];
+	_m=temp[1];
+	_d=temp[2];
+	_id=TOINT(temp[3]);
+	_mode=temp[4];
+	_j=TOINT(temp[5]);
+	_i=TOINT(temp[6]);
+	_k=TOINT(temp[7]);   
+	_l=TOINT(temp[8]);  //重复天数/周年数的列数
+	_name=abs(reference0) //重复天数/周年的值
+	if ISREAL(_name)
+		_name=TOINT(_name);
+  	if TOINT(_year)%4==0
+     		 _mon[1]=29;
+	case _mode
+	{
+		when "eventsort","eventtitle","eventplace","eventagenda","eventtime","eventbegindate","eventenddate","eventagenda","eventasakura","eventrepeatenddate"
+		{
+			SETDELIM(eventtemp, "|");
+			if (_i==2||_i==22)&&TOINT(_name)>12
+				_name=12
+			_temp=eventtemp[_id];
+			_temp[_i,'	']=_name
+			eventtemp[_id]=_temp	
+		}	
+	
+	}
+
+	if  _mode=="eventrepeatenddate"
+		OnEventEditSet(_year,_m,_d,_id,"repeatendmode",_j,_name,_i);	
+
+	elseif _mode=="repeatmodeNday"||_mode=="repeatmodeNyear"
+	{
+		SETDELIM(eventtemp,"|");
+		_temp=eventtemp[_id];
+		_temp[_k,'	']=_i;//ss=_i
+		eventtemp[_id]=_temp;
+
+		_temp=eventtemp[_id];
+		_temp[_l,'	']=_name;//sss=_name  _l重复天数的列数 _name重复天数的值
+		eventtemp[_id]=_temp;
+		OnEventEditSet(_year,_m,_d,_id,"repeatmode",_j,_i,_k,_l,_name);
+	}
+	else
+		OnEventEdit(_year,_m,_d,_id,_mode,_j,temp[7],_name);
+
+
+
+}
+
+OnAgendaMarkDel
+{
+ _year=reference0;
+  _m=reference1;
+  _d=reference2;
+markmode=(markmode+!markmode)%2*2;
+
+OnAgenda(_year,_m,_d)
+
+}
+
+
+OnEventNameToId
+{
+_name=_argv[0];
+_eventname="假日,工作,生活,学习,会议,外出,约会,其他"
+_id=-1;
+_j=0;
+foreach _eventname;_i
+{
+	if _name==_i
+	{
+	_id=_j
+	_id;
+	return;
+	}
+	_j++
+
+}
+if _id==-1&&_name!=""
+_id=7;
+_id;
+}
+
+
+OnAgendaEvent
+{
+ _year=reference0;
+  _m=reference1;
+  _d=reference2;
+_i=reference3;
+markmode=(1,_i);
+OnAgenda(_year,_m,_d)
+}
+
+OnEventSelect
+{
+ _year=reference0;
+  _m=reference1;
+  _d=reference2;
+_i=reference3;
+OnEventEdit(_year,_m,_d)
+}
+
+
+OnEventWrite
+{
+	_year=year;
+	_m=month;
+	_d=day;
+	if _argv[0]!=null 
+	{
+		_year=TOINT(_argv[0]);
+		_m=TOINT(_argv[1]);
+		_d=TOINT(_argv[2]);
+	}
+	_mode=TOINT(_argv[3])
+	_i=TOINT(_argv[4])
+	_id=TOINT(_argv[5])
+	_eventname="假日,工作,生活,学习,会议,外出,约会,其他"
+	FCHARSET(1);	
+	_file="profile/schedule.dat"
+	_temp="";
+	if FOPEN(_file,'r')
+	{
+		_buff="";
+		while _buff!=-1
+		{
+			_buff=FREAD(_file)
+			if _buff!=-1
+			_temp+=_buff+"|";
+		}
+	
+	}
+	FCLOSE(_file);
+	_t=FOPEN(_file,'w')
+	if _mode==1
+	_temp+=_eventname[_i]+'	'+_year+'	'+_m+'	'+_d+'	'+hour+'	'+minute+'	'+0+'	'+_year+'	'+_m+'	'+_d+'	'+TOINT(hour+1)+'	'+minute+"|";
+	elseif _mode==3
+	{
+		SETDELIM(eventtemp,"|");
+			_temp+=eventtemp[_id]+"|"
+	}
+	SETDELIM(_temp,'|')
+	if _mode==2
+	{
+		_s=0;
+		_n=0;
+		foreach _temp;_j
+		{
+			_Y=TOINT(_j[1,'	'])
+			_M=TOINT(_j[2,'	'])
+			_D=TOINT(_j[3,'	'])
+			if _year == _Y&&_m == _M&&_d == _D
+			{
+				if _n==_id
+				_temp[_s]=IARRAY;
+				_n++;
+			}
+			_s++
+		}
+	}
+	elseif _mode==4
+	{
+		_s=0;
+		_n=0;
+		foreach _temp;_j
+		{
+			_Y=TOINT(_j[1,'	'])
+			_M=TOINT(_j[2,'	'])
+			_D=TOINT(_j[3,'	'])
+			/*
+			if _i==0
+			{
+				if _year == _Y&&_m == _M&&_d == _D
+				{
+					if _n==_id
+					{
+						SETDELIM(eventtemp,"|");
+						_temp[_s]=eventtemp[_id];
+					}
+					_n++;
+				}
+			}
+			*/
+		
+				SETDELIM(eventtemp,"|");
+				_temp[_i]=eventtemp[_id];
+	
+			_s++
+		}
+	}
+	_s=ARRAYSIZE(_temp)-1;
+	for _i=0;_i<_s;_i++		//根据加入日期对事件排序
+	{
+		for _j=_i;_j<_s;_j++
+		{
+			_a=_temp[_i];
+			_b=_temp[_j];
+			_y=TOINT(_a[1,'	'])
+			_m=TOINT(_a[2,'	'])
+			_d=TOINT(_a[3,'	'])
+			_h=TOINT(_a[4,'	'])
+			_min=TOINT(_a[5,'	'])
+			_t=GETSECCOUNT(_y,_m,_d,0,_h,_min,0)
+			_Y=TOINT(_b[1,'	'])
+			_M=TOINT(_b[2,'	'])
+			_D=TOINT(_b[3,'	'])
+			_H=TOINT(_b[4,'	'])
+			_Min=TOINT(_b[5,'	'])
+			_T=GETSECCOUNT(_Y,_M,_D,0,_H,_Min,0)
+			if TOINT(_t)>TOINT(_T)
+			{
+				_Ttemp=_temp[_i]
+				_temp[_i]=_temp[_j]
+				_temp[_j]=_Ttemp
+			}
+		}
+	}
+	foreach _temp;_j
+	{
+		if _j!=""
+		_t=FWRITE(_file,_j)
+	}
+	FCLOSE(_file);
+	FCHARSET(1);	
+}
+
+OnDateToSecond
+{
+	_year=TOINT(_argv[0])
+	_month=TOINT(_argv[1])
+	_day=TOINT(_argv[2])
+	_hour=TOINT(_argv[3])
+	_minute=TOINT(_argv[4])
+	_second=TOINT(_argv[5])
+	_s=((daysfromdate(_year,_month,_day)*24+hour-_hour)*60+(minute-_minute))*60+second-_second
+	_s;
+}
+
+
+
+OnEventRead
+{
+	_year=year;
+	_m=month;
+	_d=day;
+	_mode="";
+	if _argv[0]!=null 
+	{
+		_year=TOINT(_argv[0]);
+		_m=TOINT(_argv[1]);
+		 _d=TOINT(_argv[2]);
+	 }
+		_mode=_argv[3];
+	_file="profile/schedule.dat"
+	FCHARSET(1);
+	_temp="";
+	_event="";
+	_eventname="假日,工作,生活,学习,会议,外出,约会,其他"
+	if FOPEN(_file,'r')
+	{
+		_buff="";
+		while _buff!=-1
+		{
+			_buff=FREAD(_file)
+			if _buff!=-1
+			_temp+=_buff+"|";
+		}
+		FCLOSE(_file);
+	}
+	
+	if _mode=="all"
+	{
+		_temp;
+		return;
+	}
+	SETDELIM(_temp,'|')
+	_n=0;
+	_idmark=1
+	foreach _temp;_j
+	{
+		_Y=TOINT(_j[1,'	'])
+		_M=TOINT(_j[2,'	'])
+		_D=TOINT(_j[3,'	'])
+		if _year == _Y&&_m == _M&&_d == _D
+		{
+			_event+=_j+'|'
+			if _idmark
+			{
+				eventid=_n;
+				_idmark=0;
+			}
+		}
+		_n++
+	}
+	_event;
+}
+
+
+
+
+
+
+
+OnINCalendar {
+  "请输入要查询的日期！\![open,dateinput,On_m_Calendar,60000,%(year),%(month),%(day)]\n[300]\![*]\q[退出,OnoverCalendar]"
+}
+On_m_Calendar {
+  OnCalendar(reference0[0],reference0[1],reference0[2]);
+}
+
+//0(年),1(月),2(日)
+//3(生肖),4(年干支),5(农历月),6(农历日),7(星座1),8(星座2)
+//9(农历节日),10(公历节日)
+//11(输入日期的节气),12(下一个节气),13(下一个节气的公历月),14(下一个节气的公历日)
+//15(农历数型月),16(农历数型日),17(星期)
+Lunartime
+{
+  _y=year;
+  _m=month;
+  _d=day;
+  if _argv[2]!=null {
+    _y=_argv[0];
+    _m=_argv[1];
+    _d=_argv[2];
+  }
+  if lunartime[0]!=_y || lunartime[1]!=_m || lunartime[2]!=_d {
+    _t=FUNCTIONEX('saori\lunar.dll',_y,_m,_d);
+    lunartime=_y+","+_m+","+_d+","+valueex0+","+valueex1+","+valueex2+","+valueex3;
+  }
+}
+
+OnoverCalendar
+{
+  "\0\s[1]嗯嗯,\![close,inputbox,On_m_Calendar] 要好好把握时间哦..."
+}
+
+
+
+Lunardata
+{
+  _y=TOINT(_argv[0]);
+  _m=TOINT(_argv[1]);
+  _d=TOINT(_argv[2]);
+	if lunardata[0] != _y || lunardata[1] != _m || lunardata[2] != _d{
+		lunardata = GetLunar(_y,_m,_d);
+	}
+}
+
+

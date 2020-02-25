@@ -1,0 +1,1119 @@
+﻿//--------------------------------------扎金花----------------------------
+
+
+
+OnBombGoldFlower
+{
+	if QuickStartVersion{
+		NeedUpdate
+		return
+	}
+	_txt="";
+	mode="-1"
+	mess="";
+	if BombGoldFlowerBoot==NULL
+	{
+		Card;
+		usercoin=20000;
+		_txt+=OnCardStory;
+	}
+	BombGoldFlowerBoot=1;
+	playBombGoldFlower=1;
+	running="playBombGoldFlower"
+	cardmode=1;                 //开始模式
+	deskmoney=0;                //当局全部赌注数额
+	wager=50;                   //赌注大小
+	cardturn=0;                 //说话顺序。
+	banker=0;                   //庄家（0：橘花；2：用户；1；斗和）
+	user.numcard=IARRAY;        //用户牌型
+	towa.numcard=IARRAY;        //斗和牌型
+	kikka.numcard=IARRAY;       //橘花牌型
+	opentowa=0;                 //斗和开牌
+	openkikka=0;                //橘花开牌
+	towapass=0;                 //斗和弃牌
+	kikkapass=0;                //橘花弃牌
+	circle=0;                   //单局回合数
+	if bombdayoff!=day
+	{
+		bombdayoff=day;
+		kikkacoin=10000;
+		towacoin=10000;
+	}
+	kikkaflowermoney=kikkacoin;
+	towaflowermoney=towacoin;
+	cardwin=-1;
+	_txt+BombGoldFlowerInit()
+}
+
+OnCardStory
+{
+_txt=""
+_txt+="\1\s[11]我说，\w9\w9我们每天这么站着，\w9\w9是不是太无聊了？\x\0\s[30]\w9\w9要不你想怎样，\w9\w9不是有%(username)看着吗？\w9\w9不要偷懒啊。\x\1\s[12]要不我们三人一起来玩游戏吧\x\0\s[30]你不是猫吗，\w9\w9应该是二人一猫才对\x\1\s[12]\w9\s[11]\w9\w9\s[13]你见过会说话的猫吗？\w9\w9早在一百年前我就拥有人类的形态了，\w9\w9现在变成猫的样子，\w9\w9只是为了萌一点而已\x\0\s[8]是为了萌%(username)吧，\w9\w9\s[30]我说，\w9\w9我该把那天你喝醉了酒说的话告诉给%(username)吗？\x\1\s[12]…\w9…\w9今天天气真好啊。\w9要不我们三人来玩扎金花吧。\x\0\s[8]又开始这样了。\w9\w9好吧，不过你这个样子怎么玩扎金花呢？\x\1\s[111]这样又如何？\x\0\s[23]把烟拿掉！！\x\1\s[117]不要这么凶嘛！在%(username)面前呢。\x\0\s[2]啊！\w9%(username)在看着呢。\w9\w9\s[1]……\w9\w8\x\1\s[110]不要废话了，快点开始吧，%(username)等得不耐烦了。\x"
+
+_txt+OnBombGoldFlowerInit
+
+
+}
+
+
+
+
+OnCardHelp
+{
+_txt="\C\![quicksession,true]\c\b[2]\![set,choicetimeout,0]"
+_txt+="伪春菜版扎金花（三张牌）游戏说明。\n/
+1.游戏采用模拟真人方式洗牌发牌的算法，使用一副去掉大小王的扑克牌，共 52 张牌。本版游戏取消了暗跟。人数为三人\n/
+2.游戏用语解释\n/ 
+庄家：上一轮赢的玩家是下一轮的庄家，第一局橘花为庄家，第一张牌始终发给庄家的下手。（逆时针）\n/
+底分：游戏开始前三人各投入押注金额的金币\n/
+封顶：有两种情况会出现封顶 \n/
+A.每个牌局允许付出的金币总和上限为10000，达到或超过上限则系统自动开牌。\n/ 
+B.当用户所剩的金币不够下次付出时，则封顶，系统自动开牌。\n/
+跟牌：投入押注金额同样大小的金币。\n/
+开牌：如果人数为三人用户开牌选择橘花或斗和。付出的金币为押注金额。当只剩下两个人时，可以随时选择开牌，但要付出当前押注金额的双倍数量，如果牌型大小相同，则先开牌的一方判输。 \n/
+弃牌：放弃当前付出的所有金币，判输。\n/
+3.牌型 \n/
+豹子：三张同样大小的牌。\n/
+顺金：花色相同的三张连牌。\n/ 
+金花：三张花色相同的牌。\n/
+顺子：三张花色不全相同的连牌。\n/ 
+对子：三张牌中有两张同样大小的牌。\n/ 
+特殊：花色不同的 235 。\n/ 
+单张：除以上牌型的牌。\n/ 
+5.  牌型的比较\n/
+豹子 > 顺金 > 金花 > 顺子 > 对子 > 单张\n/ 
+豹子、金花、对子、单张的比较，按照顺序比点的规则比较大小。\n/ 
+顺金、顺子按照顺序比点。 AKQ>A23>KQJ>QJ10 。\n/ 
+特殊牌型在普通时比较大小按单张牌型来算。当豹子存在时，特殊牌型 > 豹子\n"
+_txt+="\n\n\n\n\q[◇返回,OnBombGoldFlowerInit]"
+
+_txt
+
+
+}
+
+OnBombGoldFlowerInit
+{
+    BombGoldFlowerInit(reference0,reference1)
+}
+
+
+BombGoldFlowerInit     //用户界面
+{
+
+     _txt="\C\![quicksession,true]\c\1\s[111]\0\s[26]\b[2]\![set,choicetimeout,0]"
+     _txt+="\n押注金额：\q[50,OnBombGoldFlowerInit,wager,50] \q[100,OnBombGoldFlowerInit,wager,100] \q[150,OnBombGoldFlowerInit,wager,150] \q[200,OnBombGoldFlowerInit,wager,200] \q[250,OnBombGoldFlowerInit,wager,250] \q[300,OnBombGoldFlowerInit,wager,300] \q[350,OnBombGoldFlowerInit,wager,350] \q[400,OnBombGoldFlowerInit,wager,400] \q[450,OnBombGoldFlowerInit,wager,450] \q[500,OnBombGoldFlowerInit,wager,500]\n"
+     _txt+="押注金额：%(wager)  "
+     _txt+=ShowMoney
+     _txt+="  金币：%(usercoin)\n"
+     _txt+="该局已有%(deskmoney)金币\n"
+      
+
+     if deskmoney>=10000 && cardmode==2
+       {
+          _txt+="超过当局金币上额，自动开牌\x"
+          circle=0
+          cardmode=1
+          _txt+=BombGoldFlowerInit("systemopen")
+          _txt
+          return
+          
+       }
+
+     if usercoin<wager && cardmode==2
+       {
+          _txt+="%(username)金额不足以下注，自动开牌\x"
+          circle=0
+          cardmode=1
+          _txt+=BombGoldFlowerInit("systemopen")
+          _txt
+          return
+       }
+
+ 
+
+     if cardmode==1
+           {
+           _txt+="\q[◇开始游戏,OnBombGoldFlowerInit,begin]\n"
+           _txt+="\q[◇初始剧情,OnCardStory]\n"
+           _txt+="\q[◇游戏说明,OnCardHelp]\n"
+           }
+     
+     elseif cardmode==2 && cardturn==banker%3
+      {
+           
+           _txt+="\q[◇跟牌,OnBombGoldFlowerInit,follow]    \q[◇弃牌,OnBombGoldFlowerInit,stop]\n"
+           _txt+="\q[◇开牌,OnBombGoldFlowerInit,open]\n"
+       }
+      
+     if _argv[0]=="begin"
+       {
+           if usercoin>=TOINT(wager)
+             {
+               mess="游戏开始投入%(wager)金币。\n"
+               _txt+=CardShuffle
+               _txt+=Licensing
+               cardmode=2
+               usercoin-=TOINT(wager)
+               towacoin-=TOINT(wager)
+               kikkacoin-=TOINT(wager)
+               deskmoney=TOINT(wager)*3
+             }
+            else 
+              mess="金币不足，请充值。"
+           cardturn=0
+           circle=0
+           cardwin=-1          
+           opentowa=0 
+           openkikka=0 
+           kikkapass=0
+           towapass=0
+           _txt+=BombGoldFlowerInit()
+       }
+
+     elseif _argv[0]=="wager"
+       {
+           wager=_argv[1]
+       }
+
+    elseif _argv[0]=="follow"
+       {
+ 
+           deskmoney+=TOINT(wager)
+           usercoin-=TOINT(wager)
+           if towapass==1&&kikkapass==0
+                cardturn=(cardturn+2)%3
+           else
+                cardturn=(cardturn+1)%3
+           circle++
+                _txt+="跟牌\x"                  
+       }
+    elseif _argv[0]=="stop"  
+       {
+
+          if operator("%(towa.numcard)","%(kikka.numcard)")<=0
+                cardwin=0
+          else
+                cardwin=1
+       }
+
+    elseif _argv[0]=="open"
+       {
+          _txt+=OnUseropen
+          _txt+=ShowCard     
+       }
+      
+       elseif _argv[0]=="systemopen"
+       {
+          openkikka=1
+          opentowa=1
+          kikkapass=0
+          towapass=0
+          _txt+=ShowCard
+          cardwin=CardWin
+          cardmode=1
+          cardturn=-1 
+       }
+      if kikkapass==1&&towapass==1
+         cardwin=2
+
+      if cardwin==2
+             {
+                mess="%(username)赢了\n"
+                banker=2
+                cardmode=1
+                cardturn=-1
+                cardwin=-1
+                opentowa=1
+                openkikka=1
+                kikkapass=0
+                towapass=0
+                usercoin+=TOINT(deskmoney)
+                _txt+=BombGoldFlowerInit()
+                _txt+=ShowCard
+             }
+          elseif cardwin==1
+             {
+                mess="斗和赢了。\n"
+                banker=1
+                cardmode=1
+                cardturn=-1
+                cardwin=-1
+                opentowa=1
+                openkikka=1
+                kikkapass=0
+                towapass=0
+                towacoin+=TOINT(deskmoney)
+                _txt+=BombGoldFlowerInit()
+                _txt+=ShowCard
+             }
+          elseif cardwin==0
+             {
+                mess="橘花赢了。\n"
+                 banker=0
+                 cardmode=1
+                 cardturn=-1    
+                 cardwin=-1
+                 opentowa=1
+                 openkikka=1
+                 kikkapass=0
+                 towapass=0
+                 kikkacoin+=TOINT(deskmoney)
+                _txt+=BombGoldFlowerInit()
+                _txt+=ShowCard
+             }
+
+    
+    if cardturn==(banker+1)%3
+         _txt+=TowaFollow
+    elseif cardturn==(banker+2)%3
+         _txt+=KikkaFollow   
+    if cardmode==2
+     _txt+=ShowCard
+
+    _txt+=CardMenu;
+    _txt+="\_l[0,0]"+ mess;
+    _txt;
+}
+
+
+
+OnUseropen    //用户开牌
+{
+    _txt=""
+    if towapass==0&&kikkapass==0
+       {
+         _txt+="\q[◇开橘花的牌,OnOpenKikka]     \q[◇开斗和的牌,OnOpenTowa]\n"
+       }
+     elseif towapass==1&&kikkapass==0
+       {
+        _txt+=OnOpenKikka
+        
+       }
+     elseif towapass==0&&kikkapass==1
+       {
+
+        _txt+=OnOpenTowa
+       }
+_txt
+}
+
+OnOpenKikka     //开橘花牌
+{
+     _txt=""
+      openkikka=1
+    if towapass==0
+      { 
+        deskmoney+=TOINT(wager) 
+        usercoin-=TOINT(wager)
+        if operator("%(user.numcard)","%(kikka.numcard)")<=0
+             {
+               _txt+="\0\s[5]橘花PASS了%(username)\x"
+                   if operator("%(kikka.numcard)","%(towa.numcard)")<=0
+                      cardwin=1
+                   else
+                      cardwin=0
+                   cardmode=1
+                   opentowa=1
+             }
+       else
+             {
+               _txt+="\0\s[9]唔，\w9橘花被PASS了\x"
+                   kikkapass=1     
+             }
+      }
+    else
+       { 
+           deskmoney+=2*wager 
+           usercoin-=2*wager
+           if operator("%(user.numcard)","%(kikka.numcard)")<=0
+                  {
+                   _txt+="\0\s[5]橘花赢了%(username)\x"
+                   cardwin=0
+                   }
+                else
+                  {
+                  _txt+="\0\s[9]唔，橘花输了\x"
+                  cardwin=2
+                  }     
+       }
+
+      if towapass==1&&kikkapass==0
+          cardturn=(cardturn+2)%3
+      else
+          cardturn=(cardturn+1)%3 
+     
+    _txt+=BombGoldFlowerInit()
+    _txt
+}
+
+
+OnOpenTowa    //开斗和牌
+{
+
+     _txt=""
+     opentowa=1
+    if kikkapass==0
+      { 
+        deskmoney+=TOINT(wager) 
+        usercoin-=TOINT(wager)
+        if operator("%(user.numcard)","%(towa.numcard)")<=0
+             {
+               _txt+="\1斗和PASS了%(username)\x"
+                   if operator("%(towa.numcard)","%(kikka.numcard)")<=0
+                      cardwin=0
+                   else
+                      cardwin=1
+                   cardmode=1
+                   openkikka=1                
+             }
+       else
+             {
+               _txt+="\1被%(username)PASS了\x"
+                   towapass=1     
+             }
+      }
+    else
+       {
+           deskmoney+=2*wager 
+           usercoin-=2*wager
+           if operator("%(user.numcard)","%(towa.numcard)")<=0
+                  {
+                   _txt+="\1斗和赢了%(username)\x"
+                   cardwin=1
+                   }
+                else
+                  {
+                  _txt+="\1呀，斗和输了\x"
+                  cardwin=2
+                  }     
+       }
+       if towapass==1&&kikkapass==0
+          cardturn=(cardturn+2)%3
+       else
+          cardturn=(cardturn+1)%3 
+
+       _txt+=BombGoldFlowerInit()
+       _txt
+
+
+
+
+}
+
+
+TowaFollow         //斗和跟牌
+{
+     _txt="\0\c\b[-1]\1"
+     _k=10-towacoin*0.001
+     if _k>=6
+     _k=6
+     if _k<=0
+     _k=0;
+     if CardAICheck("%(towa.numcard)",0.3,0.08-0.01*_k,0.08-0.01*_k,0.08-0.01*_k)==0
+        {
+          _txt+="\1\s[111]\跟牌\x"
+          deskmoney+=TOINT(wager) 
+          towacoin-=TOINT(wager)             
+        }
+     elseif CardAICheck("%(towa.numcard)",0.3,0.08-0.01*_k,0.08-0.01*_k,0.08-0.01*_k)==1
+        {
+          _txt+=TowaCardDrop
+          towapass=1
+        }
+     elseif CardAICheck("%(towa.numcard)",0.3,0.08-0.01*_k,0.08-0.01*_k,0.08-0.01*_k)==2
+        {
+          _k=RAND(2)
+          if _k==1 &&kikkapass==0
+            {
+             deskmoney+=TOINT(wager)
+             towacoin-=TOINT(wager)
+             _txt+="\1开橘花的牌\x"
+                if operator("%(towa.numcard)","%(kikka.numcard)")<=0
+                   {
+                   _txt+="\1\s[111]被橘花PASS了\x"
+                   towapass=1
+                   }
+                else
+                  {
+                  _txt+="\1\s[110]斗和PASS了橘花\x"
+                  kikkapass=1
+                  }
+            }
+          elseif _k==0 &&kikkapass==0 
+              {
+             deskmoney+=TOINT(wager)
+             towacoin-=TOINT(wager)
+             opentowa=1
+             _txt+="\1开%(username)的牌\x"
+                if operator("%(towa.numcard)","%(user.numcard)")<=0
+                  {
+                   _txt+="\1\s[111]被%(username)PASS了\x"
+                   towapass=1
+                   }
+                else
+                  {
+                  _txt+="\1\s[110]%(username)的牌没有斗和大啊\x"
+                         if operator("%(towa.numcard)","%(kikka.numcard)")<=0
+                               cardwin=0
+                         else
+                               cardwin=1
+                               
+                  cardmode=1                 
+                  }
+              }
+          else
+              {
+             deskmoney+=2*wager
+             towacoin-=2*wager
+             _txt+="\1我和%(username)决战啊，那就开牌吧\x"
+                   if operator("%(towa.numcard)","%(user.numcard)")<=0
+                  {
+                   _txt+="\1\s[111]斗和输了\x"
+                   cardwin=2
+                   }
+                else
+                  {
+                  _txt+="\1\s[110]%(username)的牌没有斗和大啊\x"
+                  cardwin=1
+                  }               
+              }
+
+        }
+
+         
+        
+      if towapass==0&&kikkapass==1
+         cardturn=(cardturn+2)%3
+      else
+         cardturn=(cardturn+1)%3     
+     _txt+=BombGoldFlowerInit()
+     _txt
+
+
+}
+
+TowaCardDrop
+{
+"\1\s[117]能再小点吗？我PASS\x"
+"\1\s[111]PASS!\x"
+"\1\s[111]有没有啊,老娘不跟!\x"
+"\1\s[117]怎么总是这种鬼牌啊!\x"
+"\1\s[111]切,老娘PASS!\x"
+}
+
+KikkaCardDrop
+{
+"\0\s[33]唔，好小的牌，橘花PASS\x"
+"\0\s[34]唔，橘花PASS\x"
+"\0\s[32]牌真小啊，橘花PASS\x"
+"\0\s[23]PASS\x"
+"\0\s[22]喀嚓!\w9\w9\1\s[110]喂，牌小也不能乱来啊。\x"
+}
+
+
+KikkaFollow     //橘花跟牌
+{
+_txt="\0\c\b[0]"
+    _k=10-kikkacoin*0.001
+     if _k>=10
+     _k=10
+     if _k<=0
+     _k=0;
+     if CardAICheck("%(kikka.numcard)",0.4,0.03-0.002*_k,0.03-0.002*_k,0.03-0.002*_k)==0
+        {
+          _txt+="\0\s[26]\橘花跟牌\x"
+          deskmoney+=TOINT(wager)
+          kikkacoin-=TOINT(wager)                 
+        }
+    elseif CardAICheck("%(kikka.numcard)",0.4,0.03-0.002*_k,0.03-0.002*_k,0.03-0.002*_k)==1
+        {
+          _txt+=KikkaCardDrop
+          kikkapass=1
+        }
+     elseif CardAICheck("%(kikka.numcard)",0.4,0.03-0.002*_k,0.03-0.002*_k,0.03-0.002*_k)==2
+        {
+          _k=RAND(2)
+          if _k==1 &&towapass==0
+            {
+            deskmoney+=TOINT(wager)
+            kikkacoin-=TOINT(wager)
+             _txt+="\0\s[7]开斗和的牌\x"
+                if operator("%(kikka.numcard)","%(towa.numcard)")<=0
+                   {
+                   _txt+="\0\s[9]唔，橘花被斗和PASS了\x"
+                   kikkapass=1
+                   }
+                else
+                  {
+                  _txt+="\0\s[5]橘花PASS了斗和\x"
+                  towapass=1
+                  }
+            }
+          elseif _k==0 &&towapass==0 
+              {
+             deskmoney+=TOINT(wager)
+             kikkacoin-=TOINT(wager)
+             openkikka=1
+             _txt+="\0\s[26]开%(username)的牌\x"
+                if operator("%(kikka.numcard)","%(user.numcard)")<=0
+                  {
+                   _txt+="\0\s[9]唔，橘花被%(username)PASS了\x"
+                   kikkapass=1
+                   }
+                else
+                  {
+                  _txt+="\0\s[21]啊，%(username)的牌没有橘花大\x"
+                         if operator("%(kikka.numcard)","%(towa.numcard)")<=0
+                               cardwin=1
+                         else
+                               cardwin=0
+                               
+                  cardmode=1
+                  }
+              }
+          else
+              {
+                deskmoney+=2*wager 
+                kikkacoin-=2*wager
+                _txt+="\0\s[20]啊，橘花和%(username)决战啊，那么橘花要开牌了\x"
+                if operator("%(kikka.numcard)","%(user.numcard)")<=0
+                  {
+                   _txt+="\0\s[9]橘花输了\x"
+                   cardwin=2
+                   }
+                else
+                  {
+                  _txt+="\0\s[21]%(username)的牌没有橘花大啊\x"
+                  cardwin=0
+                  }
+              }
+
+        }
+ 
+       cardturn=(cardturn+1)%3 
+       _txt+=BombGoldFlowerInit()
+     
+_txt
+
+
+
+
+
+}
+
+CardAICheck
+{
+     _numcard=_argv[0]
+     _k1=_argv[1]
+     _k2=_argv[2]
+     _k3=_argv[3]
+     _k4=_argv[4]
+     _fear=circle*0.25+wager*0.002
+
+     if CardWeight("%(_numcard)",_k1,_k2,_k3,_k4,1)<0  //跟据判断决定是否弃牌
+          {1;return}
+
+     elseif CardWeight("%(_numcard)",_k1,_k2,_k3,_k4,_fear)>=0  //跟据判断决定是否跟注
+          {0;return}
+     else      //其他情况则开牌
+          {2;return}
+ 
+}
+
+CardWeight
+{
+     _numcard=_argv[0]
+     _k1=_argv[1]
+     _k2=_argv[2]
+     _k3=_argv[3]
+     _k4=_argv[4]
+     _k5=_argv[5]
+     _weight=compare("%(_numcard)")*_k1+maxcard("%(_numcard)")*_k2+middlecard("%(_numcard)")*_k3+leastcard("%(_numcard)")*_k4-_k5
+     _weight
+
+
+}
+
+
+
+ShowCard
+{
+     _txt=""
+     cardX=90
+     cardY=240
+     _txt+="\_l[%(cardX),%(cardY-20)]%(username)"
+     _txt+=winstring("%(user.numcard)")+" "+maxcard("%(user.numcard)")+DrawCard("%(user.numcard)")
+     cardX=0
+     cardY=116
+     _txt+="\_l[%(cardX),%(cardY-20)]橘花"
+     if openkikka!=1
+          _txt+=DrawBk
+     else
+          _txt+=winstring("%(kikka.numcard)")+" "+maxcard("%(kikka.numcard)")+DrawCard("%(kikka.numcard)")
+     cardX=180
+     cardY=116
+     _txt+="\_l[%(cardX),%(cardY-20)]斗和"
+     if opentowa!=1
+          _txt+=DrawBk
+     else
+          _txt+=winstring("%(towa.numcard)")+" "+maxcard("%(towa.numcard)")+DrawCard("%(towa.numcard)")
+
+    _txt
+}
+
+CardMenu
+{
+     _txt=""
+     _txt+="\_l[0,340]\q[◇充值,OnCardCharge]" 
+     _txt+="\_l[120,340]\q[◇兑换,OnCoinChange]" 
+     _txt+="\_l[260,340]\q[◇终了,OnCardGameOver]"  
+     _txt
+
+}
+
+OnCardCharge
+{
+   _txt="\C\![quicksession,true]\c\![set,choicetimeout,0]"
+   if reference0=="charge"
+      {
+         if money>=TOINT(reference1)
+             {
+                 money-=TOINT(reference1)
+                 usercoin+=TOINT(reference1)
+                 _txt+="成功充值%(TOINT(reference1))金币，现在金币为%(usercoin),金钱%(money)\n"
+             }
+         else
+             _txt+="金钱不足，不能充值\n"
+      }
+   _txt+=ShowMoney + "    金币：%(usercoin)\n"
+   _txt+="请输入充值金额：\n/
+   \q[10000,OnCardCharge,charge,10000] \q[20000,OnCardCharge,charge,20000]  \q[40000,OnCardCharge,charge,40000]  \q[50000,OnCardCharge,charge,50000]  \q[60000,OnCardCharge,charge,60000]  \q[80000,OnCardCharge,charge,80000]  \q[100000,OnCardCharge,charge,100000]\n"
+
+   
+
+   _txt+="\n\n\n\n\q[◇返回,OnBombGoldFlowerInit]"
+
+   _txt
+
+}
+
+OnCoinChange
+{
+   _txt="\C\![quicksession,true]\c\![set,choicetimeout,0]"
+   if reference0=="change"
+      {
+         if usercoin>=TOINT(reference1)
+             {
+                 usercoin-=TOINT(reference1)
+                 money+=TOINT(reference1)
+                 _txt+="成功兑换%(TOINT(reference1))金钱，现在金钱为%(money)，金币为%(usercoin)\n"
+             }
+         else
+             _txt+="金币不足，不能兑换"
+      }
+   _txt+=ShowMoney + "    金币：%(usercoin)\n"
+   _txt+="把金币兑换成金钱，请输入兑换金额：\n/
+   \q[10000,OnCoinChange,change,10000] \q[20000,OnCoinChange,change,20000]  \q[40000,OnCoinChange,change,40000]  \q[50000,OnCoinChange,change,50000]  \q[60000,OnCoinChange,change,60000]  \q[80000,OnCoinChange,change,80000]  \q[100000,OnCoinChange,change,100000]\n"
+
+   
+   _txt+="\n\n\n\n\q[◇返回,OnBombGoldFlowerInit]"
+
+   _txt
+
+}
+
+
+OnCardGameOver
+{
+    _txt=""
+    if towaflowermoney-towacoin>500
+       _txt+="\1\s[117]怎么，\w9\w9赢了钱就不来了啊，\w9\w9我输了%(towaflowermoney-towacoin)块呢。\w9\w9"
+    else
+       _txt+="\1\s[110]不玩了吗？\w9\w9下次再来啊。\w9\w9"
+    if kikkaflowermoney-kikkacoin>500
+       _txt+="\0\s[9]唔，橘花输了%(kikkaflowermoney-kikkacoin)。"
+    else
+       _txt+="\0\s[26]要玩时再叫我们哦。"
+    _txt+=ClearBombGoldFlowerVar
+    _txt
+
+
+}
+
+ClearBombGoldFlowerVar
+{      
+	ERASEVAR("playBombGoldFlower");
+	ERASEVAR("cardX");
+	ERASEVAR("cardY");
+	ERASEVAR("cardmode");
+	ERASEVAR("deskmoney");
+        ERASEVAR("wager");
+	ERASEVAR("cardturn");
+	ERASEVAR("banker");
+        ERASEVAR("user.numcard");
+        ERASEVAR("towa.numcard");
+	ERASEVAR("kikka.numcard");
+	ERASEVAR("opentowar");
+	ERASEVAR("openkikka");
+	ERASEVAR("towapass");
+        ERASEVAR("kikkapass");
+        ERASEVAR("circle");
+	ERASEVAR("opentowa");
+	ERASEVAR("cardwin");
+	ERASEVAR("kikkaflowermoney");
+	ERASEVAR("towaflowermoney");
+
+}
+
+Card
+{
+		for _i=0;_i<52;_i++
+		 {	
+                      card[_i]=_i;
+                 }
+}
+
+
+CardShuffle
+{
+    _card=IARRAY
+    _j=0
+    for _i=0;_i<52;_i++ //用for循环实现模拟人类洗牌
+	   {   
+		  
+                  if _i%2==0
+                  _card[_i]=card[_j]
+                  else  
+                  {  
+                  _card[_i]=card[26+_j]
+                  _j++
+                  }
+                 
+	   }
+
+     card=IARRAY
+     card=_card
+
+    _replace=RAND(52)    //产生一个随机端牌数
+    _j=0
+    for _i=0;_i<52;_i++    //用for循环模拟人类端牌
+         {
+           if _replace+_i<52
+           _card[_i]=card[_replace+_i]
+           else
+            {
+           _card[_i]=card[_j]
+            _j++
+            }
+         }
+
+    card=IARRAY
+    card=_card
+}
+
+
+
+Licensing//发牌函数
+{
+    _o=0
+    _p=0
+    _q=0
+		for _i=0;_i<9;_i++
+		{	
+			if _i%3==banker           //始终发第一张牌给庄家的下手
+			{	
+                               user.numcard[_o]=card[_i];
+		               _o++;
+			}
+                         
+                        elseif _i%3==(banker+1)%3
+			{	
+                               towa.numcard[_p]=card[_i];
+		               _p++;
+			}
+
+			else
+			{
+				kikka.numcard[_q]=card[_i];
+				_q++;
+			}
+		}
+
+
+
+	for _i=0;_i<=2;_i++    //牌的顺序从大到小
+             {
+		for _j=_i+1;_j<=2;_j++
+		{
+			if user.numcard[_i]<user.numcard[_j]
+			{
+				_k=user.numcard[_i];
+				user.numcard[_i]=user.numcard[_j];
+				user.numcard[_j]=_k;
+			}
+                        
+			if towa.numcard[_i]<towa.numcard[_j]
+			{
+				_k=towa.numcard[_i];
+				towa.numcard[_i]=towa.numcard[_j];
+				towa.numcard[_j]=_k;
+			}
+                  
+
+
+			if kikka.numcard[_i]<kikka.numcard[_j]
+			{
+				_k=kikka.numcard[_i];
+				kikka.numcard[_i]=kikka.numcard[_j];
+				kikka.numcard[_j]=_k;
+			}
+
+
+
+		}
+            }
+		
+}
+
+
+DrawCard
+{
+    _txt=""
+    _card=_argv[0]
+    for _j=0;_j<3;_j++
+	{   
+        _txt+="\_l[%(cardX+15*_j),%(cardY)]\_b[data\BombGoldFlower\%(_card[_j]).bmp,inline,--option=opaque]"
+	}
+    _txt
+
+
+}
+
+DrawBk
+{
+    _txt="" 
+    for _j=0;_j<3;_j++
+	{ 
+          _txt+="\_l[%(cardX+15*_j),%(cardY)]\_b[data\BombGoldFlower\00.bmp,inline,--option=opaque]"
+	}
+    _txt
+}
+
+
+
+leopard//判断是不是豹子
+{
+       _numcard=_argv[0];
+       if _numcard[1]/4==_numcard[2]/4&&_numcard[1]/4==_numcard[0]/4 
+		   {1;return}
+	   else
+		   {0;return}
+}
+sequence//判断是不是同花顺
+{
+                _numcard=_argv[0];
+		if _numcard[0]%4==_numcard[1]%4&&_numcard[0]%4==_numcard[2]%4 
+		{
+			if staight("%(_numcard)") 
+				{1;return}
+		}
+		{0;return}
+}
+staight//判断是不是顺子
+	{
+                _numcard=_argv[0];
+		_c1=_numcard[0]/4;
+		_c2=_numcard[1]/4;
+		_c3=_numcard[2]/4;
+		if  (_c1+1==_c2&&_c2+1==_c3)||(_c1+1==_c3&&_c3+1==_c2)||(_c2+1==_c3&&_c3+1==_c1)||(_c2+1==_c1&&_c1+1==_c3)||(_c3+1==_c1&&_c1+1==_c2)||(_c3+1==_c2&&_c2+1==_c1) 
+			{1;return}
+		else 
+			{0;return}
+	}
+samecolor//判断是不是金花（同花不同顺子）
+{
+                _numcard=_argv[0];
+		if _numcard[0]%4==_numcard[1]%4&&_numcard[0]%4==_numcard[2]%4 
+			{1;return}
+		else 
+			{0;return}
+}
+brother//对子
+{
+                _numcard=_argv[0];
+		if  _numcard[0]/4==_numcard[1]/4 || _numcard[0]/4==_numcard[2]/4 || _numcard[1]/4==_numcard[2]/4  
+			{1;return}
+		else
+			{0;return}
+}
+HighCard//特殊
+{
+                _numcard=_argv[0];
+		if _numcard[0]%13!=_numcard[1]%13&&_numcard[1]%13!=_numcard[2]%13&&_numcard[0]%13!=_numcard[2]%13 
+		{
+			if (_numcard[0]/4==0&&_numcard[1]/4==1&&_numcard[2]/4==3)||(_numcard[1]/4==0&&_numcard[0]/4==1&&_numcard[2]/4==3)||(_numcard[0]/4==0&&_numcard[2]/4==1&&_numcard[1]/4==3)||(_numcard[1]/4==0&&_numcard[2]/4==1&&_numcard[0]/4==3)||(_numcard[2]/4==0&&_numcard[0]/4==1&&_numcard[1]/4==3)||(_numcard[2]/4==0&&_numcard[1]/4==1&&_numcard[0]/4==3)
+			{1;return}
+		}
+			{0;return}
+}
+
+
+compare//比较
+{
+      _numcard=_argv[0]
+      if leopard("%(_numcard)") 
+	   {7;return }
+      elseif sequence("%(_numcard)") 
+	   {6;return}
+      elseif samecolor("%(_numcard)") 
+	   {5;return}
+      elseif staight("%(_numcard)") 
+	   {4;return}
+      elseif brother("%(_numcard)") 
+	   {3;return}
+      elseif HighCard("%(_numcard)") 
+           {1;return}
+      else
+           {2;return}
+						
+}
+      operator
+      {
+                _numcarda=_argv[0]
+                _numcardb=_argv[1]
+
+		if compare("%(_numcarda)")==1 && compare("%(_numcardb)")==7 
+			{1;return}
+		elseif compare("%(_numcarda)")==7 && compare("%(_numcardb)")==1 
+		        {0;return}
+	        elseif compare("%(_numcarda)") > compare("%(_numcardb)") 
+			{1;return}
+		elseif compare("%(_numcarda)")==compare("%(_numcardb)")&&maxcard("%(_numcarda)")>maxcard("%(_numcardb)") 
+			{1;return}
+                elseif compare("%(_numcarda)")==compare("%(_numcardb)") &&compare("%(_numcarda)")!=3 && maxcard("%(_numcarda)")==maxcard("%(_numcardb)")&&middlecard("%(_numcarda)")>middlecard("%(_numcardb)")
+			{1;return}
+                elseif compare("%(_numcarda)")==compare("%(_numcardb)")&&compare("%(_numcarda)")!=3 &&maxcard("%(_numcarda)")==maxcard("%(_numcardb)")&&middlecard("%(_numcarda)")==middlecard("%(_numcardb)")&&leastcard("%(_numcarda)")>leastcard("%(_numcardb)")
+			{1;return}
+                elseif compare("%(_numcarda)")==compare("%(_numcardb)")&&compare("%(_numcarda)")!=3 &&maxcard("%(_numcarda)")==maxcard("%(_numcardb)")&&middlecard("%(_numcarda)")==middlecard("%(_numcardb)")&&leastcard("%(_numcarda)")==leastcard("%(_numcardb)")
+			{-1;return}
+                elseif compare("%(_numcarda)")==compare("%(_numcardb)") &&compare("%(_numcarda)")==3 && maxcard("%(_numcarda)")==maxcard("%(_numcardb)")&&middlecard("%(_numcarda)")>middlecard("%(_numcardb)")
+                        {1;return}
+                elseif compare("%(_numcarda)")==compare("%(_numcardb)") &&compare("%(_numcarda)")==3 && maxcard("%(_numcarda)")==maxcard("%(_numcardb)")&&middlecard("%(_numcarda)")==middlecard("%(_numcardb)")
+                        {-1;return}
+		else
+			{0;return}
+				
+			
+		
+	}
+	maxcard
+	{
+              _numcard=_argv[0];
+              _tmp=0
+             if brother("%(_numcard)")  
+		{
+			if TOINT(_numcard[0]/4)!=TOINT(_numcard[1]/4)
+				 {TOINT(_numcard[2]/4);return}
+			else
+				{TOINT(_numcard[0]/4);return} 
+		}
+             else
+             {
+		_tmp=TOINT(_numcard[0]/4);
+		for _i=1;_i<=2;_i++ 
+		{
+			if _tmp<TOINT(_numcard[_i]/4)
+				_tmp=TOINT(_numcard[_i]/4);
+		}
+              }
+		 _tmp;return
+		
+	}
+
+       middlecard
+        {
+         _numcard=_argv[0]
+         _tmp=0
+        if brother("%(_numcard)")  
+		{
+			if TOINT(_numcard[0]/4)==TOINT(_numcard[1]/4)
+				 {TOINT(_numcard[2]/4);return}
+			else
+				{TOINT(_numcard[0]/4);return} 
+		}
+        else
+		{
+		_tmp=TOINT(_numcard[1]/4);
+		if _tmp<TOINT(_numcard[2]/4)
+		_tmp=TOINT(_numcard[2]/4);
+		}
+		 _tmp;return
+
+        }
+ 
+     leastcard
+        {
+         _numcard=_argv[2]
+         _tmp=TOINT(_numcard[1]/4);
+         _tmp
+        }
+
+
+
+CardWin
+{
+
+    if operator("%(user.numcard)","%(kikka.numcard)")>0
+         {
+           if operator("%(user.numcard)","%(towa.numcard)")>0
+               {2;return}
+             else
+               {1;return}
+         }
+    elseif operator("%(user.numcard)","%(kikka.numcard)")==0
+         {
+          if operator("%(kikka.numcard)","%(towa.numcard)")>0
+              {0;return}
+          else
+              {1;return}       
+         }
+ 
+}
+
+winstring
+{
+	_numcard=_argv[0]
+	_num=compare("%(_numcard)");
+	case _num 
+	{
+	when 7 
+                {
+		"豹子！7";
+                }
+	when  6 
+                {
+		"同花顺！6";
+                }
+	when  5 
+                {
+		"金花，花色一样！5";
+                }
+	when  4 
+                {
+		 "顺子！4";
+                }
+	when  3 
+                {
+		 "对子！3";
+                }
+	when  2 
+                {
+		 "2";
+                }
+	when  1 
+                {
+		"特殊！1";
+                }
+	}
+}

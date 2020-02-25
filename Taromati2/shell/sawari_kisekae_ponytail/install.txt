@@ -1,0 +1,5 @@
+charset,Shift_JIS
+type,shell
+name,sawari着せ替え(ポニーテール)
+accept,橘花
+directory,sawari_kisekae_ponytail

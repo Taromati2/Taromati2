@@ -1,0 +1,27 @@
+﻿OnTest
+{
+	
+}
+UnFinished
+{
+	'\0\s[3]很遗憾\w9\w9，这是一个未完成的机能。\n/
+	\1\s[12]该好好努力啦\w9\n/
+	自己动手才能丰衣足食哦\w9/
+	\0/
+	\q[◇协助项目开发,HelpProjectDev]\n/
+	\q[◇返回主菜单,OnOpenMenu]/
+	\e'
+}
+do_nothing{}
+NeedRewrite:void{}
+Select.HelpProjectDev{
+	'\![open,browser,https://github.com/steve02081504/Kikka#%E6%88%91%E8%AF%A5%E5%A6%82%E4%BD%95%E5%8F%82%E4%B8%8E%E5%BC%80%E5%8F%91]'
+}
+BUGNow{
+	'\0\s[8]失败了...未知bug吗?\n/
+	\q[◇前往汇报,BUGReport]/
+	\e'
+}
+Select.BUGReport{
+	'\![open,browser,https://github.com/steve02081504/Kikka/issues/new]'
+}

@@ -1,0 +1,5 @@
+charset,Shift_JIS
+type,shell
+name,•ƒƒ“ƒs
+accept,‹k‰Ô
+directory,black_one_piece

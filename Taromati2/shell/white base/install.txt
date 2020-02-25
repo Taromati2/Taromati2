@@ -1,0 +1,5 @@
+charset,Shift_JIS
+type,shell
+name,white base
+accept,‹k‰Ô
+directory,white base
