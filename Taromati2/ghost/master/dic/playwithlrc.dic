@@ -1644,10 +1644,10 @@ OnSystemDialog
 	}
 
 	elseif reference1 == "shortcutlistfile" {
-		OnFileDrop2(reference2);
+		OnShortcutFileDrop(reference2);
 	}
 	elseif reference1 == "shortcutopenlist" {
-		OnFileDrop2(reference2);
+		OnShortcutFileDrop(reference2);
 	}
 	elseif reference1 == "shortsavelist" {
 		SaveShortCutCfg(reference2);
@@ -1794,9 +1794,8 @@ MusicFileDrop
 	OnMusicPlayerList;
 }
 
-OnFileDropEx
+OnFileDrop
 {
-
 	if fjswitch
 		fjswitch="-1"
 	_file = reference0[0];
@@ -1808,15 +1807,15 @@ OnFileDropEx
 	}elseif rename==1
 		OnFileRenameDrop(reference0)
 	elseif shortcut==1
-		OnFileDrop2
+		OnShortcutFileDrop
 	else{
 		case _fileext {
 			when ".m3u", ".m3u8", ".mid", ".wav", ".mp3", ".au", ".m4a", ".ogg", ".wma",".ape",".flac",".avi",".wmv",".rm",".rmvb",".mp4",".mkv",".flv",".mpg"
 			{
 				MusicFileDrop(reference0);
 			}
-			when ".exe",".lnk",".sccfg",""{
-				OnFileDrop2
+			when ".exe",".lnk",""{
+				OnShortcutFileDrop
 			}
 			when ".png", ".jpg", ".jpeg", ".bmp"
 			{

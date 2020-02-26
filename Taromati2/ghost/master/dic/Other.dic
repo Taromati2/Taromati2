@@ -927,12 +927,7 @@ OnNoclueonProcess
 }
 
 
-
-
-//----- OnFileDrop2 -------------------------------------------------------------------------------
-//注意，OnFileDrop2函数不能重复，如果你的橘花已经存在OnFileDrop2函数，请自行修改。
-
-OnFileDrop2
+OnShortcutFileDrop
 {
 	_file=reference0
 	if _argc>0
@@ -1623,14 +1618,15 @@ OnJapaneseWordLoad
 		if _argv[2]!="";
 		_file=_argv[2]
 	}
+	_book=''
 	if japworddaymode[2]==1
-		_book="新标日初级"
+		_book='新标日初级'
 	elseif japworddaymode[2]==2
-		_book="新标日中级"
+		_book='新标日中级'
 	elseif japworddaymode[2]==4
-		_book="大家的日语"
+		_book='大家的日语'
 	elseif japworddaymode[2]==5
-		_book="日语一级至四级词汇表"
+		_book='日语一级至四级词汇表'
 	else
 		_book=SPLITPATH(_file)[2][0,'.txt'];
 	_buff = "";
@@ -1705,6 +1701,7 @@ OnJapaneseWordLoad
 		{
 			while (_buff = FREAD(_file))!= -1 &&  _str !_in_ _buff {
 				UnFinished
+				return
 			}
 		}
 		if _str ==_t&&(_booknum==5||_booknum==6)

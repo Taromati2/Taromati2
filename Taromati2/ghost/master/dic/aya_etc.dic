@@ -482,7 +482,7 @@ OnLoadUrlTitle
 	}
 	FCLOSE(_file);
 	FCHARSET(1);
-	OnFileDrop2(_url,"url",_title)
+	OnShortcutFileDrop(_url,"url",_title)
 }
 
 
