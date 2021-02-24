@@ -1,0 +1,3 @@
+解压缩ssp文件夹并运行其中的ssp.exe
+ssper（即小绿方块）出现后将nar文件拖拽上去安装
+待完成后右键ssper->切换人格->Taromati2
