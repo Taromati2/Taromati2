@@ -1,4 +1,4 @@
-﻿[![996.icu]( https://img.shields.io/badge/link-996.icu-red.svg )]( https://996.icu )
+[![996.icu]( https://img.shields.io/badge/link-996.icu-red.svg )]( https://996.icu )
 本项目支持anti-996，请所有国产浏览器拉黑并禁止访问，谢谢  
 ### 公告  
 > Taromati2的开发告一段落  

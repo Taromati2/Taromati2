@@ -1,4 +1,4 @@
-﻿### 制作nar与updates2.dau时加入了不想加入的文件  
+### 制作nar与updates2.dau时加入了不想加入的文件  
 方法一：每次制成后，用压缩/文本程序打开nar/dau文件，删除不需要的部分  
 方法二：将不需要的部分设为隐藏，重新进行制作，隐藏部分将被忽略  
 方法三：试试[developer_options.txt]( http://ssp.shillest.net/ukadoc/manual/descript_install.html#developer_options.txt )  

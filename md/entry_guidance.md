@@ -1,4 +1,4 @@
-﻿### wiki  
+### wiki  
 [伪春菜后援会]( http://cuc.moe.hm/wiki/ )
 
 ### 论坛  
