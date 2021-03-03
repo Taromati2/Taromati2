@@ -24,6 +24,7 @@ ps：这些辞书是H模块的，在翻译完成后只要有空我便会实装
  - 调整函数或变量名称：拼音、不明意义+数字、中式英语、汉字 -> 英语命名（考虑向前兼容在`dic\system\VersionUpgrade.dic`）  
  - 删除重复内容的函数  
  - 优化函数内容与逻辑（考虑向前兼容在`dic\system\VersionUpgrade.dic`）  
+
 [提交PR]( https://github.com/Taromati2/Taromati2/compare )即可，谢谢  
 
 #### #3.数据库整理（长期有效）  
@@ -32,6 +33,7 @@ ps：这些辞书是H模块的，在翻译完成后只要有空我便会实装
  - 删除无用的数据库或栏位  
  - 给所有数据库加入ID项以方便遍历  
  - 笑话辞书的内容移至数据库  
+
 [提交PR]( https://github.com/Taromati2/Taromati2/compare )即可，谢谢  
 
 #### #4.文件整理（长期有效）  
