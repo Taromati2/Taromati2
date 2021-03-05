@@ -24,8 +24,8 @@ Taromati2
 中间经历过无数人之手  
   
 ### 如何快速上手  
-对于伪春菜使用者，[点击这里下载轻型nar]( https://github.com/Taromati2/Taromati2/releases/download/ghost_v0/Taromati2.7z )  
-对于第一次接触伪春菜的人，[点击这里下载初心者包]( https://github.com/Taromati2/Taromati2/releases/download/ghost_v0/StarterPack.7z )  
+对于伪春菜使用者，[点击这里下载轻型nar]( https://github.com/Taromati2/Taromati2/releases/download/ghost/Taromati2.7z )  
+对于第一次接触伪春菜的人，[点击这里下载初心者包]( https://github.com/Taromati2/Taromati2/releases/download/ghost/StarterPack.7z )  
   
 注意：下载下来后需要在线更新，如果你网不好请参阅[初次启动更新]( ./md/points_for_attention.md#%E4%B8%80%E5%88%9D%E6%AC%A1%E5%90%AF%E5%8A%A8%E6%9B%B4%E6%96%B0 )  
 使用方法：  
