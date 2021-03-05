@@ -9,7 +9,7 @@
 更新时，已有机能可正常使用  
 如若手动更新，请右键人格并点击'在线更新'按钮  
 另外，视地区的不同，你可能需要使用加速器来获得更好的更新体验  
-**对国内用户：可以在双击人格->设定->帮助->修改更新源->改为`https://e-tek.coding.net/p/Taromati2/d/stable-mirror/git/raw/master/Taromati2/`后再次尝试**  
+### **对国内用户：可以在双击人格->设定->帮助->修改更新源->改为`https://e-tek.coding.net/p/Taromati2/d/stable-mirror/git/raw/master/Taromati2/`后再次尝试**  
 若需人工更新，请自行下载镜像项目中的Taromati2文件夹，并对ghost/Taromati2进行覆盖  
 [点此下载镜像项目文件夹]( https://github.com/Taromati2/stable-mirror/archive/master.zip )  
 
