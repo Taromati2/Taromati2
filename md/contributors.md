@@ -25,8 +25,9 @@ Taromati2中文化：[时原砂]( https://blog.yam.com/masenoyoi )&[TanisElf]( h
 
 ### 其他贡献者  
 [Roy]( http://scrappedblog.blogspot.com )  （win8前还能用的截屏功能，橘花后援会会长）  
-[道化师]( http://cuc.moe.hm/space.php?uid=6161 )（很多shell的制作）  
+[道化师]( http://cuc.moe.hm/space.php?uid=6161 )  （很多shell的制作）  
 [Pygmalion]( http://lockedrobin.lofter.com/ )  （拼圖遊戲1.1、OX游戏）  
 [时原砂]( https://blog.yam.com/masenoyoi )  （Database 存取，伪春菜Wiki主力之一）  
 [朔№九尾]( http://tieba.baidu.com/home/main?un=%E6%9C%94%E2%84%96%E4%B9%9D%E5%B0%BE&fr=home&id=tb.1.b25585fe.Tgg-2h0_3W6WGEeoM8GKZg )  （猜拳）  
+[Q22125529]( http://cuc.moe.hm/space.php?uid=2880 )  （部分对话）  
 
