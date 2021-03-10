@@ -29,5 +29,5 @@ Taromati2中文化：[时原砂]( https://blog.yam.com/masenoyoi )&[TanisElf]( h
 [Pygmalion]( http://lockedrobin.lofter.com/ )  （拼圖遊戲1.1、OX游戏）  
 [时原砂]( https://blog.yam.com/masenoyoi )  （Database 存取，伪春菜Wiki主力之一）  
 [朔№九尾]( http://tieba.baidu.com/home/main?un=%E6%9C%94%E2%84%96%E4%B9%9D%E5%B0%BE&fr=home&id=tb.1.b25585fe.Tgg-2h0_3W6WGEeoM8GKZg )  （猜拳）  
-[小万]( http://cuc.moe.hm/space.php?uid=2880 )  （部分对话）  
+[小万]( http://cuc.moe.hm/space.php?uid=2880 )  （游乐园剧本、部分对话等）  
 
