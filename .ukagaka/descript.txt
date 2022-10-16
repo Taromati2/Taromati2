@@ -1,0 +1,13 @@
+//meta info
+type,ghost
+name,Taromati2
+//uuid,XXX
+sakura.name,橘花
+kero.name,斗和
+has_terms,1
+icon,https://github.com/Taromati2/other/raw/master/discord_app/kikka_eye_open.png
+homeurl,https://raw.githubusercontent.com/Taromati2/stable-mirror/master/Taromati2/
+craftman,8 and other contributors
+craftmanurl,https://github.com/Taromati2/Taromati2/blob/master/docs/CONTRIBUTORS.md
+languages,Simplified Chinese	//,Japanese,Engilsh may be available in future
+robots,noindex	//until uuid support

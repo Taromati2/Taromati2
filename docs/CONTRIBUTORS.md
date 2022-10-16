@@ -1,11 +1,3 @@
-## To those from [GCS](https://buynowforsale.shillest.net/ghosts/)
-> To those from GCS:  
-> If you just want to see the changelog, please move to [Update-log](https://github.com/Taromati2/Update-log)  
-> If you just want to download the ghost, please move to [releases](https://github.com/Taromati2/Taromati2/releases/tag/ghost)  
-> (This ghost is currently in Chinese, so if you are interested in participating in her internationalisation, please refer [i18n](https://github.com/Taromati2/Taromati2/blob/master/docs/i18n.md))  
-> 
-> If you would like to access the ghost provided by the original author, please visit [永遠に未完成](http://unvollendet.web.fc2.com/)  
-
 ## 正文
 
 本md尽力收录一切为此人格做过贡献的人  

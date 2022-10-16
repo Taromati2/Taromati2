@@ -1,0 +1,11 @@
+This ghost only supports Chinese at the moment, feel free to visit the following URL to participate in the translation
+このゴーストは現在、中国語のみ対応しています。以下のURLにアクセスし、翻訳に参加してください。
+这个ghost目前只支持中文，欢迎访问以下网址来参与翻译
+https://github.com/Taromati2/Taromati2/blob/master/docs/i18n.md
+
+原作：http://unvollendet.web.fc2.com/
+详细信息：https://github.com/Taromati2/Taromati2
+免责声明：https://github.com/Taromati2/Taromati2#%E5%85%8D%E8%B4%A3%E5%A3%B0%E6%98%8E
+贡献者名单：https://github.com/Taromati2/Taromati2/blob/master/docs/CONTRIBUTORS.md
+
+
