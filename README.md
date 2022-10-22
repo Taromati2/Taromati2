@@ -32,15 +32,12 @@ Taromati2
 中间经历过无数人之手  
   
 ### 如何快速上手  
-对于伪春菜使用者，[点击这里下载轻型nar]( https://bit.ly/TaroNar )  
-对于第一次接触伪春菜的人，[点击这里下载初心者包]( https://bit.ly/TaroStartPak )  
-  
+你可以下载[ghost安装器]( https://bit.ly/TaroGHI )来自动完成下载安装依赖平台和语言包等必要内容和配置运行等一切操作（开源在[**`ghost_installer`**]( https://github.com/Taromati2/ghost_installer )）  
+如果你对exe文件不是很放心（或者你是伪春菜老手懂得如何将nar链接直接拖拽给已启动的人格以自动安装），也可以使用以下方法安装Taromati2  
+- [点击这里下载轻型nar]( https://bit.ly/TaroNar )  
+- 第一次接触伪春菜的人可以[点击这里下载初心者包]( https://bit.ly/TaroStartPak )  
+
 注意：下载下来后需要在线更新，如果你网不好请参阅[初次启动更新]( ./docs/points_for_attention.md#%E4%B8%80%E5%88%9D%E6%AC%A1%E5%90%AF%E5%8A%A8%E6%9B%B4%E6%96%B0 )  
-使用方法：  
-对于初心者，在解压并运行了ssp后，你可以看到你的ssp自带人格ssper  
-这时将初心者包中的nar拖给它，它便会自动帮你安装Taromati2  
-随后你需要右键ssper，将人格切换为Taromati2  
-便可以开始使用了  
 
 ### [注意事项]( ./docs/points_for_attention.md )  
 请点击上方标题  
