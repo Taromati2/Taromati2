@@ -1,7 +1,7 @@
 //meta info
 type,ghost
 name,Taromati2
-//uuid,XXX
+uuid,R5dVNluBvKjtQqjP0dAuoA==
 sakura.name,橘花
 kero.name,斗和
 has_terms,1
