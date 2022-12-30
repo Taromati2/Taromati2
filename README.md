@@ -8,7 +8,7 @@
 [![nar downloads](https://img.shields.io/github/downloads/Taromati2/package-factory/total?label=nar%20downloads)]( https://github.com/Taromati2/Taromati2/releases/tag/ghost )
 [![other downloads](https://img.shields.io/github/downloads/Taromati2/Taromati2/total?label=other%20downloads)]( https://github.com/Taromati2/Taromati2/releases )
 
-[![ghost-dev status](https://img.shields.io/github/workflow/status/Taromati2/ghost/auto%20check?label=ghost-dev)]( https://github.com/Taromati2/ghost/actions/workflows/auto_check.yml ) [![Discord Online Num](https://img.shields.io/discord/886249817536348160?label=discord)]( https://bit.ly/TaroDiscordServer )
+[![ghost-dev status](https://img.shields.io/github/actions/workflow/status/Taromati2/ghost/auto_check.yml?branch=main&label=ghost-dev)]( https://github.com/Taromati2/ghost/actions/workflows/auto_check.yml ) [![Discord Online Num](https://img.shields.io/discord/886249817536348160?label=discord)]( https://bit.ly/TaroDiscordServer )
 
 [![996.icu]( https://img.shields.io/badge/link-996.icu-red.svg )]( https://996.icu )
 [![state-of-the-art](https://img.shields.io/static/v1?label=state-of-the-art&message=shitcode&color=7B5804)]( https://github.com/trekhleb/state-of-the-art-shitcode )
