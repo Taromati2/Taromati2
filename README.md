@@ -86,7 +86,7 @@ tox/email/oicq渠道优先
 [修改你的副本]( ./docs/fork.md )并[向此项目提交PR]( https://docs.github.com/cn/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork )
 以参与其中（[github帮助页面]( https://help.github.com/cn )）  
 或者来[help wanted]( ./docs/help_wanted.md )部分解决高优先级或我暂时没时间解决的问题！  
-不论以何种方式参与，[贡献者名单]( CONTRIBUTORS.md )上都会留下你的名字/ID（你也可以要求匿名）  
+不论以何种方式参与，[贡献者名单]( ./docs/CONTRIBUTORS.md )上都会留下你的名字/ID（你也可以要求匿名）  
 （当然，对于被拒绝的PR，我会给出拒绝的理由，如果你足够努力，即使是被拒绝也不影响你的名字/ID进入名单——并附上你的分支版本链接）  
 
 ### 不在维护中的shell  
