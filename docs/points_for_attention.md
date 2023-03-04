@@ -17,6 +17,9 @@
 另外，视地区的不同，你可能需要使用加速器来获得更好的更新体验  
 若需人工更新，请自行下载镜像项目中的Taromati2文件夹，并对ghost/Taromati2进行覆盖  
 [点此下载镜像项目文件夹]( https://github.com/Taromati2/stable-mirror/archive/master.zip )  
+若你不能访问github下载项目，可以试试这两个每月自动更新的云盘分享，其中有较新的项目下载  
+https://url43.ctfile.com/d/43106543-54386099-16269b?p=8758  
+https://toi.teracloud.jp/share/11c1e4ce08b49155  
 
 #### 二、主程式更新  
 建议使用最新版ssp获得良好体验  
