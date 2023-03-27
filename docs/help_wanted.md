@@ -1,5 +1,5 @@
 ### 请注意  
-当你开始一项计划时，请通过[提交issues]( https://github.com/Taromati2/Taromati2/issues/new?assignees=steve02081504&labels=help+wanted+solve&template=help_wanted_slove.md&title=help+wanted+solve )并附上`help wanted solve`标签、你接手的项目名与编号、你的预计完成时间以让所有人明白这件事已经有人在做  
+当你开始一项计划时，请通过[提交issues]( https://github.com/Taromati2/Taromati2/issues/new?assignees=steve02081504&labels=help+wanted+solve&template=help_wanted_slove.yaml&title=help+wanted+solve )并附上`help wanted solve`标签、你接手的项目名与编号、你的预计完成时间以让所有人明白这件事已经有人在做  
 超时的`help wanted solve`issue会被我关闭，机会将留给他人  
 当然，你也可以在issue下发commit并表示加时  
 最多加时三次，单次请勿超过十五天  

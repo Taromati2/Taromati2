@@ -35,7 +35,7 @@
 我非常期待你的反馈以让我改进Taromati2  
 不论是出现状况也好，还是有未汉化的地方也罢  
 在你确定这是真正的BUG/翻译遗漏后  
-[提交issues]( https://github.com/Taromati2/Taromati2/issues/new?assignees=steve02081504&labels=bug&template=bug-report.md&title=a+bug )并详细描述你触发这个BUG/文本的方法  
+[提交issues]( https://github.com/Taromati2/Taromati2/issues/new?assignees=steve02081504&labels=bug&template=bug-report.yaml&title=a+bug )并详细描述你触发这个BUG/文本的方法  
 我会尽快修正  
 
 ### 出现“请不要玩弄我的心 我不会回来了”怎么解决？  

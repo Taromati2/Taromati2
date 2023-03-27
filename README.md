@@ -43,7 +43,7 @@ Taromati2
 请点击上方标题  
 
 ### bug反馈  
-[提交issues]( https://github.com/Taromati2/Taromati2/issues/new?assignees=steve02081504&labels=bug&template=bug-report.md&title=a+bug )  
+[提交issues]( https://github.com/Taromati2/Taromati2/issues/new?assignees=steve02081504&labels=bug&template=bug-report.yaml&title=a+bug )  
 若您不会，请按[此页面]( https://steve02081504.github.io/about )上的联系方式联系我  
 tox/email/oicq渠道优先  
 
