@@ -17,12 +17,25 @@
 ## [免责声明]( #免责声明 )与[社区公约]( https://github.com/Taromati2/.github/blob/master/CODE_OF_CONDUCT.md )  
 进行相关创作 或 使用？  
 请先阅读这个！  
-### [赞助者列表]( ./docs/Sponsor_list.md )  
-感谢这些人在[爱发电]( https://afdian.net/@steve02081504 )中对我的支持  
-我是个普通人，有一堆自己想做的、该做的、喜欢做的、不喜欢但不得不做的事  
-但有你们的支持使得我一直没好意思放下Taromati2（草？  
-这些钱的用处包括但不限于和群里因为喜好和热爱Taromati2的为其做功能的群友支付报酬、与画师约稿、或是制作周边等  
-相关收入支出会在[此处]( ./docs/moneyIO.md )告知  
+
+### 交流群  
+Discord：[Taromati2]( https://bit.ly/TaroDiscordServer )  
+OICQ/QQ：[717638871]( https://bit.ly/TaroOicqGroup )  
+
+## 此项目已经停止维护  
+我将kikka放在github上的初衷是觉得自己一个人并不能也没有精力更好的完善她，所以当时还在高中的我以为只要在github上放出来，就会有人来一起开发  
+想法满美好的，我将其发布在github上后为了方便人们下载安装做了很多如果不开源不需要做的事情，写安装器啦、构建安装包的自动工厂啦、存档的向后兼容啦、社区公约啦、免责条款啦、各种各样的东西  
+但是总的来说，我并没有得到我想要的结果。尽管六年间有了数十个群友、数千个下载量，但是群里的大家各有各的事情，会开发的总在喊忙，不会开发的也不打算学，最后还是我一个人在维护该项目  
+我想着或许有钱就可以了！开通了赞助渠道，并承诺所有的赞助都会用于开发，但是并没有得到足够的钱去做新的功能  
+六年来我维护该项目学到了不少东西，也在群友里见到了各式各样的人，有想帮助开发但有心无力的、有一腔热忱真的喜欢kikka的、有根本不用kikka只是在群里发猎奇图片想恶心他人的  
+但是生活中肯定不止这些，我在该项目上花费的时间精力太多了，以至于影响了高考，影响了身体，影响了在现实中的交际……  
+我想干点别的。像风一样自由，去玩想玩的游戏，去看想看的书，去做想做的事，所以我决定停止在该项目上的付出  
+从今以后Taromati2将不再有任何来自于我的实质性的更新（[@Taromatibot](https://github.com/Taromatibot)仍然会在每个月更新构建时间并发布安装包，但与我无关）  
+我也会关闭赞助渠道停止接受赞助（已接受的扣除支出共700元的开发经费暂且保留直至未来项目重新开始运作，届时我会将这些钱交给项目的维护者）  
+[赞助者列表]( ./docs/Sponsor_list.md )仍然是可用的  
+如果你想修复某个bug或添加什么功能，比起提交一个会被bot自动关闭的issue，不如试着自己修复一下，然后提交一个PR，我在偶尔回来看看的时候看到  
+
+steve02081504 2023.8.20
 
 ### 绍介  
 Taromati2  
@@ -99,10 +112,6 @@ tox/email/oicq渠道优先
 
 ### [常见疑难解答]( ./docs/Q&A.md )  
 请点击上方标题  
-
-### 交流群  
-Discord：[Taromati2]( https://bit.ly/TaroDiscordServer )  
-OICQ/QQ：[717638871]( https://bit.ly/TaroOicqGroup )  
 
 ### Star History  
 [![Star History Chart](https://api.star-history.com/svg?repos=Taromati2/Taromati2)](https://star-history.com/#Taromati2/Taromati2)  

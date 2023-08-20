@@ -1,1 +1,2 @@
-https://github.com/Taromati2/package-factory
+link, https://github.com/Taromati2/package-factory
+nar_file_name, Taromati2.nar
